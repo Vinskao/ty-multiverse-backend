@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import tw.com.ty.domain.ProductBean;
 import tw.com.ty.service.ProductService;
 
-@Controller
 @CrossOrigin(origins = "http://localhost:3000")
-@RequestMapping("/pages")
+@Controller("/tyProduct.controller")
+@RequestMapping("/product")
 public class TyProductController {
     @Autowired
     private ProductService productService;
@@ -68,7 +68,7 @@ public class TyProductController {
         }
 
         if (errors != null && !errors.isEmpty()) {
-        	return "redirect:http://localhost:3000/product/";
+            return "redirect:/product/";
         }
 
         //呼叫企業邏輯程式
@@ -78,7 +78,7 @@ public class TyProductController {
 
             List<ProductBean> result = productService.select(bean);
             model.addAttribute("select", result);
-            return "/pages/display";
+            return "/display/";
         } else if ("Insert".equals(prodaction)) {
             ProductBean result = productService.insert(bean);
             if (result != null) {
@@ -86,7 +86,7 @@ public class TyProductController {
             } else {
                 errors.put("action", messageSource.getMessage("product.failed.insert", null, locale));
             }
-            return "redirect:http://localhost:3000/product/";
+            return "redirect:/product/";
         } else if ("Update".equals(prodaction)) {
             ProductBean result = productService.update(bean);
             if (result != null) {
@@ -94,7 +94,7 @@ public class TyProductController {
             } else {
                 errors.put("action", messageSource.getMessage("product.failed.update", null, locale));
             }
-            return "redirect:http://localhost:3000/product/";
+            return "redirect:/product/";
         } else if ("Delete".equals(prodaction)) {
             boolean result = productService.delete(bean);
             if (result) {
@@ -102,11 +102,11 @@ public class TyProductController {
             } else {
                 model.addAttribute("delete", 0);
             }
-            return "redirect:http://localhost:3000/product/";
+            return "redirect:/product/";
         } else {
             errors.put("action",
                     messageSource.getMessage("product.failed.unknown", new String[] { prodaction }, locale));
-            return "redirect:http://localhost:3000/product/";
+            return "redirect:/product/";
         }
     }
 }
