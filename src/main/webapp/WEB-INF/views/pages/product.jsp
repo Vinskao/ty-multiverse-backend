@@ -8,17 +8,30 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <link rel="stylesheet" type="text/css" href="../css/main.css" />
-
 <title>Product</title>
+<script src="https://unpkg.com/axios@1.1.2/dist/axios.min.js"></script>
 <script type="text/javascript">
-function clearForm() {
-	var inputs = document.getElementsByTagName("input");
-	for(var i=0; i<inputs.length; i++) {
-		if(inputs[i].type=="text") {
-			inputs[i].value="";
+	function clearForm() {
+		var inputs = document.getElementsByTagName("input");
+		for(var i=0; i<inputs.length; i++) {
+			if(inputs[i].type=="text") {
+				inputs[i].value="";
+			}
 		}
 	}
-}
+
+	async function doClick(){
+		let xxx = await axios
+		.get("http://localhost:8080/pages/ajax/products/1")
+		.then(function(response){
+			console.log("response",response);
+		}).catch(function(error){
+			console.log("error",error);
+		}).finally(function(){
+
+		})
+	};
+
 </script>
 </head>
 <body>
@@ -64,6 +77,8 @@ function clearForm() {
 			<input type="submit" name="prodaction" value="Delete">
 			<input type="submit" name="prodaction" value="Select">
 			<input type="button" value="Clear" onclick="clearForm()">
+			<input type="button" value="Ajax" onclick="doClick()">
+
 		</td>
 	</tr>
 </table>
