@@ -24,7 +24,7 @@ import tw.com.ty.util.DatetimeConverter;
 @Controller
 @ResponseBody
 @RequestMapping("/pages/ajax")
-@CrossOrigin(origins = "http://localhost:4321")
+@CrossOrigin(origins = {"http://192.168.74.54:8080","http://192.168.74.54:4321", "http://localhost:8080", "http://127.0.0.1:5500","192.168.1.110:8080","http://127.0.0.1:5501","http://127.0.0.1:4321"})
 public class ProductAjaxController {
 
     @Autowired
