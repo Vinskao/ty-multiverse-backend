@@ -1,6 +1,7 @@
 package tw.com.ty.controller;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -28,37 +29,47 @@ public class LoginAjaxController {
     private CustomerService customerService;
 
     @PostMapping(path = {"/ajex.controller"})
-    public String login(@RequestBody String data) {
+    public String login(@RequestBody String data, Locale locale) {
         JSONObject resJson = new JSONObject();
 		JSONObject jsonList = new JSONObject(data);
 
-        Map<String, String> errorMsgs = new HashMap<>();
-        if (jsonList.getString("username") == null || jsonList.getString("username").length() == 0) {
-            errorMsgs.put("username", "請輸入帳號");
-        }
-        if (jsonList.getString("password") == null || jsonList.getString("password").length() == 0) {
-            errorMsgs.put("password", "請輸入密碼");
-        }
-        resJson.put("errors", errorMsgs);
+        String username = jsonList.isNull("username") ? null : jsonList.getString("username");
+        String password = jsonList.isNull("password") ? null : jsonList.getString("password");
 
-        if (!errorMsgs.isEmpty()) {
-            resJson.put("message", "validation_failed");
+        if ((username == null && password == null)) {
+            resJson.put("message", "帳號和密碼都是必填的");
             resJson.put("success", false);
-            return resJson.toString();
+                return resJson.toString();
         }
+        if (username == null || username.length() == 0) {
+            resJson.put("message", messageSource.getMessage("login.required.id", null,  locale));
+            resJson.put("sucess", false);
+                return resJson.toString();
 
-        // 呼叫企業邏輯程式
-        CustomerBean bean = customerService.login(jsonList.getString("username"), jsonList.getString("password"));
-
-        // 根據執行結果呼叫View
-        if (bean == null) {
-            resJson.put("message", "無此帳密");
-            resJson.put("success", false);
-            return resJson.toString();
-        } else {
-            resJson.put("message", "成功登入");
-            resJson.put("success", true);
-            return resJson.toString();
         }
+        if (password == null || password.length() == 0) {
+            resJson.put("message", messageSource.getMessage("login.required.pwd", null,  locale));
+            resJson.put("sucess", false);
+                return resJson.toString();
+        } 
+        
+        else {
+            // 呼叫企業邏輯程式
+            CustomerBean bean = customerService.login(username, password);
+
+            // 根據執行結果呼叫View
+            if (bean == null) {
+                resJson.put("message", "無此帳密");
+                resJson.put("success", false);
+
+            } else {
+                resJson.put("message", "成功登入");
+                resJson.put("success", true);
+
+            }
+        }
+        
+    
+        return resJson.toString();
     }
 }
