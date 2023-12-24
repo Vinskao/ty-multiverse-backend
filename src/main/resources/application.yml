@@ -28,4 +28,4 @@ spring:
     fallback-to-system-locale: false
   # profiles:
   profiles:
-    active: '@ooo@' 
+    active: 'xxx2' 
