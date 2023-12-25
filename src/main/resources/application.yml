@@ -26,4 +26,6 @@ spring:
     basename: i18n.Messages
     encoding: UTF-8
     fallback-to-system-locale: false
-      
+  # profiles:
+  profiles:
+    active: 'xxx2' 
