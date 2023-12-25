@@ -70,10 +70,10 @@ public class ProductAjaxController {
             for(ProductBean bean : beans){
                 String make = DatetimeConverter.toString(bean.getMake(), "yyyy-MM-dd");
                 JSONObject product = new JSONObject()
+                    .put("make",make)
                     .put("id", bean.getId())
                     .put("name",bean.getName())
                     .put("price", bean.getPrice())
-                    .put("make",make)
                     .put("expire", bean.getExpire());
                 array.put(product);
             }

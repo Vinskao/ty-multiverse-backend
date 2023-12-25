@@ -34,7 +34,7 @@ public class ProductController {
 		webDataBinder.registerCustomEditor(java.util.Date.class, editor);
 	}
 	
-	@PostMapping(path = {"/pages/product.controller"})
+	// @PostMapping(path = {"/pages/product.controller"})
 	public String handlerMethod(Locale locale, Model model,
 			String prodaction, ProductBean bean, BindingResult bindingResult) {
 //接收使用者輸入的資料
