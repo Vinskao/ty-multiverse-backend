@@ -76,6 +76,7 @@ public class ProductAjaxController {
                     .put("price", bean.getPrice())
                     .put("expire", bean.getExpire());
                 array.put(product);
+                //記得做排序
             }
         }
         resJson.put("list", array);
