@@ -4,7 +4,7 @@ spring:
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     url: jdbc:sqlserver://localhost:1433;databaseName=java;trustServerCertificate=true
     username: sa
-    password: REDACTED_SECRET=
+    password: W***
   # Hibernate
   jpa:
     show-sql: true
