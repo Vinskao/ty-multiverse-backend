@@ -1,0 +1,50 @@
+CREATE TABLE people (
+    id BIGSERIAL PRIMARY KEY,
+    name_original VARCHAR(255),
+    code_name VARCHAR(255),
+    name VARCHAR(255),
+    physic_power INT,
+    magic_power INT,
+    utility_power INT,
+    dob DATE,
+    race VARCHAR(255),
+    attributes VARCHAR(255),
+    gender VARCHAR(255),
+    ass_size VARCHAR(255),
+    boobs_size VARCHAR(255),
+    height_cm INT,
+    weight_kg INT,
+    profession VARCHAR(255),
+    combat VARCHAR(255),
+    favorite_foods VARCHAR(255),
+    job VARCHAR(255),
+    physics VARCHAR(255),
+    known_as VARCHAR(255),
+    personally VARCHAR(255),
+    main_weapon VARCHAR(255),
+    sub_weapon VARCHAR(255),
+    interest VARCHAR(255),
+    likes VARCHAR(255),
+    dislikes VARCHAR(255),
+    concubine VARCHAR(255),
+    faction VARCHAR(255),
+    army_id INT,
+    army_name VARCHAR(255),
+    dept_id INT,
+    dept_name VARCHAR(255),
+    origin_army_id INT,
+    origin_army_name VARCHAR(255),
+    gave_birth BOOLEAN,
+    email VARCHAR(255),
+    age INT,
+    proxy VARCHAR(255),
+    hei VARCHAR(255),
+    HRRatio VARCHAR(255),
+    physicsFallout4 VARCHAR(255)
+);
+
+INSERT INTO people (
+    name_original, code_name, name, physic_power, magic_power, utility_power, dob, race, attributes, gender, ass_size, boobs_size, height_cm, weight_kg, profession, combat, favorite_foods, job, physics, known_as, personally, main_weapon, sub_weapon, interest, likes, dislikes, concubine, faction, army_id, army_name, dept_id, dept_name, origin_army_id, origin_army_name, gave_birth, email, age, proxy, hei, HRRatio, physicsFallout4
+) VALUES (
+    'Wavo Yuropha', 'Wavo Yuropha', 'Wavo', 5, 2999, 4, '1994-11-12', 'Interstellar Prophetic Singularity Human', '淫', 'M', '?', '?', 177, 60, 'King', 'lewd', 'Tacos', 'Chef', '', 'Boss', '', 'Penis', '', '', '', '', '', 'Lily Palais', 1, '王', 1, '王室', 1, '王', FALSE, '', 30, '', '', '', ''
+);

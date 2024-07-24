@@ -1,13 +1,13 @@
-package tw.com.ty;
+package tw.com.tymbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LabbootHibernateApplication {
+public class TYMBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LabbootHibernateApplication.class, args);
+		SpringApplication.run(TYMBackendApplication.class, args);
 	}
 
 }

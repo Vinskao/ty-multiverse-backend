@@ -1,10 +1,11 @@
 spring:
   # DataSource
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://localhost:1433;databaseName=java;trustServerCertificate=true
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://peoplesystem.tatdvsonorth.com:5432/peoplesystem
     username: sa
-    password: W***
+    password: Wawi247525=
+
   # Hibernate
   jpa:
     show-sql: true
@@ -15,17 +16,4 @@ spring:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.SQLServerDialect
-  # ViewResolver
-  mvc:
-    view:
-      prefix: /WEB-INF/views
-      suffix: .jsp
-  # i18n
-  messages:
-    basename: i18n.Messages
-    encoding: UTF-8
-    fallback-to-system-locale: false
-  # profiles:
-  profiles:
-    active: 'xxx2' 
+        dialect: org.hibernate.dialect.PostgreSQLDialect
