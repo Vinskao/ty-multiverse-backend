@@ -1,9 +1,11 @@
 package tw.com.tymbackend.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +22,12 @@ public class PeopleService {
         return peopleRepository.findAll();
     }
 
-    public People getPersonById(Long id) {
-        return peopleRepository.findById(id).orElse(null);
+    public Optional<People> getPersonBy(String name) {
+        return peopleRepository.findByName(name);
+    }
+
+    public Optional<People> getPeopleByName(String name) {
+        return peopleRepository.findByName(name);
     }
 
     public People savePerson(People person) {
@@ -44,8 +50,32 @@ public class PeopleService {
         return peopleRepository.saveAll(newPeople);
     }
 
-    public void deletePerson(Long id) {
-        peopleRepository.deleteById(id);
+    public void deletePerson(String name) {
+        peopleRepository.deleteByName(name);
     }
 
+    @Transactional
+    public void deleteAllPeople() {
+        try {
+            peopleRepository.deleteAllPeople();
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Failed to delete all people records.", e);
+        }
+    }
+
+    public People insertPerson(People person) {
+        Optional<People> existingPerson = peopleRepository.findByName(person.getName());
+        if (!existingPerson.isPresent()) {
+            return peopleRepository.save(person);
+        }
+        throw new IllegalArgumentException("Person with name " + person.getName() + " already exists");
+    }
+
+    public People updatePerson(People person) {
+        Optional<People> existingPerson = peopleRepository.findByName(person.getName());
+        if (existingPerson.isPresent()) {
+            return peopleRepository.save(person);
+        }
+        throw new IllegalArgumentException("Person with name " + person.getName() + " does not exist");
+    }
 }

@@ -1,8 +1,7 @@
 CREATE TABLE people (
-    id BIGSERIAL PRIMARY KEY,
     name_original VARCHAR(255),
     code_name VARCHAR(255),
-    name VARCHAR(255),
+    name VARCHAR(255) PRIMARY KEY,
     physic_power INT,
     magic_power INT,
     utility_power INT,
@@ -41,10 +40,4 @@ CREATE TABLE people (
     hei VARCHAR(255),
     HRRatio VARCHAR(255),
     physicsFallout4 VARCHAR(255)
-);
-
-INSERT INTO people (
-    name_original, code_name, name, physic_power, magic_power, utility_power, dob, race, attributes, gender, ass_size, boobs_size, height_cm, weight_kg, profession, combat, favorite_foods, job, physics, known_as, personally, main_weapon, sub_weapon, interest, likes, dislikes, concubine, faction, army_id, army_name, dept_id, dept_name, origin_army_id, origin_army_name, gave_birth, email, age, proxy, hei, HRRatio, physicsFallout4
-) VALUES (
-    'Wavo Yuropha', 'Wavo Yuropha', 'Wavo', 5, 2999, 4, '1994-11-12', 'Interstellar Prophetic Singularity Human', '淫', 'M', '?', '?', 177, 60, 'King', 'lewd', 'Tacos', 'Chef', '', 'Boss', '', 'Penis', '', '', '', '', '', 'Lily Palais', 1, '王', 1, '王室', 1, '王', FALSE, '', 30, '', '', '', ''
 );

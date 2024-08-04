@@ -5,9 +5,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.domain.People;
+import tw.com.tymbackend.domain.dto.PeopleNameRequest;
 import tw.com.tymbackend.service.PeopleService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/people")
@@ -19,8 +21,26 @@ public class PeopleController {
     // 插入 1 個 (接收 JSON)
     @PostMapping("/insert")
     public ResponseEntity<People> insertPeople(@RequestBody People people) {
-        People savedPeople = peopleService.savePerson(people);
-        return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+        try {
+            People savedPeople = peopleService.insertPerson(people);
+            return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<People> updatePeople(@RequestBody People people) {
+        try {
+            People updatedPeople = peopleService.updatePerson(people);
+            return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     // 插入 n 個 (接收 JSON)
@@ -30,18 +50,10 @@ public class PeopleController {
         return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
     }
 
-    // 更新 1 個 (接收 JSON)
-    @PostMapping("/update")
-    public ResponseEntity<People> updatePeople(@RequestParam Long id, @RequestBody People people) {
-        people.setId(id);
-        People updatedPeople = peopleService.savePerson(people);
-        return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
-    }
-
     // 搜尋 1 個 (接收 id 傳出 JSON)
     @PostMapping("/get")
-    public ResponseEntity<People> getPeopleById(@RequestParam Long id) {
-        People people = peopleService.getPersonById(id);
+    public ResponseEntity<?> getPeopleById(@RequestBody PeopleNameRequest request) {
+        Optional<People> people = peopleService.getPeopleByName(request.getName());
         if (people != null) {
             return new ResponseEntity<>(people, HttpStatus.OK);
         } else {
@@ -55,4 +67,22 @@ public class PeopleController {
         List<People> people = peopleService.getAllPeople();
         return new ResponseEntity<>(people, HttpStatus.OK);
     }
+
+    // 搜尋 name (接收 name 傳出 JSON)
+    @PostMapping("/get-by-name")
+    public ResponseEntity<?> getPeopleByName(@RequestBody PeopleNameRequest request) {
+        Optional<People> people = peopleService.getPeopleByName(request.getName());
+        return new ResponseEntity<>(people, HttpStatus.OK);
+    }
+
+    @PostMapping("/delete-all")
+    public ResponseEntity<Void> deleteAllPeople() {
+        try {
+            peopleService.deleteAllPeople();
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }
