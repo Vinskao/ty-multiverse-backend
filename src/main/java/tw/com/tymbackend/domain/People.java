@@ -4,8 +4,6 @@ import java.time.LocalDate;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -19,18 +17,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "people")
 public class People {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition = "BIGINT")
-    private Long id;
+    @Column(name = "name", columnDefinition = "VARCHAR(255)")
+    private String name;
 
     @Column(name = "name_original", columnDefinition = "VARCHAR(255)")
     private String nameOriginal;
 
     @Column(name = "code_name", columnDefinition = "VARCHAR(255)")
     private String codeName;
-
-    @Column(name = "name", columnDefinition = "VARCHAR(255)")
-    private String name;
 
     @Column(name = "physic_power", columnDefinition = "INT")
     private int physicPower;
@@ -145,4 +139,5 @@ public class People {
 
     @Column(name = "physicsFallout4", columnDefinition = "VARCHAR(255)")
     private String physicsFallout4;
+
 }
