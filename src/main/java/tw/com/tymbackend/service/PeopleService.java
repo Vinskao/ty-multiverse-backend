@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import tw.com.tymbackend.dao.PeopleRepository;
-import tw.com.tymbackend.domain.People;
+import tw.com.tymbackend.domain.vo.People;
 
 @Service
 public class PeopleService {

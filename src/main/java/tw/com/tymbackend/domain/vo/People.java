@@ -1,4 +1,4 @@
-package tw.com.tymbackend.domain;
+package tw.com.tymbackend.domain.vo;
 
 import java.time.LocalDate;
 
