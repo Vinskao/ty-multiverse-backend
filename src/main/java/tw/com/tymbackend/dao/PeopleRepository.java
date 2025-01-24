@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import tw.com.tymbackend.domain.People;
+import tw.com.tymbackend.domain.vo.People;
 
 public interface PeopleRepository extends JpaRepository<People, String> {
 

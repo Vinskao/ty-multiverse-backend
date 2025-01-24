@@ -1,14 +1,20 @@
-# 使用官方 OpenJDK 17 镜像作为基础镜像
-FROM openjdk:17-jdk-slim
+# Start with a base image that has Java (using Eclipse Temurin for JDK 17)
+FROM eclipse-temurin:17-jdk
 
-# 设置工作目录
+# Set the working directory
 WORKDIR /app
 
-# 复制 WAR 文件到工作目录
-COPY ty-multiverse-backend.war /app/ty-multiverse-backend.war
+# Copy the application's JAR and dependencies
+COPY target/ty-multiverse-backend.jar /app/ty-multiverse-backend.jar
 
-# 暴露应用程序运行的端口
+# Set the working directory
+WORKDIR /app
+
+# Expose the application's port
 EXPOSE 8080
 
-# 启动应用程序
-ENTRYPOINT ["java", "-jar", "ty-multiverse-backend.war"]
+# Set the environment variable for Spring profile
+ENV SPRING_PROFILES_ACTIVE=platform
+
+# Run the application with the specified profile
+ENTRYPOINT ["java", "-jar", "/app/ty-multiverse-backend.jar", "--spring.profiles.active=${SPRING_PROFILES_ACTIVE}"]

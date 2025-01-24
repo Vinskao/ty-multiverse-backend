@@ -15,9 +15,11 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:4321", "https://ty-multiverse.netlify.app/"));
+        config.setAllowedOrigins(List.of("http://localhost:4321", "https://ty-multiverse.netlify.app/", "https://peoplesystem.tatdvsonorth.com/tymultiverse/"));
         config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
+        config.addAllowedMethod("GET");  // Allow GET method
+        config.addAllowedMethod("POST"); // Allow POST method
+        config.addAllowedMethod("OPTIONS"); // Explicitly allow OPTIONS method for preflight requests
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

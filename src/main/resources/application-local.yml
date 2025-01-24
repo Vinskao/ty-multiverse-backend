@@ -1,3 +1,5 @@
+env: '@project.env@'
+
 spring:
   security:
     oauth2:
@@ -10,18 +12,11 @@ spring:
     url: '@spring.datasource.url@'
     username: '@spring.datasource.username@'
     password: '@spring.datasource.password@'
-    hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      idle-timeout: 30000
-      pool-name: HikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      leak-detection-threshold: 2000
+  profiles:
   jpa:
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -45,10 +40,14 @@ logging:
     root: INFO
     org:
       springframework: INFO
-    '[io.micrometer]': DEBUG
 
 server:
   port: '@server.port@'
+  ssl:
+    key-store: '@server.ssl.key-store@'
+    key-store-password: '@server.ssl.key-store-password@'
+    key-store-type: '@server.ssl.key-store-type@'
+    key-alias: '@server.ssl.key-alias@'
   servlet:
     context-path: /tymb
   tomcat:
@@ -63,7 +62,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: "health,metrics"
+        include: health, info
   endpoint:
     health:
       show-details: always
@@ -83,4 +82,4 @@ keycloak:
       securityCollections:
         - patterns:
             - /*
-  backend-url: https://peoplesystem.tatdvsonorth.com/tymb
+  backend-url: '@keycloak.backend-url@'
