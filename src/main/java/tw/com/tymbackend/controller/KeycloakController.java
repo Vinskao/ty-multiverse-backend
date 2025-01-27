@@ -41,6 +41,7 @@ public class KeycloakController {
     @Value("${keycloak.backend-url}")
     private String keycloakBackendUrl;
 
+    private static final String KEYCLOAK_BASE_URL = "https://peoplesystem.tatdvsonorth.com/sso";
     private String clientId = "peoplesystem";
     private String clientSecret = "Q2zGpFXgeMev1OZg6tAPsIuGE2TS7V8T";
 
@@ -65,6 +66,7 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(tokenParams, headers);
 
+            @SuppressWarnings("unchecked")
             ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
             String accessToken = (String) tokenResponse.getBody().get("access_token");
             String refreshToken = (String) tokenResponse.getBody().get("refresh_token");
@@ -82,6 +84,7 @@ public class KeycloakController {
             userHeaders.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
 
+            @SuppressWarnings("unchecked")
             ResponseEntity<Map> userResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, userEntity,
                     Map.class);
             Map<String, Object> userInfo = userResponse.getBody();
@@ -201,6 +204,7 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
 
+            @SuppressWarnings("unchecked")
             ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
             String accessToken = (String) tokenResponse.getBody().get("access_token");
 

@@ -48,7 +48,7 @@ logging:
     '[io.micrometer]': DEBUG
 
 server:
-  port: '@server.port@'
+  port: 8080  # Change back to HTTP port
   servlet:
     context-path: /tymb
   tomcat:
@@ -58,7 +58,9 @@ server:
     whitelabel:
       enabled: true
   max-http-request-header-size: 3145728
-  
+  ssl:
+    enabled: false  # Disable SSL
+
 management:
   endpoints:
     web:

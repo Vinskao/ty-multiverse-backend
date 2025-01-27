@@ -1,6 +1,8 @@
 package tw.com.tymbackend.config;
 
 import io.micrometer.core.instrument.MeterRegistry;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -16,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import java.time.Instant;
 
 import java.util.HashMap;
 import java.util.List;
@@ -34,11 +37,14 @@ import java.util.concurrent.CompletableFuture;
 @EnableWebSocketMessageBroker
 public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigurer {
 
+    @Value("${keycloak.backend-url}")
+    private String keycloakBackendUrl;
+
     private static final Logger logger = LoggerFactory.getLogger(WebSocketMetricsExporter.class);
 
     private final ApplicationContext applicationContext;
     private final RestTemplate restTemplate = new RestTemplate();
-    private static final String ACTUATOR_METRICS_URL = "http://localhost:8443/tymb/actuator/metrics";
+    private final String actuatorMetricsUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -49,6 +55,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      */
     public WebSocketMetricsExporter(MeterRegistry meterRegistry, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+        this.actuatorMetricsUrl = keycloakBackendUrl + "/actuator/metrics";
     }
 
     /**
@@ -84,7 +91,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
             for (String metricName : metricNames) {
                 try {
                     // 構建請求URL
-                    String url = UriComponentsBuilder.fromHttpUrl(ACTUATOR_METRICS_URL)
+                    String url = UriComponentsBuilder.fromHttpUrl(actuatorMetricsUrl)
                             .pathSegment(metricName)
                             .toUriString();
 
@@ -106,7 +113,10 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
             return metricsData;
         }).thenAccept(metricsData -> {
             try {
-                // 將度量數據轉換為 JSON
+                // Add current time to the metrics data
+                metricsData.put("timestamp", Instant.now().toString());
+
+                // Convert metrics data to JSON
                 String jsonMetricsData = objectMapper.writeValueAsString(metricsData);
 
                 // Log the metrics data
