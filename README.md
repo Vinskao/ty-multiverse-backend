@@ -5,7 +5,7 @@ Astro -> Axios -> Spring Boot & SQL Server
 ## swagger ui
 
 ```bash
-https://localhost:8443/tymb/swagger-ui/index.html#/
+https://localhost:8080/tymb/swagger-ui/index.html#/
 https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
 ```
 
