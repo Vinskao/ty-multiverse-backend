@@ -48,9 +48,9 @@ springdoc:
 
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org:
-      springframework: INFO
+      springframework: DEBUG
     '[io.micrometer]': DEBUG
 
 server:
@@ -72,7 +72,7 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: metrics,health,info
+        include: '*'
   endpoint:
     health:
       show-details: always
