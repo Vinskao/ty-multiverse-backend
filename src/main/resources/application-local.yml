@@ -46,9 +46,9 @@ springdoc:
 
 logging:
   level:
-    root: INFO
+    root: DEBUG
     org:
-      springframework: INFO
+      springframework: DEBUG
     '[io.micrometer]': DEBUG
 
 server:

@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
+
 /**
  * WebSocketMetricsExporter 類別負責通過 WebSocket 將應用程式的度量數據導出。
  * <p>
@@ -46,6 +47,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
     private final RestTemplate restTemplate = new RestTemplate();
     private final String actuatorMetricsUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private CompletableFuture<String> metricsFuture; // 新增共享的 CompletableFuture 變量
 
     /**
      * 構造函數，初始化 MeterRegistry 和 ApplicationContext。
@@ -68,7 +70,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      * 然後使用 SimpMessagingTemplate 將這些數據廣播到所有連接的客戶端。
      * </p>
      */
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(fixedRate = 15000)
     public void exportSelectedMetrics() {
         logger.info("Executing exportSelectedMetrics method");
 
@@ -86,7 +88,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
             "disk.free"
         };
 
-        CompletableFuture.supplyAsync(() -> {
+        metricsFuture = CompletableFuture.supplyAsync(() -> {
             Map<String, Object> metricsData = new HashMap<>();
             for (String metricName : metricNames) {
                 try {
@@ -111,23 +113,27 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
                 }
             }
             return metricsData;
-        }).thenAccept(metricsData -> {
+        }).thenApply(metricsData -> {
             try {
                 // Add current time to the metrics data
                 metricsData.put("timestamp", Instant.now().toString());
 
                 // Convert metrics data to JSON
-                String jsonMetricsData = objectMapper.writeValueAsString(metricsData);
+                return objectMapper.writeValueAsString(metricsData); // 返回 JSON 字符串
+            } catch (Exception e) {
+                logger.error("Error converting metrics data to JSON", e);
+                return null;
+            }
+        });
 
-                // Log the metrics data
-                logger.info("Broadcasting selected metrics data: {}", jsonMetricsData);
+        metricsFuture.thenAccept(cachedMetricsData -> {
+            if (cachedMetricsData != null) {
+                logger.info("Broadcasting selected metrics data: {}", cachedMetricsData);
 
                 // Obtain SimpMessagingTemplate from the application context
                 SimpMessagingTemplate messagingTemplate = applicationContext.getBean(SimpMessagingTemplate.class);
                 // Broadcast metrics data to all connected clients
-                messagingTemplate.convertAndSend("/topic/metrics", jsonMetricsData);
-            } catch (Exception e) {
-                logger.error("Error converting metrics data to JSON", e);
+                messagingTemplate.convertAndSend("/topic/metrics", cachedMetricsData);
             }
         });
     }
@@ -140,6 +146,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      *
      * @param config 用於配置消息代理的 MessageBrokerRegistry 實例
      */
+    @SuppressWarnings("null")
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
@@ -154,8 +161,10 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      *
      * @param registry 用於註冊 STOMP 端點的 StompEndpointRegistry 實例
      */
+    @SuppressWarnings("null")
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/metrics").setAllowedOriginPatterns("*").withSockJS();
     }
 }
+
