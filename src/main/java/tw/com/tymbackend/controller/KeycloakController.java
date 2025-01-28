@@ -38,8 +38,8 @@ public class KeycloakController {
     @Autowired
     private KeycloakService keycloakService;
 
-    @Value("${keycloak.backend-url}")
-    private String keycloakBackendUrl;
+    @Value("${url.address}")
+    private String backendUrl;
 
     private static final String KEYCLOAK_BASE_URL = "https://peoplesystem.tatdvsonorth.com/sso";
     private String clientId = "peoplesystem";
@@ -48,7 +48,7 @@ public class KeycloakController {
     @GetMapping("/redirect")
     public void keycloakRedirect(@RequestParam("code") String code, HttpServletResponse response)
             throws IOException {
-        String redirectUri = keycloakBackendUrl + "/keycloak/redirect";
+        String redirectUri = backendUrl + "/keycloak/redirect";
         String tokenUrl = "https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token";
 
         try {
@@ -198,7 +198,7 @@ public class KeycloakController {
             bodyParams.add("client_secret", clientSecret);
             bodyParams.add("grant_type", "authorization_code");
             bodyParams.add("code", authorizationCode);
-            bodyParams.add("redirect_uri", keycloakBackendUrl + "/keycloak/redirect");
+            bodyParams.add("redirect_uri", backendUrl + "/keycloak/redirect");
 
             HttpHeaders headers = new HttpHeaders();
             headers.set("Content-Type", "application/x-www-form-urlencoded");

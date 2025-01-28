@@ -37,8 +37,8 @@ import java.util.concurrent.CompletableFuture;
 @EnableWebSocketMessageBroker
 public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigurer {
 
-    @Value("${keycloak.backend-url}")
-    private String keycloakBackendUrl;
+    @Value("${url.address}")
+    private String backendUrl;
 
     private static final Logger logger = LoggerFactory.getLogger(WebSocketMetricsExporter.class);
 
@@ -55,7 +55,7 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      */
     public WebSocketMetricsExporter(MeterRegistry meterRegistry, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.actuatorMetricsUrl = keycloakBackendUrl + "/actuator/metrics";
+        this.actuatorMetricsUrl = "http://localhost:8080/tymb/actuator/metrics";
     }
 
     /**
