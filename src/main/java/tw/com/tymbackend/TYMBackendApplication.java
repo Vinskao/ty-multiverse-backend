@@ -23,6 +23,7 @@ public class TYMBackendApplication {
 		
 		// 確認 WebSocketMetricsExporter 已被創建並運行
 		WebSocketMetricsExporter exporter = context.getBean(WebSocketMetricsExporter.class);
+		System.err.println("exporter" + exporter);
 		logger.info("WebSocketMetricsExporter 已成功運行");
 	}
 }
