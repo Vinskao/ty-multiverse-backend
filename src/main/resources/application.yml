@@ -1,4 +1,10 @@
+project:
+  env: '@project.env@'
 spring:
+  profiles:
+    active: '@env@'
+  config:
+    import: classpath:env/local.properties
   security:
     oauth2:
       resourceserver:
@@ -48,7 +54,7 @@ logging:
     '[io.micrometer]': DEBUG
 
 server:
-  port: 8080  # Change back to HTTP port
+  port: 8080
   servlet:
     context-path: /tymb
   tomcat:
@@ -59,13 +65,14 @@ server:
       enabled: true
   max-http-request-header-size: 3145728
   ssl:
-    enabled: false  # Disable SSL
+    enabled: false
 
 management:
   endpoints:
     web:
+      base-path: /actuator
       exposure:
-        include: "health,metrics"
+        include: metrics,health,info
   endpoint:
     health:
       show-details: always
@@ -78,11 +85,11 @@ keycloak:
   cors: true
   credentials:
     secret: Q2zGpFXgeMev1OZg6tAPsIuGE2TS7V8T
-
   bearer-only: true
   security-constraints:
     - authRoles: default-roles-peoplesystem
       securityCollections:
         - patterns:
             - /*
-  backend-url: https://peoplesystem.tatdvsonorth.com/tymb
+url:
+  address: '@url.address@'

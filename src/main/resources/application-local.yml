@@ -1,0 +1,93 @@
+project:
+  env: '@project.env@'
+spring:
+  config:
+    import: classpath:env/local.properties
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem
+          jwk-set-uri: https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/certs
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: '@spring.datasource.url@'
+    username: '@spring.datasource.username@'
+    password: '@spring.datasource.password@'
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      idle-timeout: 30000
+      pool-name: HikariCP
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      leak-detection-threshold: 2000
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: servlet
+  devtools:
+    restart:
+      enabled: false
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+    '[io.micrometer]': DEBUG
+
+server:
+  port: 8080
+  servlet:
+    context-path: /tymb
+  tomcat:
+    connection-timeout: 20000
+    max-http-form-post-size: 3145728
+  error:
+    whitelabel:
+      enabled: true
+  max-http-request-header-size: 3145728
+  ssl:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: metrics,health,info
+  endpoint:
+    health:
+      show-details: always
+
+keycloak:
+  auth-server-url: https://peoplesystem.tatdvsonorth.com/sso
+  realm: PeopleSystem
+  resource: peoplesystem # Keycloak client's client_id
+  public-client: false
+  cors: true
+  credentials:
+    secret: Q2zGpFXgeMev1OZg6tAPsIuGE2TS7V8T
+  bearer-only: true
+  security-constraints:
+    - authRoles: default-roles-peoplesystem
+      securityCollections:
+        - patterns:
+            - /*
+url:
+  address: http://localhost:8080/tymb
