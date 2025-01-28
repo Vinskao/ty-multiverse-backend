@@ -156,6 +156,6 @@ public class WebSocketMetricsExporter implements WebSocketMessageBrokerConfigure
      */
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/metrics").setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint("/metrics").setAllowedOriginPatterns("*").withSockJS();
     }
 }
