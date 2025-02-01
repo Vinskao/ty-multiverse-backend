@@ -3,8 +3,6 @@ project:
 spring:
   profiles:
     active: '@env@'
-  config:
-    import: classpath:env/local.properties
   security:
     oauth2:
       resourceserver:
@@ -48,10 +46,10 @@ springdoc:
 
 logging:
   level:
-    root: DEBUG
+    root: INFO
     org:
-      springframework: DEBUG
-    '[io.micrometer]': DEBUG
+      springframework: INFO
+    '[io.micrometer]': INFO
 
 server:
   port: 8080
