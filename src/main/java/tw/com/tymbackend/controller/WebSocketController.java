@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -107,8 +106,6 @@ public class WebSocketController {
             return metricsData;
         }).thenApply(metricsData -> {
             try {
-                // 添加時間戳到度量數據
-                metricsData.put("timestamp", Instant.now().toString());
                 // 將度量數據轉換為 JSON 字符串
                 return objectMapper.writeValueAsString(metricsData);
             } catch (Exception e) {
