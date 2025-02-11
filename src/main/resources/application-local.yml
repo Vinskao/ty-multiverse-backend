@@ -1,6 +1,19 @@
 project:
   env: '@project.env@'
 spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password:
+      database: 0
+      lettuce:
+        pool:
+          max-active: 3000
+          max-idle: 8
+          min-idle: 4
+          max-wait: 3000ms
+        shutdown-timeout: 100ms
   config:
     import: classpath:env/local.properties
   security:

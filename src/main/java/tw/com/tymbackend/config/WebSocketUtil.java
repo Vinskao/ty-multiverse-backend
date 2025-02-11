@@ -47,7 +47,7 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
      * @param config 用於配置消息代理的 MessageBrokerRegistry 實例
      */
     @Override
-    public void configureMessageBroker(MessageBrokerRegistry config) {
+    public void configureMessageBroker(@SuppressWarnings("null") MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
         config.setApplicationDestinationPrefixes("/app");
     }
@@ -58,7 +58,7 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
      * @param registry 用於註冊 STOMP 端點的 StompEndpointRegistry 實例
      */
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
+    public void registerStompEndpoints(@SuppressWarnings("null") StompEndpointRegistry registry) {
         registry.addEndpoint("/metrics").setAllowedOriginPatterns("*");
     }
 } 

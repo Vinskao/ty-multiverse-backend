@@ -41,7 +41,6 @@ public class KeycloakController {
     @Value("${url.address}")
     private String backendUrl;
 
-    private static final String KEYCLOAK_BASE_URL = "https://peoplesystem.tatdvsonorth.com/sso";
     private String clientId = "peoplesystem";
     private String clientSecret = "Q2zGpFXgeMev1OZg6tAPsIuGE2TS7V8T";
 
@@ -66,9 +65,11 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(tokenParams, headers);
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "rawtypes" })
             ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
+            @SuppressWarnings("null")
             String accessToken = (String) tokenResponse.getBody().get("access_token");
+            @SuppressWarnings("null")
             String refreshToken = (String) tokenResponse.getBody().get("refresh_token");
 
             log.info("Access Token: {}", accessToken);
@@ -84,13 +85,15 @@ public class KeycloakController {
             userHeaders.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings({ "rawtypes" })
             ResponseEntity<Map> userResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, userEntity,
                     Map.class);
+            @SuppressWarnings("unchecked")
             Map<String, Object> userInfo = userResponse.getBody();
 
             log.info("User Info: {}", userInfo);
 
+            @SuppressWarnings("null")
             String preferredUsername = (String) userInfo.get("preferred_username");
             if (preferredUsername == null) {
                 throw new RuntimeException("Failed to retrieve user info");
@@ -173,8 +176,10 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
 
+            @SuppressWarnings("rawtypes")
             ResponseEntity<Map> introspectResponse = restTemplate.exchange(introspectUrl, HttpMethod.POST, entity,
                     Map.class);
+            @SuppressWarnings("unchecked")
             Map<String, Object> introspectionResult = introspectResponse.getBody();
 
             if (introspectionResult != null && Boolean.TRUE.equals(introspectionResult.get("active"))) {
@@ -204,8 +209,9 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
 
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings("rawtypes")
             ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
+            @SuppressWarnings("null")
             String accessToken = (String) tokenResponse.getBody().get("access_token");
 
             if (accessToken == null) {
@@ -217,8 +223,10 @@ public class KeycloakController {
             userHeaders.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
 
+            @SuppressWarnings("rawtypes")
             ResponseEntity<Map> userResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, userEntity,
                     Map.class);
+            @SuppressWarnings("unchecked")
             Map<String, Object> userInfo = userResponse.getBody();
 
             if (userInfo != null) {
