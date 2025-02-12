@@ -10,9 +10,11 @@ F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\TYMBacken
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\GalleryController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\service\PeopleService.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\WebSocketController.java
+F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\RedisTestController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\dao\KeycloakRepository.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\config\CorsConfig.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\domain\dto\PeopleNameRequestDTO.java
+F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\config\RedisMessageSubscriber.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\domain\vo\People.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\service\UserApplicationService.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\config\WebSocketUtil.java
@@ -20,8 +22,10 @@ F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\config\Se
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\PeopleController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\dao\UserRepository.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\KeycloakController.java
+F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\controller\RedisMessageTestController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\dto\SignUpUserRequest.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\config\RestTemplateConfig.java
+F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\service\RedisMessageQueueService.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\domain\vo\Keycloak.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\dao\GalleryRepository.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\domain\vo\Gallery.java

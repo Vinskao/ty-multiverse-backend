@@ -38,3 +38,11 @@ mvn -P platform package
 ```bash
 keytool -genkeypair -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore keystore.p12 -validity 3650 -alias palais
 ```
+
+## Redis
+
+```bash
+docker run -d --name redis-container -p 6379:6379 redis
+```
+
+
