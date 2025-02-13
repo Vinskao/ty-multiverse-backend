@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import tw.com.tymbackend.dao.GalleryRepository;
 import tw.com.tymbackend.domain.vo.Gallery;
@@ -35,7 +36,11 @@ public class GalleryService {
         if (optionalGallery.isPresent()) {
             Gallery gallery = optionalGallery.get();
             gallery.setImageBase64(newBase64Image);
-            return galleryRepository.save(gallery);
+            try {
+                return galleryRepository.save(gallery);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                throw new RuntimeException("圖片已被其他使用者修改，請重新整理後再試。", e);
+            }
         } else {
             throw new RuntimeException("Image not found with ID: " + id);
         }

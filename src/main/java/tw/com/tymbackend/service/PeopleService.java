@@ -3,11 +3,14 @@ package tw.com.tymbackend.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+import java.util.ConcurrentModificationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.retry.annotation.Backoff;
 
 import tw.com.tymbackend.dao.PeopleRepository;
 import tw.com.tymbackend.domain.vo.People;
@@ -71,10 +74,22 @@ public class PeopleService {
         throw new IllegalArgumentException("Person with name " + person.getName() + " already exists");
     }
 
+    @Retryable(
+        value = ObjectOptimisticLockingFailureException.class,
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 1000)
+    )
     public People updatePerson(People person) {
         Optional<People> existingPerson = peopleRepository.findByName(person.getName());
         if (existingPerson.isPresent()) {
-            return peopleRepository.save(person);
+            People current = existingPerson.get();
+            // Copy all fields except version
+            person.setVersion(current.getVersion());
+            try {
+                return peopleRepository.save(person);
+            } catch (ObjectOptimisticLockingFailureException e) {
+                throw new ConcurrentModificationException("This record was modified by another user. Please refresh and try again.");
+            }
         }
         throw new IllegalArgumentException("Person with name " + person.getName() + " does not exist");
     }

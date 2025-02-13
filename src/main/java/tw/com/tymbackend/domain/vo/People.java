@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import jakarta.persistence.Version;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -139,5 +140,9 @@ public class People {
 
     @Column(name = "physicsFallout4", columnDefinition = "VARCHAR(255)")
     private String physicsFallout4;
+
+    @Column(name = "version")
+    @Version
+    private Long version;
 
 }
