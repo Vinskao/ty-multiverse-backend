@@ -9,10 +9,10 @@ spring:
       database: 0
       lettuce:
         pool:
-          max-active: 3000
+          max-active: 8
           max-idle: 8
-          min-idle: 4
-          max-wait: 3000ms
+          min-idle: 0
+          max-wait: -1ms
         shutdown-timeout: 100ms
   profiles:
     active: '@env@'
