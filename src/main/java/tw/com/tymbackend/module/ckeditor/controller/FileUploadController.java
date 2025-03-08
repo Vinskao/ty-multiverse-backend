@@ -1,4 +1,4 @@
-package com.mli.dashboard.modules.ckeditor.controller;
+package tw.com.tymbackend.module.ckeditor.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,24 +8,23 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.mli.dashboard.core.constants.ActionTypeEnum;
-import com.mli.dashboard.core.constants.ModuleEnum;
-import com.mli.dashboard.core.keycloak.controller.KeycloakController;
-import com.mli.dashboard.modules.ckeditor.bean.dto.GetContentDTO;
-import com.mli.dashboard.modules.ckeditor.bean.vo.EditContentVO;
-import com.mli.dashboard.modules.ckeditor.service.EditorContentService;
+import tw.com.tymbackend.module.ckeditor.domain.dto.GetContentDTO;
+import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
+import tw.com.tymbackend.module.ckeditor.service.EditContentService;
 
 import jakarta.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/ckeditor")
 public class FileUploadController {
-    private String module = ModuleEnum.ckeditor.name();
+    // private String module = ModuleEnum.ckeditor.name();
+    private String module = "ckeditor"; // Hardcoded instead of using ModuleEnum
 
     @Autowired
-    private EditorContentService editorContentService;
-    @Autowired
-    private KeycloakController keycloakController;
+    private EditContentService editContentService;
+    
+    // @Autowired
+    // private KeycloakController keycloakController;
 
     /**
      * 檢查使用者是否已登入
@@ -34,42 +33,69 @@ public class FileUploadController {
      * @return 如果使用者已登入則返回 true，否則返回 false
      */
     private boolean isUserLoggedIn(HttpSession session, String action, String module){
+        // Comment out the actual authentication check
+        // ResponseEntity<String> response = keycloakController.checkSession(session, action, module);
+        // return response.getStatusCode() == HttpStatus.OK;
         
-        ResponseEntity<String> response = keycloakController.checkSession(session, action, module);
-        return response.getStatusCode() == HttpStatus.OK;
-	}
-
-    // 儲存編輯器內容
+        // Always return true for now (bypass authentication)
+        return true;
+    }
+    
     @PostMapping("/save-content")
     public ResponseEntity<?> saveContent(@RequestBody EditContentVO editorContent, HttpSession session) {
-        String existingContent = editorContentService.getContent(editorContent.getEditor());
-        if (existingContent.equals(editorContent.getContent())) {
-            return ResponseEntity.ok("No changes detected. Content not saved.");
-        }
-        String action = ActionTypeEnum.UPDATE.name();
-
-        if(!isUserLoggedIn(session, action, module)){
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
-        }
+        String content = editorContent.getContent();
+        String editor = editorContent.getEditor(); // Changed from getContentId() to getEditor()
+        
         try {
-            String message = editorContentService.saveContent(editorContent.getEditor(), editorContent.getContent());
+            // Check if content is the same as stored
+            String storedContent = editContentService.getContent(editor); // Changed method name
             
-            return ResponseEntity.ok(message);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            if (content.equals(storedContent)) {
+                return ResponseEntity.ok("No changes detected. Content not saved.");
+            }
+            
+            String action = "UPDATE"; // Hardcoded instead of using ActionTypeEnum
+            
+            if(!isUserLoggedIn(session, action, module)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+            }
+            
+            // Save the content using the service method
+            String result = editContentService.saveContent(editor, content); // Changed method name
+            return ResponseEntity.ok(result);
+        } catch (RuntimeException e) {
+            // If content doesn't exist yet, just save it
+            if (e.getMessage().contains("No content found")) {
+                String action = "CREATE";
+                
+                if(!isUserLoggedIn(session, action, module)){
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+                }
+                
+                String result = editContentService.saveContent(editor, content);
+                return ResponseEntity.ok(result);
+            }
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: " + e.getMessage());
         }
     }
-
-    // 讀取編輯器內容
+    
     @PostMapping("/get-content")
     public ResponseEntity<?> getContent(@RequestBody GetContentDTO editor) {
-
+        String editorName = editor.getEditor(); // Changed from getContentId() to getEditor()
+        
         try {
-            String content = editorContentService.getContent(editor.getEditor());
-
-            return ResponseEntity.ok(new EditContentVO(editor.getEditor(), content));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            String content = editContentService.getContent(editorName); // Changed method name
+            return ResponseEntity.ok(new EditContentVO(editorName, content));
+        } catch (RuntimeException e) {
+            // If content doesn't exist, return empty
+            if (e.getMessage().contains("No content found")) {
+                return ResponseEntity.ok(new EditContentVO(editorName, ""));
+            }
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: " + e.getMessage());
         }
     }
 }

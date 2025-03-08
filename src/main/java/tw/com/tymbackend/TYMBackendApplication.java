@@ -5,6 +5,7 @@ package tw.com.tymbackend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 
@@ -23,5 +24,16 @@ public class TYMBackendApplication {
     @Bean
     ServerEndpointExporter serverEndpointExporter() {
         return new ServerEndpointExporter();
+    }
+
+    @Bean(name = "threadPoolTaskExecutor")
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);  // 核心執行緒數
+        executor.setMaxPoolSize(50);   // 最大執行緒數
+        executor.setQueueCapacity(100); // 任務隊列容量
+        executor.setThreadNamePrefix("Async-"); // 執行緒名稱前綴
+        executor.initialize();
+        return executor;
     }
 }
