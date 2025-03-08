@@ -60,3 +60,9 @@ CREATE TABLE users (
 ALTER TABLE people ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE gallery ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE users ADD COLUMN version BIGINT DEFAULT 0;
+
+
+create table ckeditor(
+	editor VARCHAR(20) primary key,
+	content TEXT
+)

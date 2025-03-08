@@ -1,4 +1,4 @@
-package com.mli.dashboard.modules.ckeditor.bean.dto;
+package tw.com.tymbackend.module.ckeditor.domain.dto;
 
 import java.util.Objects;
 

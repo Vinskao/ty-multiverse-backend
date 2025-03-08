@@ -1,9 +1,22 @@
-package com.mli.dashboard.modules.ckeditor.bean.vo;
+package tw.com.tymbackend.module.ckeditor.domain.vo;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table(name = "ckeditor")
 public class EditContentVO {
+    
+    @Id
+    @Column(name = "editor", length = 20)
     private String editor;
+    
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
 
     public EditContentVO() {
