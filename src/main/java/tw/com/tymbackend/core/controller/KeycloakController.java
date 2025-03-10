@@ -42,7 +42,7 @@ public class KeycloakController {
     private String backendUrl;
 
     private String clientId = "peoplesystem";
-    private String clientSecret = "OtZyHCNWiFZRL4b5NMF4VWfdJ3faIUD5";
+    private String clientSecret = "vjTssuy94TUlk8mipbQjMlSSlHyS3CxG";
 
     @GetMapping("/redirect")
     public void keycloakRedirect(@RequestParam("code") String code, HttpServletResponse response)

@@ -12,7 +12,7 @@ import java.security.cert.X509Certificate;
 public class RestTemplateConfig {
 
     @Bean
-    public RestTemplate restTemplate() throws Exception {
+    RestTemplate restTemplate() throws Exception {
         // 創建信任所有證書的 TrustManager
         TrustManager[] trustAllCerts = new TrustManager[]{
             new X509TrustManager() {

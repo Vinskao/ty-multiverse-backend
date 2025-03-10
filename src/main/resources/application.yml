@@ -96,7 +96,7 @@ keycloak:
   public-client: false
   cors: true
   credentials:
-    secret: OtZyHCNWiFZRL4b5NMF4VWfdJ3faIUD5
+    secret: vjTssuy94TUlk8mipbQjMlSSlHyS3CxG
   bearer-only: true
   security-constraints:
     - authRoles: default-roles-peoplesystem
