@@ -1,4 +1,4 @@
-package tw.com.tymbackend.core.controller;
+package tw.com.tymbackend.module.people.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

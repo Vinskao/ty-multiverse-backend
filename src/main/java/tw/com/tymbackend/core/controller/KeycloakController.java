@@ -30,6 +30,9 @@ import tw.com.tymbackend.core.service.KeycloakService;
 @RequestMapping("/keycloak")
 public class KeycloakController {
 
+    @Value("${url.frontend}")
+    private String frontendUrl;
+
     private static final Logger log = LoggerFactory.getLogger(KeycloakController.class);
 
     @Autowired
@@ -121,13 +124,47 @@ public class KeycloakController {
             response.addHeader("Set-Cookie", "refreshToken=" + refreshToken + "; Path=/; SameSite=Lax");
 
             response.sendRedirect(
-                    "https://peoplesystem.tatdvsonorth.com/tymultiverse/" + "?username=" + preferredUsername + "&email=" + user.getEmail()
+                frontendUrl + "?username=" + preferredUsername + "&email=" + user.getEmail()
                             + "&token=" + accessToken);
         } catch (Exception e) {
             log.error("Error processing OAuth redirect", e);
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing OAuth redirect");
         }
     }
+
+        /**
+     * 立即使session過期的方法
+     */
+    private void invalidateSession(String refreshToken) {
+        try {
+            String logoutUrl = "https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/logout";
+            
+            // 在使用令牌後立即後台註銷refresh token
+            // 但不影響當前用戶的訪問（access token仍然有效一小段時間）
+            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+            body.add("client_id", clientId);
+            body.add("client_secret", clientSecret);
+            body.add("refresh_token", refreshToken);
+            
+            HttpHeaders headers = new HttpHeaders();
+            headers.set("Content-Type", "application/x-www-form-urlencoded");
+            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
+            
+            // 非同步執行，不等待響應
+            new Thread(() -> {
+                try {
+                    Thread.sleep(1000); // 等待1秒，確保用戶信息已經獲取並處理完畢
+                    restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
+                    log.info("Session invalidated for refresh token");
+                } catch (Exception e) {
+                    log.error("Failed to invalidate session", e);
+                }
+            }).start();
+        } catch (Exception e) {
+            log.error("Error invalidating session", e);
+        }
+    }
+
 
     @CrossOrigin
     @GetMapping("/logout")
@@ -147,12 +184,6 @@ public class KeycloakController {
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
             restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
-
-            // Delete User from the Database
-            Keycloak keycloakUser = keycloakService.findByAccessToken(refreshToken);
-            if (keycloakUser != null) {
-                keycloakService.deleteByUsername(keycloakUser.getPreferredUsername());
-            }
 
             return ResponseEntity.ok("Logout successful");
         } catch (Exception e) {
