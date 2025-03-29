@@ -47,6 +47,7 @@ public class EditContentService {
      * @param editor 編輯器名稱
      * @return 儲存的內容
      */
+    @Transactional(readOnly = true)
     public String getContent(String editor) {
         try {
             EditContentVO contentVO = editContentRepository.findByEditor(editor);

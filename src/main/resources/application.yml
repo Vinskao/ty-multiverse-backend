@@ -105,3 +105,4 @@ keycloak:
             - /*
 url:
   address: '@url.address@'
+  frontend: '@url.frontend@'
