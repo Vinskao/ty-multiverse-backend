@@ -132,40 +132,6 @@ public class KeycloakController {
         }
     }
 
-        /**
-     * 立即使session過期的方法
-     */
-    private void invalidateSession(String refreshToken) {
-        try {
-            String logoutUrl = "https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/logout";
-            
-            // 在使用令牌後立即後台註銷refresh token
-            // 但不影響當前用戶的訪問（access token仍然有效一小段時間）
-            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-            body.add("client_id", clientId);
-            body.add("client_secret", clientSecret);
-            body.add("refresh_token", refreshToken);
-            
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/x-www-form-urlencoded");
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
-            
-            // 非同步執行，不等待響應
-            new Thread(() -> {
-                try {
-                    Thread.sleep(1000); // 等待1秒，確保用戶信息已經獲取並處理完畢
-                    restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
-                    log.info("Session invalidated for refresh token");
-                } catch (Exception e) {
-                    log.error("Failed to invalidate session", e);
-                }
-            }).start();
-        } catch (Exception e) {
-            log.error("Error invalidating session", e);
-        }
-    }
-
-
     @CrossOrigin
     @GetMapping("/logout")
     public ResponseEntity<?> logout(@RequestParam("refreshToken") String refreshToken) {
@@ -183,12 +149,19 @@ public class KeycloakController {
 
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
 
-            restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
+            // 同步執行登出請求
+            ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 
-            return ResponseEntity.ok("Logout successful");
+            if (response.getStatusCode() == HttpStatus.OK) {
+                log.info("Session invalidated for refresh token");
+                return ResponseEntity.ok("Logout successful");
+            } else {
+                log.error("Logout failed with status: {}", response.getStatusCode());
+                return ResponseEntity.status(response.getStatusCode()).body("Logout failed");
+            }
         } catch (Exception e) {
             log.error("Logout failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed: " + e.getMessage());
         }
     }
 

@@ -13,8 +13,8 @@ https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
 
 ```bash
 mvn clean package -DskipTests
-mvn -P platform install
 docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
+mvn -P platform install
 docker build -t papakao/ty-multiverse-backend:latest .
 docker push papakao/ty-multiverse-backend:latest
 
