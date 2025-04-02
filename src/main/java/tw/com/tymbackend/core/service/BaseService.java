@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -44,23 +45,26 @@ public abstract class BaseService {
         return dataSource.getConnection();
     }
     
+    // 釋放連接
+    protected void releaseConnection(Connection connection) {
+        if (connection != null) {
+            try {
+                String threadName = Thread.currentThread().getName();
+                connectionUsageCount.computeIfPresent(threadName, (k, v) -> {
+                    v.decrementAndGet();
+                    return v;
+                });
+                connection.close();
+            } catch (SQLException e) {
+                // 記錄錯誤但不拋出異常
+            }
+        }
+    }
+    
     // 事務管理
     protected <T> T executeInTransaction(TransactionCallback<T> action) {
         TransactionTemplate transactionTemplate = new TransactionTemplate(transactionManager);
+        transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_DEFAULT);
         return transactionTemplate.execute(action);
-    }
-    
-    // 資源釋放
-    protected void releaseConnection(Connection conn) {
-        if (conn != null) {
-            try {
-                conn.close();
-                String threadName = Thread.currentThread().getName();
-                connectionUsageCount.get(threadName).decrementAndGet();
-            } catch (SQLException e) {
-                // 記錄錯誤
-                e.printStackTrace();
-            }
-        }
     }
 } 
