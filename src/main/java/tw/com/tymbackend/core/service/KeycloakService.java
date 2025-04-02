@@ -12,8 +12,9 @@ public class KeycloakService extends BaseService {
     @Autowired
     private KeycloakRepository keycloakRepository;
 
+    @Transactional
     public Keycloak saveKeycloakData(Keycloak keycloak) {
-        return executeInTransaction(status -> keycloakRepository.save(keycloak));
+        return keycloakRepository.save(keycloak);
     }
 
     public Keycloak findByUsername(String preferredUsername) {
@@ -26,10 +27,7 @@ public class KeycloakService extends BaseService {
 
     @Transactional
     public void deleteByUsername(String preferredUsername) {
-        executeInTransaction(status -> {
-            keycloakRepository.deleteByPreferredUsername(preferredUsername);
-            return null;
-        });
+        keycloakRepository.deleteByPreferredUsername(preferredUsername);
     }
 
     public Keycloak findByAccessToken(String accessToken) {
