@@ -15,7 +15,7 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:4321","https://peoplesystem.tatdvsonorth.com/tymultiverse/"));
+        config.setAllowedOrigins(List.of("http://localhost:4321","http://localhost:8080","https://peoplesystem.tatdvsonorth.com/tymultiverse/"));
         config.addAllowedHeader("*");
         config.addAllowedMethod("GET");  // Allow GET method
         config.addAllowedMethod("POST"); // Allow POST method
