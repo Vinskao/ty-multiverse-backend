@@ -31,7 +31,3 @@ docker run -d --name ty-multiverse-backend `
   ty-multiverse-backend
 
 ```
-
-## env
-
-```
