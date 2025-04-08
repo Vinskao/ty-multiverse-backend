@@ -42,6 +42,15 @@ CREATE TABLE people (
     physicsFallout4 VARCHAR(255)
 );
 
+CREATE TABLE weapon (
+    name VARCHAR(255),
+    weapon VARCHAR(255) PRIMARY KEY,
+    attributes VARCHAR(255),
+    base_damage INT,
+    bonus_damage INT,
+    bonus_attributes TEXT[],
+    state_attributes TEXT[]
+);
 
 CREATE TABLE gallery (
     id SERIAL PRIMARY KEY,                 

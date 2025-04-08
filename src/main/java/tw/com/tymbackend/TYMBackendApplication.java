@@ -27,7 +27,7 @@ public class TYMBackendApplication {
     }
 
     @Bean(name = "threadPoolTaskExecutor")
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
+    ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);  // 核心執行緒數
         executor.setMaxPoolSize(50);   // 最大執行緒數
