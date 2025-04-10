@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import tw.com.tymbackend.core.domain.dto.DeleteByIdRequestDTO;
+import tw.com.tymbackend.module.gallery.domain.dto.DeleteByIdRequestDTO;
 import tw.com.tymbackend.module.gallery.domain.dto.GalleryUpdateRequestDTO;
 import tw.com.tymbackend.module.gallery.domain.vo.Gallery;
 import tw.com.tymbackend.module.gallery.service.GalleryService;

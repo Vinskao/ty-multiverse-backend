@@ -1,6 +1,5 @@
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\livestock\controller\LivestockController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\people\dao\PeopleImageRepository.java
-F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\domain\dto\DeleteByIdRequestDTO.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\people\controller\PeopleController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\config\SecurityConfig.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\config\RedisConfig.java
@@ -8,7 +7,6 @@ F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\pe
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\ckeditor\domain\dto\GetContentDTO.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\ckeditor\domain\vo\EditContentVO.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\people\controller\PeopleImageController.java
-F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\domain\dto\SignUpUserRequest.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\TYMBackendApplication.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\controller\HealthCheckController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\core\controller\MetricsWSController.java
@@ -26,6 +24,7 @@ F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\ga
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\livestock\domain\vo\Livestock.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\livestock\controller\LivestockWSController.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\weapon\dao\WeaponRepository.java
+F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\gallery\domain\dto\DeleteByIdRequestDTO.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\people\domain\vo\People.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\people\domain\vo\PeopleImage.java
 F:\002-workspace\TY-Multiverse-Backend\src\main\java\tw\com\tymbackend\module\weapon\controller\WeaponController.java
