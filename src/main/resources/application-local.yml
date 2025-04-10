@@ -105,4 +105,5 @@ keycloak:
 url:
   address: http://localhost:8080/tymb
   frontend: http://localhost:4321/tymultiverse/
+  sso: https://peoplesystem.tatdvsonorth.com/sso
 
