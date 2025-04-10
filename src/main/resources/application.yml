@@ -106,3 +106,4 @@ keycloak:
 url:
   address: '@url.address@'
   frontend: '@url.frontend@'
+  sso: '@url.sso@'

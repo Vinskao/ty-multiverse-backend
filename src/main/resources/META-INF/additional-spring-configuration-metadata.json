@@ -13,5 +13,10 @@
     "name": "url.frontend",
     "type": "java.lang.String",
     "description": "A description for 'url.frontend'"
+  },
+  {
+    "name": "url.sso",
+    "type": "java.lang.String",
+    "description": "A description for 'url.sso'"
   }
 ]}
