@@ -2,13 +2,16 @@
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/gallery/service/GalleryService.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/ckeditor/service/EditContentService.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/livestock/dao/LivestockRepository.java
+/Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/weapon/service/WeaponService.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/ckeditor/controller/FileUploadController.java
+/Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/weapon/domain/vo/Weapon.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/controller/UserController.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/domain/dto/DeleteByIdRequestDTO.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/livestock/controller/LivestockController.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/domain/vo/Keycloak.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/config/RedisMessageSubscriber.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/config/RestTemplateConfig.java
+/Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/weapon/dao/WeaponRepository.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/people/controller/PeopleController.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/people/domain/vo/People.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/domain/dto/SignUpUserRequest.java
@@ -18,6 +21,7 @@
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/domain/vo/User.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/config/WebSocketUtil.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/ckeditor/domain/vo/EditContentVO.java
+/Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/weapon/controller/WeaponController.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/people/controller/PeopleImageController.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/core/config/RedisConfig.java
 /Users/vinskao/001-project/TY-Multiverse-Backend/src/main/java/tw/com/tymbackend/module/people/service/PeopleService.java

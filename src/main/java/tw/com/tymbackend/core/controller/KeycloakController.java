@@ -139,50 +139,106 @@ public class KeycloakController {
 
     @CrossOrigin
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody String refreshToken) {
+    public ResponseEntity<?> logout(@RequestBody Map<String, String> tokens, HttpServletResponse httpResponse) {
         String logoutUrl = "https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/logout";
-
+        String revokeUrl = "https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token/revoke";
+    
         try {
-            // 檢查 refreshToken 是否為空
-            if (refreshToken == null || refreshToken.trim().isEmpty()) {
-                log.warn("Received empty refresh token");
-                return ResponseEntity.badRequest().body("Refresh token cannot be empty");
+            String accessToken = tokens.get("accessToken");
+            String refreshToken = tokens.get("refreshToken");
+    
+            // 檢查 tokens 是否為空
+            if ((accessToken == null || accessToken.trim().isEmpty()) && 
+                (refreshToken == null || refreshToken.trim().isEmpty())) {
+                log.warn("Received empty tokens");
+                return ResponseEntity.badRequest().body("Tokens cannot be empty");
             }
-
-            log.info("Attempting to logout with refresh token: {}", refreshToken.substring(0, 10) + "...");
-
-            // Revoke Token
-            HttpHeaders headers = new HttpHeaders();
-            headers.set("Content-Type", "application/x-www-form-urlencoded");
-
-            MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-            body.add("client_id", clientId);
-            body.add("client_secret", clientSecret);
-            body.add("refresh_token", refreshToken);
-
-            HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(body, headers);
-
-            try {
-                // 同步執行登出請求
-                ResponseEntity<String> response = restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
-
-                if (response.getStatusCode() == HttpStatus.OK) {
-                    log.info("Session invalidated successfully");
-                    return ResponseEntity.ok("Logout successful");
-                } else {
-                    log.error("Logout failed with status: {}", response.getStatusCode());
-                    return ResponseEntity.status(response.getStatusCode()).body("Logout failed");
+    
+            log.info("Attempting to logout with tokens");
+    
+            // 1. 撤銷 access token
+            if (accessToken != null && !accessToken.trim().isEmpty()) {
+                try {
+                    HttpHeaders accessHeaders = new HttpHeaders();
+                    accessHeaders.set("Content-Type", "application/x-www-form-urlencoded");
+    
+                    MultiValueMap<String, String> accessBody = new LinkedMultiValueMap<>();
+                    accessBody.add("client_id", clientId);
+                    accessBody.add("client_secret", clientSecret);
+                    accessBody.add("token", accessToken);
+                    accessBody.add("token_type_hint", "access_token");
+    
+                    HttpEntity<MultiValueMap<String, String>> accessEntity = new HttpEntity<>(accessBody, accessHeaders);
+                    restTemplate.exchange(revokeUrl, HttpMethod.POST, accessEntity, String.class);
+                    log.info("Access token revoked successfully");
+                } catch (Exception e) {
+                    log.warn("Failed to revoke access token: {}", e.getMessage());
+                    // 繼續執行，不要因為撤銷 access token 失敗而中斷整個登出流程
                 }
-            } catch (HttpClientErrorException.BadRequest e) {
-                log.error("Invalid refresh token: {}", e.getResponseBodyAsString());
-                return ResponseEntity.ok("Logout completed");
             }
+    
+            // 2. 撤銷 refresh token
+            if (refreshToken != null && !refreshToken.trim().isEmpty()) {
+                try {
+                    HttpHeaders refreshHeaders = new HttpHeaders();
+                    refreshHeaders.set("Content-Type", "application/x-www-form-urlencoded");
+    
+                    MultiValueMap<String, String> refreshBody = new LinkedMultiValueMap<>();
+                    refreshBody.add("client_id", clientId);
+                    refreshBody.add("client_secret", clientSecret);
+                    refreshBody.add("token", refreshToken);
+                    refreshBody.add("token_type_hint", "refresh_token");
+    
+                    HttpEntity<MultiValueMap<String, String>> refreshEntity = new HttpEntity<>(refreshBody, refreshHeaders);
+                    restTemplate.exchange(revokeUrl, HttpMethod.POST, refreshEntity, String.class);
+                    log.info("Refresh token revoked successfully");
+                } catch (Exception e) {
+                    log.warn("Failed to revoke refresh token: {}", e.getMessage());
+                    // 繼續執行，不要因為撤銷 refresh token 失敗而中斷整個登出流程
+                }
+            }
+    
+            // 3. 調用 Keycloak 的登出端點
+            try {
+                HttpHeaders logoutHeaders = new HttpHeaders();
+                logoutHeaders.set("Content-Type", "application/x-www-form-urlencoded");
+    
+                MultiValueMap<String, String> logoutBody = new LinkedMultiValueMap<>();
+                logoutBody.add("client_id", clientId);
+                logoutBody.add("client_secret", clientSecret);
+                if (refreshToken != null && !refreshToken.trim().isEmpty()) {
+                    logoutBody.add("refresh_token", refreshToken);
+                }
+    
+                HttpEntity<MultiValueMap<String, String>> logoutEntity = new HttpEntity<>(logoutBody, logoutHeaders);
+                restTemplate.exchange(logoutUrl, HttpMethod.POST, logoutEntity, String.class);
+                log.info("Keycloak logout successful");
+            } catch (Exception e) {
+                log.warn("Failed to call Keycloak logout endpoint: {}", e.getMessage());
+                // 繼續執行，不要因為調用登出端點失敗而中斷整個登出流程
+            }
+    
+            // 4. 清除所有相關的 cookies
+            httpResponse.addHeader("Set-Cookie", "authorizationCode=; Path=/; Max-Age=0; SameSite=Lax");
+            httpResponse.addHeader("Set-Cookie", "refreshToken=; Path=/; Max-Age=0; SameSite=Lax");
+            httpResponse.addHeader("Set-Cookie", "accessToken=; Path=/; Max-Age=0; SameSite=Lax");
+            
+            // 5. 從數據庫中刪除用戶的 token 記錄
+            if (accessToken != null) {
+                keycloakService.findByAccessToken(accessToken);
+            }
+            
+            return ResponseEntity.ok("Logout successful");
         } catch (Exception e) {
             log.error("Logout failed with error", e);
-            return ResponseEntity.ok("Logout completed");
+            // 發生錯誤時也要清除 cookies
+            httpResponse.addHeader("Set-Cookie", "authorizationCode=; Path=/; Max-Age=0; SameSite=Lax");
+            httpResponse.addHeader("Set-Cookie", "refreshToken=; Path=/; Max-Age=0; SameSite=Lax");
+            httpResponse.addHeader("Set-Cookie", "accessToken=; Path=/; Max-Age=0; SameSite=Lax");
+            return ResponseEntity.ok("Logout completed with errors");
         }
     }
-
+    
     @CrossOrigin
     @GetMapping("/introspect")
     public ResponseEntity<?> introspectToken(
