@@ -92,7 +92,7 @@ management:
 keycloak:
   auth-server-url: https://peoplesystem.tatdvsonorth.com/sso
   realm: PeopleSystem
-  resource: peoplesystem # Keycloak client's client_id
+  clientId: peoplesystem
   public-client: false
   cors: true
   credentials:
@@ -106,4 +106,3 @@ keycloak:
 url:
   address: '@url.address@'
   frontend: '@url.frontend@'
-  sso: '@url.sso@'

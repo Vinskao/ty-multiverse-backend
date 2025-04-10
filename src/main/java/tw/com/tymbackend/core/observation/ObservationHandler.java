@@ -7,6 +7,5 @@ public interface ObservationHandler<T extends Observation.Context> {
     default void onError(T context) {}
     default void onEvent(Observation.Event event, T context) {}
     default void onStop(T context) {}
-
     boolean supportsContext(Observation.Context context);
 } 

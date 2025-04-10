@@ -1,4 +1,4 @@
-package tw.com.tymbackend.core.domain.dto;
+package tw.com.tymbackend.module.gallery.domain.dto;
 import java.util.Objects;
 
 public class DeleteByIdRequestDTO {
