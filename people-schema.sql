@@ -51,6 +51,10 @@ CREATE TABLE weapon (
     bonus_attributes TEXT[],
     state_attributes TEXT[]
 );
+-- 移除舊的唯一約束
+ALTER TABLE weapon DROP CONSTRAINT IF EXISTS weapon_name_key;
+-- 添加新的複合唯一約束
+ALTER TABLE weapon ADD CONSTRAINT weapon_name_weapon_key UNIQUE (name, weapon);
 
 CREATE TABLE gallery (
     id SERIAL PRIMARY KEY,                 
@@ -69,7 +73,6 @@ CREATE TABLE users (
 ALTER TABLE people ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE gallery ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE users ADD COLUMN version BIGINT DEFAULT 0;
-
 
 create table ckeditor(
 	editor VARCHAR(20) primary key,
