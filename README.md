@@ -170,3 +170,134 @@ docker run -d --name ty-multiverse-backend `
   ty-multiverse-backend
 
 ```
+
+## 錯誤處理架構
+
+### 1. 錯誤處理架構圖
+```mermaid
+classDiagram
+    class ErrorCode {
+        <<enumeration>>
+        +INTERNAL_SERVER_ERROR
+        +BAD_REQUEST
+        +NOT_FOUND
+        +UNAUTHORIZED
+        +FORBIDDEN
+        +CONFLICT
+        +getCode()
+        +getHttpStatus()
+        +getMessage()
+    }
+    
+    class BusinessException {
+        -ErrorCode errorCode
+        +BusinessException(ErrorCode)
+        +BusinessException(ErrorCode, String)
+        +BusinessException(ErrorCode, String, Throwable)
+        +getErrorCode()
+    }
+    
+    class ErrorResponse {
+        -int code
+        -String message
+        -String detail
+        -LocalDateTime timestamp
+        -String path
+        +ErrorResponse(int, String, String, String)
+        +fromErrorCode(ErrorCode, String, String)
+        +fromBusinessException(BusinessException, String)
+    }
+    
+    class GlobalExceptionHandler {
+        -Logger logger
+        +handleBusinessException()
+        +handleEntityNotFoundException()
+        +handleDataIntegrityViolationException()
+        +handleOptimisticLockingFailureException()
+        +handleMethodArgumentNotValidException()
+        +handleConstraintViolationException()
+        +handleBindException()
+        +handleGlobalException()
+    }
+    
+    BusinessException --> ErrorCode
+    ErrorResponse --> ErrorCode
+    GlobalExceptionHandler --> BusinessException
+    GlobalExceptionHandler --> ErrorResponse
+```
+
+### 2. 模組特定異常
+```mermaid
+classDiagram
+    class BusinessException {
+        <<abstract>>
+        -ErrorCode errorCode
+        +BusinessException(ErrorCode)
+        +BusinessException(ErrorCode, String)
+        +BusinessException(ErrorCode, String, Throwable)
+        +getErrorCode()
+    }
+    
+    class PeopleException {
+        +PeopleException(ErrorCode)
+        +PeopleException(ErrorCode, String)
+        +PeopleException(ErrorCode, String, Throwable)
+    }
+    
+    class WeaponException {
+        +WeaponException(ErrorCode)
+        +WeaponException(ErrorCode, String)
+        +WeaponException(ErrorCode, String, Throwable)
+    }
+    
+    class LivestockException {
+        +LivestockException(ErrorCode)
+        +LivestockException(ErrorCode, String)
+        +LivestockException(ErrorCode, String, Throwable)
+    }
+    
+    class GalleryException {
+        +GalleryException(ErrorCode)
+        +GalleryException(ErrorCode, String)
+        +GalleryException(ErrorCode, String, Throwable)
+    }
+    
+    BusinessException <|-- PeopleException
+    BusinessException <|-- WeaponException
+    BusinessException <|-- LivestockException
+    BusinessException <|-- GalleryException
+```
+
+### 3. 錯誤處理流程
+```mermaid
+sequenceDiagram
+    participant Controller
+    participant Service
+    participant Exception
+    participant GlobalExceptionHandler
+    participant ErrorResponse
+    participant Client
+    
+    Controller->>Service: 調用服務方法
+    Service->>Exception: 拋出業務異常
+    Exception-->>Controller: 異常傳播
+    Controller->>GlobalExceptionHandler: 捕獲異常
+    GlobalExceptionHandler->>ErrorResponse: 創建錯誤響應
+    GlobalExceptionHandler-->>Client: 返回錯誤響應
+```
+
+### 4. 錯誤處理優點
+
+1. **統一錯誤格式**
+   - 所有錯誤響應格式一致
+   - 前端可以統一處理
+
+2. **標準化錯誤碼**
+   - 使用標準 HTTP 狀態碼
+
+3. **詳細錯誤信息**
+   - 包含錯誤代碼、消息和詳情
+   - 記錄錯誤發生時間和路徑
+
+4. **模組化設計**
+   - 每個模組有自己的異常類

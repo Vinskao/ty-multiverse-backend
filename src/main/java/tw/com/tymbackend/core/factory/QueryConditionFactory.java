@@ -57,4 +57,22 @@ public interface QueryConditionFactory {
      * @return a Specification for dynamic condition
      */
     <T> Specification<T> createDynamicCondition(String field, Object value, String operator);
+
+    /**
+     * Create an is not null condition
+     * 
+     * @param field the field to check
+     * @param <T> the entity type
+     * @return a Specification for is not null condition
+     */
+    <T> Specification<T> createIsNotNullCondition(String field);
+
+    /**
+     * Create an is null condition
+     * 
+     * @param field the field to check
+     * @param <T> the entity type
+     * @return a Specification for is null condition
+     */
+    <T> Specification<T> createIsNullCondition(String field);
 } 
