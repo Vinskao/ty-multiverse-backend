@@ -1,6 +1,7 @@
 package tw.com.tymbackend.module.weapon.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -9,7 +10,7 @@ import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 import java.util.List;
 
 @Repository
-public interface WeaponRepository extends JpaRepository<Weapon, String> {
+public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpecificationExecutor<Weapon> {
     
     /**
      * Find weapon by name

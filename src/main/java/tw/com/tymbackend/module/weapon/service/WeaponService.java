@@ -1,8 +1,14 @@
 package tw.com.tymbackend.module.weapon.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import tw.com.tymbackend.core.factory.QueryConditionFactory;
+import tw.com.tymbackend.core.factory.RepositoryFactory;
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
@@ -13,8 +19,17 @@ import java.util.Optional;
 @Service
 public class WeaponService {
     
-    @Autowired
-    private WeaponRepository weaponRepository;
+    private final RepositoryFactory repositoryFactory;
+    private final QueryConditionFactory queryConditionFactory;
+    private final WeaponRepository weaponRepository;
+    
+    public WeaponService(RepositoryFactory repositoryFactory,
+                         QueryConditionFactory queryConditionFactory,
+                         WeaponRepository weaponRepository) {
+        this.repositoryFactory = repositoryFactory;
+        this.queryConditionFactory = queryConditionFactory;
+        this.weaponRepository = weaponRepository;
+    }
     
     /**
      * Get all weapons
@@ -22,7 +37,7 @@ public class WeaponService {
      * @return list of all weapons
      */
     public List<Weapon> getAllWeapons() {
-        return weaponRepository.findAll();
+        return repositoryFactory.findAll(Weapon.class);
     }
     
     /**
@@ -33,7 +48,7 @@ public class WeaponService {
      * @throws NoSuchElementException if no weapon is found with the given name
      */
     public Weapon getWeaponByName(String name) {
-        Optional<Weapon> weapon = Optional.ofNullable(weaponRepository.findByName(name));
+        Optional<Weapon> weapon = repositoryFactory.findById(Weapon.class, name);
         return weapon.orElseThrow(() -> new NoSuchElementException("No weapon found with name: " + name));
     }
     
@@ -52,7 +67,7 @@ public class WeaponService {
         if (weapon.getWeaponName() == null || weapon.getWeaponName().trim().isEmpty()) {
             throw new IllegalArgumentException("Weapon weapon name cannot be null or empty");
         }
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
     }
     
     /**
@@ -66,7 +81,7 @@ public class WeaponService {
         if (!weaponRepository.existsByName(name)) {
             throw new NoSuchElementException("No weapon found with name: " + name);
         }
-        weaponRepository.deleteById(name);
+        repositoryFactory.deleteById(Weapon.class, name);
     }
     
     /**
@@ -91,7 +106,7 @@ public class WeaponService {
     public Weapon updateWeaponAttributes(String name, String attributes) {
         Weapon weapon = getWeaponByName(name);
         weapon.setAttributes(attributes);
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
     }
 
     /**
@@ -106,7 +121,7 @@ public class WeaponService {
     public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
         Weapon weapon = getWeaponByName(name);
         weapon.setBaseDamage(baseDamage);
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
     }
 
     /**
@@ -121,7 +136,7 @@ public class WeaponService {
     public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
         Weapon weapon = getWeaponByName(name);
         weapon.setBonusDamage(bonusDamage);
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
     }
 
     /**
@@ -136,7 +151,7 @@ public class WeaponService {
     public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
         Weapon weapon = getWeaponByName(name);
         weapon.setBonusAttributes(bonusAttributes);
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
     }
 
     /**
@@ -151,6 +166,54 @@ public class WeaponService {
     public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
         Weapon weapon = getWeaponByName(name);
         weapon.setStateAttributes(stateAttributes);
-        return weaponRepository.save(weapon);
+        return repositoryFactory.save(weapon);
+    }
+
+    /**
+     * Find weapons by base damage range
+     * 
+     * @param minDamage minimum base damage
+     * @param maxDamage maximum base damage
+     * @return list of weapons within the damage range
+     */
+    public List<Weapon> findByBaseDamageRange(Integer minDamage, Integer maxDamage) {
+        Specification<Weapon> spec = queryConditionFactory.createRangeCondition("baseDamage", minDamage, maxDamage);
+        return weaponRepository.findAll(spec);
+    }
+    
+    /**
+     * Find weapons by attribute
+     * 
+     * @param attribute the attribute to search for
+     * @return list of weapons with the specified attribute
+     */
+    public List<Weapon> findByAttribute(String attribute) {
+        Specification<Weapon> spec = queryConditionFactory.createLikeCondition("attributes", attribute);
+        return weaponRepository.findAll(spec);
+    }
+    
+    /**
+     * Find weapons by multiple criteria
+     * 
+     * @param minDamage minimum base damage
+     * @param maxDamage maximum base damage
+     * @param attribute the attribute to search for
+     * @return list of weapons matching all criteria
+     */
+    public List<Weapon> findByMultipleCriteria(Integer minDamage, Integer maxDamage, String attribute) {
+        Specification<Weapon> damageSpec = queryConditionFactory.createRangeCondition("baseDamage", minDamage, maxDamage);
+        Specification<Weapon> attributeSpec = queryConditionFactory.createLikeCondition("attributes", attribute);
+        Specification<Weapon> combinedSpec = queryConditionFactory.createCompositeCondition(damageSpec, attributeSpec);
+        return weaponRepository.findAll(combinedSpec);
+    }
+    
+    /**
+     * Find all weapons with pagination
+     * 
+     * @param pageable the pageable
+     * @return the page of weapons
+     */
+    public Page<Weapon> findAll(Pageable pageable) {
+        return repositoryFactory.findAll(Weapon.class, pageable);
     }
 } 

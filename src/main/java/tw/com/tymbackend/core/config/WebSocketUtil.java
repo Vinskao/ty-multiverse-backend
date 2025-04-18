@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @EnableWebSocketMessageBroker
 public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
 
+    // 線上Session
     private static final Map<String, Session> ONLINE_SESSION = new ConcurrentHashMap<>();
 
     // 新增紀錄Session
@@ -33,11 +34,13 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
         if (session == null) {
             return;
         }
+        // 發送訊息
         session.getAsyncRemote().sendText(message);
     }
 
     // 發送群體訊息
     public static void sendMessageForAll(String message) {
+        // 發送群體訊息
         ONLINE_SESSION.forEach((sessionId, session) -> sendMessage(session, message));
     }
 
@@ -48,7 +51,9 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(@SuppressWarnings("null") MessageBrokerRegistry config) {
+        // 啟用簡單代理
         config.enableSimpleBroker("/topic");
+        // 設置應用程序目的地前綴
         config.setApplicationDestinationPrefixes("/app");
     }
 

@@ -1,10 +1,10 @@
 package tw.com.tymbackend.module.livestock.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.scheduling.annotation.Async;
 
+import tw.com.tymbackend.core.factory.RepositoryFactory;
 import tw.com.tymbackend.core.service.BaseService;
 import tw.com.tymbackend.module.livestock.dao.LivestockRepository;
 import tw.com.tymbackend.module.livestock.domain.vo.Livestock;
@@ -16,15 +16,20 @@ import java.util.concurrent.CompletableFuture;
 @Service
 public class LivestockService extends BaseService {
 
-    @Autowired
-    private LivestockRepository livestockRepository;
+    private final RepositoryFactory repositoryFactory;
+    private final LivestockRepository livestockRepository;
+
+    public LivestockService(RepositoryFactory repositoryFactory, LivestockRepository livestockRepository) {
+        this.repositoryFactory = repositoryFactory;
+        this.livestockRepository = livestockRepository;
+    }
 
     public List<Livestock> getAllLivestock() {
-        return livestockRepository.findAll();
+        return repositoryFactory.findAll(Livestock.class);
     }
 
     public Optional<Livestock> getLivestockById(Long id) {
-        return livestockRepository.findById(id);
+        return repositoryFactory.findById(Livestock.class, id);
     }
 
     public List<Livestock> getLivestockByOwner(String owner) {
@@ -33,20 +38,17 @@ public class LivestockService extends BaseService {
 
     @Transactional
     public Livestock saveLivestock(Livestock livestock) {
-        return livestockRepository.save(livestock);
+        return repositoryFactory.save(livestock);
     }
 
     @Transactional
     public void deleteLivestock(Long id) {
-        livestockRepository.deleteById(id);
+        repositoryFactory.deleteById(Livestock.class, id);
     }
 
     @Transactional
     public Livestock updateLivestock(Livestock livestock) {
-        if (!livestockRepository.existsById(livestock.getId())) {
-            throw new RuntimeException("Livestock not found with id: " + livestock.getId());
-        }
-        return livestockRepository.save(livestock);
+        return repositoryFactory.updateById(Livestock.class, livestock.getId(), livestock);
     }
 
     @Transactional
@@ -57,7 +59,7 @@ public class LivestockService extends BaseService {
     @Async("threadPoolTaskExecutor")
     public CompletableFuture<List<Livestock>> getAllLivestockAsync() {
         return CompletableFuture.completedFuture(
-            livestockRepository.findAll()
+            repositoryFactory.findAll(Livestock.class)
         );
     }
     
@@ -65,7 +67,7 @@ public class LivestockService extends BaseService {
     public CompletableFuture<Livestock> saveLivestockAsync(Livestock livestock) {
         return CompletableFuture.completedFuture(
             executeInTransaction(status -> 
-                livestockRepository.save(livestock)
+                repositoryFactory.save(livestock)
             )
         );
     }
