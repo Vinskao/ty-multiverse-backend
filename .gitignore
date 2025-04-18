@@ -86,7 +86,3 @@ docker-compose.override.yml
 .env.*.local
 
 wrapper/
-
-### Database ###
-people-schema.sql
-people-data.sql
