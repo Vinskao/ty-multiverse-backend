@@ -14,6 +14,11 @@ import tw.com.tymbackend.module.ckeditor.service.EditContentService;
 
 import jakarta.servlet.http.HttpSession;
 
+import java.util.Optional;
+
+/**
+ * 檔案上傳控制器
+ */ 
 @RestController
 @RequestMapping("/ckeditor")
 public class FileUploadController {
@@ -41,6 +46,13 @@ public class FileUploadController {
         return true;
     }
     
+    /**
+     * 儲存編輯器內容
+     * 
+     * @param editorContent 編輯器內容物件
+     * @param session HTTP 會話
+     * @return 儲存後的內容物件
+     */
     @PostMapping("/save-content")
     public ResponseEntity<?> saveContent(@RequestBody EditContentVO editorContent, HttpSession session) {
         String content = editorContent.getContent();
@@ -48,21 +60,24 @@ public class FileUploadController {
         
         try {
             // Check if content is the same as stored
-            String storedContent = editContentService.getContent(editor); // Changed method name
+            Optional<EditContentVO> storedContentOpt = editContentService.getContent(editor);
             
-            if (content.equals(storedContent)) {
+            // 如果內容存在且內容相同，則不保存
+            if (storedContentOpt.isPresent() && content.equals(storedContentOpt.get().getContent())) {
                 return ResponseEntity.ok("No changes detected. Content not saved.");
             }
             
+            // 檢查使用者是否已登入
             String action = "UPDATE"; // Hardcoded instead of using ActionTypeEnum
             
+            // 如果使用者未登入，則返回401 Unauthorized
             if(!isUserLoggedIn(session, action, module)){
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
             }
             
             // Save the content using the service method
-            String result = editContentService.saveContent(editor, content); // Changed method name
-            return ResponseEntity.ok(result);
+            editContentService.saveContent(editorContent);
+            return ResponseEntity.ok("Content saved successfully!");
         } catch (RuntimeException e) {
             // If content doesn't exist yet, just save it
             if (e.getMessage().contains("No content found")) {
@@ -72,8 +87,9 @@ public class FileUploadController {
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
                 }
                 
-                String result = editContentService.saveContent(editor, content);
-                return ResponseEntity.ok(result);
+                // Save the content using the service method
+                editContentService.saveContent(editorContent);
+                return ResponseEntity.ok("Content saved successfully!");
             }
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -86,14 +102,15 @@ public class FileUploadController {
         String editorName = editor.getEditor(); // Changed from getContentId() to getEditor()
         
         try {
-            String content = editContentService.getContent(editorName); // Changed method name
-            return ResponseEntity.ok(new EditContentVO(editorName, content));
-        } catch (RuntimeException e) {
-            // If content doesn't exist, return empty
-            if (e.getMessage().contains("No content found")) {
+            Optional<EditContentVO> contentOpt = editContentService.getContent(editorName);
+            
+            if (contentOpt.isPresent()) {
+                return ResponseEntity.ok(contentOpt.get());
+            } else {
+                // If content doesn't exist, return empty
                 return ResponseEntity.ok(new EditContentVO(editorName, ""));
             }
-            
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error: " + e.getMessage());
         }

@@ -19,6 +19,7 @@ public class SecurityConfig {
 
     private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
+    // 安全過濾器鏈
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -36,6 +37,7 @@ public class SecurityConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
+                // 添加CORS映射
                 registry.addMapping("/**")
                         .allowedOrigins(
                             "http://localhost:4321", 
@@ -56,6 +58,7 @@ public class SecurityConfig {
         };
     }
 
+    // 密碼編碼器
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

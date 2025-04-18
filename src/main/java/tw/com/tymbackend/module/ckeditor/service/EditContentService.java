@@ -1,62 +1,42 @@
 package tw.com.tymbackend.module.ckeditor.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
+import tw.com.tymbackend.core.factory.RepositoryFactory;
+import tw.com.tymbackend.core.service.BaseService;
 import tw.com.tymbackend.module.ckeditor.dao.EditContentRepository;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 
 @Service
-public class EditContentService {
+public class EditContentService extends BaseService {
 
-    @Autowired
-    private EditContentRepository editContentRepository;
+    private final RepositoryFactory repositoryFactory;
+    private final EditContentRepository editContentRepository;
+
+    public EditContentService(RepositoryFactory repositoryFactory, EditContentRepository editContentRepository) {
+        this.repositoryFactory = repositoryFactory;
+        this.editContentRepository = editContentRepository;
+    }
 
     /**
      * 儲存編輯器內容
      * 
-     * @param editor  編輯器名稱
-     * @param content 儲存的內容
-     * @return 成功訊息或異常
+     * @param editContentVO 要儲存的內容物件
+     * @return 儲存後的內容物件
      */
-    @Transactional
-    public String saveContent(String editor, String content) {
-        try {
-            // Create new entity or update existing one
-            EditContentVO contentVO = editContentRepository.findByEditor(editor);
-            
-            if (contentVO == null) {
-                // Create new entity
-                contentVO = new EditContentVO();
-                contentVO.setEditor(editor);
-            }
-            
-            contentVO.setContent(content);
-            editContentRepository.save(contentVO);
-            
-            return "Content saved successfully!";
-        } catch (Exception e) {
-            throw new RuntimeException("Error while saving content: " + e.getMessage(), e);
-        }
+    public EditContentVO saveContent(EditContentVO editContentVO) {
+        return repositoryFactory.save(editContentVO);
     }
 
     /**
      * 讀取編輯器內容
      * 
      * @param editor 編輯器名稱
-     * @return 儲存的內容
+     * @return 儲存的內容，如果找不到則返回空的Optional
      */
-    @Transactional(readOnly = true)
-    public String getContent(String editor) {
-        try {
-            EditContentVO contentVO = editContentRepository.findByEditor(editor);
-            if (contentVO == null) {
-                throw new RuntimeException("No content found for editor: " + editor);
-            }
-            return contentVO.getContent();
-        } catch (Exception e) {
-            throw new RuntimeException("Error while retrieving content: " + e.getMessage(), e);
-        }
+    public Optional<EditContentVO> getContent(String editor) {
+        return repositoryFactory.findById(EditContentVO.class, editor);
     }
 }
