@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import tw.com.tymbackend.core.factory.RepositoryFactory;
 import tw.com.tymbackend.core.service.BaseService;
 import tw.com.tymbackend.module.ckeditor.dao.EditContentRepository;
+import tw.com.tymbackend.module.ckeditor.dao.EditContentVORepository;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 
 @Service
@@ -14,10 +15,14 @@ public class EditContentService extends BaseService {
 
     private final RepositoryFactory repositoryFactory;
     private final EditContentRepository editContentRepository;
+    private final EditContentVORepository editContentVORepository;
 
-    public EditContentService(RepositoryFactory repositoryFactory, EditContentRepository editContentRepository) {
+    public EditContentService(RepositoryFactory repositoryFactory, 
+                             EditContentRepository editContentRepository,
+                             EditContentVORepository editContentVORepository) {
         this.repositoryFactory = repositoryFactory;
         this.editContentRepository = editContentRepository;
+        this.editContentVORepository = editContentVORepository;
     }
 
     /**

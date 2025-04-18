@@ -43,14 +43,14 @@ public class SecurityConfig {
                             "http://localhost:4321", 
                             "http://localhost:8080", 
                             "http://localhost:8000", 
-                            "https://peoplesystem.tatdvsonorth.com",  // 移除 /tymultiverse
+                            "https://peoplesystem.tatdvsonorth.com",
                             "https://peoplesystem.tatdvsonorth.com/tymultiverse",
                             "http://127.0.0.1:4321", 
                             "http://127.0.0.1:8080", 
                             "http://127.0.0.1:8000"
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")  // 允許所有 headers
+                        .allowedHeaders("*")
                         .exposedHeaders("Authorization", "Set-Cookie")
                         .allowCredentials(true)
                         .maxAge(3600);
