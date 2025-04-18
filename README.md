@@ -125,16 +125,6 @@ classDiagram
    - 提高性能
    - 節省資源
 
-4. **靈活性**
-   - 易於擴展新功能
-   - 易於修改現有功能
-   - 支持動態配置
-
-5. **可維護性**
-   - 清晰的代碼結構
-   - 統一的接口定義
-   - 良好的代碼組織
-
 ### 5. 使用示例
 ```mermaid
 sequenceDiagram
@@ -158,7 +148,7 @@ http://localhost:8080/tymb/swagger-ui/index.html#/
 https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
 ```
 
-## image
+## image 建置
 
 ```bash
 mvn clean package -DskipTests
