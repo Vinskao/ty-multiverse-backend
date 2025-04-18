@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
     "tw.com.tymbackend.module.weapon.dao",
     "tw.com.tymbackend.module.livestock.dao",
     "tw.com.tymbackend.module.ckeditor.dao",
-    "tw.com.tymbackend.module.gallery.dao"
+    "tw.com.tymbackend.module.gallery.dao",
 })
 public class RepositoryConfig {
     // No additional configuration needed

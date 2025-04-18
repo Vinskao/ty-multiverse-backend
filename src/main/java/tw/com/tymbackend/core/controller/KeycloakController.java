@@ -47,13 +47,18 @@ public class KeycloakController {
     private String ssoUrl;
 
     @GetMapping("/redirect")
-    public void keycloakRedirect(@RequestParam("code") String code, HttpServletResponse response)
+    public void keycloakRedirect(@RequestParam("code") String code, 
+                                @RequestParam(value = "session_state", required = false) String sessionState,
+                                @RequestParam(value = "iss", required = false) String issuer,
+                                HttpServletResponse response)
             throws IOException {
         String redirectUri = backendUrl + "/keycloak/redirect";
         String tokenUrl = ssoUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
         try {
             log.info("Received authorization code: {}", code);
+            log.info("Session state: {}", sessionState);
+            log.info("Issuer: {}", issuer);
 
             // Token Request
             MultiValueMap<String, String> tokenParams = new LinkedMultiValueMap<>();
@@ -67,8 +72,18 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(tokenParams, headers);
 
+            log.info("Sending token request to: {}", tokenUrl);
+            log.info("Token request params: {}", tokenParams);
+
             @SuppressWarnings({ "rawtypes" })
             ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
+            
+            if (tokenResponse.getStatusCode() != HttpStatus.OK) {
+                log.error("Token request failed with status: {}", tokenResponse.getStatusCode());
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Failed to obtain access token");
+                return;
+            }
+            
             @SuppressWarnings("null")
             String accessToken = (String) tokenResponse.getBody().get("access_token");
             @SuppressWarnings("null")
@@ -78,7 +93,9 @@ public class KeycloakController {
             log.info("Refresh Token: {}", refreshToken);
 
             if (accessToken == null || refreshToken == null) {
-                throw new RuntimeException("Failed to obtain access token");
+                log.error("Access token or refresh token is null");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Failed to obtain access token");
+                return;
             }
 
             // Request User Info
@@ -87,9 +104,18 @@ public class KeycloakController {
             userHeaders.set("Authorization", "Bearer " + accessToken);
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
 
+            log.info("Sending user info request to: {}", userInfoUrl);
+
             @SuppressWarnings({ "rawtypes" })
             ResponseEntity<Map> userResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, userEntity,
                     Map.class);
+            
+            if (userResponse.getStatusCode() != HttpStatus.OK) {
+                log.error("User info request failed with status: {}", userResponse.getStatusCode());
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Failed to obtain user info");
+                return;
+            }
+            
             @SuppressWarnings("unchecked")
             Map<String, Object> userInfo = userResponse.getBody();
 
@@ -98,7 +124,9 @@ public class KeycloakController {
             @SuppressWarnings("null")
             String preferredUsername = (String) userInfo.get("preferred_username");
             if (preferredUsername == null) {
-                throw new RuntimeException("Failed to retrieve user info");
+                log.error("Preferred username is null");
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Failed to retrieve user info");
+                return;
             }
 
             String email = (String) userInfo.get("email");
@@ -108,14 +136,16 @@ public class KeycloakController {
             response.addHeader("Set-Cookie", "authorizationCode=" + code + "; Path=/; SameSite=Lax");
             response.addHeader("Set-Cookie", "refreshToken=" + refreshToken + "; Path=/; SameSite=Lax");
 
-            response.sendRedirect(
-                frontendUrl + "?username=" + preferredUsername 
-                            + "&email=" + email
+            String redirectUrl = frontendUrl + "?username=" + preferredUsername 
+                            + "&email=" + (email != null ? email : "")
                             + "&token=" + accessToken
-                            + "&refreshToken=" + refreshToken);
+                            + "&refreshToken=" + refreshToken;
+            
+            log.info("Redirecting to: {}", redirectUrl);
+            response.sendRedirect(redirectUrl);
         } catch (Exception e) {
             log.error("Error processing OAuth redirect", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing OAuth redirect");
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing OAuth redirect: " + e.getMessage());
         }
     }
 
