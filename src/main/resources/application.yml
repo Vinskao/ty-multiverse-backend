@@ -20,8 +20,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem
-          jwk-set-uri: https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/certs
+          issuer-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@'
+          jwk-set-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@/protocol/openid-connect/certs'
   datasource:
     driver-class-name: org.postgresql.Driver
     url: '@spring.datasource.url@'
@@ -90,13 +90,13 @@ management:
       show-details: always
 
 keycloak:
-  auth-server-url: https://peoplesystem.tatdvsonorth.com/sso
-  realm: PeopleSystem
-  clientId: peoplesystem
+  auth-server-url: '@keycloak.auth-server-url@'
+  realm: '@keycloak.realm@'
+  clientId: '@keycloak.clientId@'
   public-client: false
   cors: true
   credentials:
-    secret: vjTssuy94TUlk8mipbQjMlSSlHyS3CxG
+    secret: '@keycloak.credentials.secret@'
   bearer-only: true
   security-constraints:
     - authRoles: default-roles-peoplesystem

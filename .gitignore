@@ -36,6 +36,5 @@ build/
 .war
 
 ### Environment Properties ###
-src/main/resources/env/local.properties
-src/main/resources/env/platform.properties
+src/main/resources/env/
 
