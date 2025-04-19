@@ -1,15 +1,17 @@
 package tw.com.tymbackend.module.people.domain.vo;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import jakarta.persistence.Version;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,8 +20,20 @@ import jakarta.persistence.Version;
 @Table(name = "people")
 public class People {
     @Id
-    @Column(name = "name", columnDefinition = "VARCHAR(255)")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(name = "base_attributes")
+    private String baseAttributes;
+
+    @Column(name = "bonus_attributes")
+    private String bonusAttributes;
+
+    @Column(name = "state_attributes")
+    private String stateAttributes;
 
     @Column(name = "name_original", columnDefinition = "VARCHAR(255)")
     private String nameOriginal;
@@ -81,12 +95,6 @@ public class People {
     @Column(name = "personally", columnDefinition = "VARCHAR(255)")
     private String personally;
 
-    @Column(name = "main_weapon", columnDefinition = "VARCHAR(255)")
-    private String mainWeapon;
-
-    @Column(name = "sub_weapon", columnDefinition = "VARCHAR(255)")
-    private String subWeapon;
-
     @Column(name = "interest", columnDefinition = "VARCHAR(255)")
     private String interest;
 
@@ -141,8 +149,44 @@ public class People {
     @Column(name = "physicsFallout4", columnDefinition = "VARCHAR(255)")
     private String physicsFallout4;
 
-    @Column(name = "version")
-    @Version
-    private Long version;
+    @Column(name = "version", nullable = true)
+    private Long version = 0L;
 
+    public void initializeVersion() {
+        if (this.version == null) {
+            this.version = 0L;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        People people = (People) o;
+        return Objects.equals(id, people.id) &&
+                Objects.equals(name, people.name) &&
+                Objects.equals(baseAttributes, people.baseAttributes) &&
+                Objects.equals(bonusAttributes, people.bonusAttributes) &&
+                Objects.equals(stateAttributes, people.stateAttributes) &&
+                Objects.equals(nameOriginal, people.nameOriginal) &&
+                Objects.equals(version, people.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal, version);
+    }
+
+    @Override
+    public String toString() {
+        return "People{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", baseAttributes='" + baseAttributes + '\'' +
+                ", bonusAttributes='" + bonusAttributes + '\'' +
+                ", stateAttributes='" + stateAttributes + '\'' +
+                ", nameOriginal='" + nameOriginal + '\'' +
+                ", version=" + version +
+                '}';
+    }
 }

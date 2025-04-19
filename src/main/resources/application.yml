@@ -30,21 +30,21 @@ spring:
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
-      idle-timeout: 30000
+      idle-timeout: 300000
       pool-name: HikariCP
       max-lifetime: 1800000
       connection-timeout: 30000
-      leak-detection-threshold: 2000
+      leak-detection-threshold: 120000
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
+      auto-commit: false
+      register-mbeans: true
   jpa:
-    show-sql: true
-    hibernate:
-      ddl-auto: update
-      naming:
-        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
-        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        connection:
+          provider_disables_autocommit: true
   main:
     allow-bean-definition-overriding: true
     web-application-type: servlet
@@ -63,6 +63,11 @@ logging:
     root: INFO
     org:
       springframework: INFO
+      hibernate:
+        SQL: DEBUG
+        type:
+          descriptor:
+            sql: TRACE
     '[io.micrometer]': INFO
 
 server:
@@ -84,10 +89,41 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: '*'
+        include: health,metrics,prometheus,info,loggers,env
   endpoint:
     health:
       show-details: always
+      show-components: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name:tym-backend}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 400ms
+    enable:
+      jvm: true
+      process: true
+      system: true
+      logback: true
+      tomcat: true
+      jdbc: true
+      hikaricp: true
+      http: true
+      jms: true
+      kafka: true
+      mongodb: true
+      redis: true
+      rabbit: true
+      cache: true
+      hibernate: true
 
 keycloak:
   auth-server-url: '@keycloak.auth-server-url@'

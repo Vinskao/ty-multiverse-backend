@@ -20,8 +20,6 @@ CREATE TABLE people (
     physics VARCHAR(255),
     known_as VARCHAR(255),
     personally VARCHAR(255),
-    main_weapon VARCHAR(255),
-    sub_weapon VARCHAR(255),
     interest VARCHAR(255),
     likes VARCHAR(255),
     dislikes VARCHAR(255),
