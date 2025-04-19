@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import tw.com.tymbackend.module.people.domain.vo.People;
 
-public interface PeopleRepository extends JpaRepository<People, String>, JpaSpecificationExecutor<People> {
+public interface PeopleRepository extends JpaRepository<People, Long>, JpaSpecificationExecutor<People> {
 
     Optional<People> findByName(String name);
 

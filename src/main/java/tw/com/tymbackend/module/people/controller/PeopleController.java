@@ -38,10 +38,22 @@ public class PeopleController {
     @PostMapping("/update")
     public ResponseEntity<?> updatePeople(@RequestBody People people) {
         try {
+            // 驗證輸入
+            if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
+                return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
+            }
+            
+            // 嘗試更新
             People updatedPeople = peopleService.updatePerson(people);
             return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("Person not found: " + e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (org.hibernate.StaleObjectStateException e) {
+            // 樂觀鎖定衝突，返回衝突狀態
+            return new ResponseEntity<>("Concurrent update detected: " + e.getMessage(), HttpStatus.CONFLICT);
+        } catch (org.springframework.dao.DataIntegrityViolationException e) {
+            // 數據完整性違規，返回錯誤請求狀態
+            return new ResponseEntity<>("Data integrity violation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {

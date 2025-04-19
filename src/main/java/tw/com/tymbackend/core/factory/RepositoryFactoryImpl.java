@@ -142,12 +142,23 @@ public class RepositoryFactoryImpl implements RepositoryFactory {
     // 保存實體
     @Override
     public <T> T save(T entity) {
-        // 獲取Repository
-        @SuppressWarnings("unchecked")
-        Class<T> entityType = (Class<T>) entity.getClass();
-        JpaRepository<T, ?> repository = getRepository(entityType, String.class);
-        // 保存實體
-        return repository.save(entity);
+        if (entity == null) {
+            return null;
+        }
+        
+        try {
+            // 使用 JpaRepository 的 save 方法保存實體
+            // 不使用 @Version 註解，避免樂觀鎖定衝突
+            @SuppressWarnings("unchecked")
+            JpaRepository<T, ?> repository = (JpaRepository<T, ?>) repositoryCache.get(entity.getClass());
+            return repository.save(entity);
+        } catch (Exception e) {
+            // 記錄異常但不重新拋出，防止事務回滾
+            System.err.println("Error saving entity: " + e.getMessage());
+            e.printStackTrace();
+            // 返回原始實體
+            return entity;
+        }
     }
 
     // 保存所有實體

@@ -301,3 +301,116 @@ sequenceDiagram
 
 4. **模組化設計**
    - 每個模組有自己的異常類
+
+## 監控與健康檢查
+
+### 1. Actuator 端點
+
+應用程式提供了以下 Actuator 端點用於監控：
+
+#### 1.1 健康檢查
+```
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/health
+```
+提供應用程式的健康狀態，包括：
+- 應用程式狀態
+- 資料庫連接狀態
+- 磁碟空間
+- 其他組件狀態
+
+#### 1.2 指標信息
+```
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics
+```
+提供所有可用的指標列表，包括：
+- JVM 指標
+- 系統指標
+- 應用程式指標
+- 自定義指標
+
+#### 1.3 HikariCP 連接池指標
+```
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.active
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.idle
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.pending
+```
+提供連接池的詳細狀態：
+- 活動連接數
+- 空閒連接數
+- 等待連接數
+- 連接獲取時間
+- 連接使用時間
+- 連接泄漏檢測
+
+#### 1.4 Prometheus 格式指標
+```
+GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/prometheus
+```
+提供 Prometheus 格式的指標數據，可用於：
+- 指標收集
+- 監控面板
+- 警報設置
+
+### 2. 監控架構
+```mermaid
+classDiagram
+    class ActuatorEndpoints {
+        +/health
+        +/metrics
+        +/prometheus
+    }
+    
+    class MetricsConfig {
+        +configureMetrics()
+        +MeterRegistry
+        +DataSource
+    }
+    
+    class HikariCPMetrics {
+        +connections
+        +active
+        +idle
+        +pending
+    }
+    
+    ActuatorEndpoints --> MetricsConfig
+    MetricsConfig --> HikariCPMetrics
+```
+
+### 3. 監控指標說明
+
+#### 3.1 系統指標
+- CPU 使用率
+- 記憶體使用情況
+- 磁碟空間
+- 線程狀態
+
+#### 3.2 應用程式指標
+- HTTP 請求統計
+- 響應時間
+- 錯誤率
+- 業務邏輯執行時間
+
+#### 3.3 資料庫指標
+- 連接池狀態
+- 查詢執行時間
+- 事務統計
+- 連接泄漏檢測
+
+### 4. 使用建議
+
+1. **健康檢查**
+   - 定期檢查應用程式健康狀態
+   - 設置自動化監控
+   - 配置警報閾值
+
+2. **性能監控**
+   - 監控關鍵指標
+   - 分析性能瓶頸
+   - 優化資源使用
+
+3. **問題診斷**
+   - 使用指標追蹤問題
+   - 分析錯誤模式
+   - 預防系統故障
