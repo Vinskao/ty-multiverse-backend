@@ -29,8 +29,16 @@ public class WeaponController {
      * Get weapon by name
      */
     @GetMapping("/{name}")
-    public ResponseEntity<Weapon> getWeaponByName(@PathVariable String name) {
-        return ResponseEntity.ok(weaponService.getWeaponByName(name));
+    public ResponseEntity<List<Weapon>> getWeaponByName(@PathVariable String name) {
+        return ResponseEntity.ok(weaponService.getWeaponsByOwnerName(name));
+    }
+
+    /**
+     * Get weapons by owner name
+     */
+    @GetMapping("/owner/{name}")
+    public ResponseEntity<List<Weapon>> getWeaponsByOwnerName(@PathVariable String name) {
+        return ResponseEntity.ok(weaponService.getWeaponsByOwnerName(name));
     }
 
     /**
