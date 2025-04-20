@@ -13,9 +13,9 @@ import java.util.List;
 public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpecificationExecutor<Weapon> {
     
     /**
-     * Find weapon by name
+     * Find weapons by owner name
      */
-    Weapon findByName(String name);
+    List<Weapon> findByName(String name);
     
     /**
      * Check if weapon exists by name

@@ -41,15 +41,13 @@ public class WeaponService {
     }
     
     /**
-     * Get weapon by name
+     * Get weapons by owner name
      * 
-     * @param name the name of the weapon
-     * @return the weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @param name the owner name
+     * @return list of weapons owned by the person
      */
-    public Weapon getWeaponByName(String name) {
-        Optional<Weapon> weapon = repositoryFactory.findById(Weapon.class, name);
-        return weapon.orElseThrow(() -> new NoSuchElementException("No weapon found with name: " + name));
+    public List<Weapon> getWeaponsByOwnerName(String name) {
+        return weaponRepository.findByName(name);
     }
     
     /**
@@ -104,7 +102,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponAttributes(String name, String attributes) {
-        Weapon weapon = getWeaponByName(name);
+        Weapon weapon = getWeaponsByOwnerName(name).get(0);
         weapon.setAttributes(attributes);
         return repositoryFactory.save(weapon);
     }
@@ -119,7 +117,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
-        Weapon weapon = getWeaponByName(name);
+        Weapon weapon = getWeaponsByOwnerName(name).get(0);
         weapon.setBaseDamage(baseDamage);
         return repositoryFactory.save(weapon);
     }
@@ -134,7 +132,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
-        Weapon weapon = getWeaponByName(name);
+        Weapon weapon = getWeaponsByOwnerName(name).get(0);
         weapon.setBonusDamage(bonusDamage);
         return repositoryFactory.save(weapon);
     }
@@ -149,7 +147,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
-        Weapon weapon = getWeaponByName(name);
+        Weapon weapon = getWeaponsByOwnerName(name).get(0);
         weapon.setBonusAttributes(bonusAttributes);
         return repositoryFactory.save(weapon);
     }
@@ -164,7 +162,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
-        Weapon weapon = getWeaponByName(name);
+        Weapon weapon = getWeaponsByOwnerName(name).get(0);
         weapon.setStateAttributes(stateAttributes);
         return repositoryFactory.save(weapon);
     }

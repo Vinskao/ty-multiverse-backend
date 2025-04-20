@@ -62,7 +62,7 @@ ON CONFLICT (name, weapon) DO UPDATE SET
     state_attributes = EXCLUDED.state_attributes;
 
 INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
-VALUES ('kalidasa', 'The Buddha', '淫',50, 2122, ARRAY['淫','佛'], ARRAY['腿軟','噴汁','噴尿','暈眩','四隻麻痺','屁股抽筋','噴乳汁'])
+VALUES ('kalidasa', 'The Buddha', '淫',50, 2122, ARRAY['淫','佛'], ARRAY['腿軟','噴汁','噴尿','暈眩','四肢麻痺','屁股抽筋','噴乳汁'])
 ON CONFLICT (name, weapon) DO UPDATE SET
     attributes = EXCLUDED.attributes,
     base_damage = EXCLUDED.base_damage,
@@ -70,3 +70,31 @@ ON CONFLICT (name, weapon) DO UPDATE SET
     bonus_attributes = EXCLUDED.bonus_attributes,
     state_attributes = EXCLUDED.state_attributes;
 
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('wavo', 'Giant Penis', '淫',1, 8564, ARRAY['淫'], ARRAY['噴屎','麻痺','崩壞','噴尿','痙攣','屁股抽筋','噴乳汁','暈吐','癱軟','中邪'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
+
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('siyu', '龍骨劍', '龍',149,34, ARRAY['龍'], ARRAY['見血'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('siyu', '龍骨盾', '龍',46, 142, ARRAY['龍'], ARRAY['見血'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
