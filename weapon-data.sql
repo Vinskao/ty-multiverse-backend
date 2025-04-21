@@ -98,3 +98,40 @@ ON CONFLICT (name, weapon) DO UPDATE SET
     bonus_damage = EXCLUDED.bonus_damage,
     bonus_attributes = EXCLUDED.bonus_attributes,
     state_attributes = EXCLUDED.state_attributes;
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('mesoyei', '屠宰刀', '血',232, 48, ARRAY['血'], ARRAY['抽乾'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('z', '突擊步槍', '無',55, 0, ARRAY['無'], ARRAY['破洞'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('z', '突擊步槍', '無',55, 0, ARRAY['無'], ARRAY['破洞'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;
+
+
+INSERT INTO weapon(name, weapon, attributes, base_damage, bonus_damage, bonus_attributes, state_attributes)
+VALUES ('aile', '', '無',55, 0, ARRAY['無'], ARRAY['破洞'])
+ON CONFLICT (name, weapon) DO UPDATE SET
+    attributes = EXCLUDED.attributes,
+    base_damage = EXCLUDED.base_damage,
+    bonus_damage = EXCLUDED.bonus_damage,
+    bonus_attributes = EXCLUDED.bonus_attributes,
+    state_attributes = EXCLUDED.state_attributes;

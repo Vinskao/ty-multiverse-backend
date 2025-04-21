@@ -1,32 +1,95 @@
 # TY-Multiverse-Backend
 這是我的個人網站的 Backend。
 
-## 工廠方法架構
+## 架構設計
 
-### 1. Repository 工廠模式
-
-#### 1.1 配置
+### 1. 核心架構
 ```mermaid
 classDiagram
-    class RepositoryConfig {
-        +@Configuration
-        +@EnableJpaRepositories
+    class IoCContainer {
+        +ApplicationContext
+        +BeanFactory
     }
-    note for RepositoryConfig "配置JPA Repository掃描路徑"
+    
+    class SingletonBeans {
+        +@Configuration
+        +@Component
+        +@Service
+        +@Controller
+    }
+    
+    class FactoryBeans {
+        +RepositoryFactory
+        +QueryConditionFactory
+    }
+    
+    class AOPBeans {
+        +@Transactional
+        +@ControllerAdvice
+        +ObservationHandler
+    }
+    
+    IoCContainer --> SingletonBeans
+    IoCContainer --> FactoryBeans
+    IoCContainer --> AOPBeans
 ```
 
-#### 1.2 工廠接口
+### 2. 設計模式與工廠架構
+
+#### 2.1 Singleton 模式
 ```mermaid
 classDiagram
+    class SpringContainer {
+        +ApplicationContext
+        +BeanFactory
+    }
+    
+    class SingletonBeans {
+        +@Configuration
+        +@Component
+        +@Service
+        +@Controller
+    }
+    
+    SpringContainer --> SingletonBeans
+```
+
+- **目的**: 確保系統資源的唯一性和一致性
+- **應用**: 配置類、服務類、控制器等核心組件
+- **優點**: 資源共享、狀態一致性、內存優化
+
+#### 2.2 Factory 模式
+```mermaid
+classDiagram
+    class FactoryInterface {
+        <<interface>>
+        +createProduct()
+    }
+    
     class RepositoryFactory {
         <<interface>>
-        +getCustomRepository(repositoryClass, entityType, idType)
-        +getRepository(entityType, idType)
-        +getSpecificationRepository(entityType, idType)
+        +getCustomRepository()
+        +getRepository()
+        +getSpecificationRepository()
     }
+    
+    class QueryConditionFactory {
+        <<interface>>
+        +createEqualsCondition()
+        +createLikeCondition()
+        +createRangeCondition()
+        +createCompositeCondition()
+    }
+    
+    FactoryInterface <|-- RepositoryFactory
+    FactoryInterface <|-- QueryConditionFactory
 ```
 
-#### 1.3 工廠實現
+- **目的**: 提供統一的對象創建接口
+- **應用**: Repository工廠、查詢條件工廠
+- **優點**: 解耦對象創建、統一管理實例、支持擴展
+
+#### 2.3 工廠方法實現
 ```mermaid
 classDiagram
     class RepositoryFactoryImpl {
@@ -36,27 +99,7 @@ classDiagram
         +getRepository()
         +getSpecificationRepository()
     }
-    RepositoryFactory <|.. RepositoryFactoryImpl
-```
-
-### 2. 查詢條件工廠模式
-
-#### 2.1 工廠接口
-```mermaid
-classDiagram
-    class QueryConditionFactory {
-        <<interface>>
-        +createEqualsCondition(field, value)
-        +createLikeCondition(field, value)
-        +createRangeCondition(field, min, max)
-        +createCompositeCondition(conditions)
-        +createDynamicCondition(field, value, operator)
-    }
-```
-
-#### 2.2 工廠實現
-```mermaid
-classDiagram
+    
     class QueryConditionFactoryImpl {
         +createEqualsCondition()
         +createLikeCondition()
@@ -64,112 +107,107 @@ classDiagram
         +createCompositeCondition()
         +createDynamicCondition()
     }
+    
+    RepositoryFactory <|.. RepositoryFactoryImpl
     QueryConditionFactory <|.. QueryConditionFactoryImpl
 ```
 
-### 3. 工作原理
-
-#### 3.1 Repository 註冊流程
+#### 2.4 工作原理
 ```mermaid
 sequenceDiagram
-    participant Spring
-    participant RepositoryConfig
-    participant RepositoryFactory
     participant Service
-    
-    Spring->>RepositoryConfig: 掃描Repository接口
-    Spring->>RepositoryFactory: 註冊Factory Bean
-    Service->>RepositoryFactory: 請求Repository實例
-    RepositoryFactory->>Spring: 獲取Repository Bean
-    Spring-->>Service: 返回Repository實例
-```
-
-#### 3.2 Factory 註冊流程
-```mermaid
-sequenceDiagram
-    participant Spring
     participant Factory
+    participant Repository
     participant ApplicationContext
     
-    Spring->>Factory: 掃描@Component
-    Spring->>ApplicationContext: 注入Context
+    Service->>Factory: 請求實例
     Factory->>ApplicationContext: 獲取Bean
+    ApplicationContext-->>Factory: 返回Bean
+    Factory-->>Service: 返回實例
+    Service->>Repository: 使用實例
 ```
 
-#### 3.3 Service 使用流程
+- **註冊流程**: Spring容器掃描並註冊工廠Bean
+- **實例化**: 按需創建並緩存實例
+- **依賴注入**: 通過構造器注入工廠實例
+- **使用方式**: 服務層通過工廠獲取所需實例
+
+### 3. IoC/AOP 架構
+
+#### 3.1 IoC 容器
 ```mermaid
 classDiagram
-    class PeopleService {
-        -PeopleRepository repository
-        -QueryConditionFactory queryConditionFactory
-        +constructor(repositoryFactory, queryConditionFactory)
+    class SpringContainer {
+        +BeanFactory
+        +ApplicationContext
     }
-    PeopleService --> RepositoryFactory
-    PeopleService --> QueryConditionFactory
-```
-
-### 4. 設計優點
-
-1. **依賴注入**
-   - 所有組件都由 Spring 管理
-   - 降低組件間耦合度
-   - 便於單元測試
-
-2. **類型安全**
-   - 編譯時類型檢查
-   - 避免運行時類型錯誤
-   - 更好的 IDE 支持
-
-3. **緩存機制**
-   - 避免重複創建實例
-   - 提高性能
-   - 節省資源
-
-### 5. 使用示例
-```mermaid
-sequenceDiagram
-    participant Service
-    participant RepositoryFactory
-    participant QueryConditionFactory
-    participant Repository
     
-    Service->>RepositoryFactory: 獲取Repository
-    RepositoryFactory-->>Service: 返回Repository實例
-    Service->>QueryConditionFactory: 創建查詢條件
-    QueryConditionFactory-->>Service: 返回Specification
-    Service->>Repository: 執行查詢
-    Repository-->>Service: 返回結果
+    class BeanDefinition {
+        +Scope
+        +Dependencies
+        +Lifecycle
+    }
+    
+    class BeanLifecycle {
+        +Initialization
+        +Destruction
+        +DependencyInjection
+    }
+    
+    SpringContainer --> BeanDefinition
+    BeanDefinition --> BeanLifecycle
 ```
 
-## swagger ui
-
-```bash
-http://localhost:8080/tymb/swagger-ui/index.html#/
-https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
+#### 3.2 AOP 切面
+```mermaid
+classDiagram
+    class AOPContainer {
+        +@Aspect
+        +@Pointcut
+        +@Around
+    }
+    
+    class TransactionAspect {
+        +@Transactional
+        +TransactionManager
+    }
+    
+    class ExceptionAspect {
+        +@ControllerAdvice
+        +GlobalExceptionHandler
+    }
+    
+    class ObservationAspect {
+        +ObservationHandler
+        +Metrics
+    }
+    
+    AOPContainer --> TransactionAspect
+    AOPContainer --> ExceptionAspect
+    AOPContainer --> ObservationAspect
 ```
 
-## image 建置
+### 4. 架構優勢
 
-```bash
-mvn clean package -DskipTests
-docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
-mvn -P platform install
-docker build -t papakao/ty-multiverse-backend:latest .
-docker push papakao/ty-multiverse-backend:latest
+1. **解耦與內聚**
+   - IoC 實現依賴反轉
+   - AOP 處理橫切關注點
+   - 工廠模式管理對象創建
 
+2. **可維護性**
+   - 清晰的職責分離
+   - 統一的異常處理
+   - 集中的配置管理
 
-mvn -P platform install
-docker build -t ty-multiverse-backend .
-docker run -d --name ty-multiverse-backend `
-  -e "SPRING_PROFILES_ACTIVE=platform" `
-  -e "URL_BACKEND=http://localhost:8080/tymb" `
-  -e "SPRING_DATASOURCE_URL=jdbc:postgresql://*****:****/peoplesystem" `
-  -e "SPRING_DATASOURCE_USERNAME=w*****o" `
-  -e "SPRING_DATASOURCE_PASSWORD=W*****=" `
-  -p 8080:8080 `
-  ty-multiverse-backend
+3. **可擴展性**
+   - 模塊化設計
+   - 接口導向
+   - 鬆散耦合
 
-```
+4. **性能優化**
+   - 單例資源共享
+   - 工廠對象緩存
+   - AOP 性能監控
 
 ## 錯誤處理架構
 
@@ -414,3 +452,63 @@ classDiagram
    - 使用指標追蹤問題
    - 分析錯誤模式
    - 預防系統故障
+
+## swagger ui
+
+```bash
+http://localhost:8080/tymb/swagger-ui/index.html#/
+https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
+```
+
+## image 建置
+
+```bash
+mvn clean package -DskipTests
+docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
+mvn -P platform install
+docker build -t papakao/ty-multiverse-backend:latest .
+docker push papakao/ty-multiverse-backend:latest
+
+
+mvn -P platform install
+docker build -t ty-multiverse-backend .
+docker run -d --name ty-multiverse-backend `
+  -e "SPRING_PROFILES_ACTIVE=platform" `
+  -e "URL_BACKEND=http://localhost:8080/tymb" `
+  -e "SPRING_DATASOURCE_URL=jdbc:postgresql://*****:****/peoplesystem" `
+  -e "SPRING_DATASOURCE_USERNAME=w*****o" `
+  -e "SPRING_DATASOURCE_PASSWORD=W*****=" `
+  -p 8080:8080 `
+  ty-multiverse-backend
+```
+
+### 3. 並發控制
+
+#### 3.1 樂觀鎖定
+```mermaid
+classDiagram
+    class Entity {
+        +@Version
+        +version: Long
+    }
+    
+    class Service {
+        +updateEntity()
+        +handleOptimisticLocking()
+    }
+    
+    class ExceptionHandler {
+        +handleOptimisticLockingFailure()
+    }
+    
+    Entity --> Service
+    Service --> ExceptionHandler
+```
+
+#### 3.2 樂觀鎖定機制
+- **實現方式**: 使用 `@Version` 註解
+- **觸發時機**: 並發更新衝突
+- **處理策略**: 
+  - 自動重試
+  - 返回衝突狀態
+  - 提示用戶刷新
