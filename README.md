@@ -348,7 +348,7 @@ sequenceDiagram
 
 #### 1.1 健康檢查
 ```
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/health
+GET https://***/tymb/actuator/health
 ```
 提供應用程式的健康狀態，包括：
 - 應用程式狀態
@@ -358,7 +358,7 @@ GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/health
 
 #### 1.2 指標信息
 ```
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics
+GET https://***/tymb/actuator/metrics
 ```
 提供所有可用的指標列表，包括：
 - JVM 指標
@@ -368,10 +368,10 @@ GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics
 
 #### 1.3 HikariCP 連接池指標
 ```
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.active
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.idle
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connections.pending
+GET https://***/tymb/actuator/metrics/hikaricp.connections
+GET https://***/tymb/actuator/metrics/hikaricp.connections.active
+GET https://***/tymb/actuator/metrics/hikaricp.connections.idle
+GET https://***/tymb/actuator/metrics/hikaricp.connections.pending
 ```
 提供連接池的詳細狀態：
 - 活動連接數
@@ -383,7 +383,7 @@ GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/metrics/hikaricp.connect
 
 #### 1.4 Prometheus 格式指標
 ```
-GET https://peoplesystem.tatdvsonorth.com/tymb/actuator/prometheus
+GET https://***/tymb/actuator/prometheus
 ```
 提供 Prometheus 格式的指標數據，可用於：
 - 指標收集
@@ -468,6 +468,11 @@ docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:late
 mvn -P platform install
 docker build -t papakao/ty-multiverse-backend:latest .
 docker push papakao/ty-multiverse-backend:latest
+
+mvn -P platform install
+docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
+docker push papakao/ty-multiverse-backend:latest
+
 
 
 mvn -P platform install
