@@ -3,12 +3,23 @@ package tw.com.tymbackend.module.weapon.domain.vo;
 import jakarta.persistence.*;
 import java.util.Objects;
 import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "weapon")
+@Data
+@NoArgsConstructor
 public class Weapon {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Version
+    @Column(name = "version", nullable = true)
+    private Long version = 0L;
+
     @Column(name = "name", length = 255)
     private String name;
 
@@ -29,9 +40,6 @@ public class Weapon {
 
     @Column(name = "state_attributes", columnDefinition = "text[]")
     private List<String> stateAttributes;
-
-    public Weapon() {
-    }
 
     public Weapon(String name, String weaponName, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {

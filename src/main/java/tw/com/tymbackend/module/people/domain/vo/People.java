@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -150,6 +151,7 @@ public class People {
     private String physicsFallout4;
 
     @Column(name = "version", nullable = true)
+    @Version
     private Long version = 0L;
 
     public void initializeVersion() {

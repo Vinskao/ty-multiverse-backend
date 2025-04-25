@@ -58,4 +58,9 @@ public class LivestockController {
         livestockService.deleteLivestock(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/buyer/{buyer}")
+    public ResponseEntity<List<Livestock>> getLivestockByBuyer(@PathVariable String buyer) {
+        return ResponseEntity.ok(livestockService.getLivestockByBuyer(buyer));
+    }
 } 

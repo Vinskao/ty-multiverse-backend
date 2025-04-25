@@ -36,6 +36,10 @@ public class LivestockService extends BaseService {
         return livestockRepository.findByOwner(owner);
     }
 
+    public List<Livestock> getLivestockByBuyer(String buyer) {
+        return livestockRepository.findByBuyer(buyer);
+    }
+
     @Transactional
     public Livestock saveLivestock(Livestock livestock) {
         return repositoryFactory.save(livestock);
