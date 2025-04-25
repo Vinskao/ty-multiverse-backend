@@ -49,7 +49,7 @@ public class MetricsWSController {
      */
     public MetricsWSController(MeterRegistry meterRegistry, ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
-        this.actuatorMetricsUrl = "http://localhost:8080/tymb/actuator/metrics";
+        this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
     }
 
     /**
