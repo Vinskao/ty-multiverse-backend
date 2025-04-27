@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import tw.com.tymbackend.module.people.domain.vo.PeopleImage;
 
 @Repository
+@SuppressWarnings("DOMAIN_ID_FOR_REPOSITORY")
 public interface PeopleImageRepository extends JpaRepository<PeopleImage, String> {
     
     /**

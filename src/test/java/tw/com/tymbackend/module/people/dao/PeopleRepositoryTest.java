@@ -13,11 +13,27 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * 使用 @DataJpaTest 註解進行數據訪問層測試
+ * 原因：
+ * 1. 自動配置：自動配置測試環境，包括內存數據庫、JPA 相關組件等
+ * 2. 隔離測試：只加載與 JPA 相關的配置，不加載其他不必要的組件
+ * 3. 事務管理：自動管理測試事務，每個測試方法執行完後自動回滾
+ * 4. 提高測試速度：使用內存數據庫，避免網絡延遲和外部依賴
+ */
 @DataJpaTest
 @ContextConfiguration(classes = {TestConfig.class})
 @ActiveProfiles("test")
 class PeopleRepositoryTest {
 
+    /**
+     * 使用 @Autowired 註解注入真實的 Repository
+     * 原因：
+     * 1. 真實測試：數據訪問層測試需要使用真實的 Repository 實現
+     * 2. 完整功能：測試 Repository 的所有功能，包括基本的 CRUD 操作
+     * 3. 驗證 SQL：可以驗證生成的 SQL 語句是否正確
+     * 4. 數據持久化：測試數據的持久化和查詢功能
+     */
     @Autowired
     private PeopleRepository peopleRepository;
 

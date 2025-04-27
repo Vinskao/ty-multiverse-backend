@@ -101,6 +101,7 @@ class PeopleImageControllerTest {
         verify(peopleImageService, times(1)).savePeopleImage(testPeopleImage);
     }
 
+    @SuppressWarnings("null")
     @Test
     void createPeopleImage_AlreadyExists() {
         // Arrange
@@ -132,6 +133,7 @@ class PeopleImageControllerTest {
         verify(peopleImageService, times(1)).savePeopleImage(testPeopleImage);
     }
 
+    @SuppressWarnings("null")
     @Test
     void updatePeopleImage_NotFound() {
         // Arrange
@@ -147,6 +149,7 @@ class PeopleImageControllerTest {
         verify(peopleImageService, never()).savePeopleImage(any());
     }
 
+    @SuppressWarnings("null")
     @Test
     void deletePeopleImage_Success() {
         // Arrange

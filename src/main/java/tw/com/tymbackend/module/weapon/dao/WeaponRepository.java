@@ -10,6 +10,7 @@ import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 import java.util.List;
 
 @Repository
+@SuppressWarnings("vscode-spring-boot/DOMAIN_ID_FOR_REPOSITORY")
 public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpecificationExecutor<Weapon> {
     
     /**

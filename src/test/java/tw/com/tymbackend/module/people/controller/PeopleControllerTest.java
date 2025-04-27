@@ -24,9 +24,25 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PeopleControllerTest {
 
+    /**
+     * 使用 @Mock 註解模擬 PeopleService
+     * 原因：
+     * 1. 隔離依賴：控制器層測試應該只關注 HTTP 請求和響應的處理，而不需要真實的服務層實現
+     * 2. 控制行為：可以精確控制服務層方法的返回值，便於測試不同場景
+     * 3. 提高測試速度：不需要初始化真實的服務層對象和其依賴
+     * 4. 避免外部依賴：不需要連接數據庫或其他外部服務
+     */
     @Mock
     private PeopleService peopleService;
 
+    /**
+     * 使用 @InjectMocks 註解注入模擬的依賴
+     * 原因：
+     * 1. 自動注入：自動將 @Mock 註解的對象注入到控制器中
+     * 2. 簡化測試設置：不需要手動創建控制器實例並設置依賴
+     * 3. 保持真實依賴關係：保持與實際代碼相同的依賴注入方式
+     * 4. 便於維護：當控制器的依賴發生變化時，測試代碼不需要大量修改
+     */
     @InjectMocks
     private PeopleController peopleController;
 
