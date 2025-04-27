@@ -12,17 +12,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Weapon {
 
-    @EmbeddedId
-    private WeaponId id;
-
-    @Version
-    @Column(name = "version", nullable = true)
-    private Long version = 0L;
-
-    @Column(name = "name", length = 255, insertable = false, updatable = false)
+    @Column(name = "name", length = 255)
     private String name;
 
-    @Column(name = "weapon", length = 255, insertable = false, updatable = false)
+    @Id
+    @Column(name = "weapon", length = 255)
     private String weaponName;
 
     @Column(name = "attributes", length = 255)

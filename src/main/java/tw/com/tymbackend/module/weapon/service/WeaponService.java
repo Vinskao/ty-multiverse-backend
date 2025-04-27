@@ -46,15 +46,15 @@ public class WeaponService {
     }
     
     /**
-     * Get weapon by ID
+     * Get weapon by weapon name (ID)
      * 
-     * @param id the weapon ID
+     * @param weaponName the weapon name (ID)
      * @return the weapon
-     * @throws NoSuchElementException if no weapon is found with the given ID
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
-    public Weapon getWeaponById(String id) {
-        return weaponDataAccessor.findById(id)
-            .orElseThrow(() -> new NoSuchElementException("No weapon found with ID: " + id));
+    public Weapon getWeaponByWeaponName(String weaponName) {
+        return weaponDataAccessor.findById(weaponName)
+            .orElseThrow(() -> new NoSuchElementException("No weapon found with name: " + weaponName));
     }
     
     /**
@@ -69,20 +69,15 @@ public class WeaponService {
     }
     
     /**
-     * Delete a weapon by name
+     * Delete a weapon by weapon name (ID)
      * 
-     * @param name the name of the weapon to delete
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @param weaponName the weapon name (ID) of the weapon to delete
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public void deleteWeapon(String name) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        for (Weapon weapon : weapons) {
-            weaponDataAccessor.deleteById(weapon.getId());
-        }
+    public void deleteWeapon(String weaponName) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
+        weaponDataAccessor.deleteById(weaponName);
     }
     
     /**
@@ -98,18 +93,14 @@ public class WeaponService {
     /**
      * Update weapon attributes
      * 
-     * @param name the name of the weapon
+     * @param weaponName the weapon name (ID) of the weapon
      * @param attributes the new attributes
      * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponAttributes(String name, String attributes) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        Weapon weapon = weapons.get(0);
+    public Weapon updateWeaponAttributes(String weaponName, String attributes) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
         weapon.setAttributes(attributes);
         return weaponDataAccessor.save(weapon);
     }
@@ -117,18 +108,14 @@ public class WeaponService {
     /**
      * Update weapon base damage
      * 
-     * @param name the name of the weapon
+     * @param weaponName the weapon name (ID) of the weapon
      * @param baseDamage the new base damage
      * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        Weapon weapon = weapons.get(0);
+    public Weapon updateWeaponBaseDamage(String weaponName, Integer baseDamage) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
         weapon.setBaseDamage(baseDamage);
         return weaponDataAccessor.save(weapon);
     }
@@ -136,18 +123,14 @@ public class WeaponService {
     /**
      * Update weapon bonus damage
      * 
-     * @param name the name of the weapon
+     * @param weaponName the weapon name (ID) of the weapon
      * @param bonusDamage the new bonus damage
      * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        Weapon weapon = weapons.get(0);
+    public Weapon updateWeaponBonusDamage(String weaponName, Integer bonusDamage) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
         weapon.setBonusDamage(bonusDamage);
         return weaponDataAccessor.save(weapon);
     }
@@ -155,18 +138,14 @@ public class WeaponService {
     /**
      * Update weapon bonus attributes
      * 
-     * @param name the name of the weapon
+     * @param weaponName the weapon name (ID) of the weapon
      * @param bonusAttributes the new bonus attributes
      * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        Weapon weapon = weapons.get(0);
+    public Weapon updateWeaponBonusAttributes(String weaponName, List<String> bonusAttributes) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
         weapon.setBonusAttributes(bonusAttributes);
         return weaponDataAccessor.save(weapon);
     }
@@ -174,18 +153,14 @@ public class WeaponService {
     /**
      * Update weapon state attributes
      * 
-     * @param name the name of the weapon
+     * @param weaponName the weapon name (ID) of the weapon
      * @param stateAttributes the new state attributes
      * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given name
+     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
-        List<Weapon> weapons = weaponRepository.findByName(name);
-        if (weapons.isEmpty()) {
-            throw new NoSuchElementException("No weapon found with name: " + name);
-        }
-        Weapon weapon = weapons.get(0);
+    public Weapon updateWeaponStateAttributes(String weaponName, List<String> stateAttributes) {
+        Weapon weapon = getWeaponByWeaponName(weaponName);
         weapon.setStateAttributes(stateAttributes);
         return weaponDataAccessor.save(weapon);
     }
