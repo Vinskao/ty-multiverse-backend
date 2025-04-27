@@ -7,10 +7,13 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
+import tw.com.tymbackend.core.repository.DataAccessor;
 import tw.com.tymbackend.module.people.domain.vo.People;
 
-public interface PeopleRepository extends JpaRepository<People, Long>, JpaSpecificationExecutor<People> {
+@Repository
+public interface PeopleRepository extends JpaRepository<People, Long>, JpaSpecificationExecutor<People>, DataAccessor<People, Long> {
 
     Optional<People> findByName(String name);
 

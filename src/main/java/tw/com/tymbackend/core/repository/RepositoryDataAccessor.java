@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,19 +14,24 @@ import java.util.Optional;
  * @param <T> The entity type
  * @param <ID> The ID type
  */
-@Component
 public class RepositoryDataAccessor<T, ID> implements DataAccessor<T, ID> {
 
     private final JpaRepository<T, ID> repository;
     private final JpaSpecificationExecutor<T> specificationExecutor;
 
-    public RepositoryDataAccessor(JpaRepository<T, ID> repository) {
+    // Private constructor to prevent direct instantiation
+    private RepositoryDataAccessor(JpaRepository<T, ID> repository) {
         this.repository = repository;
         if (repository instanceof JpaSpecificationExecutor) {
             this.specificationExecutor = (JpaSpecificationExecutor<T>) repository;
         } else {
             throw new IllegalArgumentException("Repository must implement JpaSpecificationExecutor");
         }
+    }
+
+    // Factory method to create a RepositoryDataAccessor
+    public static <T, ID> RepositoryDataAccessor<T, ID> create(JpaRepository<T, ID> repository) {
+        return new RepositoryDataAccessor<>(repository);
     }
 
     @Override

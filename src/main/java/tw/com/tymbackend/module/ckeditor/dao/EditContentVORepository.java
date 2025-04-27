@@ -1,6 +1,7 @@
 package tw.com.tymbackend.module.ckeditor.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 
@@ -8,7 +9,7 @@ import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
  * Repository for EditContentVO entity
  */
 @Repository
-public interface EditContentVORepository extends JpaRepository<EditContentVO, String> {
+public interface EditContentVORepository extends JpaRepository<EditContentVO, String>, JpaSpecificationExecutor<EditContentVO> {
     
     /**
      * Find EditContentVO by editor name

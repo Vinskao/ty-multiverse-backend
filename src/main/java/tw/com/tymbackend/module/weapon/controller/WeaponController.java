@@ -11,7 +11,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/weapons")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:8080"}, allowCredentials = "true")
 public class WeaponController {
 
     @Autowired
@@ -26,11 +25,11 @@ public class WeaponController {
     }
 
     /**
-     * Get weapon by name
+     * Get weapon by weapon name (ID)
      */
-    @GetMapping("/{name}")
-    public ResponseEntity<List<Weapon>> getWeaponByName(@PathVariable String name) {
-        return ResponseEntity.ok(weaponService.getWeaponsByOwnerName(name));
+    @GetMapping("/{weaponName}")
+    public ResponseEntity<Weapon> getWeaponByWeaponName(@PathVariable String weaponName) {
+        return ResponseEntity.ok(weaponService.getWeaponByWeaponName(weaponName));
     }
 
     /**
@@ -52,9 +51,9 @@ public class WeaponController {
     /**
      * Delete a weapon
      */
-    @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteWeapon(@PathVariable String name) {
-        weaponService.deleteWeapon(name);
+    @DeleteMapping("/{weaponName}")
+    public ResponseEntity<Void> deleteWeapon(@PathVariable String weaponName) {
+        weaponService.deleteWeapon(weaponName);
         return ResponseEntity.ok().build();
     }
 
@@ -69,50 +68,68 @@ public class WeaponController {
     /**
      * Update weapon attributes
      */
-    @PutMapping("/{name}/attributes")
+    @PutMapping("/{weaponName}/attributes")
     public ResponseEntity<Weapon> updateWeaponAttributes(
-            @PathVariable String name,
-            @RequestBody String attributes) {
-        return ResponseEntity.ok(weaponService.updateWeaponAttributes(name, attributes));
+            @PathVariable String weaponName,
+            @RequestBody Map<String, String> request) {
+        return ResponseEntity.ok(weaponService.updateWeaponAttributes(weaponName, request.get("attributes")));
     }
 
     /**
      * Update weapon base damage
      */
-    @PutMapping("/{name}/base-damage")
+    @PutMapping("/{weaponName}/base-damage")
     public ResponseEntity<Weapon> updateWeaponBaseDamage(
-            @PathVariable String name,
-            @RequestBody Integer baseDamage) {
-        return ResponseEntity.ok(weaponService.updateWeaponBaseDamage(name, baseDamage));
+            @PathVariable String weaponName,
+            @RequestBody Map<String, Integer> request) {
+        return ResponseEntity.ok(weaponService.updateWeaponBaseDamage(weaponName, request.get("baseDamage")));
     }
 
     /**
      * Update weapon bonus damage
      */
-    @PutMapping("/{name}/bonus-damage")
+    @PutMapping("/{weaponName}/bonus-damage")
     public ResponseEntity<Weapon> updateWeaponBonusDamage(
-            @PathVariable String name,
-            @RequestBody Integer bonusDamage) {
-        return ResponseEntity.ok(weaponService.updateWeaponBonusDamage(name, bonusDamage));
+            @PathVariable String weaponName,
+            @RequestBody Map<String, Integer> request) {
+        return ResponseEntity.ok(weaponService.updateWeaponBonusDamage(weaponName, request.get("bonusDamage")));
     }
 
     /**
      * Update weapon bonus attributes
      */
-    @PutMapping("/{name}/bonus-attributes")
+    @PutMapping("/{weaponName}/bonus-attributes")
     public ResponseEntity<Weapon> updateWeaponBonusAttributes(
-            @PathVariable String name,
-            @RequestBody List<String> bonusAttributes) {
-        return ResponseEntity.ok(weaponService.updateWeaponBonusAttributes(name, bonusAttributes));
+            @PathVariable String weaponName,
+            @RequestBody Map<String, List<String>> request) {
+        return ResponseEntity.ok(weaponService.updateWeaponBonusAttributes(weaponName, request.get("bonusAttributes")));
     }
 
     /**
      * Update weapon state attributes
      */
-    @PutMapping("/{name}/state-attributes")
+    @PutMapping("/{weaponName}/state-attributes")
     public ResponseEntity<Weapon> updateWeaponStateAttributes(
-            @PathVariable String name,
-            @RequestBody List<String> stateAttributes) {
-        return ResponseEntity.ok(weaponService.updateWeaponStateAttributes(name, stateAttributes));
+            @PathVariable String weaponName,
+            @RequestBody Map<String, List<String>> request) {
+        return ResponseEntity.ok(weaponService.updateWeaponStateAttributes(weaponName, request.get("stateAttributes")));
+    }
+
+    /**
+     * Find weapons by base damage range
+     */
+    @GetMapping("/damage-range")
+    public ResponseEntity<List<Weapon>> findByBaseDamageRange(
+            @RequestParam Integer minDamage,
+            @RequestParam Integer maxDamage) {
+        return ResponseEntity.ok(weaponService.findByBaseDamageRange(minDamage, maxDamage));
+    }
+
+    /**
+     * Find weapons by attribute
+     */
+    @GetMapping("/attribute/{attribute}")
+    public ResponseEntity<List<Weapon>> findByAttribute(@PathVariable String attribute) {
+        return ResponseEntity.ok(weaponService.findByAttribute(attribute));
     }
 } 

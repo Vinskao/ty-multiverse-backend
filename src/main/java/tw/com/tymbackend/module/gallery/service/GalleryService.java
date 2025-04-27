@@ -6,44 +6,41 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
-import tw.com.tymbackend.core.repository.DataAccessor;
 import tw.com.tymbackend.module.gallery.dao.GalleryRepository;
 import tw.com.tymbackend.module.gallery.domain.vo.Gallery;
 
 @Service
 public class GalleryService {
 
-    private final DataAccessor<Gallery, Integer> galleryDataAccessor;
     private final GalleryRepository galleryRepository;
 
-    public GalleryService(DataAccessor<Gallery, Integer> galleryDataAccessor, GalleryRepository galleryRepository) {
-        this.galleryDataAccessor = galleryDataAccessor;
+    public GalleryService(GalleryRepository galleryRepository) {
         this.galleryRepository = galleryRepository;
     }
 
     public List<Gallery> getAllImages() {
-        return galleryDataAccessor.findAll();
+        return galleryRepository.findAll();
     }
 
     public Optional<Gallery> getImageById(Integer id) {
-        return galleryDataAccessor.findById(id);
+        return galleryRepository.findById(id);
     }
 
     public Gallery saveImage(Gallery gallery) {
-        return galleryDataAccessor.save(gallery);
+        return galleryRepository.save(gallery);
     }
 
     public void deleteImage(Integer id) {
-        galleryDataAccessor.deleteById(id);
+        galleryRepository.deleteById(id);
     }
 
     public Gallery updateImage(Integer id, String newBase64Image) {
-        Optional<Gallery> optionalGallery = galleryDataAccessor.findById(id);
+        Optional<Gallery> optionalGallery = galleryRepository.findById(id);
         if (optionalGallery.isPresent()) {
             Gallery gallery = optionalGallery.get();
             gallery.setImageBase64(newBase64Image);
             try {
-                return galleryDataAccessor.save(gallery);
+                return galleryRepository.save(gallery);
             } catch (ObjectOptimisticLockingFailureException e) {
                 throw new RuntimeException("圖片已被其他使用者修改，請重新整理後再試。", e);
             }

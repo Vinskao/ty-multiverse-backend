@@ -2,8 +2,6 @@ package tw.com.tymbackend.module.people.domain.vo;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Version;
@@ -16,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PeopleImage {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String id;
 
     @Version
@@ -30,12 +27,21 @@ public class PeopleImage {
     private String image;
     
     // Constructor with parameters
-    public PeopleImage(String codeName, String image) {
+    public PeopleImage(String id, String codeName, String image) {
+        this.id = id;
         this.codeName = codeName;
         this.image = image;
     }
     
     // Getters and Setters
+    public String getId() {
+        return id;
+    }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
+    
     public String getCodeName() {
         return codeName;
     }
