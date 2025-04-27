@@ -4,23 +4,22 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import tw.com.tymbackend.core.factory.RepositoryFactory;
-import tw.com.tymbackend.core.service.BaseService;
+import tw.com.tymbackend.core.repository.DataAccessor;
 import tw.com.tymbackend.module.ckeditor.dao.EditContentRepository;
 import tw.com.tymbackend.module.ckeditor.dao.EditContentVORepository;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 
 @Service
-public class EditContentService extends BaseService {
+public class EditContentService {
 
-    private final RepositoryFactory repositoryFactory;
+    private final DataAccessor<EditContentVO, String> editContentDataAccessor;
     private final EditContentRepository editContentRepository;
     private final EditContentVORepository editContentVORepository;
 
-    public EditContentService(RepositoryFactory repositoryFactory, 
+    public EditContentService(DataAccessor<EditContentVO, String> editContentDataAccessor, 
                              EditContentRepository editContentRepository,
                              EditContentVORepository editContentVORepository) {
-        this.repositoryFactory = repositoryFactory;
+        this.editContentDataAccessor = editContentDataAccessor;
         this.editContentRepository = editContentRepository;
         this.editContentVORepository = editContentVORepository;
     }
@@ -32,7 +31,7 @@ public class EditContentService extends BaseService {
      * @return 儲存後的內容物件
      */
     public EditContentVO saveContent(EditContentVO editContentVO) {
-        return repositoryFactory.save(editContentVO);
+        return editContentDataAccessor.save(editContentVO);
     }
 
     /**
@@ -42,6 +41,6 @@ public class EditContentService extends BaseService {
      * @return 儲存的內容，如果找不到則返回空的Optional
      */
     public Optional<EditContentVO> getContent(String editor) {
-        return repositoryFactory.findById(EditContentVO.class, editor);
+        return editContentDataAccessor.findById(editor);
     }
 }

@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class PeopleImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Version
     @Column(name = "version", nullable = true)

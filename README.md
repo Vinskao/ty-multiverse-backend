@@ -34,7 +34,134 @@ classDiagram
     IoCContainer --> AOPBeans
 ```
 
-### 2. 設計模式與工廠架構
+### 2. 領域驅動設計 (DDD) 架構
+
+#### 2.1 DDD 分層架構
+```mermaid
+classDiagram
+    class PresentationLayer {
+        +Controller
+        +DTO
+    }
+    
+    class ApplicationLayer {
+        +Service
+        +ApplicationService
+    }
+    
+    class DomainLayer {
+        +Entity
+        +ValueObject
+        +Aggregate
+        +DomainService
+        +Repository
+    }
+    
+    class InfrastructureLayer {
+        +RepositoryImpl
+        +DataAccessor
+        +ExternalService
+    }
+    
+    PresentationLayer --> ApplicationLayer
+    ApplicationLayer --> DomainLayer
+    DomainLayer --> InfrastructureLayer
+```
+
+- **表現層 (Presentation Layer)**
+  - 控制器 (`Controller`) 處理 HTTP 請求
+  - 資料傳輸物件 (`DTO`) 用於 API 請求/響應
+  - 負責與外部系統的通信
+
+- **應用層 (Application Layer)**
+  - 服務類 (`Service`) 協調領域物件
+  - 處理事務和協調多個領域物件
+  - 不包含業務規則，只負責流程協調
+
+- **領域層 (Domain Layer)**
+  - 實體 (`Entity`) 和值物件 (`ValueObject`) 包含業務邏輯
+  - 領域服務 (`DomainService`) 處理跨實體的業務邏輯
+  - 儲存庫介面 (`Repository`) 定義資料存取契約
+  - 聚合根 (`Aggregate`) 確保資料一致性
+
+- **基礎設施層 (Infrastructure Layer)**
+  - 儲存庫實現 (`RepositoryImpl`) 提供資料持久化
+  - 資料存取器 (`DataAccessor`) 抽象化資料存取
+  - 外部服務整合
+
+#### 2.2 領域模型示例
+```mermaid
+classDiagram
+    class People {
+        +Long id
+        +String name
+        +int age
+        +String race
+        +String attributes
+        +Long version
+        +equals()
+        +hashCode()
+    }
+    
+    class Weapon {
+        +String id
+        +String name
+        +String weaponName
+        +int baseDamage
+        +int bonusDamage
+        +String attributes
+        +String bonusAttributes
+        +String stateAttributes
+    }
+    
+    class PeopleRepository {
+        <<interface>>
+        +findByName()
+        +deleteByName()
+    }
+    
+    class WeaponRepository {
+        <<interface>>
+        +findByName()
+        +findByAttributes()
+        +findByBaseDamageBetween()
+    }
+    
+    PeopleRepository --> People
+    WeaponRepository --> Weapon
+```
+
+#### 2.3 領域驅動設計原則
+
+1. **統一語言 (Ubiquitous Language)**
+   - 在代碼和文檔中使用一致的術語
+   - 領域專家、開發人員和業務人員共享相同的語言
+
+2. **限界上下文 (Bounded Context)**
+   - 每個模組 (people, weapon, livestock, gallery) 代表一個限界上下文
+   - 上下文之間通過明確的介面進行通信
+
+3. **實體與值物件 (Entity vs Value Object)**
+   - 實體：具有唯一標識的物件 (如 People, Weapon)
+   - 值物件：描述事物特徵的物件，無唯一標識
+
+4. **聚合 (Aggregate)**
+   - 聚合根：People, Weapon 等
+   - 聚合邊界：確保資料一致性
+
+5. **領域服務 (Domain Service)**
+   - 處理跨實體的業務邏輯
+   - 不屬於任何單一實體的業務規則
+
+6. **儲存庫 (Repository)**
+   - 提供資料持久化抽象
+   - 隱藏資料存取細節
+
+7. **工廠 (Factory)**
+   - 複雜物件的創建邏輯
+   - 確保物件創建的完整性
+
+### 3. 設計模式與工廠架構
 
 #### 2.1 Singleton 模式
 ```mermaid
@@ -517,3 +644,98 @@ classDiagram
   - 自動重試
   - 返回衝突狀態
   - 提示用戶刷新
+
+## 單元測試架構
+
+### 1. 測試架構概述
+```mermaid
+classDiagram
+    class TestConfig {
+        +@TestConfiguration
+        +dataSource() DataSource
+    }
+    
+    class RepositoryTests {
+        +@DataJpaTest
+        +RepositoryTest
+    }
+    
+    class ServiceTests {
+        +@ExtendWith(MockitoExtension)
+        +ServiceTest
+    }
+    
+    class ControllerTests {
+        +@ExtendWith(MockitoExtension)
+        +ControllerTest
+    }
+    
+    TestConfig --> RepositoryTests : provides
+    RepositoryTests --> ServiceTests : uses
+    ServiceTests --> ControllerTests : uses
+```
+
+### 2. 測試分層設計
+
+#### 2.1 配置層 (Configuration)
+- **TestConfig.java**
+  - 提供測試環境的基礎配置
+  - 使用 H2 內存數據庫
+  - 通過 `@TestConfiguration` 和 `@Primary` 確保測試環境隔離
+  - 配置測試專用的數據源和事務管理器
+
+#### 2.2 數據訪問層測試 (Repository Tests)
+- **PeopleRepositoryTest.java**
+  - 使用 `@DataJpaTest` 進行 JPA 相關測試
+  - 測試基本的 CRUD 操作
+  - 驗證數據庫操作的正確性
+  - 使用 H2 內存數據庫進行測試
+
+#### 2.3 服務層測試 (Service Tests)
+- **PeopleServiceTest.java**
+  - 使用 Mockito 進行依賴模擬
+  - 測試業務邏輯的完整性
+  - 驗證服務層方法的行為
+  - 處理異常情況的測試
+
+#### 2.4 控制器層測試 (Controller Tests)
+- **PeopleControllerTest.java**
+  - 測試 API 接口的正確性
+  - 驗證 HTTP 響應和狀態碼
+  - 測試請求參數的處理
+  - 驗證服務層的調用
+
+### 3. 測試設計模式
+
+#### 3.1 AAA 模式 (Arrange-Act-Assert)
+```java
+@Test
+void testMethod() {
+    // Arrange: 準備測試數據
+    // Act: 執行被測試的方法
+    // Assert: 驗證結果
+}
+```
+
+#### 3.2 依賴注入模式
+
+##### 3.2.1 Mock 類型說明
+
+###### 1. 標準 Mock (@Mock)
+- 就像一個空殼子，你告訴它怎麼做它就怎麼做，沒告訴它的就什麼都不做，最常用的一種模擬方式。
+
+###### 2. 嚴格 Mock (@Mock(strictness = Strictness.STRICT))
+- 像一個嚴格的檢查員，你必須告訴它所有可能發生的事情，如果遇到沒說清楚的情況就會報錯，適合需要非常嚴謹的測試。
+
+###### 3. 寬鬆 Mock (@Mock(strictness = Strictness.LENIENT))
+- 像一個好說話的助手，你沒說清楚的事情它會自動處理，不會報錯，適合快速測試和開發階段。
+
+###### 4. 間諜 Mock (@Spy)
+- 像一個可以部分替換的零件，有些功能用真實的，有些功能用模擬的，適合只需要模擬部分功能的場景。
+- 真實的：資料庫查詢功能
+- 模擬的：送出Http請求其他端點
+
+###### 5. 靜態 Mock (@MockStatic)
+- 專門用來模擬那些不需要創建對象就能直接調用的方法，比如工具類中的方法，適合測試靜態方法。
+- 例如：模擬一個工具類中的日期格式化方法
+

@@ -11,10 +11,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-
-import tw.com.tymbackend.core.factory.QueryConditionFactory;
-import tw.com.tymbackend.core.factory.RepositoryFactory;
+import tw.com.tymbackend.core.repository.DataAccessor;
 import tw.com.tymbackend.module.people.domain.vo.PeopleImage;
 
 import java.util.Arrays;
@@ -31,13 +28,7 @@ import static org.mockito.Mockito.*;
 class PeopleImageServiceTest {
 
     @Mock
-    private RepositoryFactory repositoryFactory;
-
-    @Mock
-    private QueryConditionFactory queryConditionFactory;
-
-    @Mock
-    private JpaSpecificationExecutor<PeopleImage> specificationExecutor;
+    private DataAccessor<PeopleImage, String> peopleImageDataAccessor;
 
     @InjectMocks
     private PeopleImageService peopleImageService;
@@ -58,20 +49,20 @@ class PeopleImageServiceTest {
     @Test
     void getAllPeopleImages_Success() {
         // Arrange
-        when(repositoryFactory.findAll(PeopleImage.class)).thenReturn(testPeopleImageList);
+        when(peopleImageDataAccessor.findAll()).thenReturn(testPeopleImageList);
 
         // Act
         List<PeopleImage> result = peopleImageService.getAllPeopleImages();
 
         // Assert
         assertEquals(testPeopleImageList, result);
-        verify(repositoryFactory, times(1)).findAll(PeopleImage.class);
+        verify(peopleImageDataAccessor, times(1)).findAll();
     }
 
     @Test
     void getPeopleImageByCodeName_Success() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.of(testPeopleImage));
 
         // Act
@@ -79,66 +70,66 @@ class PeopleImageServiceTest {
 
         // Assert
         assertEquals(testPeopleImage, result);
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "test-code");
+        verify(peopleImageDataAccessor, times(1)).findById("test-code");
     }
 
     @Test
     void getPeopleImageByCodeName_NotFound() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NoSuchElementException.class, () -> 
             peopleImageService.getPeopleImageByCodeName("non-existent"));
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "non-existent");
+        verify(peopleImageDataAccessor, times(1)).findById("non-existent");
     }
 
     @Test
     void savePeopleImage_Success() {
         // Arrange
-        when(repositoryFactory.save(any(PeopleImage.class))).thenReturn(testPeopleImage);
+        when(peopleImageDataAccessor.save(any(PeopleImage.class))).thenReturn(testPeopleImage);
 
         // Act
         PeopleImage result = peopleImageService.savePeopleImage(testPeopleImage);
 
         // Assert
         assertEquals(testPeopleImage, result);
-        verify(repositoryFactory, times(1)).save(testPeopleImage);
+        verify(peopleImageDataAccessor, times(1)).save(testPeopleImage);
     }
 
     @Test
     void deletePeopleImage_Success() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.of(testPeopleImage));
-        doNothing().when(repositoryFactory).deleteById(eq(PeopleImage.class), anyString());
+        doNothing().when(peopleImageDataAccessor).deleteById(anyString());
 
         // Act
         peopleImageService.deletePeopleImage("test-code");
 
         // Assert
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "test-code");
-        verify(repositoryFactory, times(1)).deleteById(PeopleImage.class, "test-code");
+        verify(peopleImageDataAccessor, times(1)).findById("test-code");
+        verify(peopleImageDataAccessor, times(1)).deleteById("test-code");
     }
 
     @Test
     void deletePeopleImage_NotFound() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.empty());
 
         // Act & Assert
         assertThrows(NoSuchElementException.class, () -> 
             peopleImageService.deletePeopleImage("non-existent"));
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "non-existent");
-        verify(repositoryFactory, never()).deleteById(any(), anyString());
+        verify(peopleImageDataAccessor, times(1)).findById("non-existent");
+        verify(peopleImageDataAccessor, never()).deleteById(anyString());
     }
 
     @Test
     void peopleImageExists_True() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.of(testPeopleImage));
 
         // Act
@@ -146,13 +137,13 @@ class PeopleImageServiceTest {
 
         // Assert
         assertTrue(result);
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "test-code");
+        verify(peopleImageDataAccessor, times(1)).findById("test-code");
     }
 
     @Test
     void peopleImageExists_False() {
         // Arrange
-        when(repositoryFactory.findById(eq(PeopleImage.class), anyString()))
+        when(peopleImageDataAccessor.findById(anyString()))
             .thenReturn(Optional.empty());
 
         // Act
@@ -160,27 +151,31 @@ class PeopleImageServiceTest {
 
         // Assert
         assertFalse(result);
-        verify(repositoryFactory, times(1)).findById(PeopleImage.class, "non-existent");
+        verify(peopleImageDataAccessor, times(1)).findById("non-existent");
     }
 
     @Test
-    void findByCodeNameContaining_Success() {
-        // Arrange
-        @SuppressWarnings("unchecked")
-        Specification<PeopleImage> mockSpec = mock(Specification.class);
-        when(queryConditionFactory.<PeopleImage>createLikeCondition(anyString(), anyString())).thenReturn(mockSpec);
-        when(repositoryFactory.getSpecificationRepository(PeopleImage.class, String.class))
-            .thenReturn(specificationExecutor);
-        when(specificationExecutor.findAll(any(Specification.class))).thenReturn(testPeopleImageList);
-
-        // Act
-        List<PeopleImage> result = peopleImageService.findByCodeNameContaining("test");
-
-        // Assert
-        assertEquals(testPeopleImageList, result);
-        verify(queryConditionFactory, times(1)).createLikeCondition("codeName", "test");
-        verify(repositoryFactory, times(1)).getSpecificationRepository(PeopleImage.class, String.class);
-        verify(specificationExecutor, times(1)).findAll(mockSpec);
+    void testFindByCodeNameContaining() {
+        // Given
+        String searchTerm = "test";
+        PeopleImage image1 = new PeopleImage();
+        image1.setCodeName("test1");
+        PeopleImage image2 = new PeopleImage();
+        image2.setCodeName("TEST2");
+        List<PeopleImage> expectedImages = Arrays.asList(image1, image2);
+        
+        Specification<PeopleImage> spec = (root, query, cb) -> 
+            cb.like(cb.lower(root.get("codeName")), "%" + searchTerm.toLowerCase() + "%");
+        
+        when(peopleImageDataAccessor.findAll(any(Specification.class)))
+            .thenReturn(expectedImages);
+        
+        // When
+        List<PeopleImage> result = peopleImageService.findByCodeNameContaining(searchTerm);
+        
+        // Then
+        assertEquals(expectedImages, result);
+        verify(peopleImageDataAccessor).findAll(any(Specification.class));
     }
 
     @Test
@@ -188,42 +183,13 @@ class PeopleImageServiceTest {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
         Page<PeopleImage> expectedPage = new PageImpl<>(testPeopleImageList, pageable, testPeopleImageList.size());
-        when(repositoryFactory.findAll(eq(PeopleImage.class), any(Pageable.class))).thenReturn(expectedPage);
+        when(peopleImageDataAccessor.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
         // Act
         Page<PeopleImage> result = peopleImageService.findAll(pageable);
 
         // Assert
         assertEquals(expectedPage, result);
-        verify(repositoryFactory, times(1)).findAll(PeopleImage.class, pageable);
-    }
-
-    @Test
-    void findByMultipleCriteria_Success() {
-        // Arrange
-        @SuppressWarnings("unchecked")
-        Specification<PeopleImage> mockCodeNameSpec = mock(Specification.class);
-        @SuppressWarnings("unchecked")
-        Specification<PeopleImage> mockImageSpec = mock(Specification.class);
-        @SuppressWarnings("unchecked")
-        Specification<PeopleImage> mockCombinedSpec = mock(Specification.class);
-
-        when(queryConditionFactory.<PeopleImage>createLikeCondition(anyString(), anyString())).thenReturn(mockCodeNameSpec);
-        when(queryConditionFactory.<PeopleImage>createIsNotNullCondition(anyString())).thenReturn(mockImageSpec);
-        when(queryConditionFactory.<PeopleImage>createCompositeCondition(any(), any())).thenReturn(mockCombinedSpec);
-        when(repositoryFactory.getSpecificationRepository(PeopleImage.class, String.class))
-            .thenReturn(specificationExecutor);
-        when(specificationExecutor.findAll(any(Specification.class))).thenReturn(testPeopleImageList);
-
-        // Act
-        List<PeopleImage> result = peopleImageService.findByMultipleCriteria("test", true);
-
-        // Assert
-        assertEquals(testPeopleImageList, result);
-        verify(queryConditionFactory, times(1)).createLikeCondition("codeName", "test");
-        verify(queryConditionFactory, times(1)).createIsNotNullCondition("image");
-        verify(queryConditionFactory, times(1)).createCompositeCondition(mockCodeNameSpec, mockImageSpec);
-        verify(repositoryFactory, times(1)).getSpecificationRepository(PeopleImage.class, String.class);
-        verify(specificationExecutor, times(1)).findAll(mockCombinedSpec);
+        verify(peopleImageDataAccessor, times(1)).findAll(pageable);
     }
 } 

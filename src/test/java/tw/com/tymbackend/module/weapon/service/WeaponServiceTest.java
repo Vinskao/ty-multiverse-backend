@@ -11,10 +11,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-import tw.com.tymbackend.core.factory.QueryConditionFactory;
-import tw.com.tymbackend.core.factory.RepositoryFactory;
+import tw.com.tymbackend.core.repository.DataAccessor;
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
@@ -27,23 +25,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class WeaponServiceTest {
 
     @Mock
-    private RepositoryFactory repositoryFactory;
-
-    @Mock
-    private QueryConditionFactory queryConditionFactory;
+    private DataAccessor<Weapon, String> weaponDataAccessor;
 
     @Mock
     private WeaponRepository weaponRepository;
-
-    @Mock
-    private JpaSpecificationExecutor<Weapon> specificationExecutor;
 
     @InjectMocks
     private WeaponService weaponService;
@@ -69,14 +60,14 @@ class WeaponServiceTest {
     @Test
     void getAllWeapons_Success() {
         // Arrange
-        when(repositoryFactory.findAll(Weapon.class)).thenReturn(testWeaponList);
+        when(weaponDataAccessor.findAll()).thenReturn(testWeaponList);
 
         // Act
         List<Weapon> result = weaponService.getAllWeapons();
 
         // Assert
         assertEquals(testWeaponList, result);
-        verify(repositoryFactory, times(1)).findAll(Weapon.class);
+        verify(weaponDataAccessor, times(1)).findAll();
     }
 
     @Test
@@ -95,28 +86,28 @@ class WeaponServiceTest {
     @Test
     void saveWeapon_Success() {
         // Arrange
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.saveWeapon(testWeapon);
 
         // Assert
         assertEquals(testWeapon, result);
-        verify(repositoryFactory, times(1)).save(testWeapon);
+        verify(weaponDataAccessor, times(1)).save(testWeapon);
     }
 
     @Test
     void deleteWeapon_Success() {
         // Arrange
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        doNothing().when(repositoryFactory).deleteById(eq(Weapon.class), anyString());
+        doNothing().when(weaponDataAccessor).deleteById(anyString());
 
         // Act
         weaponService.deleteWeapon("TestWeapon");
 
         // Assert
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).deleteById(Weapon.class, "TestWeapon");
+        verify(weaponDataAccessor, times(1)).deleteById("TestWeapon");
     }
 
     @Test
@@ -128,7 +119,7 @@ class WeaponServiceTest {
         assertThrows(NoSuchElementException.class, () -> 
             weaponService.deleteWeapon("NonExistentWeapon"));
         verify(weaponRepository, times(1)).existsByName("NonExistentWeapon");
-        verify(repositoryFactory, never()).deleteById(any(), anyString());
+        verify(weaponDataAccessor, never()).deleteById(anyString());
     }
 
     @Test
@@ -161,8 +152,8 @@ class WeaponServiceTest {
     void updateWeaponAttributes_Success() {
         // Arrange
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        when(repositoryFactory.findById(eq(Weapon.class), anyString())).thenReturn(Optional.of(testWeapon));
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.findById(anyString())).thenReturn(Optional.of(testWeapon));
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.updateWeaponAttributes("TestWeapon", "NewAttributes");
@@ -170,8 +161,8 @@ class WeaponServiceTest {
         // Assert
         assertEquals("NewAttributes", result.getAttributes());
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).findById(Weapon.class, "TestWeapon");
-        verify(repositoryFactory, times(1)).save(any(Weapon.class));
+        verify(weaponDataAccessor, times(1)).findById("TestWeapon");
+        verify(weaponDataAccessor, times(1)).save(any(Weapon.class));
     }
 
     @Test
@@ -183,16 +174,16 @@ class WeaponServiceTest {
         assertThrows(NoSuchElementException.class, () -> 
             weaponService.updateWeaponAttributes("NonExistentWeapon", "NewAttributes"));
         verify(weaponRepository, times(1)).existsByName("NonExistentWeapon");
-        verify(repositoryFactory, never()).findById(any(), anyString());
-        verify(repositoryFactory, never()).save(any());
+        verify(weaponDataAccessor, never()).findById(anyString());
+        verify(weaponDataAccessor, never()).save(any());
     }
 
     @Test
     void updateWeaponBaseDamage_Success() {
         // Arrange
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        when(repositoryFactory.findById(eq(Weapon.class), anyString())).thenReturn(Optional.of(testWeapon));
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.findById(anyString())).thenReturn(Optional.of(testWeapon));
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.updateWeaponBaseDamage("TestWeapon", 15);
@@ -200,16 +191,16 @@ class WeaponServiceTest {
         // Assert
         assertEquals(15, result.getBaseDamage());
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).findById(Weapon.class, "TestWeapon");
-        verify(repositoryFactory, times(1)).save(any(Weapon.class));
+        verify(weaponDataAccessor, times(1)).findById("TestWeapon");
+        verify(weaponDataAccessor, times(1)).save(any(Weapon.class));
     }
 
     @Test
     void updateWeaponBonusDamage_Success() {
         // Arrange
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        when(repositoryFactory.findById(eq(Weapon.class), anyString())).thenReturn(Optional.of(testWeapon));
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.findById(anyString())).thenReturn(Optional.of(testWeapon));
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.updateWeaponBonusDamage("TestWeapon", 10);
@@ -217,8 +208,8 @@ class WeaponServiceTest {
         // Assert
         assertEquals(10, result.getBonusDamage());
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).findById(Weapon.class, "TestWeapon");
-        verify(repositoryFactory, times(1)).save(any(Weapon.class));
+        verify(weaponDataAccessor, times(1)).findById("TestWeapon");
+        verify(weaponDataAccessor, times(1)).save(any(Weapon.class));
     }
 
     @Test
@@ -226,8 +217,8 @@ class WeaponServiceTest {
         // Arrange
         List<String> newBonusAttributes = Arrays.asList("NewBonus1", "NewBonus2");
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        when(repositoryFactory.findById(eq(Weapon.class), anyString())).thenReturn(Optional.of(testWeapon));
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.findById(anyString())).thenReturn(Optional.of(testWeapon));
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.updateWeaponBonusAttributes("TestWeapon", newBonusAttributes);
@@ -235,8 +226,8 @@ class WeaponServiceTest {
         // Assert
         assertEquals(newBonusAttributes, result.getBonusAttributes());
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).findById(Weapon.class, "TestWeapon");
-        verify(repositoryFactory, times(1)).save(any(Weapon.class));
+        verify(weaponDataAccessor, times(1)).findById("TestWeapon");
+        verify(weaponDataAccessor, times(1)).save(any(Weapon.class));
     }
 
     @Test
@@ -244,8 +235,8 @@ class WeaponServiceTest {
         // Arrange
         List<String> newStateAttributes = Arrays.asList("NewState1", "NewState2");
         when(weaponRepository.existsByName(anyString())).thenReturn(true);
-        when(repositoryFactory.findById(eq(Weapon.class), anyString())).thenReturn(Optional.of(testWeapon));
-        when(repositoryFactory.save(any(Weapon.class))).thenReturn(testWeapon);
+        when(weaponDataAccessor.findById(anyString())).thenReturn(Optional.of(testWeapon));
+        when(weaponDataAccessor.save(any(Weapon.class))).thenReturn(testWeapon);
 
         // Act
         Weapon result = weaponService.updateWeaponStateAttributes("TestWeapon", newStateAttributes);
@@ -253,8 +244,8 @@ class WeaponServiceTest {
         // Assert
         assertEquals(newStateAttributes, result.getStateAttributes());
         verify(weaponRepository, times(1)).existsByName("TestWeapon");
-        verify(repositoryFactory, times(1)).findById(Weapon.class, "TestWeapon");
-        verify(repositoryFactory, times(1)).save(any(Weapon.class));
+        verify(weaponDataAccessor, times(1)).findById("TestWeapon");
+        verify(weaponDataAccessor, times(1)).save(any(Weapon.class));
     }
 
     @Test
@@ -286,23 +277,19 @@ class WeaponServiceTest {
     @Test
     void findByMultipleCriteria_Success() {
         // Arrange
-        @SuppressWarnings("unchecked")
-        Specification<Weapon> mockSpec = mock(Specification.class);
-        when(queryConditionFactory.<Weapon>createRangeCondition(anyString(), any(), any())).thenReturn(mockSpec);
-        when(queryConditionFactory.<Weapon>createLikeCondition(anyString(), anyString())).thenReturn(mockSpec);
-        when(repositoryFactory.getSpecificationRepository(Weapon.class, String.class))
-            .thenReturn(specificationExecutor);
-        when(specificationExecutor.findAll(any(Specification.class))).thenReturn(testWeaponList);
+        Specification<Weapon> spec = (root, query, cb) -> 
+            cb.and(
+                cb.between(root.get("baseDamage"), 5, 15),
+                cb.like(root.get("attributes"), "%TestAttribute%")
+            );
+        when(weaponDataAccessor.findAll(any(Specification.class))).thenReturn(testWeaponList);
 
         // Act
         List<Weapon> result = weaponService.findByMultipleCriteria(5, 15, "TestAttribute");
 
         // Assert
         assertEquals(testWeaponList, result);
-        verify(queryConditionFactory, times(1)).createRangeCondition("baseDamage", 5, 15);
-        verify(queryConditionFactory, times(1)).createLikeCondition("attributes", "TestAttribute");
-        verify(repositoryFactory, times(1)).getSpecificationRepository(Weapon.class, String.class);
-        verify(specificationExecutor, times(1)).findAll(any(Specification.class));
+        verify(weaponDataAccessor, times(1)).findAll(any(Specification.class));
     }
 
     @Test
@@ -310,13 +297,13 @@ class WeaponServiceTest {
         // Arrange
         Pageable pageable = PageRequest.of(0, 10);
         Page<Weapon> expectedPage = new PageImpl<>(testWeaponList, pageable, testWeaponList.size());
-        when(repositoryFactory.findAll(eq(Weapon.class), any(Pageable.class))).thenReturn(expectedPage);
+        when(weaponDataAccessor.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
         // Act
         Page<Weapon> result = weaponService.findAll(pageable);
 
         // Assert
         assertEquals(expectedPage, result);
-        verify(repositoryFactory, times(1)).findAll(Weapon.class, pageable);
+        verify(weaponDataAccessor, times(1)).findAll(pageable);
     }
 } 

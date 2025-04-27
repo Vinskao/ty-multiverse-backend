@@ -7,26 +7,24 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import javax.sql.DataSource;
 
 /**
- * Configuration class for test environment.
+ * 測試環境的配置類。
  * 
- * This class provides test-specific configuration beans that override the default
- * application configuration during testing. It's specifically designed to be used
- * with Spring Boot test contexts.
+ * 此類提供測試特定的配置 bean，這些 bean 在測試期間覆蓋默認的應用程序配置。
+ * 它專門設計用於與 Spring Boot 測試上下文一起使用。
  * 
- * The primary purpose of this configuration is to provide an in-memory H2 database
- * for testing, which ensures that tests run in isolation without affecting any
- * external database.
+ * 此配置的主要目的是提供一個內存 H2 數據庫用於測試，確保測試在隔離環境中運行，
+ * 不會影響任何外部數據庫。
  */
 @TestConfiguration
 public class TestConfig {
     
     /**
-     * Creates and configures an in-memory H2 database for testing purposes.
+     * 創建並配置用於測試目的的內存 H2 數據庫。
      * 
-     * This bean is marked as @Primary to ensure it takes precedence over any other
-     * DataSource beans that might be defined in the application context during testing.
+     * 此 bean 標記為 @Primary，確保它在測試期間優先於應用程序上下文中可能定義的
+     * 任何其他 DataSource bean。
      * 
-     * @return A configured DataSource instance pointing to an in-memory H2 database
+     * @return 一個配置好的 DataSource 實例，指向內存 H2 數據庫
      */
     @Bean
     @Primary

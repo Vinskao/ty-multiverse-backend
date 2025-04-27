@@ -14,7 +14,6 @@ import tw.com.tymbackend.module.weapon.service.WeaponService;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -118,6 +117,7 @@ class WeaponControllerTest {
         verify(weaponService, times(1)).deleteWeapon("TestWeapon");
     }
 
+    @SuppressWarnings("null")
     @Test
     void checkWeaponExists_Success() {
         // Arrange
