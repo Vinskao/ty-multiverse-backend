@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -92,11 +93,20 @@ public class KeycloakController {
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(tokenParams, headers);
 
             // 發送 POST 請求給 Keycloak 的 token endpoint
-            ResponseEntity<Map> tokenResponse = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> tokenResponse = restTemplate.exchange(
+                tokenUrl, 
+                HttpMethod.POST, 
+                entity, 
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
+            Map<String, Object> tokenBody = tokenResponse.getBody();
+            if (tokenBody == null) {
+                throw new RuntimeException("Failed to obtain token response");
+            }
             // 從回傳內容中取得 access token
-            String accessToken = (String) tokenResponse.getBody().get("access_token");
+            String accessToken = (String) tokenBody.get("access_token");
             // 取得 refresh token
-            String refreshToken = (String) tokenResponse.getBody().get("refresh_token");
+            String refreshToken = (String) tokenBody.get("refresh_token");
 
             log.info("Access Token: {}", accessToken);
             log.info("Refresh Token: {}", refreshToken);
@@ -115,10 +125,19 @@ public class KeycloakController {
             HttpEntity<String> userEntity = new HttpEntity<>(userHeaders);
 
             // 發送 GET 請求取得使用者資訊
-            ResponseEntity<Map> userResponse = restTemplate.exchange(userInfoUrl, HttpMethod.GET, userEntity, Map.class);
+            ResponseEntity<Map<String, Object>> userResponse = restTemplate.exchange(
+                userInfoUrl, 
+                HttpMethod.GET, 
+                userEntity, 
+                new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
             Map<String, Object> userInfo = userResponse.getBody();
 
             log.info("User Info: {}", userInfo);
+
+            if (userInfo == null) {
+                throw new RuntimeException("Failed to retrieve user info");
+            }
 
             // 從使用者資訊中取得使用者名稱
             String preferredUsername = (String) userInfo.get("preferred_username");
@@ -228,9 +247,16 @@ public class KeycloakController {
             headers.set("Content-Type", "application/x-www-form-urlencoded");
             HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(bodyParams, headers);
     
-            ResponseEntity<Map> introspectResponse = restTemplate.exchange(
-                    introspectUrl, HttpMethod.POST, entity, Map.class);
+            ResponseEntity<Map<String, Object>> introspectResponse = restTemplate.exchange(
+                    introspectUrl, 
+                    HttpMethod.POST, 
+                    entity, 
+                    new ParameterizedTypeReference<Map<String, Object>>() {}
+            );
             Map<String, Object> result = introspectResponse.getBody();
+            if (result == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token introspection failed");
+            }
     
             // Step 2: 如果 token 還有效，直接回傳
             if (result != null && Boolean.TRUE.equals(result.get("active"))) {
@@ -247,11 +273,18 @@ public class KeycloakController {
     
                 HttpEntity<MultiValueMap<String, String>> refreshEntity = new HttpEntity<>(refreshParams, headers);
     
-                ResponseEntity<Map> refreshResponse = restTemplate.exchange(
-                        tokenUrl, HttpMethod.POST, refreshEntity, Map.class);
+                ResponseEntity<Map<String, Object>> refreshResponse = restTemplate.exchange(
+                        tokenUrl, 
+                        HttpMethod.POST, 
+                        refreshEntity, 
+                        new ParameterizedTypeReference<Map<String, Object>>() {}
+                );
                 Map<String, Object> refreshResult = refreshResponse.getBody();
+                if (refreshResult == null) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token refresh failed");
+                }
     
-                if (refreshResult != null && refreshResult.get("access_token") != null) {
+                if (refreshResult.get("access_token") != null) {
                     // 回傳新的 access token 及相關資訊
                     return ResponseEntity.ok(refreshResult);
                 }

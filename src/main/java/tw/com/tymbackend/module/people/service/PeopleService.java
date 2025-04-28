@@ -8,14 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
 
-import tw.com.tymbackend.core.repository.IntegerPkRepository;
 import tw.com.tymbackend.module.people.dao.PeopleRepository;
 import tw.com.tymbackend.module.people.domain.vo.People;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
-import java.util.Objects;
 
 @Service
 @Transactional(readOnly = true, noRollbackFor = {IllegalArgumentException.class, EmptyResultDataAccessException.class})

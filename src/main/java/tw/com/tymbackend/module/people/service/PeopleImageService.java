@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import tw.com.tymbackend.core.repository.StringPkRepository;
 import tw.com.tymbackend.module.people.dao.PeopleImageRepository;
 import tw.com.tymbackend.module.people.domain.vo.PeopleImage;
 

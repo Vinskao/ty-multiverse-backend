@@ -6,7 +6,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import tw.com.tymbackend.core.repository.StringPkRepository;
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
