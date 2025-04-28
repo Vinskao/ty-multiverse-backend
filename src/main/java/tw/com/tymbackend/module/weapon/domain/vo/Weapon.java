@@ -56,6 +56,14 @@ public class Weapon {
         }
     }
 
+    public String getId() {
+        return this.weaponName;
+    }
+
+    public void setId(String id) {
+        this.weaponName = id;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -120,31 +128,28 @@ public class Weapon {
             return false;
         }
         Weapon weapon = (Weapon) o;
-        return Objects.equals(name, weapon.name) && 
-               Objects.equals(weaponName, weapon.weaponName) &&
-               Objects.equals(attributes, weapon.attributes) && 
-               Objects.equals(baseDamage, weapon.baseDamage) &&
-               Objects.equals(bonusDamage, weapon.bonusDamage) &&
-               Objects.equals(bonusAttributes, weapon.bonusAttributes) &&
-               Objects.equals(stateAttributes, weapon.stateAttributes);
+        return Objects.equals(name, weapon.name) && Objects.equals(weaponName, weapon.weaponName)
+                && Objects.equals(attributes, weapon.attributes) && Objects.equals(baseDamage, weapon.baseDamage)
+                && Objects.equals(bonusDamage, weapon.bonusDamage) && Objects.equals(bonusAttributes, weapon.bonusAttributes)
+                && Objects.equals(stateAttributes, weapon.stateAttributes) && Objects.equals(version, weapon.version);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weaponName, attributes, baseDamage, bonusDamage, 
-                          bonusAttributes, stateAttributes);
+        return Objects.hash(name, weaponName, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version);
     }
 
     @Override
     public String toString() {
         return "{" +
-            " name='" + getName() + "'" +
-            ", weaponName='" + getWeaponName() + "'" +
-            ", attributes='" + getAttributes() + "'" +
-            ", baseDamage='" + getBaseDamage() + "'" +
-            ", bonusDamage='" + getBonusDamage() + "'" +
-            ", bonusAttributes='" + getBonusAttributes() + "'" +
-            ", stateAttributes='" + getStateAttributes() + "'" +
-            "}";
+                " name='" + getName() + "'" +
+                ", weaponName='" + getWeaponName() + "'" +
+                ", attributes='" + getAttributes() + "'" +
+                ", baseDamage='" + getBaseDamage() + "'" +
+                ", bonusDamage='" + getBonusDamage() + "'" +
+                ", bonusAttributes='" + getBonusAttributes() + "'" +
+                ", stateAttributes='" + getStateAttributes() + "'" +
+                ", version='" + getVersion() + "'" +
+                "}";
     }
 } 

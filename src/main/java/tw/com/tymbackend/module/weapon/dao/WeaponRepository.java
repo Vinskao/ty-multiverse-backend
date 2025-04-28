@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WeaponRepository extends StringPkRepository<Weapon>, WeaponRepositoryCustom {
+public interface WeaponRepository extends StringPkRepository<Weapon> {
     
     Optional<Weapon> findByName(String name);
     

@@ -30,9 +30,6 @@ import java.util.concurrent.CompletableFuture;
 @Component
 public class MetricsWSController {
 
-    @Value("${url.address}")
-    private String backendUrl;
-
     private static final Logger logger = LoggerFactory.getLogger(MetricsWSController.class);
 
     private final ApplicationContext applicationContext;
@@ -46,10 +43,20 @@ public class MetricsWSController {
      *
      * @param meterRegistry      度量註冊表，用於度量數據的收集。
      * @param applicationContext 應用程序上下文，用於獲取 Spring beans。
+     * @param backendUrl        後端 URL，用於構建度量 URL。
      */
-    public MetricsWSController(MeterRegistry meterRegistry, ApplicationContext applicationContext) {
+    public MetricsWSController(
+            MeterRegistry meterRegistry, 
+            ApplicationContext applicationContext,
+            @Value("${url.address}") String backendUrl) {
         this.applicationContext = applicationContext;
+        logger.info("Initializing MetricsWSController with backendUrl: {}", backendUrl);
+        if (backendUrl == null || backendUrl.trim().isEmpty()) {
+            logger.error("backendUrl is null or empty!");
+            throw new IllegalStateException("backendUrl must be configured");
+        }
         this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
+        logger.info("Actuator metrics URL initialized to: {}", actuatorMetricsUrl);
     }
 
     /**
@@ -86,6 +93,8 @@ public class MetricsWSController {
                     String url = UriComponentsBuilder.fromHttpUrl(actuatorMetricsUrl)
                             .pathSegment(metricName)
                             .toUriString();
+
+                    logger.debug("Fetching metric from URL: {}", url);
 
                     // 發送 GET 請求以獲取度量數據
                     @SuppressWarnings("unchecked")

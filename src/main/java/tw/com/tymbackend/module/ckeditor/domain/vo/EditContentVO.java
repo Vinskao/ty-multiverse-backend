@@ -27,6 +27,14 @@ public class EditContentVO {
         this.content = content;
     }
 
+    public String getId() {
+        return this.editor;
+    }
+
+    public void setId(String id) {
+        this.editor = id;
+    }
+    
     public String getEditor() {
         return this.editor;
     }

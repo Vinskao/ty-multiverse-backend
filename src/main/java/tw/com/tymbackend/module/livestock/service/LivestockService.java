@@ -4,7 +4,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.scheduling.annotation.Async;
 
-import tw.com.tymbackend.core.repository.IntegerPkRepository;
 import tw.com.tymbackend.module.livestock.dao.LivestockRepository;
 import tw.com.tymbackend.module.livestock.domain.vo.Livestock;
 

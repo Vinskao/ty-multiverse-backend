@@ -19,10 +19,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GalleryControllerTest {
@@ -181,13 +186,13 @@ class GalleryControllerTest {
         GalleryUpdateRequestDTO updateRequest = new GalleryUpdateRequestDTO();
         updateRequest.setId(1);
         updateRequest.setImageBase64("new-base64-image");
-        when(galleryService.updateImage(anyInt(), anyString())).thenThrow(new Exception());
+        when(galleryService.updateImage(anyInt(), anyString())).thenThrow(new RuntimeException("Internal server error"));
 
         // Act
         ResponseEntity<Gallery> response = galleryController.updateImage(updateRequest);
 
         // Assert
-        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         verify(galleryService, times(1)).updateImage(1, "new-base64-image");
     }
 

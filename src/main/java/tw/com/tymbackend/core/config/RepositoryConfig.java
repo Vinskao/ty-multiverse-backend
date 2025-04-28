@@ -2,11 +2,8 @@ package tw.com.tymbackend.core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean;
-import org.springframework.data.repository.core.support.RepositoryFactorySupport;
 
 import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
-import tw.com.tymbackend.core.repository.StringPkRepositoryImpl;
 
 /**
  * 配置類，用於啟用 JPA 倉儲

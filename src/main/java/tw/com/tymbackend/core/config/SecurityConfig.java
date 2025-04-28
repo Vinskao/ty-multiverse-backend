@@ -10,14 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
-
-    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
 
     // 安全過濾器鏈
     @Bean
