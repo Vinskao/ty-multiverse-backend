@@ -6,23 +6,21 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import tw.com.tymbackend.core.repository.DataAccessor;
+import tw.com.tymbackend.core.repository.StringPkRepository;
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 public class WeaponService {
     
-    private final DataAccessor<Weapon, String> weaponDataAccessor;
     private final WeaponRepository weaponRepository;
     
-    public WeaponService(DataAccessor<Weapon, String> weaponDataAccessor,
-                         WeaponRepository weaponRepository) {
-        this.weaponDataAccessor = weaponDataAccessor;
+    public WeaponService(WeaponRepository weaponRepository) {
         this.weaponRepository = weaponRepository;
     }
     
@@ -32,7 +30,7 @@ public class WeaponService {
      * @return list of all weapons
      */
     public List<Weapon> getAllWeapons() {
-        return weaponDataAccessor.findAll();
+        return weaponRepository.findAll();
     }
     
     /**
@@ -42,7 +40,9 @@ public class WeaponService {
      * @return list of weapons owned by the person
      */
     public List<Weapon> getWeaponsByOwnerName(String name) {
-        return weaponRepository.findByName(name);
+        return weaponRepository.findByName(name)
+                .map(List::of)
+                .orElse(List.of());
     }
     
     /**
@@ -52,9 +52,8 @@ public class WeaponService {
      * @return the weapon
      * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
-    public Weapon getWeaponByWeaponName(String weaponName) {
-        return weaponDataAccessor.findById(weaponName)
-            .orElseThrow(() -> new NoSuchElementException("No weapon found with name: " + weaponName));
+    public Optional<Weapon> getWeaponByWeaponName(String weaponName) {
+        return weaponRepository.findById(weaponName);
     }
     
     /**
@@ -65,7 +64,7 @@ public class WeaponService {
      */
     @Transactional
     public Weapon saveWeapon(Weapon weapon) {
-        return weaponDataAccessor.save(weapon);
+        return weaponRepository.save(weapon);
     }
     
     /**
@@ -76,8 +75,7 @@ public class WeaponService {
      */
     @Transactional
     public void deleteWeapon(String weaponName) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weaponDataAccessor.deleteById(weaponName);
+        weaponRepository.deleteById(weaponName);
     }
     
     /**
@@ -94,15 +92,19 @@ public class WeaponService {
      * Update weapon attributes
      * 
      * @param weaponName the weapon name (ID) of the weapon
-     * @param attributes the new attributes
+     * @param weapon the new weapon
      * @return the updated weapon
      * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponAttributes(String weaponName, String attributes) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weapon.setAttributes(attributes);
-        return weaponDataAccessor.save(weapon);
+    public Weapon updateWeaponAttributes(String weaponName, Weapon weapon) {
+        return weaponRepository.findById(weaponName)
+            .map(existing -> {
+                existing.setBaseDamage(weapon.getBaseDamage());
+                existing.setAttributes(weapon.getAttributes());
+                return weaponRepository.save(existing);
+            })
+            .orElse(null);
     }
     
     /**
@@ -115,9 +117,12 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBaseDamage(String weaponName, Integer baseDamage) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weapon.setBaseDamage(baseDamage);
-        return weaponDataAccessor.save(weapon);
+        return weaponRepository.findById(weaponName)
+            .map(existing -> {
+                existing.setBaseDamage(baseDamage);
+                return weaponRepository.save(existing);
+            })
+            .orElse(null);
     }
     
     /**
@@ -130,9 +135,12 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBonusDamage(String weaponName, Integer bonusDamage) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weapon.setBonusDamage(bonusDamage);
-        return weaponDataAccessor.save(weapon);
+        return weaponRepository.findById(weaponName)
+            .map(existing -> {
+                existing.setBonusDamage(bonusDamage);
+                return weaponRepository.save(existing);
+            })
+            .orElse(null);
     }
     
     /**
@@ -145,9 +153,12 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponBonusAttributes(String weaponName, List<String> bonusAttributes) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weapon.setBonusAttributes(bonusAttributes);
-        return weaponDataAccessor.save(weapon);
+        return weaponRepository.findById(weaponName)
+            .map(existing -> {
+                existing.setBonusAttributes(bonusAttributes);
+                return weaponRepository.save(existing);
+            })
+            .orElse(null);
     }
     
     /**
@@ -160,9 +171,12 @@ public class WeaponService {
      */
     @Transactional
     public Weapon updateWeaponStateAttributes(String weaponName, List<String> stateAttributes) {
-        Weapon weapon = getWeaponByWeaponName(weaponName);
-        weapon.setStateAttributes(stateAttributes);
-        return weaponDataAccessor.save(weapon);
+        return weaponRepository.findById(weaponName)
+            .map(existing -> {
+                existing.setStateAttributes(stateAttributes);
+                return weaponRepository.save(existing);
+            })
+            .orElse(null);
     }
     
     /**
@@ -208,7 +222,7 @@ public class WeaponService {
         Specification<Weapon> combinedSpec = specs.stream()
             .reduce(Specification.where(null), Specification::and);
             
-        return weaponDataAccessor.findAll(combinedSpec);
+        return weaponRepository.findAll(combinedSpec);
     }
     
     /**
@@ -218,6 +232,6 @@ public class WeaponService {
      * @return the page of weapons
      */
     public Page<Weapon> findAll(Pageable pageable) {
-        return weaponDataAccessor.findAll(pageable);
+        return weaponRepository.findAll(pageable);
     }
 } 

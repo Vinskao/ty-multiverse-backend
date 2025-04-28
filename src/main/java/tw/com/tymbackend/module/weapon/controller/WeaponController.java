@@ -29,7 +29,9 @@ public class WeaponController {
      */
     @GetMapping("/{weaponName}")
     public ResponseEntity<Weapon> getWeaponByWeaponName(@PathVariable String weaponName) {
-        return ResponseEntity.ok(weaponService.getWeaponByWeaponName(weaponName));
+        return weaponService.getWeaponByWeaponName(weaponName)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     /**
@@ -72,7 +74,10 @@ public class WeaponController {
     public ResponseEntity<Weapon> updateWeaponAttributes(
             @PathVariable String weaponName,
             @RequestBody Map<String, String> request) {
-        return ResponseEntity.ok(weaponService.updateWeaponAttributes(weaponName, request.get("attributes")));
+        Weapon weapon = weaponService.getWeaponByWeaponName(weaponName)
+                .orElseThrow(() -> new RuntimeException("Weapon not found: " + weaponName));
+        weapon.setAttributes(request.get("attributes"));
+        return ResponseEntity.ok(weaponService.updateWeaponAttributes(weaponName, weapon));
     }
 
     /**

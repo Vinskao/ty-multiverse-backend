@@ -34,6 +34,10 @@ public class Weapon {
     @Column(name = "state_attributes", columnDefinition = "text[]")
     private List<String> stateAttributes;
 
+    @Version
+    @Column(name = "version")
+    private Long version = 0L;
+
     public Weapon(String name, String weaponName, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {
         this.name = name;
@@ -43,6 +47,13 @@ public class Weapon {
         this.bonusDamage = bonusDamage;
         this.bonusAttributes = bonusAttributes;
         this.stateAttributes = stateAttributes;
+        this.version = 0L;
+    }
+
+    public void initializeVersion() {
+        if (this.version == null) {
+            this.version = 0L;
+        }
     }
 
     public String getName() {

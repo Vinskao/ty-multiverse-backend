@@ -1,15 +1,14 @@
 package tw.com.tymbackend.module.livestock.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import java.util.List;
-import java.util.Optional;
-
+import tw.com.tymbackend.core.repository.IntegerPkRepository;
 import tw.com.tymbackend.module.livestock.domain.vo.Livestock;
 
+import java.util.List;
+
 @Repository
-public interface LivestockRepository extends JpaRepository<Livestock, Long>, LivestockRepositoryCustom {
+public interface LivestockRepository extends IntegerPkRepository<Livestock> {
     List<Livestock> findByOwner(String owner);
     List<Livestock> findByBuyer(String buyer);
-    Optional<Livestock> findByLivestock(String livestock);
+    List<Livestock> findByLivestock(String livestock);
 } 
