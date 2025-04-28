@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 public class Livestock {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     
     @Column(name = "livestock", nullable = false)
     private String livestock;

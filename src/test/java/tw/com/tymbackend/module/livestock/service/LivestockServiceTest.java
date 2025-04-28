@@ -16,7 +16,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -35,7 +35,7 @@ class LivestockServiceTest {
     @BeforeEach
     void setUp() {
         testLivestock = new Livestock();
-        testLivestock.setId(1L);
+        testLivestock.setId(1);
         testLivestock.setLivestock("Cow");
         testLivestock.setHeight(1.5);
         testLivestock.setWeight(500.0);
@@ -70,7 +70,7 @@ class LivestockServiceTest {
     @Test
     void getLivestockById_Success() {
         // Arrange
-        when(livestockRepository.findById(anyLong())).thenReturn(Optional.of(testLivestock));
+        when(livestockRepository.findById(anyInt())).thenReturn(Optional.of(testLivestock));
 
         // Act
         Optional<Livestock> result = livestockService.getLivestockById(1L);
@@ -78,26 +78,26 @@ class LivestockServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals(testLivestock, result.get());
-        verify(livestockRepository, times(1)).findById(1L);
+        verify(livestockRepository, times(1)).findById(1);
     }
 
     @Test
     void getLivestockById_NotFound() {
         // Arrange
-        when(livestockRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(livestockRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         // Act
         Optional<Livestock> result = livestockService.getLivestockById(1L);
 
         // Assert
         assertFalse(result.isPresent());
-        verify(livestockRepository, times(1)).findById(1L);
+        verify(livestockRepository, times(1)).findById(1);
     }
 
     @Test
     void getLivestockByName_Success() {
         // Arrange
-        when(livestockRepository.findByLivestock(anyString())).thenReturn(Optional.of(testLivestock));
+        when(livestockRepository.findByLivestock(anyString())).thenReturn(Arrays.asList(testLivestock));
 
         // Act
         Optional<Livestock> result = livestockService.getLivestockByName("Cow");
@@ -111,7 +111,7 @@ class LivestockServiceTest {
     @Test
     void getLivestockByName_NotFound() {
         // Arrange
-        when(livestockRepository.findByLivestock(anyString())).thenReturn(Optional.empty());
+        when(livestockRepository.findByLivestock(anyString())).thenReturn(Arrays.asList());
 
         // Act
         Optional<Livestock> result = livestockService.getLivestockByName("NonExistent");
@@ -152,13 +152,13 @@ class LivestockServiceTest {
     @Test
     void deleteLivestock_Success() {
         // Arrange
-        doNothing().when(livestockRepository).deleteById(anyLong());
+        doNothing().when(livestockRepository).deleteById(anyInt());
 
         // Act
-        livestockService.deleteLivestock(1L);
+        livestockService.deleteLivestock(1);
 
         // Assert
-        verify(livestockRepository, times(1)).deleteById(1L);
+        verify(livestockRepository, times(1)).deleteById(1);
     }
 
     @Test

@@ -6,8 +6,9 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Sort;
 
-import tw.com.tymbackend.core.repository.DataAccessor;
+import tw.com.tymbackend.core.repository.IntegerPkRepository;
 import tw.com.tymbackend.module.people.dao.PeopleRepository;
 import tw.com.tymbackend.module.people.domain.vo.People;
 
@@ -20,128 +21,138 @@ import java.util.Objects;
 @Transactional(readOnly = true, noRollbackFor = {IllegalArgumentException.class, EmptyResultDataAccessException.class})
 public class PeopleService {
 
-    private final DataAccessor<People, Long> peopleDataAccessor;
     private final PeopleRepository peopleRepository;
 
-    public PeopleService(DataAccessor<People, Long> peopleDataAccessor,
-                        PeopleRepository peopleRepository) {
-        this.peopleDataAccessor = peopleDataAccessor;
+    public PeopleService(PeopleRepository peopleRepository) {
         this.peopleRepository = peopleRepository;
     }
 
+    public List<People> findAll() {
+        return peopleRepository.findAll();
+    }
+    
+    /**
+     * Get all people
+     * 
+     * @return list of all people
+     */
     public List<People> getAllPeople() {
-        return peopleDataAccessor.findAll();
+        return findAll();
     }
 
-    public Optional<People> getPersonBy(String name) {
-        return peopleRepository.findByName(name);
+    public Optional<People> findById(Integer id) {
+        return peopleRepository.findById(id);
     }
-
+    
+    /**
+     * Get people by name
+     * 
+     * @param name the person's name
+     * @return the person
+     */
     public Optional<People> getPeopleByName(String name) {
         return peopleRepository.findByName(name);
     }
 
     @Transactional
-    public People savePerson(People person) {
-        return peopleDataAccessor.save(person);
+    public People save(People person) {
+        return peopleRepository.save(person);
     }
-
-    @Transactional
-    public List<People> saveAllPeople(List<People> peopleList) {
-        return peopleDataAccessor.saveAll(peopleList);
-    }
-
-    @Transactional
-    public void deletePerson(String name) {
-        Optional<People> person = peopleRepository.findByName(name);
-        if (person.isPresent()) {
-            peopleRepository.deleteByName(name);
-        }
-    }
-
-    @Transactional
-    public void deleteAllPeople() {
-        try {
-            peopleDataAccessor.deleteAll();
-        } catch (Exception e) {
-            System.err.println("Error during deleteAllPeople: " + e.getMessage());
-        }
-    }
-
+    
+    /**
+     * Insert a new person
+     * 
+     * @param person the person to insert
+     * @return the inserted person
+     */
     @Transactional
     public People insertPerson(People person) {
-        Optional<People> existingPerson = peopleRepository.findByName(person.getName());
-        if (!existingPerson.isPresent()) {
-            return peopleDataAccessor.save(person);
-        }
-        throw new IllegalArgumentException("Person with name " + person.getName() + " already exists");
+        return save(person);
     }
 
     @Transactional
+    public List<People> saveAll(List<People> peopleList) {
+        return peopleRepository.saveAll(peopleList);
+    }
+    
+    /**
+     * Save all people
+     * 
+     * @param peopleList the list of people to save
+     * @return the saved people
+     */
+    @Transactional
+    public List<People> saveAllPeople(List<People> peopleList) {
+        return saveAll(peopleList);
+    }
+
+    @Transactional
+    public void deleteAll() {
+        peopleRepository.deleteAll();
+    }
+    
+    /**
+     * Delete all people
+     */
+    @Transactional
+    public void deleteAllPeople() {
+        deleteAll();
+    }
+
+    @Transactional
+    public People update(Integer id, People person) {
+        if (peopleRepository.existsById(id)) {
+            person.setId(id);
+            return peopleRepository.save(person);
+        }
+        return null;
+    }
+    
+    /**
+     * Update a person
+     * 
+     * @param person the person to update
+     * @return the updated person
+     */
+    @Transactional
     public People updatePerson(People person) {
-        Optional<People> existingPerson = peopleRepository.findByName(person.getName());
-        if (!existingPerson.isPresent()) {
-            throw new IllegalArgumentException("Person not found with name: " + person.getName());
+        if (person.getId() != null && peopleRepository.existsById(person.getId())) {
+            return peopleRepository.save(person);
         }
-        
-        People existing = existingPerson.get();
-        updatePersonFields(existing, person);
-        
-        try {
-            return peopleDataAccessor.save(existing);
-        } catch (Exception e) {
-            System.err.println("Error updating person: " + e.getMessage());
-            e.printStackTrace();
-            return existing;
-        }
+        return save(person);
     }
-    
-    private void updatePersonFields(People existingPerson, People updatedPerson) {
-        if (Objects.nonNull(updatedPerson.getName())) {
-            existingPerson.setName(updatedPerson.getName());
-        }
-        if (Objects.nonNull(updatedPerson.getAge())) {
-            existingPerson.setAge(updatedPerson.getAge());
-        }
-        if (Objects.nonNull(updatedPerson.getRace())) {
-            existingPerson.setRace(updatedPerson.getRace());
-        }
-        // ... other fields ...
+
+    @Transactional
+    public People updateAttributes(Integer id, People person) {
+        return peopleRepository.findById(id)
+            .map(existing -> {
+                existing.setBaseAttributes(person.getBaseAttributes());
+                existing.setBonusAttributes(person.getBonusAttributes());
+                existing.setStateAttributes(person.getStateAttributes());
+                return peopleRepository.save(existing);
+            })
+            .orElse(null);
     }
-    
-    public List<People> findByRace(String race) {
-        Specification<People> spec = (root, query, cb) -> 
-            cb.equal(root.get("race"), race);
-        return peopleDataAccessor.findAll(spec);
+
+    public List<People> findBySpecification(Specification<People> spec) {
+        return peopleRepository.findAll(spec);
     }
-    
-    public List<People> findByAgeRange(int minAge, int maxAge) {
-        Specification<People> spec = (root, query, cb) -> 
-            cb.between(root.get("age"), minAge, maxAge);
-        return peopleDataAccessor.findAll(spec);
+
+    public List<People> findBySpecification(Specification<People> spec, Sort sort) {
+        return peopleRepository.findAll(spec, sort);
     }
-    
-    public List<People> findByNameContaining(String namePart) {
-        Specification<People> spec = (root, query, cb) -> 
-            cb.like(cb.lower(root.get("name")), "%" + namePart.toLowerCase() + "%");
-        return peopleDataAccessor.findAll(spec);
+
+    public Page<People> findBySpecification(Specification<People> spec, Pageable pageable) {
+        return peopleRepository.findAll(spec, pageable);
     }
-    
-    public List<People> findByMultipleCriteria(String race, int minAge, int maxAge) {
-        List<Specification<People>> specs = new ArrayList<>();
-        
-        if (race != null) {
-            specs.add((root, query, cb) -> cb.equal(root.get("race"), race));
-        }
-        specs.add((root, query, cb) -> cb.between(root.get("age"), minAge, maxAge));
-        
+
+    public List<People> findByMultipleSpecifications(List<Specification<People>> specs) {
         Specification<People> combinedSpec = specs.stream()
             .reduce(Specification.where(null), Specification::and);
-            
-        return peopleDataAccessor.findAll(combinedSpec);
+        return peopleRepository.findAll(combinedSpec);
     }
-    
+
     public Page<People> findAll(Pageable pageable) {
-        return peopleDataAccessor.findAll(pageable);
+        return peopleRepository.findAll(pageable);
     }
 }

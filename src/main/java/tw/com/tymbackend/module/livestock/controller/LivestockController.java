@@ -47,7 +47,7 @@ public class LivestockController {
 
     @PostMapping("/update/{id}")
     public ResponseEntity<Livestock> updateLivestock(@PathVariable Long id, @RequestBody Livestock livestock) {
-        livestock.setId(id);
+        livestock.setId(id.intValue());
         Livestock updated = livestockService.updateLivestock(livestock);
         livestockWebSocketController.broadcastLivestockUpdate(updated);
         return ResponseEntity.ok(updated);
@@ -55,7 +55,7 @@ public class LivestockController {
 
     @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteLivestock(@PathVariable Long id) {
-        livestockService.deleteLivestock(id);
+        livestockService.deleteLivestock(id.intValue());
         return ResponseEntity.ok().build();
     }
 

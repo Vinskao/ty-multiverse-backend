@@ -19,6 +19,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -42,7 +43,7 @@ class LivestockControllerTest {
     void setUp() {
         // Arrange: Set up test data
         testLivestock = new Livestock();
-        testLivestock.setId(1L);
+        testLivestock.setId(1);
         testLivestock.setLivestock("Cow");
         testLivestock.setHeight(1.5);
         testLivestock.setWeight(500.0);
@@ -155,7 +156,7 @@ class LivestockControllerTest {
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(testLivestock, response.getBody());
-        assertEquals(1L, testLivestock.getId());
+        assertEquals(1, testLivestock.getId().intValue());
         verify(livestockService, times(1)).updateLivestock(testLivestock);
         verify(livestockWebSocketController, times(1)).broadcastLivestockUpdate(testLivestock);
     }
@@ -163,13 +164,13 @@ class LivestockControllerTest {
     @Test
     void deleteLivestock_Success() {
         // Arrange
-        doNothing().when(livestockService).deleteLivestock(anyLong());
+        doNothing().when(livestockService).deleteLivestock(anyInt());
 
         // Act
         ResponseEntity<Void> response = livestockController.deleteLivestock(1L);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(livestockService, times(1)).deleteLivestock(1L);
+        verify(livestockService, times(1)).deleteLivestock(1);
     }
 } 
