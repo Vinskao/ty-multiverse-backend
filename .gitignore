@@ -34,7 +34,7 @@ build/
 .war
 
 ### Environment Properties ###
-src/main/resources/env/
+src/main/resources/env/local.properties
 
 ### Logs ###
 logs/
@@ -79,6 +79,7 @@ docker-compose.override.yml
 *.temp
 *.swp
 *~
+*.bak
 
 ### Local development ###
 .env
