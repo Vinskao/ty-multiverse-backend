@@ -12,6 +12,13 @@ pipeline {
             }
         }
 
+        stage('Check Git Version') {
+            steps {
+                sh 'git log -1'
+                sh 'ls -R src/main/resources/env'
+            }
+        }
+
         stage('Maven Build') {
             steps {
                 sh './mvnw clean install -P platform'
