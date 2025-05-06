@@ -56,6 +56,7 @@ pipeline {
                         project.env=${PROJECT_ENV}
                         EOL
                         chmod 644 src/main/resources/env/platform.properties
+                        ls -la src/main/resources/env/
                         cat src/main/resources/env/platform.properties
                     '''
                 }
