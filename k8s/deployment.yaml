@@ -1,0 +1,156 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ty-multiverse-backend-secrets
+type: Opaque
+stringData:
+  SPRING_DATASOURCE_URL: "${{ secrets.SPRING_DATASOURCE_URL }}"
+  SPRING_DATASOURCE_USERNAME: "${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+  SPRING_DATASOURCE_PASSWORD: "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+  KEYCLOAK_AUTH_SERVER_URL: "${{ secrets.KEYCLOAK_AUTH_SERVER_URL }}"
+  KEYCLOAK_REALM: "${{ secrets.KEYCLOAK_REALM }}"
+  KEYCLOAK_CLIENT_ID: "${{ secrets.KEYCLOAK_CLIENT_ID }}"
+  KEYCLOAK_CREDENTIALS_SECRET: "${{ secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ty-multiverse-backend-config
+data:
+  SPRING_PROFILES_ACTIVE: "platform" 
+  SERVER_PORT: "8080"
+  LOGGING_LEVEL: "INFO"
+  LOGGING_LEVEL_SPRINGFRAMEWORK: "INFO"
+  URL_ADDRESS: "${{ secrets.URL_ADDRESS }}"
+  URL_FRONTEND: "${{ secrets.URL_FRONTEND }}"
+  PROJECT_ENV: "platform"
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ty-multiverse-backend
+  labels:
+    app.kubernetes.io/name: ty-multiverse-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ty-multiverse-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ty-multiverse-backend
+    spec:
+      containers:
+      - name: ty-multiverse-backend
+        image: papakao/ty-multiverse-backend:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: SERVER_PORT
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: LOGGING_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: LOGGING_LEVEL
+        - name: LOGGING_LEVEL_SPRINGFRAMEWORK
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: LOGGING_LEVEL_SPRINGFRAMEWORK
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_PASSWORD
+        - name: KEYCLOAK_AUTH_SERVER_URL
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_AUTH_SERVER_URL
+        - name: KEYCLOAK_REALM
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_REALM
+        - name: KEYCLOAK_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_CLIENT_ID
+        - name: KEYCLOAK_CREDENTIALS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_CREDENTIALS_SECRET
+        - name: URL_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: URL_ADDRESS
+        - name: URL_FRONTEND
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: URL_FRONTEND
+        - name: PROJECT_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: PROJECT_ENV
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: ty-multiverse-backend
+  labels:
+    app.kubernetes.io/name: ty-multiverse-backend
+spec:
+  selector:
+    app.kubernetes.io/name: ty-multiverse-backend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: ClusterIP
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ty-multiverse-backend-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: peoplesystem.tatdvsonorth.com
+    http:
+      paths:
+      - path: /tymb
+        pathType: Prefix
+        backend:
+          service:
+            name: ty-multiverse-backend
+            port:
+              number: 80
