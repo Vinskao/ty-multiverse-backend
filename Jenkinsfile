@@ -38,8 +38,8 @@ pipeline {
                 ]) {
                     sh '''
                         mkdir -p src/main/resources/env
-                        cat > src/main/resources/env/platform.properties << EOL
-                        env: platform
+                        cat > src/main/resources/env/platform.properties << 'EOL'
+                        env=platform
                         spring.profiles.active=platform
                         spring.datasource.url=${SPRING_DATASOURCE_URL}
                         spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
@@ -55,6 +55,7 @@ pipeline {
                         keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
                         project.env=${PROJECT_ENV}
                         EOL
+                        chmod 644 src/main/resources/env/platform.properties
                         cat src/main/resources/env/platform.properties
                     '''
                 }
