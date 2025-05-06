@@ -3,19 +3,9 @@ pipeline {
 
     environment {
         IMAGE_NAME = "papakao/ty-multiverse-backend:latest"
-        SPRING_DATASOURCE_URL = credentials('SPRING_DATASOURCE_URL')
-        SPRING_DATASOURCE_USERNAME = credentials('SPRING_DATASOURCE_USERNAME')
-        SPRING_DATASOURCE_PASSWORD = credentials('SPRING_DATASOURCE_PASSWORD')
         SERVER_PORT = "8080"
         LOGGING_LEVEL = "INFO"
         LOGGING_LEVEL_SPRINGFRAMEWORK = "INFO"
-        URL_ADDRESS = credentials('URL_ADDRESS')
-        URL_FRONTEND = credentials('URL_FRONTEND')
-        KEYCLOAK_AUTH_SERVER_URL = credentials('KEYCLOAK_AUTH_SERVER_URL')
-        KEYCLOAK_REALM = credentials('KEYCLOAK_REALM')
-        KEYCLOAK_CLIENT_ID = credentials('KEYCLOAK_CLIENT_ID')
-        KEYCLOAK_CREDENTIALS_SECRET = credentials('KEYCLOAK_CREDENTIALS_SECRET')
-        PROJECT_ENV = credentials('PROJECT_ENV')
     }
 
     stages {
@@ -34,27 +24,40 @@ pipeline {
 
         stage('Setup Environment') {
             steps {
-                sh '''
-                    mkdir -p src/main/resources/env
-                    cat > src/main/resources/env/platform.properties << EOL
-                    env: platform
-                    spring.profiles.active=platform
-                    spring.datasource.url=${SPRING_DATASOURCE_URL}
-                    spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
-                    spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
-                    server.port=${SERVER_PORT}
-                    logging.level.root=${LOGGING_LEVEL}
-                    logging.level.org.springframework=${LOGGING_LEVEL_SPRINGFRAMEWORK}
-                    url.address=${URL_ADDRESS}
-                    url.frontend=${URL_FRONTEND}
-                    keycloak.auth-server-url=${KEYCLOAK_AUTH_SERVER_URL}
-                    keycloak.realm=${KEYCLOAK_REALM}
-                    keycloak.clientId=${KEYCLOAK_CLIENT_ID}
-                    keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
-                    project.env=${PROJECT_ENV}
-                    EOL
-                    cat src/main/resources/env/platform.properties
-                '''
+                withCredentials([
+                    string(credentialsId: 'TYB/SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                    string(credentialsId: 'TYB/SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                    string(credentialsId: 'TYB/SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                    string(credentialsId: 'TYB/URL_ADDRESS', variable: 'URL_ADDRESS'),
+                    string(credentialsId: 'TYB/URL_FRONTEND', variable: 'URL_FRONTEND'),
+                    string(credentialsId: 'TYB/KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                    string(credentialsId: 'TYB/KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
+                    string(credentialsId: 'TYB/KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                    string(credentialsId: 'TYB/KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
+                    string(credentialsId: 'TYB/PROJECT_ENV', variable: 'PROJECT_ENV')
+                ]) {
+                    sh '''
+                        mkdir -p src/main/resources/env
+                        cat > src/main/resources/env/platform.properties << EOL
+                        env: platform
+                        spring.profiles.active=platform
+                        spring.datasource.url=${SPRING_DATASOURCE_URL}
+                        spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
+                        spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+                        server.port=${SERVER_PORT}
+                        logging.level.root=${LOGGING_LEVEL}
+                        logging.level.org.springframework=${LOGGING_LEVEL_SPRINGFRAMEWORK}
+                        url.address=${URL_ADDRESS}
+                        url.frontend=${URL_FRONTEND}
+                        keycloak.auth-server-url=${KEYCLOAK_AUTH_SERVER_URL}
+                        keycloak.realm=${KEYCLOAK_REALM}
+                        keycloak.clientId=${KEYCLOAK_CLIENT_ID}
+                        keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
+                        project.env=${PROJECT_ENV}
+                        EOL
+                        cat src/main/resources/env/platform.properties
+                    '''
+                }
             }
         }
 
