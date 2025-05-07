@@ -2,36 +2,49 @@ pipeline {
     agent {
         kubernetes {
             yaml '''
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: maven
-    image: maven:3.8.4-openjdk-17
-    command: ["cat"]
-    tty: true
-    volumeMounts:
-    - mountPath: /root/.m2
-      name: maven-repo
-    workingDir: /workspace
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug
-    command: ["/busybox/sh"]
-    args: ["-c", "while true; do sleep 30; done;"]
-    tty: true
-    volumeMounts:
-    - name: kaniko-secret
-      mountPath: /kaniko/.docker
-    - name: workspace
-      mountPath: /workspace
-  volumes:
-  - name: maven-repo
-    emptyDir: {}
-  - name: kaniko-secret
-    secret:
-      secretName: kaniko-secret
-  - name: workspace
-    emptyDir: {}
+                apiVersion: v1
+                kind: Pod
+                spec:
+                  containers:
+                  - name: jnlp
+                    image: jenkins/inbound-agent:latest
+                    args: ['\$(JENKINS_URL)', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
+                    env:
+                    - name: JENKINS_URL
+                      value: https://peoplesystem.tatdvsonorth.com/jenkins
+                    - name: JENKINS_SECRET
+                      valueFrom:
+                        secretKeyRef:
+                          name: jenkins-agent-secret
+                          key: secret
+                    - name: JENKINS_NAME
+                      value: "tyb-ty-multiverse-backend-\$(BUILD_NUMBER)"
+                  - name: maven
+                    image: maven:3.8.4-openjdk-17
+                    command: ["cat"]
+                    tty: true
+                    volumeMounts:
+                    - mountPath: /root/.m2
+                      name: maven-repo
+                    workingDir: /workspace
+                  - name: kaniko
+                    image: gcr.io/kaniko-project/executor:debug
+                    command: ["/busybox/sh"]
+                    args: ["-c", "while true; do sleep 30; done;"]
+                    tty: true
+                    volumeMounts:
+                    - name: kaniko-secret
+                      mountPath: /kaniko/.docker
+                    - name: workspace
+                      mountPath: /workspace
+                  volumes:
+                  - name: maven-repo
+                    emptyDir: {}
+                  - name: kaniko-secret
+                    secret:
+                      secretName: kaniko-secret
+                  - name: workspace
+                    emptyDir: {}
             '''
         }
     }
@@ -80,7 +93,7 @@ spec:
                                 keycloak.clientId=${KEYCLOAK_CLIENT_ID}
                                 keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
                                 project.env=${PROJECT_ENV}
-EOL
+                                EOL
                             '''
                         }
                     }
@@ -101,13 +114,13 @@ EOL
                 container('kaniko') {
                     sh '''
                         /kaniko/executor \
-                          --context=/workspace \
-                          --dockerfile=/workspace/Dockerfile \
-                          --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                          --destination=${DOCKER_IMAGE}:latest \
-                          --cache=true \
-                          --verbosity=info \
-                          --skip-tls-verify
+                            --context=/workspace \
+                            --dockerfile=/workspace/Dockerfile \
+                            --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
+                            --destination=${DOCKER_IMAGE}:latest \
+                            --cache=true \
+                            --verbosity=info \
+                            --skip-tls-verify
                     '''
                 }
             }
