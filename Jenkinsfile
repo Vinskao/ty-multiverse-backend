@@ -25,16 +25,16 @@ pipeline {
         stage('Setup Environment') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'TYB/SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
-                    string(credentialsId: 'TYB/SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
-                    string(credentialsId: 'TYB/SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
-                    string(credentialsId: 'TYB/URL_ADDRESS', variable: 'URL_ADDRESS'),
-                    string(credentialsId: 'TYB/URL_FRONTEND', variable: 'URL_FRONTEND'),
-                    string(credentialsId: 'TYB/KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                    string(credentialsId: 'TYB/KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
-                    string(credentialsId: 'TYB/KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
-                    string(credentialsId: 'TYB/KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
-                    string(credentialsId: 'TYB/PROJECT_ENV', variable: 'PROJECT_ENV')
+                    string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                    string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                    string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                    string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
+                    string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                    string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                    string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
+                    string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                    string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
+                    string(credentialsId: 'PROJECT_ENV', variable: 'PROJECT_ENV')
                 ]) {
                     sh '''
                         mkdir -p src/main/resources/env
@@ -58,6 +58,35 @@ pipeline {
                         chmod 644 src/main/resources/env/platform.properties
                         ls -la src/main/resources/env/
                         cat src/main/resources/env/platform.properties
+                    '''
+                }
+            }
+        }
+
+        stage('Debug Env') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                    string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                    string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                    string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
+                    string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                    string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                    string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
+                    string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                    string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
+                    string(credentialsId: 'PROJECT_ENV', variable: 'PROJECT_ENV')
+                ]) {
+                    sh '''
+                        echo "Checking environment variables:"
+                        echo "SPRING_DATASOURCE_URL: $SPRING_DATASOURCE_URL"
+                        echo "SPRING_DATASOURCE_USERNAME: $SPRING_DATASOURCE_USERNAME"
+                        echo "URL_ADDRESS: $URL_ADDRESS"
+                        echo "URL_FRONTEND: $URL_FRONTEND"
+                        echo "KEYCLOAK_AUTH_SERVER_URL: $KEYCLOAK_AUTH_SERVER_URL"
+                        echo "KEYCLOAK_REALM: $KEYCLOAK_REALM"
+                        echo "KEYCLOAK_CLIENT_ID: $KEYCLOAK_CLIENT_ID"
+                        echo "PROJECT_ENV: $PROJECT_ENV"
                     '''
                 }
             }
