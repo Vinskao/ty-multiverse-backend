@@ -590,6 +590,7 @@ https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
 ## image 建置
 
 ```bash
+# Build image
 mvn clean package -DskipTests
 docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
 mvn -P platform install
@@ -611,7 +612,7 @@ docker run -d --name ty-multiverse-backend `
   -p 8080:8080 `
   ty-multiverse-backend
 
-
+# Docker Agent
 docker build -t papakao/maven-docker-agent:latest -f Dockerfile.agent .
 docker push papakao/maven-docker-agent:latest
 ```
@@ -706,38 +707,16 @@ classDiagram
   - 驗證 HTTP 響應和狀態碼
   - 測試請求參數的處理
   - 驗證服務層的調用
+## CI/CD 流程
 
-### 3. 測試設計模式
-
-#### 3.1 AAA 模式 (Arrange-Act-Assert)
-```java
-@Test
-void testMethod() {
-    // Arrange: 準備測試數據
-    // Act: 執行被測試的方法
-    // Assert: 驗證結果
-}
+```mermaid
+graph LR
+    A[GitHub] --> B[Jenkins]
+    B --> C[Jenkins Agent Pod]
+    C --> D[Docker Hub]
+    D --> E[Kubernetes]
+    E --> F[Production]
+    F --> A
 ```
 
-#### 3.2 依賴注入模式
-
-##### 3.2.1 Mock 類型說明
-
-###### 1. 標準 Mock (@Mock)
-- 就像一個空殼子，你告訴它怎麼做它就怎麼做，沒告訴它的就什麼都不做，最常用的一種模擬方式。
-
-###### 2. 嚴格 Mock (@Mock(strictness = Strictness.STRICT))
-- 像一個嚴格的檢查員，你必須告訴它所有可能發生的事情，如果遇到沒說清楚的情況就會報錯，適合需要非常嚴謹的測試。
-
-###### 3. 寬鬆 Mock (@Mock(strictness = Strictness.LENIENT))
-- 像一個好說話的助手，你沒說清楚的事情它會自動處理，不會報錯，適合快速測試和開發階段。
-
-###### 4. 間諜 Mock (@Spy)
-- 像一個可以部分替換的零件，有些功能用真實的，有些功能用模擬的，適合只需要模擬部分功能的場景。
-- 真實的：資料庫查詢功能
-- 模擬的：送出Http請求其他端點
-
-###### 5. 靜態 Mock (@MockStatic)
-- 專門用來模擬那些不需要創建對象就能直接調用的方法，比如工具類中的方法，適合測試靜態方法。
-- 例如：模擬一個工具類中的日期格式化方法
 
