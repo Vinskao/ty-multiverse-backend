@@ -1,6 +1,5 @@
 HELP.md
 target/
-.mvn/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -53,7 +52,6 @@ ehthumbs.db
 Thumbs.db
 
 ### Maven ###
-.mvn/timing.properties
 target/
 pom.xml.tag
 pom.xml.releaseBackup
@@ -62,7 +60,12 @@ pom.xml.next
 release.properties
 dependency-reduced-pom.xml
 buildNumber.properties
-.mvn/timing.properties
+
+# 確保 .mvn/wrapper 目錄不被忽略
+!.mvn/wrapper/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+!.mvn/wrapper/MavenWrapperDownloader.java
 
 ### Spring Boot ###
 application-*.yml
@@ -85,5 +88,3 @@ docker-compose.override.yml
 .env
 .env.local
 .env.*.local
-
-wrapper/
