@@ -600,8 +600,6 @@ mvn -P platform install
 docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
 docker push papakao/ty-multiverse-backend:latest
 
-
-
 mvn -P platform install
 docker build -t ty-multiverse-backend .
 docker run -d --name ty-multiverse-backend `
@@ -612,6 +610,10 @@ docker run -d --name ty-multiverse-backend `
   -e "SPRING_DATASOURCE_PASSWORD=W*****=" `
   -p 8080:8080 `
   ty-multiverse-backend
+
+
+docker build -t papakao/maven-docker-agent:latest -f Dockerfile.agent .
+docker push papakao/maven-docker-agent:latest
 ```
 
 ### 3. 並發控制
