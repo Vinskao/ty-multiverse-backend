@@ -2,36 +2,36 @@ pipeline {
     agent {
         kubernetes {
             yaml '''
-                apiVersion: v1
-                kind: Pod
-                spec:
-                  containers:
-                  - name: maven
-                    image: maven:3.8.4-openjdk-17
-                    command:
-                    - cat
-                    tty: true
-                    volumeMounts:
-                    - mountPath: /root/.m2
-                      name: maven-repo
-                  - name: kaniko
-                    image: gcr.io/kaniko-project/executor:debug
-                    command:
-                    - cat
-                    tty: true
-                    volumeMounts:
-                    - mountPath: /kaniko/.docker
-                      name: kaniko-secret
-                    - mountPath: /workspace
-                      name: workspace
-                  volumes:
-                  - name: maven-repo
-                    emptyDir: {}
-                  - name: kaniko-secret
-                    secret:
-                      secretName: kaniko-secret
-                  - name: workspace
-                    emptyDir: {}
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: maven
+    image: maven:3.8.4-openjdk-17
+    command: ["cat"]
+    tty: true
+    volumeMounts:
+    - mountPath: /root/.m2
+      name: maven-repo
+    workingDir: /workspace
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:debug
+    command: ["/busybox/sh"]
+    args: ["-c", "while true; do sleep 30; done;"]
+    tty: true
+    volumeMounts:
+    - name: kaniko-secret
+      mountPath: /kaniko/.docker
+    - name: workspace
+      mountPath: /workspace
+  volumes:
+  - name: maven-repo
+    emptyDir: {}
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+  - name: workspace
+    emptyDir: {}
             '''
         }
     }
@@ -43,17 +43,13 @@ pipeline {
         LOGGING_LEVEL_SPRINGFRAMEWORK = "INFO"
     }
     stages {
-        stage('Clone repository') {
+        stage('Clone and Setup') {
             steps {
                 container('maven') {
-                    git url: 'https://github.com/Vinskao/TY-Multiverse-Backend.git', branch: 'main'
-                }
-            }
-        }
-
-        stage('Setup Environment') {
-            steps {
-                container('maven') {
+                    sh '''
+                        git clone https://github.com/Vinskao/TY-Multiverse-Backend.git .
+                        mkdir -p src/main/resources/env
+                    '''
                     withCredentials([
                         string(credentialsId: 'TYB_SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
                         string(credentialsId: 'TYB_SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
@@ -67,8 +63,7 @@ pipeline {
                         string(credentialsId: 'TYB_PROJECT_ENV', variable: 'PROJECT_ENV')
                     ]) {
                         sh '''
-                            mkdir -p src/main/resources/env
-                            cat > src/main/resources/env/platform.properties << 'EOL'
+                            cat > src/main/resources/env/platform.properties <<EOL
                             env=platform
                             spring.profiles.active=platform
                             spring.datasource.url=${SPRING_DATASOURCE_URL}
@@ -84,15 +79,14 @@ pipeline {
                             keycloak.clientId=${KEYCLOAK_CLIENT_ID}
                             keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
                             project.env=${PROJECT_ENV}
-                            EOL
-                            chmod 644 src/main/resources/env/platform.properties
+EOL
                         '''
                     }
                 }
             }
         }
 
-        stage('Build') {
+        stage('Build JAR') {
             steps {
                 container('maven') {
                     sh 'mvn clean package -DskipTests'
@@ -100,20 +94,18 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Docker Image with Kaniko') {
             steps {
                 container('kaniko') {
                     sh '''
-                        cp -r . /workspace/
                         /kaniko/executor \
-                            --context=/workspace \
-                            --dockerfile=/workspace/Dockerfile \
-                            --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                            --destination=${DOCKER_IMAGE}:latest \
-                            --cache=true \
-                            --verbosity=info \
-                            --insecure \
-                            --skip-tls-verify
+                          --context=/workspace \
+                          --dockerfile=/workspace/Dockerfile \
+                          --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
+                          --destination=${DOCKER_IMAGE}:latest \
+                          --cache=true \
+                          --verbosity=info \
+                          --skip-tls-verify
                     '''
                 }
             }
