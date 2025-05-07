@@ -15,7 +15,10 @@ pipeline {
                     - mountPath: /root/.m2
                       name: maven-repo
                   - name: kaniko
-                    image: gcr.io/kaniko-project/executor:latest
+                    image: gcr.io/kaniko-project/executor:debug
+                    command:
+                    - cat
+                    tty: true
                     volumeMounts:
                     - mountPath: /kaniko/.docker
                       name: kaniko-secret
@@ -110,8 +113,7 @@ pipeline {
                             --cache=true \
                             --verbosity=info \
                             --insecure \
-                            --skip-tls-verify \
-                            --oci-layout-path=/workspace/oci-layout
+                            --skip-tls-verify
                     '''
                 }
             }
