@@ -110,7 +110,8 @@ pipeline {
                             --cache=true \
                             --verbosity=info \
                             --insecure \
-                            --skip-tls-verify
+                            --skip-tls-verify \
+                            --oci-layout-path=/workspace/oci-layout
                     '''
                 }
             }
