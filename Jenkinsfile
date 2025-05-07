@@ -17,7 +17,7 @@ pipeline {
                   - name: kaniko
                     image: gcr.io/kaniko-project/executor:latest
                     command:
-                    - cat
+                    - /busybox/sh
                     tty: true
                     volumeMounts:
                     - mountPath: /kaniko/.docker
