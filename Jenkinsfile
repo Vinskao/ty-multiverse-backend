@@ -57,10 +57,6 @@ pipeline {
                 script {
                     container('maven') {
                         sh '''
-                            # 確保工作目錄是空的
-                            rm -rf *
-                            # 克隆代碼
-                            git clone https://github.com/Vinskao/TY-Multiverse-Backend.git .
                             # 確認 Dockerfile 存在
                             ls -la
                             if [ ! -f "Dockerfile" ]; then
