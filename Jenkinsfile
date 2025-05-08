@@ -127,7 +127,7 @@ pipeline {
                     script {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
-                                cd /home/jenkins/agent
+                                cd /home/jenkins/agent/workspace
                                 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
                                 # 確認 Dockerfile 存在
                                 ls -la
