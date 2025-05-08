@@ -14,22 +14,29 @@ pipeline {
                     - mountPath: /root/.m2
                       name: maven-repo
                     workingDir: /workspace
-                  - name: kaniko
-                    image: gcr.io/kaniko-project/executor:debug
-                    command: ["/busybox/sh"]
-                    args: ["-c", "while true; do sleep 30; done;"]
-                    tty: true
+                  - name: docker
+                    image: docker:23-dind
+                    privileged: true
+                    securityContext:
+                      privileged: true
+                    env:
+                    - name: DOCKER_HOST
+                      value: tcp://localhost:2375
+                    - name: DOCKER_TLS_CERTDIR
+                      value: ""
+                    - name: DOCKER_BUILDKIT
+                      value: "1"
                     volumeMounts:
-                    - name: kaniko-secret
-                      mountPath: /kaniko/.docker
+                    - name: docker-config
+                      mountPath: /root/.docker
                     - name: workspace
                       mountPath: /workspace
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
-                  - name: kaniko-secret
+                  - name: docker-config
                     secret:
-                      secretName: kaniko-secret
+                      secretName: docker-config-secret
                   - name: workspace
                     emptyDir: {}
             '''
@@ -104,19 +111,20 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image with Kaniko') {
+        stage('Build Docker Image with BuildKit') {
             steps {
-                container('kaniko') {
+                container('docker') {
                     script {
                         sh '''
-                            /kaniko/executor \
-                                --context=/workspace \
-                                --dockerfile=/workspace/Dockerfile \
-                                --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                                --destination=${DOCKER_IMAGE}:latest \
-                                --cache=true \
-                                --verbosity=info \
-                                --skip-tls-verify
+                            cd /workspace
+                            docker build \
+                                --build-arg BUILDKIT_INLINE_CACHE=1 \
+                                --cache-from ${DOCKER_IMAGE}:latest \
+                                -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                                -t ${DOCKER_IMAGE}:latest \
+                                .
+                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker push ${DOCKER_IMAGE}:latest
                         '''
                     }
                 }
