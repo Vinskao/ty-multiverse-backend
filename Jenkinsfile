@@ -5,6 +5,7 @@ pipeline {
                 apiVersion: v1
                 kind: Pod
                 spec:
+                  serviceAccountName: jenkins
                   containers:
                   - name: maven
                     image: maven:3.8.4-openjdk-17
@@ -35,6 +36,10 @@ pipeline {
                   - name: workspace
                     emptyDir: {}
             '''
+            defaultContainer 'maven'
+            inheritFrom 'default'
+            jenkinsUrl 'http://jenkins-service:8080/jenkins'
+            jenkinsTunnel 'jenkins-service:50000'
         }
     }
     environment {
