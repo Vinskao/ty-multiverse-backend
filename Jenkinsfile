@@ -27,16 +27,11 @@ pipeline {
                     - name: DOCKER_BUILDKIT
                       value: "1"
                     volumeMounts:
-                    - name: docker-config
-                      mountPath: /root/.docker
                     - name: workspace
                       mountPath: /workspace
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
-                  - name: docker-config
-                    secret:
-                      secretName: docker-config-secret
                   - name: workspace
                     emptyDir: {}
             '''
@@ -115,17 +110,20 @@ pipeline {
             steps {
                 container('docker') {
                     script {
-                        sh '''
-                            cd /workspace
-                            docker build \
-                                --build-arg BUILDKIT_INLINE_CACHE=1 \
-                                --cache-from ${DOCKER_IMAGE}:latest \
-                                -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
-                                -t ${DOCKER_IMAGE}:latest \
-                                .
-                            docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                            docker push ${DOCKER_IMAGE}:latest
-                        '''
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            sh '''
+                                cd /workspace
+                                echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                                docker build \
+                                    --build-arg BUILDKIT_INLINE_CACHE=1 \
+                                    --cache-from ${DOCKER_IMAGE}:latest \
+                                    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                                    -t ${DOCKER_IMAGE}:latest \
+                                    .
+                                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE}:latest
+                            '''
+                        }
                     }
                 }
             }
