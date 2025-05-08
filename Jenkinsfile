@@ -33,16 +33,20 @@ pipeline {
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
                   - name: kubectl
-                    image: bitnami/kubectl:latest
-                    command: ["cat"]
-                    tty: true
+                    image: gcr.io/cloud-builders/kubectl:latest
+                    command: ["/bin/sh"]
+                    args: ["-c", "while true; do sleep 30; done"]
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
+                    - mountPath: /root/.kube
+                      name: kube-config
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
                   - name: workspace-volume
+                    emptyDir: {}
+                  - name: kube-config
                     emptyDir: {}
             '''
             defaultContainer 'maven'
@@ -163,6 +167,12 @@ pipeline {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
                         sh '''
+                            echo "Current directory: $(pwd)"
+                            echo "Listing directory contents:"
+                            ls -la
+                            echo "Checking kubectl version:"
+                            kubectl version --client
+                            echo "Deploying to Kubernetes..."
                             kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
                             kubectl rollout restart deployment ty-multiverse-backend
                         '''
