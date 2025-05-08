@@ -34,15 +34,19 @@ pipeline {
                       name: workspace-volume
                   - name: kubectl
                     image: bitnami/kubectl:1.30.7
-                    command: ["cat"]
-                    tty: true
+                    command: ["/bin/sh"]
+                    args: ["-c", "while true; do sleep 30; done"]
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
+                    - mountPath: /root/.kube
+                      name: kube-config
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
                   - name: workspace-volume
+                    emptyDir: {}
+                  - name: kube-config
                     emptyDir: {}
             '''
             defaultContainer 'maven'
@@ -163,27 +167,17 @@ pipeline {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
                         sh '''
-                            # 基本診斷
-                            echo "=== 基本診斷 ==="
-                            echo "當前目錄: $(pwd)"
-                            echo "目錄內容:"
-                            ls -la
+                            # 測試集群連接
+                            echo "=== 測試集群連接 ==="
+                            kubectl cluster-info
                             
-                            # kubectl 診斷
-                            echo "=== kubectl 診斷 ==="
-                            echo "kubectl 版本:"
-                            kubectl version --client
+                            # 測試命名空間
+                            echo "=== 測試命名空間 ==="
+                            kubectl get ns
                             
-                            echo "kubectl 配置:"
-                            kubectl config view
-                            
-                            echo "服務賬戶權限:"
-                            kubectl auth can-i get deployments --all-namespaces
-                            
-                            # 如果以上都正常，再執行部署
-                            echo "=== 開始部署 ==="
-                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                            kubectl rollout restart deployment ty-multiverse-backend
+                            # 測試部署
+                            echo "=== 測試部署 ==="
+                            kubectl get deployments -n default
                         '''
                     }
                 }
