@@ -32,6 +32,13 @@ pipeline {
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
+                  - name: kubectl
+                    image: bitnami/kubectl:1.30.7
+                    command: ["/bin/sh"]
+                    args: ["-c", "while true; do sleep 30; done"]
+                    volumeMounts:
+                    - mountPath: /home/jenkins/agent
+                      name: workspace-volume
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
@@ -153,29 +160,31 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                    // 測試集群連接
-                    sh 'kubectl cluster-info --v=9'
-                    
-                    // 檢查 deployment.yaml 文件
-                    sh 'ls -la k8s/'
-                    sh 'cat k8s/deployment.yaml'
-                    
-                    // 檢查 Deployment 是否存在
-                    sh '''
-                        if kubectl get deployment ty-multiverse-backend -n default --v=9; then
-                            echo "Deployment exists, updating..."
-                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default --v=9
-                            kubectl rollout restart deployment ty-multiverse-backend --v=9
-                        else
-                            echo "Deployment does not exist, creating..."
-                            kubectl apply -f k8s/deployment.yaml --v=9
-                        fi
-                    '''
-                    
-                    // 檢查部署狀態
-                    sh 'kubectl get deployments -n default --v=9'
-                    sh 'kubectl rollout status deployment/ty-multiverse-backend --v=9'
+                container('kubectl') {
+                    withKubeConfig([credentialsId: 'kubeconfig-secret']) {
+                        // 測試集群連接
+                        sh 'kubectl cluster-info --v=9'
+                        
+                        // 檢查 deployment.yaml 文件
+                        sh 'ls -la k8s/'
+                        sh 'cat k8s/deployment.yaml'
+                        
+                        // 檢查 Deployment 是否存在
+                        sh '''
+                            if kubectl get deployment ty-multiverse-backend -n default --v=9; then
+                                echo "Deployment exists, updating..."
+                                kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default --v=9
+                                kubectl rollout restart deployment ty-multiverse-backend --v=9
+                            else
+                                echo "Deployment does not exist, creating..."
+                                kubectl apply -f k8s/deployment.yaml --v=9
+                            fi
+                        '''
+                        
+                        // 檢查部署狀態
+                        sh 'kubectl get deployments -n default --v=9'
+                        sh 'kubectl rollout status deployment/ty-multiverse-backend --v=9'
+                    }
                 }
             }
         }
