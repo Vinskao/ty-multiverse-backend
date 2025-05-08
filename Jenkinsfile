@@ -40,6 +40,12 @@ pipeline {
             inheritFrom 'default'
         }
     }
+    options {
+        timestamps()
+        ansiColor('xterm')
+        disableConcurrentBuilds()
+        domain('TYB')
+    }
     environment {
         DOCKER_IMAGE = 'papakao/ty-multiverse-backend'
         DOCKER_TAG = "${BUILD_NUMBER}"
@@ -56,16 +62,16 @@ pipeline {
                             mkdir -p src/main/resources/env
                         '''
                         withCredentials([
-                            string(credentialsId: 'TYB_SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
-                            string(credentialsId: 'TYB_SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
-                            string(credentialsId: 'TYB_SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
-                            string(credentialsId: 'TYB_URL_ADDRESS', variable: 'URL_ADDRESS'),
-                            string(credentialsId: 'TYB_URL_FRONTEND', variable: 'URL_FRONTEND'),
-                            string(credentialsId: 'TYB_KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                            string(credentialsId: 'TYB_KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
-                            string(credentialsId: 'TYB_KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
-                            string(credentialsId: 'TYB_KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
-                            string(credentialsId: 'TYB_PROJECT_ENV', variable: 'PROJECT_ENV')
+                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
+                            string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                            string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                            string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
+                            string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
+                            string(credentialsId: 'PROJECT_ENV', variable: 'PROJECT_ENV')
                         ]) {
                             sh '''
                                 cat > src/main/resources/env/platform.properties <<EOL
