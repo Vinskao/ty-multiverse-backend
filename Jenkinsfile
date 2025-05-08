@@ -32,6 +32,13 @@ pipeline {
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
+                  - name: kubectl
+                    image: bitnami/kubectl:latest
+                    command: ["cat"]
+                    tty: true
+                    volumeMounts:
+                    - mountPath: /home/jenkins/agent
+                      name: workspace-volume
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
@@ -153,11 +160,13 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                    sh '''
-                        kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                        kubectl rollout restart deployment ty-multiverse-backend
-                    '''
+                container('kubectl') {
+                    withKubeConfig([credentialsId: 'kubeconfig-secret']) {
+                        sh '''
+                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                            kubectl rollout restart deployment ty-multiverse-backend
+                        '''
+                    }
                 }
             }
         }
