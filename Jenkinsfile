@@ -33,20 +33,16 @@ pipeline {
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
                   - name: kubectl
-                    image: gcr.io/cloud-builders/kubectl:latest
-                    command: ["/bin/sh"]
-                    args: ["-c", "while true; do sleep 30; done"]
+                    image: bitnami/kubectl:1.30.7
+                    command: ["cat"]
+                    tty: true
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
-                    - mountPath: /root/.kube
-                      name: kube-config
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
                   - name: workspace-volume
-                    emptyDir: {}
-                  - name: kube-config
                     emptyDir: {}
             '''
             defaultContainer 'maven'
