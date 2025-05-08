@@ -38,8 +38,6 @@ pipeline {
             '''
             defaultContainer 'maven'
             inheritFrom 'default'
-            jenkinsUrl 'http://jenkins-service:8080/jenkins'
-            jenkinsTunnel 'jenkins-service:50000'
         }
     }
     environment {
