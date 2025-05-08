@@ -53,7 +53,6 @@ pipeline {
                 script {
                     container('maven') {
                         sh '''
-                            git clone https://github.com/Vinskao/TY-Multiverse-Backend.git .
                             mkdir -p src/main/resources/env
                         '''
                         withCredentials([
