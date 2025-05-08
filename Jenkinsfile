@@ -162,24 +162,22 @@ pipeline {
             steps {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                        sh '''
-                            # 測試集群連接
-                            echo "=== 測試集群連接 ==="
-                            kubectl cluster-info
-                            
-                            # 測試命名空間
-                            echo "=== 測試命名空間 ==="
-                            kubectl get ns
-                            
-                            # 測試部署
-                            echo "=== 測試部署 ==="
-                            kubectl get deployments -n default
-                            
-                            # 執行部署
-                            echo "=== 執行部署 ==="
-                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                            kubectl rollout restart deployment ty-multiverse-backend
-                        '''
+                        // 測試集群連接
+                        sh 'kubectl cluster-info --v=9'
+                        
+                        // 檢查現有部署
+                        sh 'kubectl get deployments -n default --v=9'
+                        
+                        // 檢查 deployment.yaml 文件
+                        sh 'ls -la k8s/'
+                        sh 'cat k8s/deployment.yaml'
+                        
+                        // 應用配置
+                        sh 'kubectl apply -f k8s/deployment.yaml --v=9'
+                        
+                        // 檢查部署狀態
+                        sh 'kubectl get deployments -n default --v=9'
+                        sh 'kubectl rollout status deployment/ty-multiverse-backend --v=9'
                     }
                 }
             }
