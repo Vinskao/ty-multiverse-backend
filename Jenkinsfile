@@ -14,9 +14,9 @@ pipeline {
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
-                    - mountPath: /workspace
+                    - mountPath: /home/jenkins/agent
                       name: workspace-volume
-                    workingDir: /workspace
+                    workingDir: /home/jenkins/agent
                   - name: docker
                     image: docker:23-dind
                     privileged: true
@@ -30,7 +30,7 @@ pipeline {
                     - name: DOCKER_BUILDKIT
                       value: "1"
                     volumeMounts:
-                    - mountPath: /workspace
+                    - mountPath: /home/jenkins/agent
                       name: workspace-volume
                   volumes:
                   - name: maven-repo
@@ -127,10 +127,15 @@ pipeline {
                     script {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
-                                cd /workspace
+                                cd /home/jenkins/agent
                                 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                                pwd
+                                # 確認 Dockerfile 存在
                                 ls -la
+                                if [ ! -f "Dockerfile" ]; then
+                                    echo "Error: Dockerfile not found!"
+                                    exit 1
+                                fi
+                                # 構建 Docker 鏡像
                                 docker build \
                                     --build-arg BUILDKIT_INLINE_CACHE=1 \
                                     --cache-from ${DOCKER_IMAGE}:latest \
