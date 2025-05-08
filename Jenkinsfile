@@ -163,12 +163,25 @@ pipeline {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
                         sh '''
-                            echo "Current directory: $(pwd)"
-                            echo "Listing directory contents:"
+                            # 基本診斷
+                            echo "=== 基本診斷 ==="
+                            echo "當前目錄: $(pwd)"
+                            echo "目錄內容:"
                             ls -la
-                            echo "Checking kubectl version:"
+                            
+                            # kubectl 診斷
+                            echo "=== kubectl 診斷 ==="
+                            echo "kubectl 版本:"
                             kubectl version --client
-                            echo "Deploying to Kubernetes..."
+                            
+                            echo "kubectl 配置:"
+                            kubectl config view
+                            
+                            echo "服務賬戶權限:"
+                            kubectl auth can-i get deployments --all-namespaces
+                            
+                            # 如果以上都正常，再執行部署
+                            echo "=== 開始部署 ==="
                             kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
                             kubectl rollout restart deployment ty-multiverse-backend
                         '''
