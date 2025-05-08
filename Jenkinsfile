@@ -42,9 +42,7 @@ pipeline {
     }
     options {
         timestamps()
-        ansiColor('xterm')
         disableConcurrentBuilds()
-        domain('TYB')
     }
     environment {
         DOCKER_IMAGE = 'papakao/ty-multiverse-backend'
