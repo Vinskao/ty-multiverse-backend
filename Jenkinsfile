@@ -6,19 +6,6 @@ pipeline {
                 kind: Pod
                 spec:
                   containers:
-                  - name: jnlp
-                    image: jenkins/inbound-agent:latest
-                    args: ['\$(JENKINS_URL)', '\$(JENKINS_SECRET)', '\$(JENKINS_NAME)']
-                    env:
-                    - name: JENKINS_URL
-                      value: https://peoplesystem.tatdvsonorth.com/jenkins
-                    - name: JENKINS_SECRET
-                      valueFrom:
-                        secretKeyRef:
-                          name: jenkins-agent-secret
-                          key: secret
-                    - name: JENKINS_NAME
-                      value: "tyb-ty-multiverse-backend-\$(BUILD_NUMBER)"
                   - name: maven
                     image: maven:3.8.4-openjdk-17
                     command: ["cat"]
