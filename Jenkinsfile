@@ -57,6 +57,17 @@ pipeline {
                 script {
                     container('maven') {
                         sh '''
+                            # 確保工作目錄是空的
+                            rm -rf *
+                            # 克隆代碼
+                            git clone https://github.com/Vinskao/TY-Multiverse-Backend.git .
+                            # 確認 Dockerfile 存在
+                            ls -la
+                            if [ ! -f "Dockerfile" ]; then
+                                echo "Error: Dockerfile not found!"
+                                exit 1
+                            fi
+                            # 創建配置目錄
                             mkdir -p src/main/resources/env
                         '''
                         withCredentials([
@@ -120,6 +131,8 @@ pipeline {
                             sh '''
                                 cd /workspace
                                 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                                pwd
+                                ls -la
                                 docker build \
                                     --build-arg BUILDKIT_INLINE_CACHE=1 \
                                     --cache-from ${DOCKER_IMAGE}:latest \
