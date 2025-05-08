@@ -34,19 +34,15 @@ pipeline {
                       name: workspace-volume
                   - name: kubectl
                     image: bitnami/kubectl:1.30.7
-                    command: ["/bin/sh"]
-                    args: ["-c", "while true; do sleep 30; done"]
+                    command: ["cat"]
+                    tty: true
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
-                    - mountPath: /root/.kube
-                      name: kube-config
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
                   - name: workspace-volume
-                    emptyDir: {}
-                  - name: kube-config
                     emptyDir: {}
             '''
             defaultContainer 'maven'
@@ -178,6 +174,11 @@ pipeline {
                             # 測試部署
                             echo "=== 測試部署 ==="
                             kubectl get deployments -n default
+                            
+                            # 執行部署
+                            echo "=== 執行部署 ==="
+                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                            kubectl rollout restart deployment ty-multiverse-backend
                         '''
                     }
                 }
