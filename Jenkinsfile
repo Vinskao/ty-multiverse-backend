@@ -14,6 +14,8 @@ pipeline {
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
+                    - mountPath: /workspace
+                      name: workspace-volume
                     workingDir: /workspace
                   - name: docker
                     image: docker:23-dind
@@ -28,12 +30,12 @@ pipeline {
                     - name: DOCKER_BUILDKIT
                       value: "1"
                     volumeMounts:
-                    - name: workspace
-                      mountPath: /workspace
+                    - mountPath: /workspace
+                      name: workspace-volume
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
-                  - name: workspace
+                  - name: workspace-volume
                     emptyDir: {}
             '''
             defaultContainer 'maven'
