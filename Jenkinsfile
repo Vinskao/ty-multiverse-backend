@@ -101,10 +101,18 @@ pipeline {
             }
         }
 
-        stage('Build JAR') {
+        stage('Build') {
             steps {
                 container('maven') {
-                    sh 'mvn clean package -DskipTests'
+                    sh 'mvn clean package -P platform -DskipTests'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                container('maven') {
+                    sh 'mvn test -P platform'
                 }
             }
         }
@@ -112,16 +120,18 @@ pipeline {
         stage('Build Docker Image with Kaniko') {
             steps {
                 container('kaniko') {
-                    sh '''
-                        /kaniko/executor \
-                            --context=/workspace \
-                            --dockerfile=/workspace/Dockerfile \
-                            --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                            --destination=${DOCKER_IMAGE}:latest \
-                            --cache=true \
-                            --verbosity=info \
-                            --skip-tls-verify
-                    '''
+                    script {
+                        sh '''
+                            /kaniko/executor \
+                                --context=/workspace \
+                                --dockerfile=/workspace/Dockerfile \
+                                --destination=${DOCKER_IMAGE}:${DOCKER_TAG} \
+                                --destination=${DOCKER_IMAGE}:latest \
+                                --cache=true \
+                                --verbosity=info \
+                                --skip-tls-verify
+                        '''
+                    }
                 }
             }
         }
