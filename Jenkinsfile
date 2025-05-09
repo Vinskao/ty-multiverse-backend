@@ -36,6 +36,9 @@ pipeline {
                     image: bitnami/kubectl:1.30.7
                     command: ["/bin/sh"]
                     args: ["-c", "while true; do sleep 30; done"]
+                    alwaysPull: true
+                    securityContext:
+                      runAsUser: 0
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
@@ -158,32 +161,74 @@ pipeline {
             }
         }
 
+        stage('Debug Environment') {
+            steps {
+                container('kubectl') {
+                    script {
+                        echo "=== Listing all environment variables ==="
+                        sh 'printenv | sort'
+                        
+                        echo "=== Checking Jenkins environment variables ==="
+                        sh '''
+                            echo "BUILD_NUMBER: ${BUILD_NUMBER}"
+                            echo "BUILD_ID: ${BUILD_ID}"
+                            echo "BUILD_URL: ${BUILD_URL}"
+                            echo "JOB_NAME: ${JOB_NAME}"
+                            echo "JOB_BASE_NAME: ${JOB_BASE_NAME}"
+                            echo "WORKSPACE: ${WORKSPACE}"
+                            echo "JENKINS_HOME: ${JENKINS_HOME}"
+                            echo "JENKINS_URL: ${JENKINS_URL}"
+                            echo "EXECUTOR_NUMBER: ${EXECUTOR_NUMBER}"
+                            echo "NODE_NAME: ${NODE_NAME}"
+                            echo "NODE_LABELS: ${NODE_LABELS}"
+                            echo "JAVA_HOME: ${JAVA_HOME}"
+                            echo "PATH: ${PATH}"
+                            echo "SHELL: ${SHELL}"
+                            echo "HOME: ${HOME}"
+                            echo "USER: ${USER}"
+                            echo "DOCKER_IMAGE: ${DOCKER_IMAGE}"
+                            echo "DOCKER_TAG: ${DOCKER_TAG}"
+                            echo "SERVER_PORT: ${SERVER_PORT}"
+                            echo "LOGGING_LEVEL: ${LOGGING_LEVEL}"
+                            echo "LOGGING_LEVEL_SPRINGFRAMEWORK: ${LOGGING_LEVEL_SPRINGFRAMEWORK}"
+                        '''
+                    }
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                        // 測試集群連接
-                        sh 'kubectl cluster-info --v=9'
-                        
-                        // 檢查 deployment.yaml 文件
-                        sh 'ls -la k8s/'
-                        sh 'cat k8s/deployment.yaml'
-                        
-                        // 檢查 Deployment 是否存在
-                        sh '''
-                            if kubectl get deployment ty-multiverse-backend -n default --v=9; then
-                                echo "Deployment exists, updating..."
-                                kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default --v=9
-                                kubectl rollout restart deployment ty-multiverse-backend --v=9
-                            else
-                                echo "Deployment does not exist, creating..."
-                                kubectl apply -f k8s/deployment.yaml --v=9
-                            fi
-                        '''
-                        
-                        // 檢查部署狀態
-                        sh 'kubectl get deployments -n default --v=9'
-                        sh 'kubectl rollout status deployment/ty-multiverse-backend --v=9'
+                        script {
+                            try {
+                                // 測試集群連接
+                                sh 'kubectl cluster-info'
+                                
+                                // 檢查 deployment.yaml 文件
+                                sh 'ls -la k8s/'
+                                
+                                // 檢查 Deployment 是否存在
+                                sh '''
+                                    if kubectl get deployment ty-multiverse-backend -n default; then
+                                        echo "Deployment exists, updating..."
+                                        kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                                        kubectl rollout restart deployment ty-multiverse-backend
+                                    else
+                                        echo "Deployment does not exist, creating..."
+                                        kubectl apply -f k8s/deployment.yaml
+                                    fi
+                                '''
+                                
+                                // 檢查部署狀態
+                                sh 'kubectl get deployments -n default'
+                                sh 'kubectl rollout status deployment/ty-multiverse-backend'
+                            } catch (Exception e) {
+                                echo "Error during deployment: ${e.message}"
+                                throw e
+                            }
+                        }
                     }
                 }
             }
