@@ -76,6 +76,31 @@ public abstract class BaseService {
     }
     
     /**
+     * 使用自動關閉的資料庫連接執行操作。
+     * 使用 try-with-resources 確保連接在使用後自動關閉。
+     *
+     * @param <T> 操作返回值的類型
+     * @param action 要在資料庫連接上執行的操作
+     * @return 操作的執行結果
+     * @throws SQLException 當資料庫操作失敗時拋出
+     */
+    protected <T> T executeWithAutoClose(ConnectionConsumer<T> action) throws SQLException {
+        try (Connection connection = getConnection()) {
+            return action.execute(connection);
+        }
+    }
+    
+    /**
+     * 資料庫連接操作的函數式接口。
+     *
+     * @param <T> 操作返回值的類型
+     */
+    @FunctionalInterface
+    protected interface ConnectionConsumer<T> {
+        T execute(Connection connection) throws SQLException;
+    }
+    
+    /**
      * 釋放資料庫連接。
      * 同時會減少當前執行緒的連接使用計數。
      *
