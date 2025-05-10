@@ -707,16 +707,27 @@ classDiagram
   - 驗證 HTTP 響應和狀態碼
   - 測試請求參數的處理
   - 驗證服務層的調用
-## CI/CD 流程
 
+## CI/CD Pipeline
+
+### 1. Pipeline Overview
 ```mermaid
 graph LR
-    A[GitHub] --> B[Jenkins]
-    B --> C[Jenkins Agent Pod]
-    C --> D[Docker Hub]
-    D --> E[Kubernetes]
-    E --> F[Production]
-    F --> A
+    A[GitHub Repository] --> B[Clone and Setup]
+    B --> C[Build]
+    C --> D[Test]
+    D --> E[Build Docker Image with BuildKit]
+    E --> F[Debug Environment]
+    F --> G[Deploy to Kubernetes]
+    
+
+    
+
 ```
 
+### 2. Pipeline Components
 
+#### 2.1 Agent Configuration
+- **Maven Container**: `maven:3.8.4-openjdk-17`
+- **Docker Container**: `docker:23-dind`
+- **Kubectl Container**: `bitnami/kubectl:1.30.7`
