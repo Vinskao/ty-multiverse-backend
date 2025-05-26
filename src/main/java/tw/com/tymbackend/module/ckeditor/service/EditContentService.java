@@ -1,12 +1,16 @@
 package tw.com.tymbackend.module.ckeditor.service;
 
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+
 import tw.com.tymbackend.core.service.BaseService;
 import tw.com.tymbackend.module.ckeditor.dao.EditContentRepository;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
-
-import java.util.Optional;
 
 /**
  * CKEditor 內容管理服務
@@ -19,9 +23,10 @@ import java.util.Optional;
  * @since 2024-05-10
  */
 @Service
-@Transactional
 public class EditContentService extends BaseService {
     
+    @Autowired
+    private TransactionTemplate transactionTemplate;
     /**
      * CKEditor 內容存儲庫
      * 用於執行數據庫操作
@@ -44,16 +49,21 @@ public class EditContentService extends BaseService {
      * 將拋出 RuntimeException。
      * 
      * @param editContentVO 要保存的內容對象，包含編輯器名稱和內容
-     * @return 保存後的內容對象，包含數據庫生成的ID和其他信息
+     * @return CompletableFuture<EditContentVO> 保存後的內容對象，包含數據庫生成的ID和其他信息
      * @throws RuntimeException 當數據庫操作失敗時拋出
      */
-    @Transactional
-    public EditContentVO save(EditContentVO editContentVO) {
-        try {
-            return editContentRepository.save(editContentVO);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to save editor content", e);
-        }
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<EditContentVO> saveContent(EditContentVO editContentVO) {
+        return CompletableFuture.supplyAsync(() -> {
+            return transactionTemplate.execute(status -> {
+                try {
+                    return editContentRepository.save(editContentVO);
+                } catch (Exception e) {
+                    status.setRollbackOnly();
+                    throw new RuntimeException("Failed to save editor content", e);
+                }
+            });
+        });
     }
 
     /**
@@ -63,30 +73,20 @@ public class EditContentService extends BaseService {
      * 將返回空的 Optional。
      * 
      * @param editor 編輯器名稱，用作查詢的標識符
-     * @return 包含找到的內容的 Optional，如果未找到則為空
+     * @return CompletableFuture<Optional<EditContentVO>> 包含找到的內容的 Optional，如果未找到則為空
      * @throws RuntimeException 當數據庫操作失敗時拋出
      */
-    @Transactional(readOnly = true)
-    public Optional<EditContentVO> findById(String editor) {
-        try {
-            return editContentRepository.findById(editor);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to find editor content", e);
-        }
-    }
-    
-    /**
-     * 保存編輯器內容的便捷方法
-     * 
-     * 此方法是 save 方法的包裝，提供更直觀的方法名稱。
-     * 
-     * @param editContentVO 要保存的內容對象
-     * @return 保存後的內容對象
-     * @see #save(EditContentVO)
-     */
-    @Transactional
-    public EditContentVO saveContent(EditContentVO editContentVO) {
-        return save(editContentVO);
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<Optional<EditContentVO>> findById(String editor) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return transactionTemplate.execute(status -> {
+                    return editContentRepository.findById(editor);
+                });
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to find editor content", e);
+            }
+        });
     }
     
     /**
@@ -95,11 +95,11 @@ public class EditContentService extends BaseService {
      * 此方法是 findById 方法的包裝，提供更直觀的方法名稱。
      * 
      * @param editor 編輯器名稱
-     * @return 包含找到的內容的 Optional，如果未找到則為空
+     * @return CompletableFuture<Optional<EditContentVO>> 包含找到的內容的 Optional，如果未找到則為空
      * @see #findById(String)
      */
-    @Transactional(readOnly = true)
-    public Optional<EditContentVO> getContent(String editor) {
+    @Async("threadPoolTaskExecutor")
+    public CompletableFuture<Optional<EditContentVO>> getContent(String editor) {
         return findById(editor);
     }
 }

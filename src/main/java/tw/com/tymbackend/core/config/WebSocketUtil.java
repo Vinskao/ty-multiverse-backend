@@ -25,7 +25,7 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
     }
 
     // 移除Session
-    public static void remoteSession(String userNick) {
+    public static void removeSession(String userNick) {
         ONLINE_SESSION.remove(userNick);
     }
 
