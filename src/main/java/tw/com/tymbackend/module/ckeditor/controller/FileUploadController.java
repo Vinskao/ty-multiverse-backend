@@ -15,6 +15,7 @@ import tw.com.tymbackend.module.ckeditor.service.EditContentService;
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * 檔案上傳控制器
@@ -60,7 +61,7 @@ public class FileUploadController {
         
         try {
             // Check if content is the same as stored
-            Optional<EditContentVO> storedContentOpt = editContentService.getContent(editor);
+            Optional<EditContentVO> storedContentOpt = editContentService.getContent(editor).get();
             
             // 如果內容存在且內容相同，則不保存
             if (storedContentOpt.isPresent() && content.equals(storedContentOpt.get().getContent())) {
@@ -94,6 +95,9 @@ public class FileUploadController {
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error: " + e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: " + e.getMessage());
         }
     }
     
@@ -102,7 +106,7 @@ public class FileUploadController {
         String editorName = editor.getEditor(); // Changed from getContentId() to getEditor()
         
         try {
-            Optional<EditContentVO> contentOpt = editContentService.getContent(editorName);
+            Optional<EditContentVO> contentOpt = editContentService.getContent(editorName).get();
             
             if (contentOpt.isPresent()) {
                 return ResponseEntity.ok(contentOpt.get());
@@ -111,6 +115,9 @@ public class FileUploadController {
                 return ResponseEntity.ok(new EditContentVO(editorName, ""));
             }
         } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error: " + e.getMessage());
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body("Error: " + e.getMessage());
         }
