@@ -6,32 +6,45 @@
 ### 1. 核心架構
 ```mermaid
 classDiagram
-    class IoCContainer {
-        +ApplicationContext
-        +BeanFactory
+    class ApplicationCore {
+        +IoC Container
+        +Bean Management
+        +Lifecycle Control
     }
     
-    class SingletonBeans {
+    class DependencyInjection {
+        +@Autowired
+        +@Qualifier
+        +@Primary
+        +Constructor Injection
+    }
+    
+    class BeanManagement {
+        +Singleton Scope
+        +Prototype Scope
+        +Request Scope
+        +Session Scope
+    }
+    
+    class AspectOriented {
+        +@Aspect
+        +@Pointcut
+        +@Around
+        +@Before
+        +@After
+    }
+    
+    class ConfigurationManagement {
         +@Configuration
-        +@Component
-        +@Service
-        +@Controller
+        +@Bean
+        +@ComponentScan
+        +@PropertySource
     }
     
-    class FactoryBeans {
-        +RepositoryFactory
-        +QueryConditionFactory
-    }
-    
-    class AOPBeans {
-        +@Transactional
-        +@ControllerAdvice
-        +ObservationHandler
-    }
-    
-    IoCContainer --> SingletonBeans
-    IoCContainer --> FactoryBeans
-    IoCContainer --> AOPBeans
+    ApplicationCore --> DependencyInjection
+    ApplicationCore --> BeanManagement
+    ApplicationCore --> AspectOriented
+    ApplicationCore --> ConfigurationManagement
 ```
 
 ### 2. 領域驅動設計 (DDD) 架構
@@ -40,32 +53,58 @@ classDiagram
 ```mermaid
 classDiagram
     class PresentationLayer {
-        +Controller
-        +DTO
+        +REST Controllers
+        +WebSocket Controllers
+        +Request/Response DTOs
+        +API Documentation
+        +Authentication
+        +Authorization
     }
     
     class ApplicationLayer {
-        +Service
-        +ApplicationService
+        +Application Services
+        +Command Handlers
+        +Query Handlers
+        +Event Handlers
+        +Transaction Management
+        +Orchestration
     }
     
     class DomainLayer {
-        +Entity
-        +ValueObject
-        +Aggregate
-        +DomainService
-        +Repository
+        +Domain Entities
+        +Value Objects
+        +Aggregates
+        +Domain Services
+        +Domain Events
+        +Business Rules
+        +Repository Interfaces
     }
     
     class InfrastructureLayer {
-        +RepositoryImpl
-        +DataAccessor
-        +ExternalService
+        +Repository Implementations
+        +Database Access
+        +External Services
+        +Message Brokers
+        +File Storage
+        +Caching
+    }
+    
+    class CrossCuttingConcerns {
+        +Logging
+        +Security
+        +Validation
+        +Error Handling
+        +Monitoring
+        +Configuration
     }
     
     PresentationLayer --> ApplicationLayer
     ApplicationLayer --> DomainLayer
     DomainLayer --> InfrastructureLayer
+    CrossCuttingConcerns --> PresentationLayer
+    CrossCuttingConcerns --> ApplicationLayer
+    CrossCuttingConcerns --> DomainLayer
+    CrossCuttingConcerns --> InfrastructureLayer
 ```
 
 - **表現層 (Presentation Layer)**
@@ -92,32 +131,72 @@ classDiagram
 #### 2.2 領域模型示例
 ```mermaid
 classDiagram
-    class People {
+    class DomainEntity {
+        <<abstract>>
         +Long id
+        +Long version
+        +LocalDateTime createdAt
+        +LocalDateTime updatedAt
+        +equals()
+        +hashCode()
+        +toString()
+    }
+    
+    class People {
         +String name
         +int age
         +String race
         +String attributes
-        +Long version
-        +equals()
-        +hashCode()
+        +List~PeopleImage~ images
+        +addImage()
+        +removeImage()
+        +updateAttributes()
     }
     
     class Weapon {
-        +String id
-        +String name
         +String weaponName
         +int baseDamage
         +int bonusDamage
         +String attributes
         +String bonusAttributes
         +String stateAttributes
+        +calculateTotalDamage()
+        +applyBonus()
+    }
+    
+    class Livestock {
+        +String name
+        +String species
+        +int health
+        +String status
+        +feed()
+        +heal()
+        +getStatus()
+    }
+    
+    class Gallery {
+        +String title
+        +String description
+        +String imageUrl
+        +String category
+        +updateContent()
+        +validateImage()
+    }
+    
+    class Repository {
+        <<interface>>
+        +save()
+        +findById()
+        +findAll()
+        +delete()
+        +count()
     }
     
     class PeopleRepository {
         <<interface>>
         +findByName()
         +deleteByName()
+        +findByAgeBetween()
     }
     
     class WeaponRepository {
@@ -127,6 +206,12 @@ classDiagram
         +findByBaseDamageBetween()
     }
     
+    DomainEntity <|-- People
+    DomainEntity <|-- Weapon
+    DomainEntity <|-- Livestock
+    DomainEntity <|-- Gallery
+    Repository <|-- PeopleRepository
+    Repository <|-- WeaponRepository
     PeopleRepository --> People
     WeaponRepository --> Weapon
 ```
@@ -163,34 +248,55 @@ classDiagram
 
 ### 3. 設計模式與工廠架構
 
-#### 2.1 Singleton 模式
+#### 3.1 Singleton 模式
 ```mermaid
 classDiagram
     class SpringContainer {
         +ApplicationContext
         +BeanFactory
+        +DefaultListableBeanFactory
+        +AnnotationConfigApplicationContext
+    }
+    
+    class SingletonRegistry {
+        +ConcurrentHashMap~String, Object~
+        +registerBean()
+        +getBean()
+        +containsBean()
+    }
+    
+    class BeanLifecycle {
+        +Initialization
+        +PostConstruct
+        +PreDestroy
+        +DependencyInjection
     }
     
     class SingletonBeans {
-        +@Configuration
-        +@Component
-        +@Service
-        +@Controller
+        +Configuration Beans
+        +Service Beans
+        +Controller Beans
+        +Repository Beans
+        +Component Beans
     }
     
-    SpringContainer --> SingletonBeans
+    SpringContainer --> SingletonRegistry
+    SingletonRegistry --> BeanLifecycle
+    BeanLifecycle --> SingletonBeans
 ```
 
 - **目的**: 確保系統資源的唯一性和一致性
 - **應用**: 配置類、服務類、控制器等核心組件
 - **優點**: 資源共享、狀態一致性、內存優化
 
-#### 2.2 Factory 模式
+#### 3.2 Factory 模式
 ```mermaid
 classDiagram
-    class FactoryInterface {
+    class AbstractFactory {
         <<interface>>
         +createProduct()
+        +createProductA()
+        +createProductB()
     }
     
     class RepositoryFactory {
@@ -198,6 +304,7 @@ classDiagram
         +getCustomRepository()
         +getRepository()
         +getSpecificationRepository()
+        +getJpaRepository()
     }
     
     class QueryConditionFactory {
@@ -206,50 +313,102 @@ classDiagram
         +createLikeCondition()
         +createRangeCondition()
         +createCompositeCondition()
+        +createInCondition()
+        +createNullCondition()
     }
     
-    FactoryInterface <|-- RepositoryFactory
-    FactoryInterface <|-- QueryConditionFactory
+    class ServiceFactory {
+        <<interface>>
+        +createService()
+        +createServiceWithDependencies()
+        +getServiceInstance()
+    }
+    
+    class ConfigurationFactory {
+        <<interface>>
+        +createConfiguration()
+        +createDataSource()
+        +createTransactionManager()
+    }
+    
+    AbstractFactory <|-- RepositoryFactory
+    AbstractFactory <|-- QueryConditionFactory
+    AbstractFactory <|-- ServiceFactory
+    AbstractFactory <|-- ConfigurationFactory
 ```
 
 - **目的**: 提供統一的對象創建接口
 - **應用**: Repository工廠、查詢條件工廠
 - **優點**: 解耦對象創建、統一管理實例、支持擴展
 
-#### 2.3 工廠方法實現
+#### 3.3 工廠方法實現
 ```mermaid
 classDiagram
     class RepositoryFactoryImpl {
         -ApplicationContext applicationContext
         -Map<Class<?>, Object> repositoryCache
+        -ConcurrentHashMap<String, Object> customRepositories
         +getCustomRepository()
         +getRepository()
         +getSpecificationRepository()
+        +createRepositoryInstance()
+        +cacheRepository()
     }
     
     class QueryConditionFactoryImpl {
+        -Map<String, QueryCondition> conditionCache
         +createEqualsCondition()
         +createLikeCondition()
         +createRangeCondition()
         +createCompositeCondition()
         +createDynamicCondition()
+        +buildCondition()
+        +validateCondition()
+    }
+    
+    class ServiceFactoryImpl {
+        -ApplicationContext applicationContext
+        -Map<Class<?>, Object> serviceCache
+        +createService()
+        +createServiceWithDependencies()
+        +getServiceInstance()
+        +injectDependencies()
+    }
+    
+    class ConfigurationFactoryImpl {
+        -Environment environment
+        -Properties properties
+        +createConfiguration()
+        +createDataSource()
+        +createTransactionManager()
+        +loadProperties()
+        +validateConfiguration()
     }
     
     RepositoryFactory <|.. RepositoryFactoryImpl
     QueryConditionFactory <|.. QueryConditionFactoryImpl
+    ServiceFactory <|.. ServiceFactoryImpl
+    ConfigurationFactory <|.. ConfigurationFactoryImpl
 ```
 
-#### 2.4 工作原理
+#### 3.4 工作原理
 ```mermaid
 sequenceDiagram
     participant Service
     participant Factory
-    participant Repository
+    participant Cache
     participant ApplicationContext
+    participant Repository
     
     Service->>Factory: 請求實例
-    Factory->>ApplicationContext: 獲取Bean
-    ApplicationContext-->>Factory: 返回Bean
+    Factory->>Cache: 檢查緩存
+    alt 緩存命中
+        Cache-->>Factory: 返回緩存實例
+    else 緩存未命中
+        Factory->>ApplicationContext: 獲取Bean
+        ApplicationContext-->>Factory: 返回Bean
+        Factory->>Cache: 存入緩存
+    end
     Factory-->>Service: 返回實例
     Service->>Repository: 使用實例
 ```
@@ -259,62 +418,131 @@ sequenceDiagram
 - **依賴注入**: 通過構造器注入工廠實例
 - **使用方式**: 服務層通過工廠獲取所需實例
 
-### 3. IoC/AOP 架構
+### 4. IoC/AOP 架構
 
-#### 3.1 IoC 容器
+#### 4.1 IoC 容器
 ```mermaid
 classDiagram
     class SpringContainer {
         +BeanFactory
         +ApplicationContext
+        +ConfigurableApplicationContext
     }
     
     class BeanDefinition {
-        +Scope
-        +Dependencies
-        +Lifecycle
+        +Class<?> beanClass
+        +String scope
+        +boolean lazyInit
+        +String[] dependsOn
+        +ConstructorArgumentValues
+        +PropertyValues
     }
     
     class BeanLifecycle {
+        +Instantiation
+        +Population
         +Initialization
         +Destruction
         +DependencyInjection
     }
     
+    class BeanPostProcessor {
+        +postProcessBeforeInitialization()
+        +postProcessAfterInitialization()
+        +postProcessBeforeInstantiation()
+        +postProcessAfterInstantiation()
+    }
+    
+    class DependencyResolver {
+        +resolveDependencies()
+        +injectDependencies()
+        +validateDependencies()
+        +createProxy()
+    }
+    
     SpringContainer --> BeanDefinition
     BeanDefinition --> BeanLifecycle
+    BeanLifecycle --> BeanPostProcessor
+    BeanPostProcessor --> DependencyResolver
 ```
 
-#### 3.2 AOP 切面
+#### 4.2 AOP 切面
 ```mermaid
 classDiagram
-    class AOPContainer {
+    class AOPFramework {
+        +AspectJ
+        +Spring AOP
+        +Proxy Creation
+        +Weaving
+    }
+    
+    class AspectDefinition {
         +@Aspect
         +@Pointcut
         +@Around
+        +@Before
+        +@After
+        +@AfterReturning
+        +@AfterThrowing
     }
     
     class TransactionAspect {
         +@Transactional
         +TransactionManager
+        +TransactionDefinition
+        +TransactionStatus
+        +beginTransaction()
+        +commitTransaction()
+        +rollbackTransaction()
     }
     
     class ExceptionAspect {
         +@ControllerAdvice
+        +@ExceptionHandler
         +GlobalExceptionHandler
+        +handleException()
+        +logException()
+        +createErrorResponse()
     }
     
     class ObservationAspect {
         +ObservationHandler
         +Metrics
+        +Tracing
+        +Performance Monitoring
+        +recordMetrics()
+        +startTimer()
+        +stopTimer()
     }
     
-    AOPContainer --> TransactionAspect
-    AOPContainer --> ExceptionAspect
-    AOPContainer --> ObservationAspect
+    class SecurityAspect {
+        +@PreAuthorize
+        +@PostAuthorize
+        +@Secured
+        +Authentication
+        +Authorization
+        +validateAccess()
+        +checkPermissions()
+    }
+    
+    class ValidationAspect {
+        +@Valid
+        +@Validated
+        +ConstraintValidator
+        +ValidationResult
+        +validateInput()
+        +handleValidationErrors()
+    }
+    
+    AOPFramework --> AspectDefinition
+    AspectDefinition --> TransactionAspect
+    AspectDefinition --> ExceptionAspect
+    AspectDefinition --> ObservationAspect
+    AspectDefinition --> SecurityAspect
+    AspectDefinition --> ValidationAspect
 ```
 
-### 4. 架構優勢
+### 5. 架構優勢
 
 1. **解耦與內聚**
    - IoC 實現依賴反轉
@@ -341,6 +569,13 @@ classDiagram
 ### 1. 錯誤處理架構圖
 ```mermaid
 classDiagram
+    class ErrorHandlingFramework {
+        +Global Exception Handler
+        +Error Response Builder
+        +Exception Mapper
+        +Error Logger
+    }
+    
     class ErrorCode {
         <<enumeration>>
         +INTERNAL_SERVER_ERROR
@@ -349,17 +584,24 @@ classDiagram
         +UNAUTHORIZED
         +FORBIDDEN
         +CONFLICT
+        +VALIDATION_ERROR
+        +BUSINESS_ERROR
         +getCode()
         +getHttpStatus()
         +getMessage()
+        +getDescription()
     }
     
     class BusinessException {
         -ErrorCode errorCode
+        -String detail
+        -Map<String, Object> parameters
         +BusinessException(ErrorCode)
         +BusinessException(ErrorCode, String)
         +BusinessException(ErrorCode, String, Throwable)
         +getErrorCode()
+        +getDetail()
+        +getParameters()
     }
     
     class ErrorResponse {
@@ -368,13 +610,18 @@ classDiagram
         -String detail
         -LocalDateTime timestamp
         -String path
+        -String traceId
+        -Map<String, Object> metadata
         +ErrorResponse(int, String, String, String)
         +fromErrorCode(ErrorCode, String, String)
         +fromBusinessException(BusinessException, String)
+        +addMetadata()
+        +setTraceId()
     }
     
     class GlobalExceptionHandler {
         -Logger logger
+        -ErrorResponseBuilder responseBuilder
         +handleBusinessException()
         +handleEntityNotFoundException()
         +handleDataIntegrityViolationException()
@@ -383,12 +630,28 @@ classDiagram
         +handleConstraintViolationException()
         +handleBindException()
         +handleGlobalException()
+        +logException()
+        +createErrorResponse()
     }
     
+    class ExceptionMapper {
+        +mapToErrorCode(Exception)
+        +mapToHttpStatus(Exception)
+        +mapToErrorMessage(Exception)
+        +isBusinessException(Exception)
+        +isSystemException(Exception)
+    }
+    
+    ErrorHandlingFramework --> ErrorCode
+    ErrorHandlingFramework --> BusinessException
+    ErrorHandlingFramework --> ErrorResponse
+    ErrorHandlingFramework --> GlobalExceptionHandler
+    ErrorHandlingFramework --> ExceptionMapper
     BusinessException --> ErrorCode
     ErrorResponse --> ErrorCode
     GlobalExceptionHandler --> BusinessException
     GlobalExceptionHandler --> ErrorResponse
+    GlobalExceptionHandler --> ExceptionMapper
 ```
 
 ### 2. 模組特定異常
@@ -397,58 +660,104 @@ classDiagram
     class BusinessException {
         <<abstract>>
         -ErrorCode errorCode
+        -String detail
+        -Map<String, Object> parameters
         +BusinessException(ErrorCode)
         +BusinessException(ErrorCode, String)
         +BusinessException(ErrorCode, String, Throwable)
         +getErrorCode()
+        +getDetail()
+        +getParameters()
     }
     
     class PeopleException {
+        -String peopleName
+        -Long peopleId
         +PeopleException(ErrorCode)
         +PeopleException(ErrorCode, String)
         +PeopleException(ErrorCode, String, Throwable)
+        +setPeopleInfo()
+        +getPeopleName()
+        +getPeopleId()
     }
     
     class WeaponException {
+        -String weaponName
+        -String weaponType
         +WeaponException(ErrorCode)
         +WeaponException(ErrorCode, String)
         +WeaponException(ErrorCode, String, Throwable)
+        +setWeaponInfo()
+        +getWeaponName()
+        +getWeaponType()
     }
     
     class LivestockException {
+        -String livestockName
+        -String species
         +LivestockException(ErrorCode)
         +LivestockException(ErrorCode, String)
         +LivestockException(ErrorCode, String, Throwable)
+        +setLivestockInfo()
+        +getLivestockName()
+        +getSpecies()
     }
     
     class GalleryException {
+        -String galleryTitle
+        -String category
         +GalleryException(ErrorCode)
         +GalleryException(ErrorCode, String)
         +GalleryException(ErrorCode, String, Throwable)
+        +setGalleryInfo()
+        +getGalleryTitle()
+        +getCategory()
+    }
+    
+    class ValidationException {
+        -List<String> validationErrors
+        -String fieldName
+        +ValidationException(ErrorCode)
+        +ValidationException(ErrorCode, String)
+        +addValidationError()
+        +getValidationErrors()
+        +getFieldName()
     }
     
     BusinessException <|-- PeopleException
     BusinessException <|-- WeaponException
     BusinessException <|-- LivestockException
     BusinessException <|-- GalleryException
+    BusinessException <|-- ValidationException
 ```
 
 ### 3. 錯誤處理流程
 ```mermaid
 sequenceDiagram
+    participant Client
     participant Controller
     participant Service
+    participant Repository
     participant Exception
     participant GlobalExceptionHandler
     participant ErrorResponse
-    participant Client
+    participant Logger
     
+    Client->>Controller: HTTP Request
     Controller->>Service: 調用服務方法
-    Service->>Exception: 拋出業務異常
-    Exception-->>Controller: 異常傳播
-    Controller->>GlobalExceptionHandler: 捕獲異常
-    GlobalExceptionHandler->>ErrorResponse: 創建錯誤響應
-    GlobalExceptionHandler-->>Client: 返回錯誤響應
+    Service->>Repository: 數據庫操作
+    Repository-->>Service: 返回結果/異常
+    alt 發生異常
+        Service->>Exception: 拋出業務異常
+        Exception-->>Controller: 異常傳播
+        Controller->>GlobalExceptionHandler: 捕獲異常
+        GlobalExceptionHandler->>Logger: 記錄異常
+        GlobalExceptionHandler->>ErrorResponse: 創建錯誤響應
+        GlobalExceptionHandler-->>Client: 返回錯誤響應
+    else 正常流程
+        Service-->>Controller: 返回結果
+        Controller-->>Client: 返回成功響應
+    end
 ```
 
 ### 4. 錯誤處理優點
