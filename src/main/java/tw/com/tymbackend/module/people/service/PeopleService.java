@@ -37,8 +37,8 @@ public class PeopleService {
         return findAll();
     }
 
-    public Optional<People> findById(Integer id) {
-        return peopleRepository.findById(id);
+    public Optional<People> findByName(String name) {
+        return peopleRepository.findByName(name);
     }
     
     /**
@@ -97,9 +97,9 @@ public class PeopleService {
     }
 
     @Transactional
-    public People update(Integer id, People person) {
-        if (peopleRepository.existsById(id)) {
-            person.setId(id);
+    public People update(String name, People person) {
+        if (peopleRepository.existsById(name)) {
+            person.setName(name);
             return peopleRepository.save(person);
         }
         return null;
@@ -113,15 +113,15 @@ public class PeopleService {
      */
     @Transactional
     public People updatePerson(People person) {
-        if (person.getId() != null && peopleRepository.existsById(person.getId())) {
+        if (person.getName() != null && peopleRepository.existsById(person.getName())) {
             return peopleRepository.save(person);
         }
         return save(person);
     }
 
     @Transactional
-    public People updateAttributes(Integer id, People person) {
-        return peopleRepository.findById(id)
+    public People updateAttributes(String name, People person) {
+        return peopleRepository.findByName(name)
             .map(existing -> {
                 existing.setBaseAttributes(person.getBaseAttributes());
                 existing.setBonusAttributes(person.getBonusAttributes());

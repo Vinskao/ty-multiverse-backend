@@ -1,15 +1,17 @@
 package tw.com.tymbackend.module.weapon.dao;
 
-import tw.com.tymbackend.core.repository.StringPkRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
-import org.springframework.stereotype.Repository;
+import tw.com.tymbackend.module.weapon.domain.vo.WeaponId;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WeaponRepository extends StringPkRepository<Weapon> {
+public interface WeaponRepository extends JpaRepository<Weapon, WeaponId>, JpaSpecificationExecutor<Weapon> {
     
     Optional<Weapon> findByName(String name);
     
@@ -24,7 +26,4 @@ public interface WeaponRepository extends StringPkRepository<Weapon> {
     
     @Query(value = "SELECT * FROM weapon WHERE :attribute = ANY(state_attributes)", nativeQuery = true)
     List<Weapon> findByStateAttributesContaining(@Param("attribute") String attribute);
-    
-    @Query("SELECT w FROM Weapon w WHERE w.weaponName = :id")
-    Optional<Weapon> findById(@Param("id") String id);
 } 

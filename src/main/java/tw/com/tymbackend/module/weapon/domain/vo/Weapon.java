@@ -10,14 +10,16 @@ import lombok.NoArgsConstructor;
 @Table(name = "weapon")
 @Data
 @NoArgsConstructor
+@IdClass(WeaponId.class)
 public class Weapon {
 
+    @Id
     @Column(name = "name", length = 255)
     private String name;
 
     @Id
     @Column(name = "weapon", length = 255)
-    private String weaponName;
+    private String weapon;
 
     @Column(name = "attributes", length = 255)
     private String attributes;
@@ -38,10 +40,10 @@ public class Weapon {
     @Column(name = "version")
     private Long version = 0L;
 
-    public Weapon(String name, String weaponName, String attributes, Integer baseDamage, 
+    public Weapon(String name, String weapon, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {
         this.name = name;
-        this.weaponName = weaponName;
+        this.weapon = weapon;
         this.attributes = attributes;
         this.baseDamage = baseDamage;
         this.bonusDamage = bonusDamage;
@@ -57,11 +59,11 @@ public class Weapon {
     }
 
     public String getId() {
-        return this.weaponName;
+        return this.weapon;
     }
 
     public void setId(String id) {
-        this.weaponName = id;
+        this.weapon = id;
     }
 
     public String getName() {
@@ -72,12 +74,12 @@ public class Weapon {
         this.name = name;
     }
 
-    public String getWeaponName() {
-        return this.weaponName;
+    public String getWeapon() {
+        return this.weapon;
     }
 
-    public void setWeaponName(String weaponName) {
-        this.weaponName = weaponName;
+    public void setWeapon(String weapon) {
+        this.weapon = weapon;
     }
 
     public String getAttributes() {
@@ -128,7 +130,7 @@ public class Weapon {
             return false;
         }
         Weapon weapon = (Weapon) o;
-        return Objects.equals(name, weapon.name) && Objects.equals(weaponName, weapon.weaponName)
+        return Objects.equals(name, weapon.name) && Objects.equals(this.weapon, weapon.weapon)
                 && Objects.equals(attributes, weapon.attributes) && Objects.equals(baseDamage, weapon.baseDamage)
                 && Objects.equals(bonusDamage, weapon.bonusDamage) && Objects.equals(bonusAttributes, weapon.bonusAttributes)
                 && Objects.equals(stateAttributes, weapon.stateAttributes) && Objects.equals(version, weapon.version);
@@ -136,14 +138,14 @@ public class Weapon {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weaponName, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version);
+        return Objects.hash(name, weapon, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version);
     }
 
     @Override
     public String toString() {
         return "{" +
                 " name='" + getName() + "'" +
-                ", weaponName='" + getWeaponName() + "'" +
+                ", weapon='" + getWeapon() + "'" +
                 ", attributes='" + getAttributes() + "'" +
                 ", baseDamage='" + getBaseDamage() + "'" +
                 ", bonusDamage='" + getBonusDamage() + "'" +
