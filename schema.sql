@@ -19,7 +19,7 @@ CREATE TABLE people (
     job VARCHAR(255),
     physics VARCHAR(255),
     known_as VARCHAR(255),
-    personally VARCHAR(255),
+    personality VARCHAR(255),
     interest VARCHAR(255),
     likes VARCHAR(255),
     dislikes VARCHAR(255),
@@ -34,10 +34,7 @@ CREATE TABLE people (
     gave_birth BOOLEAN,
     email VARCHAR(255),
     age INT,
-    proxy VARCHAR(255),
-    hei VARCHAR(255),
-    HRRatio VARCHAR(255),
-    physicsFallout4 VARCHAR(255)
+    proxy VARCHAR(255)
 );
 
 CREATE TABLE weapon (
@@ -68,7 +65,6 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL
 );
 
-ALTER TABLE people ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE gallery ADD COLUMN version BIGINT DEFAULT 0;
 ALTER TABLE users ADD COLUMN version BIGINT DEFAULT 0;
 

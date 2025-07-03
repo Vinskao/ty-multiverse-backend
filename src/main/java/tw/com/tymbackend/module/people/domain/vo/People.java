@@ -9,7 +9,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -93,8 +92,8 @@ public class People {
     @Column(name = "known_as", columnDefinition = "VARCHAR(255)")
     private String knownAs;
 
-    @Column(name = "personally", columnDefinition = "VARCHAR(255)")
-    private String personally;
+    @Column(name = "personality", columnDefinition = "VARCHAR(255)")
+    private String personality;
 
     @Column(name = "interest", columnDefinition = "VARCHAR(255)")
     private String interest;
@@ -141,25 +140,6 @@ public class People {
     @Column(name = "proxy", columnDefinition = "VARCHAR(255)")
     private String proxy;
 
-    @Column(name = "hei", columnDefinition = "VARCHAR(255)")
-    private String hei;
-
-    @Column(name = "HRRatio", columnDefinition = "VARCHAR(255)")
-    private String HRRatio;
-
-    @Column(name = "physicsFallout4", columnDefinition = "VARCHAR(255)")
-    private String physicsFallout4;
-
-    @Column(name = "version", nullable = true)
-    @Version
-    private Long version = 0L;
-
-    public void initializeVersion() {
-        if (this.version == null) {
-            this.version = 0L;
-        }
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -170,13 +150,12 @@ public class People {
                 Objects.equals(baseAttributes, people.baseAttributes) &&
                 Objects.equals(bonusAttributes, people.bonusAttributes) &&
                 Objects.equals(stateAttributes, people.stateAttributes) &&
-                Objects.equals(nameOriginal, people.nameOriginal) &&
-                Objects.equals(version, people.version);
+                Objects.equals(nameOriginal, people.nameOriginal);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal, version);
+        return Objects.hash(id, name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal);
     }
 
     @Override
@@ -188,7 +167,6 @@ public class People {
                 ", bonusAttributes='" + bonusAttributes + '\'' +
                 ", stateAttributes='" + stateAttributes + '\'' +
                 ", nameOriginal='" + nameOriginal + '\'' +
-                ", version=" + version +
                 '}';
     }
 }
