@@ -1,6 +1,7 @@
 package tw.com.tymbackend.module.people.domain.vo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -137,6 +138,16 @@ public class People {
     @Column(name = "proxy", columnDefinition = "VARCHAR(255)")
     private String proxy;
 
+    // Embedding field for semantic search
+    @Column(name = "embedding", columnDefinition = "VECTOR(1536)")
+    private String embedding;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime updatedAt;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -146,12 +157,16 @@ public class People {
                 Objects.equals(baseAttributes, people.baseAttributes) &&
                 Objects.equals(bonusAttributes, people.bonusAttributes) &&
                 Objects.equals(stateAttributes, people.stateAttributes) &&
-                Objects.equals(nameOriginal, people.nameOriginal);
+                Objects.equals(nameOriginal, people.nameOriginal) &&
+                Objects.equals(embedding, people.embedding) &&
+                Objects.equals(createdAt, people.createdAt) &&
+                Objects.equals(updatedAt, people.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal);
+        return Objects.hash(name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal, 
+                          embedding, createdAt, updatedAt);
     }
 
     @Override
@@ -162,6 +177,9 @@ public class People {
                 ", bonusAttributes='" + bonusAttributes + '\'' +
                 ", stateAttributes='" + stateAttributes + '\'' +
                 ", nameOriginal='" + nameOriginal + '\'' +
+                ", embedding='" + embedding + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", updatedAt='" + updatedAt + '\'' +
                 '}';
     }
 }

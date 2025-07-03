@@ -1,6 +1,7 @@
 package tw.com.tymbackend.module.weapon.domain.vo;
 
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.List;
 import lombok.Data;
@@ -40,6 +41,16 @@ public class Weapon {
     @Column(name = "version")
     private Long version = 0L;
 
+    // Embedding field for semantic search
+    @Column(name = "embedding", columnDefinition = "VECTOR(1536)")
+    private String embedding;
+
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
+    private LocalDateTime updatedAt;
+
     public Weapon(String name, String weapon, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {
         this.name = name;
@@ -50,6 +61,8 @@ public class Weapon {
         this.bonusAttributes = bonusAttributes;
         this.stateAttributes = stateAttributes;
         this.version = 0L;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void initializeVersion() {
@@ -122,6 +135,30 @@ public class Weapon {
         this.stateAttributes = stateAttributes2;
     }
 
+    public String getEmbedding() {
+        return this.embedding;
+    }
+
+    public void setEmbedding(String embedding) {
+        this.embedding = embedding;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -133,12 +170,15 @@ public class Weapon {
         return Objects.equals(name, weapon.name) && Objects.equals(this.weapon, weapon.weapon)
                 && Objects.equals(attributes, weapon.attributes) && Objects.equals(baseDamage, weapon.baseDamage)
                 && Objects.equals(bonusDamage, weapon.bonusDamage) && Objects.equals(bonusAttributes, weapon.bonusAttributes)
-                && Objects.equals(stateAttributes, weapon.stateAttributes) && Objects.equals(version, weapon.version);
+                && Objects.equals(stateAttributes, weapon.stateAttributes) && Objects.equals(version, weapon.version)
+                && Objects.equals(embedding, weapon.embedding) && Objects.equals(createdAt, weapon.createdAt)
+                && Objects.equals(updatedAt, weapon.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weapon, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version);
+        return Objects.hash(name, weapon, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version,
+                          embedding, createdAt, updatedAt);
     }
 
     @Override
@@ -152,6 +192,9 @@ public class Weapon {
                 ", bonusAttributes='" + getBonusAttributes() + "'" +
                 ", stateAttributes='" + getStateAttributes() + "'" +
                 ", version='" + getVersion() + "'" +
+                ", embedding='" + getEmbedding() + "'" +
+                ", createdAt='" + getCreatedAt() + "'" +
+                ", updatedAt='" + getUpdatedAt() + "'" +
                 "}";
     }
 } 
