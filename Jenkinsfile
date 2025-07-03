@@ -82,6 +82,9 @@ pipeline {
                             string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
                             string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
                             string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
                             string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
                             string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
@@ -97,6 +100,9 @@ pipeline {
                                 spring.datasource.url=${SPRING_DATASOURCE_URL}
                                 spring.datasource.username=${SPRING_DATASOURCE_USERNAME}
                                 spring.datasource.password=${SPRING_DATASOURCE_PASSWORD}
+                                spring.people-datasource.url=${SPRING_PEOPLE_DATASOURCE_URL}
+                                spring.people-datasource.username=${SPRING_PEOPLE_DATASOURCE_USERNAME}
+                                spring.people-datasource.password=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
                                 server.port=${SERVER_PORT}
                                 logging.level.root=${LOGGING_LEVEL}
                                 logging.level.org.springframework=${LOGGING_LEVEL_SPRINGFRAMEWORK}

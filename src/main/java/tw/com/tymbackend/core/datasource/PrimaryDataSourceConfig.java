@@ -1,25 +1,51 @@
-package tw.com.tymbackend.core.config;
+package tw.com.tymbackend.core.datasource;
 
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
 import java.util.Properties;
 
+/**
+ * Primary DataSource Configuration
+ * Used for all tables except people and weapon tables
+ */
 @Configuration
-@EnableTransactionManagement
-public class HibernateConfig {
+public class PrimaryDataSourceConfig {
 
-    @Bean
-    public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+    private final PrimaryDataSourceProperties properties;
+
+    public PrimaryDataSourceConfig(PrimaryDataSourceProperties properties) {
+        this.properties = properties;
+    }
+
+    @Primary
+    @Bean(name = "primaryDataSource")
+    public DataSource primaryDataSource() {
+        return DataSourceBuilder.create()
+                .url(properties.getUrl())
+                .username(properties.getUsername())
+                .password(properties.getPassword())
+                .driverClassName(properties.getDriverClassName())
+                .build();
+    }
+
+    @Primary
+    @Bean(name = "primaryEntityManagerFactory")
+    public LocalContainerEntityManagerFactoryBean primaryEntityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-        em.setDataSource(dataSource);
-        em.setPackagesToScan("tw.com.tymbackend.module");
+        em.setDataSource(primaryDataSource());
+        em.setPackagesToScan(
+            "tw.com.tymbackend.module.livestock.domain.vo", 
+            "tw.com.tymbackend.module.ckeditor.domain.vo",
+            "tw.com.tymbackend.module.gallery.domain.vo"
+        );
         
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         vendorAdapter.setGenerateDdl(true);
@@ -39,7 +65,7 @@ public class HibernateConfig {
         properties.setProperty("hibernate.jdbc.batch_versioned_data", "true");
         properties.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
         properties.setProperty("hibernate.jdbc.lob.non_contextual_creation", "true");
-        properties.setProperty("hibernate.connection.provider_disables_autocommit", "true");
+        properties.setProperty("hibernate.connection.provider_disables_autocommit", "false");
         properties.setProperty("hibernate.connection.handling_mode", "DELAYED_ACQUISITION_AND_RELEASE_AFTER_TRANSACTION");
         properties.setProperty("hibernate.cache.use_second_level_cache", "false");
         properties.setProperty("hibernate.cache.use_query_cache", "false");
@@ -49,10 +75,11 @@ public class HibernateConfig {
         return em;
     }
 
-    @Bean
-    public PlatformTransactionManager transactionManager(LocalContainerEntityManagerFactoryBean entityManagerFactory) {
+    @Primary
+    @Bean(name = "primaryTransactionManager")
+    public PlatformTransactionManager primaryTransactionManager() {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory.getObject());
+        transactionManager.setEntityManagerFactory(primaryEntityManagerFactory().getObject());
         transactionManager.setNestedTransactionAllowed(true);
         transactionManager.setDefaultTimeout(30);
         return transactionManager;
