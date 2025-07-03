@@ -20,9 +20,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "people")
 public class People {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
     @Column(nullable = false)
     private String name;
 
@@ -145,8 +142,7 @@ public class People {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         People people = (People) o;
-        return Objects.equals(id, people.id) &&
-                Objects.equals(name, people.name) &&
+        return Objects.equals(name, people.name) &&
                 Objects.equals(baseAttributes, people.baseAttributes) &&
                 Objects.equals(bonusAttributes, people.bonusAttributes) &&
                 Objects.equals(stateAttributes, people.stateAttributes) &&
@@ -155,14 +151,13 @@ public class People {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal);
+        return Objects.hash(name, baseAttributes, bonusAttributes, stateAttributes, nameOriginal);
     }
 
     @Override
     public String toString() {
         return "People{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
+                "name='" + name + '\'' +
                 ", baseAttributes='" + baseAttributes + '\'' +
                 ", bonusAttributes='" + bonusAttributes + '\'' +
                 ", stateAttributes='" + stateAttributes + '\'' +

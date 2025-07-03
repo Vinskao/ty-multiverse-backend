@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
+import tw.com.tymbackend.module.weapon.domain.vo.WeaponId;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -45,21 +46,14 @@ public class WeaponService {
     }
     
     /**
-     * Get weapon by weapon name (ID)
-     * 
-     * @param weaponName the weapon name (ID)
-     * @return the weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
+     * Get weapon by weapon (ID)
      */
-    public Optional<Weapon> getWeaponByWeaponName(String weaponName) {
-        return weaponRepository.findById(weaponName);
+    public Optional<Weapon> getWeaponById(String name, String weapon) {
+        return weaponRepository.findById(new WeaponId(name, weapon));
     }
     
     /**
      * Save or update a weapon
-     * 
-     * @param weapon the weapon to save or update
-     * @return the saved weapon
      */
     @Transactional
     public Weapon saveWeapon(Weapon weapon) {
@@ -67,40 +61,29 @@ public class WeaponService {
     }
     
     /**
-     * Delete a weapon by weapon name (ID)
-     * 
-     * @param weaponName the weapon name (ID) of the weapon to delete
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
+     * Delete a weapon by weapon (ID)
      */
     @Transactional
-    public void deleteWeapon(String weaponName) {
-        weaponRepository.deleteById(weaponName);
+    public void deleteWeapon(String name, String weapon) {
+        weaponRepository.deleteById(new WeaponId(name, weapon));
     }
     
     /**
-     * Check if a weapon exists
-     * 
-     * @param name the name of the weapon
-     * @return true if weapon exists, false otherwise
+     * Check if a weapon exists by weapon (ID)
      */
-    public boolean weaponExists(String name) {
-        return weaponRepository.existsByName(name);
+    public boolean weaponExists(String name, String weapon) {
+        return weaponRepository.existsById(new WeaponId(name, weapon));
     }
     
     /**
      * Update weapon attributes
-     * 
-     * @param weaponName the weapon name (ID) of the weapon
-     * @param weapon the new weapon
-     * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponAttributes(String weaponName, Weapon weapon) {
-        return weaponRepository.findById(weaponName)
+    public Weapon updateWeaponAttributes(String name, String weapon, Weapon newWeapon) {
+        return weaponRepository.findById(new WeaponId(name, weapon))
             .map(existing -> {
-                existing.setBaseDamage(weapon.getBaseDamage());
-                existing.setAttributes(weapon.getAttributes());
+                existing.setBaseDamage(newWeapon.getBaseDamage());
+                existing.setAttributes(newWeapon.getAttributes());
                 return weaponRepository.save(existing);
             })
             .orElse(null);
@@ -108,15 +91,10 @@ public class WeaponService {
     
     /**
      * Update weapon base damage
-     * 
-     * @param weaponName the weapon name (ID) of the weapon
-     * @param baseDamage the new base damage
-     * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBaseDamage(String weaponName, Integer baseDamage) {
-        return weaponRepository.findById(weaponName)
+    public Weapon updateWeaponBaseDamage(String name, String weapon, Integer baseDamage) {
+        return weaponRepository.findById(new WeaponId(name, weapon))
             .map(existing -> {
                 existing.setBaseDamage(baseDamage);
                 return weaponRepository.save(existing);
@@ -126,15 +104,10 @@ public class WeaponService {
     
     /**
      * Update weapon bonus damage
-     * 
-     * @param weaponName the weapon name (ID) of the weapon
-     * @param bonusDamage the new bonus damage
-     * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBonusDamage(String weaponName, Integer bonusDamage) {
-        return weaponRepository.findById(weaponName)
+    public Weapon updateWeaponBonusDamage(String name, String weapon, Integer bonusDamage) {
+        return weaponRepository.findById(new WeaponId(name, weapon))
             .map(existing -> {
                 existing.setBonusDamage(bonusDamage);
                 return weaponRepository.save(existing);
@@ -144,15 +117,10 @@ public class WeaponService {
     
     /**
      * Update weapon bonus attributes
-     * 
-     * @param weaponName the weapon name (ID) of the weapon
-     * @param bonusAttributes the new bonus attributes
-     * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponBonusAttributes(String weaponName, List<String> bonusAttributes) {
-        return weaponRepository.findById(weaponName)
+    public Weapon updateWeaponBonusAttributes(String name, String weapon, List<String> bonusAttributes) {
+        return weaponRepository.findById(new WeaponId(name, weapon))
             .map(existing -> {
                 existing.setBonusAttributes(bonusAttributes);
                 return weaponRepository.save(existing);
@@ -162,15 +130,10 @@ public class WeaponService {
     
     /**
      * Update weapon state attributes
-     * 
-     * @param weaponName the weapon name (ID) of the weapon
-     * @param stateAttributes the new state attributes
-     * @return the updated weapon
-     * @throws NoSuchElementException if no weapon is found with the given weapon name
      */
     @Transactional
-    public Weapon updateWeaponStateAttributes(String weaponName, List<String> stateAttributes) {
-        return weaponRepository.findById(weaponName)
+    public Weapon updateWeaponStateAttributes(String name, String weapon, List<String> stateAttributes) {
+        return weaponRepository.findById(new WeaponId(name, weapon))
             .map(existing -> {
                 existing.setStateAttributes(stateAttributes);
                 return weaponRepository.save(existing);
@@ -180,10 +143,6 @@ public class WeaponService {
     
     /**
      * Find weapons by base damage range
-     * 
-     * @param minDamage minimum damage
-     * @param maxDamage maximum damage
-     * @return list of weapons within the damage range
      */
     public List<Weapon> findByBaseDamageRange(Integer minDamage, Integer maxDamage) {
         return weaponRepository.findByBaseDamageBetween(minDamage, maxDamage);
@@ -191,9 +150,6 @@ public class WeaponService {
     
     /**
      * Find weapons by attribute
-     * 
-     * @param attribute the attribute to search for
-     * @return list of weapons with the specified attribute
      */
     public List<Weapon> findByAttribute(String attribute) {
         return weaponRepository.findByAttributes(attribute);
@@ -201,11 +157,6 @@ public class WeaponService {
     
     /**
      * Find weapons by multiple criteria
-     * 
-     * @param minDamage minimum damage
-     * @param maxDamage maximum damage
-     * @param attribute the attribute to search for
-     * @return list of weapons matching all criteria
      */
     public List<Weapon> findByMultipleCriteria(Integer minDamage, Integer maxDamage, String attribute) {
         List<Specification<Weapon>> specs = new ArrayList<>();
@@ -226,9 +177,6 @@ public class WeaponService {
     
     /**
      * Find all weapons with pagination
-     * 
-     * @param pageable the pageable
-     * @return the page of weapons
      */
     public Page<Weapon> findAll(Pageable pageable) {
         return weaponRepository.findAll(pageable);
