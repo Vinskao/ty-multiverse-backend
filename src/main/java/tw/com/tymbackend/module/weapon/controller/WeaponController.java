@@ -47,7 +47,7 @@ public class WeaponController {
      */
     @PostMapping
     public ResponseEntity<Weapon> saveWeapon(@RequestBody Weapon weapon) {
-        return ResponseEntity.ok(weaponService.saveWeapon(weapon));
+        return ResponseEntity.ok(weaponService.saveWeaponSmart(weapon));
     }
 
     /**
