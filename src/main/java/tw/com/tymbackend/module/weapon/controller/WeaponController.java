@@ -60,6 +60,15 @@ public class WeaponController {
     }
 
     /**
+     * Delete all weapons
+     */
+    @DeleteMapping("/delete-all")
+    public ResponseEntity<Void> deleteAllWeapons() {
+        weaponService.deleteAllWeapons();
+        return ResponseEntity.noContent().build();
+    }
+
+    /**
      * Check if weapon exists by composite key (name, weapon)
      */
     @GetMapping("/exists/{name}/{weapon}")
