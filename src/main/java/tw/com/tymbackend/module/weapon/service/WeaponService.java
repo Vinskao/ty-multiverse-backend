@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
-import tw.com.tymbackend.module.weapon.domain.vo.WeaponId;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,22 +33,20 @@ public class WeaponService {
     }
     
     /**
-     * Get weapons by owner name
+     * Get weapons by weapon type
      * 
-     * @param name the owner name
-     * @return list of weapons owned by the person
+     * @param weaponType the weapon type
+     * @return list of weapons of the specified type
      */
-    public List<Weapon> getWeaponsByOwnerName(String name) {
-        return weaponRepository.findByName(name)
-                .map(List::of)
-                .orElse(List.of());
+    public List<Weapon> getWeaponsByWeaponType(String weaponType) {
+        return weaponRepository.findByWeaponType(weaponType);
     }
     
     /**
-     * Get weapon by weapon (ID)
+     * Get weapon by name (ID)
      */
-    public Optional<Weapon> getWeaponById(String name, String weapon) {
-        return weaponRepository.findById(new WeaponId(name, weapon));
+    public Optional<Weapon> getWeaponById(String name) {
+        return weaponRepository.findById(name);
     }
     
     /**
@@ -67,8 +64,8 @@ public class WeaponService {
     @Transactional
     public Weapon saveWeaponSmart(Weapon weapon) {
         // 檢查是否為更新操作（武器已存在）
-        if (weapon.getName() != null && weapon.getWeapon() != null) {
-            Optional<Weapon> existingWeapon = weaponRepository.findById(new WeaponId(weapon.getName(), weapon.getWeapon()));
+        if (weapon.getName() != null) {
+            Optional<Weapon> existingWeapon = weaponRepository.findById(weapon.getName());
             if (existingWeapon.isPresent()) {
                 return updateWeaponSmart(existingWeapon.get(), weapon);
             }
@@ -84,6 +81,10 @@ public class WeaponService {
     @Transactional
     public Weapon updateWeaponSmart(Weapon existing, Weapon updateData) {
         // 只更新非空且非空字串的欄位
+        if (isValidString(updateData.getWeaponType())) {
+            existing.setWeaponType(updateData.getWeaponType());
+        }
+        
         if (isValidString(updateData.getAttributes())) {
             existing.setAttributes(updateData.getAttributes());
         }
@@ -122,11 +123,11 @@ public class WeaponService {
     }
     
     /**
-     * Delete a weapon by weapon (ID)
+     * Delete a weapon by name (ID)
      */
     @Transactional
-    public void deleteWeapon(String name, String weapon) {
-        weaponRepository.deleteById(new WeaponId(name, weapon));
+    public void deleteWeapon(String name) {
+        weaponRepository.deleteById(name);
     }
     
     /**
@@ -138,18 +139,18 @@ public class WeaponService {
     }
     
     /**
-     * Check if a weapon exists by weapon (ID)
+     * Check if a weapon exists by name (ID)
      */
-    public boolean weaponExists(String name, String weapon) {
-        return weaponRepository.existsById(new WeaponId(name, weapon));
+    public boolean weaponExists(String name) {
+        return weaponRepository.existsById(name);
     }
     
     /**
      * Update weapon attributes
      */
     @Transactional
-    public Weapon updateWeaponAttributes(String name, String weapon, Weapon newWeapon) {
-        return weaponRepository.findById(new WeaponId(name, weapon))
+    public Weapon updateWeaponAttributes(String name, Weapon newWeapon) {
+        return weaponRepository.findById(name)
             .map(existing -> {
                 existing.setBaseDamage(newWeapon.getBaseDamage());
                 existing.setAttributes(newWeapon.getAttributes());
@@ -162,8 +163,8 @@ public class WeaponService {
      * Update weapon base damage
      */
     @Transactional
-    public Weapon updateWeaponBaseDamage(String name, String weapon, Integer baseDamage) {
-        return weaponRepository.findById(new WeaponId(name, weapon))
+    public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
+        return weaponRepository.findById(name)
             .map(existing -> {
                 existing.setBaseDamage(baseDamage);
                 return weaponRepository.save(existing);
@@ -175,8 +176,8 @@ public class WeaponService {
      * Update weapon bonus damage
      */
     @Transactional
-    public Weapon updateWeaponBonusDamage(String name, String weapon, Integer bonusDamage) {
-        return weaponRepository.findById(new WeaponId(name, weapon))
+    public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
+        return weaponRepository.findById(name)
             .map(existing -> {
                 existing.setBonusDamage(bonusDamage);
                 return weaponRepository.save(existing);
@@ -188,8 +189,8 @@ public class WeaponService {
      * Update weapon bonus attributes
      */
     @Transactional
-    public Weapon updateWeaponBonusAttributes(String name, String weapon, List<String> bonusAttributes) {
-        return weaponRepository.findById(new WeaponId(name, weapon))
+    public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
+        return weaponRepository.findById(name)
             .map(existing -> {
                 existing.setBonusAttributes(bonusAttributes);
                 return weaponRepository.save(existing);
@@ -201,8 +202,8 @@ public class WeaponService {
      * Update weapon state attributes
      */
     @Transactional
-    public Weapon updateWeaponStateAttributes(String name, String weapon, List<String> stateAttributes) {
-        return weaponRepository.findById(new WeaponId(name, weapon))
+    public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
+        return weaponRepository.findById(name)
             .map(existing -> {
                 existing.setStateAttributes(stateAttributes);
                 return weaponRepository.save(existing);

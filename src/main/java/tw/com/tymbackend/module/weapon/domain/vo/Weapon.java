@@ -11,16 +11,14 @@ import lombok.NoArgsConstructor;
 @Table(name = "weapon")
 @Data
 @NoArgsConstructor
-@IdClass(WeaponId.class)
 public class Weapon {
 
     @Id
     @Column(name = "name", length = 255)
     private String name;
 
-    @Id
-    @Column(name = "weapon", length = 255)
-    private String weapon;
+    @Column(name = "weapon_type", length = 255)
+    private String weaponType;
 
     @Column(name = "attributes", length = 255)
     private String attributes;
@@ -37,10 +35,6 @@ public class Weapon {
     @Column(name = "state_attributes", columnDefinition = "text[]")
     private List<String> stateAttributes;
 
-    @Version
-    @Column(name = "version")
-    private Long version = 0L;
-
     // Embedding field for semantic search
     @Column(name = "embedding", columnDefinition = "VECTOR(1536)")
     private String embedding;
@@ -51,32 +45,25 @@ public class Weapon {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
     private LocalDateTime updatedAt;
 
-    public Weapon(String name, String weapon, String attributes, Integer baseDamage, 
+    public Weapon(String name, String weaponType, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {
         this.name = name;
-        this.weapon = weapon;
+        this.weaponType = weaponType;
         this.attributes = attributes;
         this.baseDamage = baseDamage;
         this.bonusDamage = bonusDamage;
         this.bonusAttributes = bonusAttributes;
         this.stateAttributes = stateAttributes;
-        this.version = 0L;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }
 
-    public void initializeVersion() {
-        if (this.version == null) {
-            this.version = 0L;
-        }
-    }
-
     public String getId() {
-        return this.weapon;
+        return this.name;
     }
 
     public void setId(String id) {
-        this.weapon = id;
+        this.name = id;
     }
 
     public String getName() {
@@ -87,12 +74,12 @@ public class Weapon {
         this.name = name;
     }
 
-    public String getWeapon() {
-        return this.weapon;
+    public String getWeaponType() {
+        return this.weaponType;
     }
 
-    public void setWeapon(String weapon) {
-        this.weapon = weapon;
+    public void setWeaponType(String weaponType) {
+        this.weaponType = weaponType;
     }
 
     public String getAttributes() {
@@ -123,16 +110,16 @@ public class Weapon {
         return this.bonusAttributes;
     }
 
-    public void setBonusAttributes(List<String> bonusAttributes2) {
-        this.bonusAttributes = bonusAttributes2;
+    public void setBonusAttributes(List<String> bonusAttributes) {
+        this.bonusAttributes = bonusAttributes;
     }
 
     public List<String> getStateAttributes() {
         return this.stateAttributes;
     }
 
-    public void setStateAttributes(List<String> stateAttributes2) {
-        this.stateAttributes = stateAttributes2;
+    public void setStateAttributes(List<String> stateAttributes) {
+        this.stateAttributes = stateAttributes;
     }
 
     public String getEmbedding() {
@@ -167,17 +154,17 @@ public class Weapon {
             return false;
         }
         Weapon weapon = (Weapon) o;
-        return Objects.equals(name, weapon.name) && Objects.equals(this.weapon, weapon.weapon)
+        return Objects.equals(name, weapon.name) && Objects.equals(weaponType, weapon.weaponType)
                 && Objects.equals(attributes, weapon.attributes) && Objects.equals(baseDamage, weapon.baseDamage)
                 && Objects.equals(bonusDamage, weapon.bonusDamage) && Objects.equals(bonusAttributes, weapon.bonusAttributes)
-                && Objects.equals(stateAttributes, weapon.stateAttributes) && Objects.equals(version, weapon.version)
+                && Objects.equals(stateAttributes, weapon.stateAttributes)
                 && Objects.equals(embedding, weapon.embedding) && Objects.equals(createdAt, weapon.createdAt)
                 && Objects.equals(updatedAt, weapon.updatedAt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weapon, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes, version,
+        return Objects.hash(name, weaponType, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes,
                           embedding, createdAt, updatedAt);
     }
 
@@ -185,13 +172,12 @@ public class Weapon {
     public String toString() {
         return "{" +
                 " name='" + getName() + "'" +
-                ", weapon='" + getWeapon() + "'" +
+                ", weaponType='" + getWeaponType() + "'" +
                 ", attributes='" + getAttributes() + "'" +
                 ", baseDamage='" + getBaseDamage() + "'" +
                 ", bonusDamage='" + getBonusDamage() + "'" +
                 ", bonusAttributes='" + getBonusAttributes() + "'" +
                 ", stateAttributes='" + getStateAttributes() + "'" +
-                ", version='" + getVersion() + "'" +
                 ", embedding='" + getEmbedding() + "'" +
                 ", createdAt='" + getCreatedAt() + "'" +
                 ", updatedAt='" + getUpdatedAt() + "'" +

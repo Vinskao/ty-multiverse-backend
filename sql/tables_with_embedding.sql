@@ -45,10 +45,10 @@ CREATE TABLE people (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
--- Weapon table with single embedding field
+-- Weapon table with single embedding field - using name as primary key
 CREATE TABLE weapon (
-    name VARCHAR(255),
-    weapon VARCHAR(255),
+    name VARCHAR(255) PRIMARY KEY,
+    weapon_type VARCHAR(255),
     attributes VARCHAR(255),
     base_damage INT,
     bonus_damage INT,
@@ -57,9 +57,7 @@ CREATE TABLE weapon (
     -- Single embedding field for all search
     embedding VECTOR(1536),           -- OpenAI text-embedding-ada-002 dimension
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW(),
-    -- Primary key and constraints
-    PRIMARY KEY (name, weapon)
+    updated_at TIMESTAMP DEFAULT NOW()
 );
 
 -- Create indexes for people table
@@ -71,8 +69,7 @@ CREATE INDEX idx_people_army_id ON people(army_id);
 CREATE INDEX idx_people_dept_id ON people(dept_id);
 
 -- Create indexes for weapon table
-CREATE INDEX idx_weapon_name ON weapon(name);
-CREATE INDEX idx_weapon_weapon ON weapon(weapon);
+CREATE INDEX idx_weapon_weapon_type ON weapon(weapon_type);
 CREATE INDEX idx_weapon_base_damage ON weapon(base_damage);
 CREATE INDEX idx_weapon_bonus_damage ON weapon(bonus_damage);
 
