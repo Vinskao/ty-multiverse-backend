@@ -8,6 +8,7 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
 /**
  * 配置類，用於啟用 JPA 倉儲
  * 是一種IOC容器，用於管理Spring容器中的Bean
+ * 注意：weapon 模組使用複合主鍵，不在此配置範圍內
  */
 @Configuration
 @EnableJpaRepositories(
@@ -24,4 +25,5 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
 public class RepositoryConfig {
     // Spring Data JPA will automatically create repository implementations
     // using our custom base classes for primary datasource
+    // Weapon module uses composite key and has its own configuration
 } 

@@ -1,7 +1,6 @@
 package tw.com.tymbackend.module.weapon.dao;
 
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
-import tw.com.tymbackend.module.weapon.domain.vo.WeaponId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -11,11 +10,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WeaponRepository extends JpaRepository<Weapon, WeaponId>, JpaSpecificationExecutor<Weapon> {
+public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpecificationExecutor<Weapon> {
     
     Optional<Weapon> findByName(String name);
     
     boolean existsByName(String name);
+    
+    List<Weapon> findByWeaponType(String weaponType);
     
     List<Weapon> findByBaseDamageBetween(Integer minDamage, Integer maxDamage);
     

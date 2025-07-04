@@ -25,21 +25,21 @@ public class WeaponController {
     }
 
     /**
-     * Get weapon by composite key (name, weapon)
+     * Get weapon by name (ID)
      */
-    @GetMapping("/{name}/{weapon}")
-    public ResponseEntity<Weapon> getWeaponById(@PathVariable String name, @PathVariable String weapon) {
-        return weaponService.getWeaponById(name, weapon)
+    @GetMapping("/{name}")
+    public ResponseEntity<Weapon> getWeaponById(@PathVariable String name) {
+        return weaponService.getWeaponById(name)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     /**
-     * Get weapons by owner name
+     * Get weapons by weapon type
      */
-    @GetMapping("/owner/{name}")
-    public ResponseEntity<List<Weapon>> getWeaponsByOwnerName(@PathVariable String name) {
-        return ResponseEntity.ok(weaponService.getWeaponsByOwnerName(name));
+    @GetMapping("/type/{weaponType}")
+    public ResponseEntity<List<Weapon>> getWeaponsByWeaponType(@PathVariable String weaponType) {
+        return ResponseEntity.ok(weaponService.getWeaponsByWeaponType(weaponType));
     }
 
     /**
@@ -51,11 +51,11 @@ public class WeaponController {
     }
 
     /**
-     * Delete a weapon by composite key (name, weapon)
+     * Delete a weapon by name (ID)
      */
-    @DeleteMapping("/{name}/{weapon}")
-    public ResponseEntity<Void> deleteWeapon(@PathVariable String name, @PathVariable String weapon) {
-        weaponService.deleteWeapon(name, weapon);
+    @DeleteMapping("/{name}")
+    public ResponseEntity<Void> deleteWeapon(@PathVariable String name) {
+        weaponService.deleteWeapon(name);
         return ResponseEntity.ok().build();
     }
 
@@ -69,69 +69,64 @@ public class WeaponController {
     }
 
     /**
-     * Check if weapon exists by composite key (name, weapon)
+     * Check if weapon exists by name (ID)
      */
-    @GetMapping("/exists/{name}/{weapon}")
-    public ResponseEntity<Map<String, Boolean>> checkWeaponExists(@PathVariable String name, @PathVariable String weapon) {
-        return ResponseEntity.ok(Map.of("exists", weaponService.weaponExists(name, weapon)));
+    @GetMapping("/exists/{name}")
+    public ResponseEntity<Map<String, Boolean>> checkWeaponExists(@PathVariable String name) {
+        return ResponseEntity.ok(Map.of("exists", weaponService.weaponExists(name)));
     }
 
     /**
      * Update weapon attributes
      */
-    @PutMapping("/{name}/{weapon}/attributes")
+    @PutMapping("/{name}/attributes")
     public ResponseEntity<Weapon> updateWeaponAttributes(
             @PathVariable String name,
-            @PathVariable String weapon,
             @RequestBody Map<String, String> request) {
-        Weapon w = weaponService.getWeaponById(name, weapon)
-                .orElseThrow(() -> new RuntimeException("Weapon not found: " + weapon));
+        Weapon w = weaponService.getWeaponById(name)
+                .orElseThrow(() -> new RuntimeException("Weapon not found: " + name));
         w.setAttributes(request.get("attributes"));
-        return ResponseEntity.ok(weaponService.updateWeaponAttributes(name, weapon, w));
+        return ResponseEntity.ok(weaponService.updateWeaponAttributes(name, w));
     }
 
     /**
      * Update weapon base damage
      */
-    @PutMapping("/{name}/{weapon}/base-damage")
+    @PutMapping("/{name}/base-damage")
     public ResponseEntity<Weapon> updateWeaponBaseDamage(
             @PathVariable String name,
-            @PathVariable String weapon,
             @RequestBody Map<String, Integer> request) {
-        return ResponseEntity.ok(weaponService.updateWeaponBaseDamage(name, weapon, request.get("baseDamage")));
+        return ResponseEntity.ok(weaponService.updateWeaponBaseDamage(name, request.get("baseDamage")));
     }
 
     /**
      * Update weapon bonus damage
      */
-    @PutMapping("/{name}/{weapon}/bonus-damage")
+    @PutMapping("/{name}/bonus-damage")
     public ResponseEntity<Weapon> updateWeaponBonusDamage(
             @PathVariable String name,
-            @PathVariable String weapon,
             @RequestBody Map<String, Integer> request) {
-        return ResponseEntity.ok(weaponService.updateWeaponBonusDamage(name, weapon, request.get("bonusDamage")));
+        return ResponseEntity.ok(weaponService.updateWeaponBonusDamage(name, request.get("bonusDamage")));
     }
 
     /**
      * Update weapon bonus attributes
      */
-    @PutMapping("/{name}/{weapon}/bonus-attributes")
+    @PutMapping("/{name}/bonus-attributes")
     public ResponseEntity<Weapon> updateWeaponBonusAttributes(
             @PathVariable String name,
-            @PathVariable String weapon,
             @RequestBody Map<String, List<String>> request) {
-        return ResponseEntity.ok(weaponService.updateWeaponBonusAttributes(name, weapon, request.get("bonusAttributes")));
+        return ResponseEntity.ok(weaponService.updateWeaponBonusAttributes(name, request.get("bonusAttributes")));
     }
 
     /**
      * Update weapon state attributes
      */
-    @PutMapping("/{name}/{weapon}/state-attributes")
+    @PutMapping("/{name}/state-attributes")
     public ResponseEntity<Weapon> updateWeaponStateAttributes(
             @PathVariable String name,
-            @PathVariable String weapon,
             @RequestBody Map<String, List<String>> request) {
-        return ResponseEntity.ok(weaponService.updateWeaponStateAttributes(name, weapon, request.get("stateAttributes")));
+        return ResponseEntity.ok(weaponService.updateWeaponStateAttributes(name, request.get("stateAttributes")));
     }
 
     /**

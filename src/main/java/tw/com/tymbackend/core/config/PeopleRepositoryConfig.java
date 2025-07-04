@@ -11,10 +11,7 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
  */
 @Configuration
 @EnableJpaRepositories(
-    basePackages = {
-        "tw.com.tymbackend.module.people.dao",
-        "tw.com.tymbackend.module.weapon.dao"
-    },
+    basePackages = "tw.com.tymbackend.module.people.dao",
     entityManagerFactoryRef = "peopleEntityManagerFactory",
     transactionManagerRef = "peopleTransactionManager",
     repositoryImplementationPostfix = "Impl",
