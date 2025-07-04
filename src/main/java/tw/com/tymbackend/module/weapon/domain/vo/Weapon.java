@@ -35,8 +35,9 @@ public class Weapon {
     @Column(name = "state_attributes", columnDefinition = "text[]")
     private List<String> stateAttributes;
 
-    // Embedding field for semantic search
-    @Column(name = "embedding", columnDefinition = "VECTOR(1536)")
+    // Embedding field for semantic search - excluded from JPA mapping
+    // This field is typically populated by external AI embedding services
+    @Transient
     private String embedding;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
