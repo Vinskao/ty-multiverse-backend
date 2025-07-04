@@ -60,6 +60,7 @@ public class WeaponService {
     /**
      * Save or update a weapon with smart field update
      * Only updates non-null and non-empty string fields
+     * Embedding field is not handled - managed by external AI services
      */
     @Transactional
     public Weapon saveWeaponSmart(Weapon weapon) {
@@ -71,7 +72,8 @@ public class WeaponService {
             }
         }
         
-        // 如果是新武器，直接保存
+        // 如果是新武器，確保不處理 embedding 欄位
+        weapon.setEmbedding(null);
         return weaponRepository.save(weapon);
     }
     
@@ -105,9 +107,7 @@ public class WeaponService {
             existing.setStateAttributes(updateData.getStateAttributes());
         }
         
-        if (isValidString(updateData.getEmbedding())) {
-            existing.setEmbedding(updateData.getEmbedding());
-        }
+        // 不處理 embedding 欄位 - 由外部 AI 服務管理
         
         // 更新時間戳
         existing.setUpdatedAt(java.time.LocalDateTime.now());

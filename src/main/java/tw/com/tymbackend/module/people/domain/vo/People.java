@@ -8,6 +8,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -136,8 +137,9 @@ public class People {
     @Column(name = "proxy", columnDefinition = "VARCHAR(255)")
     private String proxy;
 
-    // Embedding field for semantic search
-    @Column(name = "embedding", columnDefinition = "VECTOR(1536)")
+    // Embedding field for semantic search - excluded from JPA mapping
+    // This field is typically populated by external AI embedding services
+    @Transient
     private String embedding;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
