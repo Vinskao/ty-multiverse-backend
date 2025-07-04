@@ -69,6 +69,14 @@ public class WeaponService {
     }
     
     /**
+     * Delete all weapons
+     */
+    @Transactional
+    public void deleteAllWeapons() {
+        weaponRepository.deleteAll();
+    }
+    
+    /**
      * Check if a weapon exists by weapon (ID)
      */
     public boolean weaponExists(String name, String weapon) {
