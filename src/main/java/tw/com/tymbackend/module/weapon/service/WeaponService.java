@@ -61,6 +61,67 @@ public class WeaponService {
     }
     
     /**
+     * Save or update a weapon with smart field update
+     * Only updates non-null and non-empty string fields
+     */
+    @Transactional
+    public Weapon saveWeaponSmart(Weapon weapon) {
+        // 檢查是否為更新操作（武器已存在）
+        if (weapon.getName() != null && weapon.getWeapon() != null) {
+            Optional<Weapon> existingWeapon = weaponRepository.findById(new WeaponId(weapon.getName(), weapon.getWeapon()));
+            if (existingWeapon.isPresent()) {
+                return updateWeaponSmart(existingWeapon.get(), weapon);
+            }
+        }
+        
+        // 如果是新武器，直接保存
+        return weaponRepository.save(weapon);
+    }
+    
+    /**
+     * Smart update weapon - only update non-null and non-empty fields
+     */
+    @Transactional
+    public Weapon updateWeaponSmart(Weapon existing, Weapon updateData) {
+        // 只更新非空且非空字串的欄位
+        if (isValidString(updateData.getAttributes())) {
+            existing.setAttributes(updateData.getAttributes());
+        }
+        
+        if (updateData.getBaseDamage() != null) {
+            existing.setBaseDamage(updateData.getBaseDamage());
+        }
+        
+        if (updateData.getBonusDamage() != null) {
+            existing.setBonusDamage(updateData.getBonusDamage());
+        }
+        
+        if (updateData.getBonusAttributes() != null && !updateData.getBonusAttributes().isEmpty()) {
+            existing.setBonusAttributes(updateData.getBonusAttributes());
+        }
+        
+        if (updateData.getStateAttributes() != null && !updateData.getStateAttributes().isEmpty()) {
+            existing.setStateAttributes(updateData.getStateAttributes());
+        }
+        
+        if (isValidString(updateData.getEmbedding())) {
+            existing.setEmbedding(updateData.getEmbedding());
+        }
+        
+        // 更新時間戳
+        existing.setUpdatedAt(java.time.LocalDateTime.now());
+        
+        return weaponRepository.save(existing);
+    }
+    
+    /**
+     * Check if a string is valid (not null and not empty)
+     */
+    private boolean isValidString(String value) {
+        return value != null && !value.trim().isEmpty();
+    }
+    
+    /**
      * Delete a weapon by weapon (ID)
      */
     @Transactional
