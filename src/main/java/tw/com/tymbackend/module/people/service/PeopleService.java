@@ -13,6 +13,7 @@ import tw.com.tymbackend.module.people.domain.vo.People;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true, noRollbackFor = {IllegalArgumentException.class, EmptyResultDataAccessException.class})
@@ -151,5 +152,16 @@ public class PeopleService {
 
     public Page<People> findAll(Pageable pageable) {
         return peopleRepository.findAll(pageable);
+    }
+    
+    /**
+     * Get all people names only
+     * 
+     * @return list of people names
+     */
+    public List<String> getAllPeopleNames() {
+        return peopleRepository.findAll().stream()
+            .map(People::getName)
+            .collect(Collectors.toList());
     }
 }

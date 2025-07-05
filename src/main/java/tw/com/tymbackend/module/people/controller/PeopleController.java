@@ -135,4 +135,17 @@ public class PeopleController {
             return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    // 取得所有人的名字
+    @GetMapping("/names")
+    public ResponseEntity<?> getAllPeopleNames() {
+        try {
+            List<String> names = peopleService.getAllPeopleNames();
+            return new ResponseEntity<>(names, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
