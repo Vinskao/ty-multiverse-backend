@@ -35,11 +35,11 @@ public class WeaponController {
     }
 
     /**
-     * Get weapons by weapon type
+     * Get weapons by owner
      */
-    @GetMapping("/type/{weaponType}")
-    public ResponseEntity<List<Weapon>> getWeaponsByWeaponType(@PathVariable String weaponType) {
-        return ResponseEntity.ok(weaponService.getWeaponsByWeaponType(weaponType));
+    @GetMapping("/owner/{owner}")
+    public ResponseEntity<List<Weapon>> getWeaponsByOwner(@PathVariable String owner) {
+        return ResponseEntity.ok(weaponService.getWeaponsByOwner(owner));
     }
 
     /**

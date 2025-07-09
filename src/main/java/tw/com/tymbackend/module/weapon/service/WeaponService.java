@@ -33,13 +33,13 @@ public class WeaponService {
     }
     
     /**
-     * Get weapons by weapon type
+     * Get weapons by owner
      * 
-     * @param weaponType the weapon type
-     * @return list of weapons of the specified type
+     * @param owner the weapon owner
+     * @return list of weapons belonging to the specified owner
      */
-    public List<Weapon> getWeaponsByWeaponType(String weaponType) {
-        return weaponRepository.findByWeaponType(weaponType);
+    public List<Weapon> getWeaponsByOwner(String owner) {
+        return weaponRepository.findByOwner(owner);
     }
     
     /**
@@ -83,8 +83,8 @@ public class WeaponService {
     @Transactional
     public Weapon updateWeaponSmart(Weapon existing, Weapon updateData) {
         // 只更新非空且非空字串的欄位
-        if (isValidString(updateData.getWeaponType())) {
-            existing.setWeaponType(updateData.getWeaponType());
+        if (isValidString(updateData.getOwner())) {
+            existing.setOwner(updateData.getOwner());
         }
         
         if (isValidString(updateData.getAttributes())) {
