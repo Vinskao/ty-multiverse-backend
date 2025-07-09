@@ -6,24 +6,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import tw.com.tymbackend.module.weapon.service.WeaponService;
-import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
-import tw.com.tymbackend.module.people.service.PeopleService;
-import tw.com.tymbackend.module.people.domain.vo.People;
-
-import java.util.List;
-import java.util.Map;
+import tw.com.tymbackend.module.people.service.WeaponDamageService;
 
 @RestController
 @RequestMapping("/people")
 public class WeaponDamageController {
 
-    private final WeaponService weaponService;
-    private final PeopleService peopleService;
+    private final WeaponDamageService weaponDamageService;
 
-    public WeaponDamageController(WeaponService weaponService, PeopleService peopleService) {
-        this.weaponService = weaponService;
-        this.peopleService = peopleService;
+    public WeaponDamageController(WeaponDamageService weaponDamageService) {
+        this.weaponDamageService = weaponDamageService;
     }
 
     /**
@@ -35,45 +27,12 @@ public class WeaponDamageController {
      */
     @GetMapping("/damageWithWeapon")
     public ResponseEntity<Integer> damageWithWeapon(@RequestParam("name") String name) {
-        // Fetch person
-        People person = peopleService.getPeopleByName(name)
-                .orElse(null);
-        if (person == null) {
-            return ResponseEntity.badRequest().body(-1);
+        int result = weaponDamageService.calculateDamageWithWeapon(name);
+        if (result == -1) {
+            return ResponseEntity.badRequest().body(result);
         }
-
-        // Fetch weapons owned by the person
-        List<Weapon> weapons = weaponService.getWeaponsByOwner(name);
-        if (weapons == null || weapons.isEmpty()) {
-            return ResponseEntity.badRequest().body(-1);
-        }
-
-        Weapon weapon = weapons.get(0); // Use first weapon
-
-        int physicPower = safeInt(person.getPhysicPower());
-        int magicPower = safeInt(person.getMagicPower());
-        int utilityPower = safeInt(person.getUtilityPower());
-        int baseDamage = safeInt(weapon.getBaseDamage());
-        int bonusDamage = safeInt(weapon.getBonusDamage());
-
-        double ratio = baseDamage > 0 ? (double) utilityPower / baseDamage : 0;
-
-        String personAttr = person.getAttributes();
-        List<String> bonusAttrs = weapon.getBonusAttributes();
-        boolean attrMatch = bonusAttrs != null && personAttr != null && bonusAttrs.contains(personAttr);
-
-        double damage;
-        if (attrMatch) {
-            damage = physicPower + magicPower + utilityPower + ratio * bonusDamage;
-        } else {
-            damage = physicPower + magicPower + utilityPower + utilityPower * ratio;
-        }
-
-        int result = (int) Math.round(damage);
         return ResponseEntity.ok(result);
     }
 
-    private int safeInt(Integer value) {
-        return value == null ? 0 : value;
-    }
+    // Removed safeInt method as the computation is now inside the service
 } 
