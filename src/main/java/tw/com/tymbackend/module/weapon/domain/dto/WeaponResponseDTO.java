@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class WeaponResponseDTO {
-    private String name;
+    private String owner;
     private String weapon;
     private String attributes;
     private Integer baseDamage;

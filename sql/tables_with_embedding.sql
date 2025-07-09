@@ -47,8 +47,8 @@ CREATE TABLE people (
 
 -- Weapon table with single embedding field - using name as primary key
 CREATE TABLE weapon (
-    name VARCHAR(255) PRIMARY KEY,
-    weapon_type VARCHAR(255),
+    owner VARCHAR(255),
+    weapon VARCHAR(255) PRIMARY KEY,
     attributes VARCHAR(255),
     base_damage INT,
     bonus_damage INT,
@@ -69,7 +69,7 @@ CREATE INDEX idx_people_army_id ON people(army_id);
 CREATE INDEX idx_people_dept_id ON people(dept_id);
 
 -- Create indexes for weapon table
-CREATE INDEX idx_weapon_weapon_type ON weapon(weapon_type);
+CREATE INDEX idx_weapon_owner ON weapon(owner);
 CREATE INDEX idx_weapon_base_damage ON weapon(base_damage);
 CREATE INDEX idx_weapon_bonus_damage ON weapon(bonus_damage);
 

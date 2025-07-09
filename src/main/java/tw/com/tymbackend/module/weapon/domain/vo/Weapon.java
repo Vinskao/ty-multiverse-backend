@@ -1,5 +1,7 @@
 package tw.com.tymbackend.module.weapon.domain.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -14,11 +16,12 @@ import lombok.NoArgsConstructor;
 public class Weapon {
 
     @Id
-    @Column(name = "name", length = 255)
+    @Column(name = "weapon", length = 255)
+    @JsonProperty("weapon")
     private String name;
 
-    @Column(name = "weapon_type", length = 255)
-    private String weaponType;
+    @Column(name = "owner", length = 255)
+    private String owner;
 
     @Column(name = "attributes", length = 255)
     private String attributes;
@@ -46,10 +49,10 @@ public class Weapon {
     @Column(name = "updated_at", columnDefinition = "TIMESTAMP DEFAULT NOW()")
     private LocalDateTime updatedAt;
 
-    public Weapon(String name, String weaponType, String attributes, Integer baseDamage, 
+    public Weapon(String name, String owner, String attributes, Integer baseDamage, 
                  Integer bonusDamage, List<String> bonusAttributes, List<String> stateAttributes) {
         this.name = name;
-        this.weaponType = weaponType;
+        this.owner = owner;
         this.attributes = attributes;
         this.baseDamage = baseDamage;
         this.bonusDamage = bonusDamage;
@@ -59,10 +62,12 @@ public class Weapon {
         this.updatedAt = LocalDateTime.now();
     }
 
+    @JsonIgnore
     public String getId() {
         return this.name;
     }
 
+    @JsonIgnore
     public void setId(String id) {
         this.name = id;
     }
@@ -75,12 +80,12 @@ public class Weapon {
         this.name = name;
     }
 
-    public String getWeaponType() {
-        return this.weaponType;
+    public String getOwner() {
+        return this.owner;
     }
 
-    public void setWeaponType(String weaponType) {
-        this.weaponType = weaponType;
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 
     public String getAttributes() {
@@ -155,7 +160,7 @@ public class Weapon {
             return false;
         }
         Weapon weapon = (Weapon) o;
-        return Objects.equals(name, weapon.name) && Objects.equals(weaponType, weapon.weaponType)
+        return Objects.equals(name, weapon.name) && Objects.equals(owner, weapon.owner)
                 && Objects.equals(attributes, weapon.attributes) && Objects.equals(baseDamage, weapon.baseDamage)
                 && Objects.equals(bonusDamage, weapon.bonusDamage) && Objects.equals(bonusAttributes, weapon.bonusAttributes)
                 && Objects.equals(stateAttributes, weapon.stateAttributes)
@@ -165,7 +170,7 @@ public class Weapon {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, weaponType, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes,
+        return Objects.hash(name, owner, attributes, baseDamage, bonusDamage, bonusAttributes, stateAttributes,
                           embedding, createdAt, updatedAt);
     }
 
@@ -173,7 +178,7 @@ public class Weapon {
     public String toString() {
         return "{" +
                 " name='" + getName() + "'" +
-                ", weaponType='" + getWeaponType() + "'" +
+                ", owner='" + getOwner() + "'" +
                 ", attributes='" + getAttributes() + "'" +
                 ", baseDamage='" + getBaseDamage() + "'" +
                 ", bonusDamage='" + getBonusDamage() + "'" +

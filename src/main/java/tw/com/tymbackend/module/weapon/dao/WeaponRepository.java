@@ -16,7 +16,7 @@ public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpec
     
     boolean existsByName(String name);
     
-    List<Weapon> findByWeaponType(String weaponType);
+    List<Weapon> findByOwner(String owner);
     
     List<Weapon> findByBaseDamageBetween(Integer minDamage, Integer maxDamage);
     
