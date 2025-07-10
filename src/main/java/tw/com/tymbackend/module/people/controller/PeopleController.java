@@ -1,5 +1,7 @@
 package tw.com.tymbackend.module.people.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/people")
 public class PeopleController {
+
+    private static final Logger logger = LoggerFactory.getLogger(PeopleController.class);
 
     @Autowired
     private PeopleService peopleService;
@@ -47,16 +51,20 @@ public class PeopleController {
             People updatedPeople = peopleService.updatePerson(people);
             return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            logger.error("Invalid input while updating person", e);
             return new ResponseEntity<>("Person not found: " + e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (org.hibernate.StaleObjectStateException e) {
             // 樂觀鎖定衝突，返回衝突狀態
+            logger.error("Concurrent update detected", e);
             return new ResponseEntity<>("Concurrent update detected: " + e.getMessage(), HttpStatus.CONFLICT);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             // 數據完整性違規，返回錯誤請求狀態
             return new ResponseEntity<>("Data integrity violation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
+            logger.error("Runtime exception during update", e);
             return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
+            logger.error("Unexpected error during update", e);
             return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

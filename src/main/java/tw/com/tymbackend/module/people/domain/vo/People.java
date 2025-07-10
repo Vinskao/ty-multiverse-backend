@@ -39,13 +39,13 @@ public class People {
     private String codeName;
 
     @Column(name = "physic_power", columnDefinition = "INT")
-    private int physicPower;
+    private Integer physicPower;
 
     @Column(name = "magic_power", columnDefinition = "INT")
-    private int magicPower;
+    private Integer magicPower;
 
     @Column(name = "utility_power", columnDefinition = "INT")
-    private int utilityPower;
+    private Integer utilityPower;
 
     @Column(name = "dob", columnDefinition = "DATE")
     private LocalDate dob;
@@ -66,10 +66,10 @@ public class People {
     private String boobsSize;
 
     @Column(name = "height_cm", columnDefinition = "INT")
-    private int heightCm;
+    private Integer heightCm;
 
     @Column(name = "weight_kg", columnDefinition = "INT")
-    private int weightKg;
+    private Integer weightKg;
 
     @Column(name = "profession", columnDefinition = "VARCHAR(255)")
     private String profession;
@@ -108,19 +108,19 @@ public class People {
     private String faction;
 
     @Column(name = "army_id", columnDefinition = "INT")
-    private int armyId;
+    private Integer armyId;
 
     @Column(name = "army_name", columnDefinition = "VARCHAR(255)")
     private String armyName;
 
     @Column(name = "dept_id", columnDefinition = "INT")
-    private int deptId;
+    private Integer deptId;
 
     @Column(name = "dept_name", columnDefinition = "VARCHAR(255)")
     private String deptName;
 
     @Column(name = "origin_army_id", columnDefinition = "INT")
-    private int originArmyId;
+    private Integer originArmyId;
 
     @Column(name = "origin_army_name", columnDefinition = "VARCHAR(255)")
     private String originArmyName;
@@ -132,7 +132,7 @@ public class People {
     private String email;
 
     @Column(name = "age", columnDefinition = "INT")
-    private int age;
+    private Integer age;
 
     @Column(name = "proxy", columnDefinition = "VARCHAR(255)")
     private String proxy;

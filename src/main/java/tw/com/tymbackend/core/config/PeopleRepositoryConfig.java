@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
+import tw.com.tymbackend.core.repository.StringPkRepositoryImpl;
 
 /**
  * Configuration for People and Weapon repositories
@@ -15,7 +16,7 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
     entityManagerFactoryRef = "peopleEntityManagerFactory",
     transactionManagerRef = "peopleTransactionManager",
     repositoryImplementationPostfix = "Impl",
-    repositoryBaseClass = IntegerPkRepositoryImpl.class
+    repositoryBaseClass = StringPkRepositoryImpl.class
 )
 public class PeopleRepositoryConfig {
     // Spring Data JPA will automatically create repository implementations
