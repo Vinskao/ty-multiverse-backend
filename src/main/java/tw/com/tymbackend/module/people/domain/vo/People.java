@@ -1,9 +1,9 @@
 package tw.com.tymbackend.module.people.domain.vo;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,25 +18,24 @@ import lombok.NoArgsConstructor;
 @Data
 @Entity
 @Table(name = "people")
+@JsonPropertyOrder({
+    "nameOriginal", "codeName", "name", "physicPower", "magicPower", "utilityPower",
+    "dob", "race", "attributes", "gender", "assSize", "boobsSize", "heightCm", "weightKg",
+    "profession", "combat", "favoriteFoods", "job", "physics", "knownAs", "personality",
+    "interest", "likes", "dislikes", "concubine", "faction", "armyId", "armyName",
+    "deptId", "deptName", "originArmyId", "originArmyName", "gaveBirth", "email", "age",
+    "proxy", "baseAttributes", "bonusAttributes", "stateAttributes"
+})
 public class People {
-    @Id
-    @Column(nullable = false)
-    private String name;
-
-    @Column(name = "base_attributes")
-    private String baseAttributes;
-
-    @Column(name = "bonus_attributes")
-    private String bonusAttributes;
-
-    @Column(name = "state_attributes")
-    private String stateAttributes;
-
     @Column(name = "name_original", columnDefinition = "VARCHAR(255)")
     private String nameOriginal;
 
     @Column(name = "code_name", columnDefinition = "VARCHAR(255)")
     private String codeName;
+
+    @Id
+    @Column(nullable = false)
+    private String name;
 
     @Column(name = "physic_power", columnDefinition = "INT")
     private Integer physicPower;
@@ -47,8 +46,8 @@ public class People {
     @Column(name = "utility_power", columnDefinition = "INT")
     private Integer utilityPower;
 
-    @Column(name = "dob", columnDefinition = "DATE")
-    private LocalDate dob;
+    @Column(name = "dob", columnDefinition = "VARCHAR(255)")
+    private String dob;
 
     @Column(name = "race", columnDefinition = "VARCHAR(255)")
     private String race;
@@ -126,7 +125,7 @@ public class People {
     private String originArmyName;
 
     @Column(name = "gave_birth", columnDefinition = "BOOLEAN")
-    private boolean gaveBirth;
+    private Boolean gaveBirth;
 
     @Column(name = "email", columnDefinition = "VARCHAR(255)")
     private String email;
@@ -136,6 +135,15 @@ public class People {
 
     @Column(name = "proxy", columnDefinition = "VARCHAR(255)")
     private String proxy;
+
+    @Column(name = "base_attributes")
+    private String baseAttributes;
+
+    @Column(name = "bonus_attributes")
+    private String bonusAttributes;
+
+    @Column(name = "state_attributes")
+    private String stateAttributes;
 
     // Embedding field for semantic search - excluded from JPA mapping
     // This field is typically populated by external AI embedding services
