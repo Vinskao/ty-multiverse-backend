@@ -141,48 +141,61 @@ classDiagram
         +hashCode()
         +toString()
     }
-    
+
     class People {
         +String name
-        +int age
+        +String nameOriginal
+        +String codeName
         +String race
         +String attributes
-        +List~PeopleImage~ images
-        +addImage()
-        +removeImage()
-        +updateAttributes()
-    }
-    
-    class Weapon {
-        +String weaponName
-        +int baseDamage
-        +int bonusDamage
-        +String attributes
+        +String baseAttributes
         +String bonusAttributes
         +String stateAttributes
-        +calculateTotalDamage()
-        +applyBonus()
+        +Integer physicPower
+        +Integer magicPower
+        +Integer utilityPower
     }
-    
-    class Livestock {
+
+    class PeopleImage {
+        +String id
+        +String codeName
+        +String image
+    }
+
+    class Weapon {
         +String name
-        +String species
-        +int health
-        +String status
-        +feed()
-        +heal()
-        +getStatus()
+        +String owner
+        +String attributes
+        +Integer baseDamage
+        +Integer bonusDamage
+        +List~String~ bonusAttributes
+        +List~String~ stateAttributes
     }
-    
+
+    class Livestock {
+        +Integer id
+        +String livestock
+        +Double height
+        +Double weight
+        +Integer melee
+        +Integer magicka
+        +Integer ranged
+        +BigDecimal sellingPrice
+        +BigDecimal buyingPrice
+        +BigDecimal dealPrice
+    }
+
     class Gallery {
-        +String title
-        +String description
-        +String imageUrl
-        +String category
-        +updateContent()
-        +validateImage()
+        +Integer id
+        +String imageBase64
+        +LocalDateTime uploadTime
     }
-    
+
+    class EditContentVO {
+        +String editor
+        +String content
+    }
+
     class Repository {
         <<interface>>
         +save()
@@ -191,29 +204,53 @@ classDiagram
         +delete()
         +count()
     }
-    
+
     class PeopleRepository {
         <<interface>>
         +findByName()
         +deleteByName()
-        +findByAgeBetween()
+        +deleteAllPeople()
     }
-    
+
     class WeaponRepository {
         <<interface>>
         +findByName()
         +findByAttributes()
         +findByBaseDamageBetween()
+        +findByOwner()
     }
-    
+
+    class LivestockRepository {
+        <<interface>>
+        +findByOwner()
+        +findByBuyer()
+        +findByLivestock()
+    }
+
+    class GalleryRepository {
+        <<interface>>
+    }
+
+    class EditContentRepository {
+        <<interface>>
+        +findByEditor()
+    }
+
     DomainEntity <|-- People
     DomainEntity <|-- Weapon
     DomainEntity <|-- Livestock
     DomainEntity <|-- Gallery
     Repository <|-- PeopleRepository
     Repository <|-- WeaponRepository
+    Repository <|-- LivestockRepository
+    Repository <|-- GalleryRepository
+    Repository <|-- EditContentRepository
     PeopleRepository --> People
     WeaponRepository --> Weapon
+    LivestockRepository --> Livestock
+    GalleryRepository --> Gallery
+    EditContentRepository --> EditContentVO
+    People "1" -- "*" PeopleImage : images
 ```
 
 #### 2.3 領域驅動設計原則
@@ -223,7 +260,7 @@ classDiagram
    - 領域專家、開發人員和業務人員共享相同的語言
 
 2. **限界上下文 (Bounded Context)**
-   - 每個模組 (people, weapon, livestock, gallery) 代表一個限界上下文
+   - 每個模組 (people, weapon, livestock, gallery, deckofcards, ckeditor) 代表一個限界上下文
    - 上下文之間通過明確的介面進行通信
 
 3. **實體與值物件 (Entity vs Value Object)**
