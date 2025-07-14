@@ -82,10 +82,10 @@ logging:
     org:
       springframework: INFO
       hibernate:
-        SQL: DEBUG
+        SQL: OFF
         type:
           descriptor:
-            sql: TRACE
+            sql: OFF
     '[io.micrometer]': INFO
 
 server:
