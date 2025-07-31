@@ -7,6 +7,10 @@ stringData:
   SPRING_DATASOURCE_URL: "${{ secrets.SPRING_DATASOURCE_URL }}"
   SPRING_DATASOURCE_USERNAME: "${{ secrets.SPRING_DATASOURCE_USERNAME }}"
   SPRING_DATASOURCE_PASSWORD: "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+  REDIS_HOST: "${{ secrets.REDIS_HOST }}"
+  REDIS_CUSTOM_PORT: "${{ secrets.REDIS_CUSTOM_PORT }}"
+  REDIS_PASSWORD: "${{ secrets.REDIS_PASSWORD }}"
+  REDIS_QUEUE_TYMB: "${{ secrets.REDIS_QUEUE_TYMB }}"
   KEYCLOAK_AUTH_SERVER_URL: "${{ secrets.KEYCLOAK_AUTH_SERVER_URL }}"
   KEYCLOAK_REALM: "${{ secrets.KEYCLOAK_REALM }}"
   KEYCLOAK_CLIENT_ID: "${{ secrets.KEYCLOAK_CLIENT_ID }}"
@@ -119,6 +123,26 @@ spec:
             configMapKeyRef:
               name: ty-multiverse-backend-config
               key: PROJECT_ENV
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_HOST
+        - name: REDIS_CUSTOM_PORT
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_CUSTOM_PORT
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_PASSWORD
+        - name: REDIS_QUEUE_TYMB
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_QUEUE_TYMB
 ---
 
 apiVersion: v1

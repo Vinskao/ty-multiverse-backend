@@ -85,6 +85,10 @@ pipeline {
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                            string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
+                            string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                            string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
                             string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
                             string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
@@ -113,6 +117,10 @@ pipeline {
                                 keycloak.clientId=${KEYCLOAK_CLIENT_ID}
                                 keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
                                 project.env=${PROJECT_ENV}
+                                REDIS_HOST=${REDIS_HOST}
+                                REDIS_CUSTOM_PORT=${REDIS_CUSTOM_PORT}
+                                REDIS_PASSWORD=${REDIS_PASSWORD}
+                                REDIS_QUEUE_TYMB=${REDIS_QUEUE_TYMB}
                                 EOL
                             '''
                         }
