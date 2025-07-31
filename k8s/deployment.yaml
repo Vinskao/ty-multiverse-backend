@@ -4,19 +4,19 @@ metadata:
   name: ty-multiverse-backend-secrets
 type: Opaque
 stringData:
-  SPRING_DATASOURCE_URL: "${SPRING_DATASOURCE_URL}"
-  SPRING_DATASOURCE_USERNAME: "${SPRING_DATASOURCE_USERNAME}"
-  SPRING_DATASOURCE_PASSWORD: "${SPRING_DATASOURCE_PASSWORD}"
-  REDIS_HOST: "${REDIS_HOST}"
-  REDIS_CUSTOM_PORT: "${REDIS_CUSTOM_PORT}"
-  REDIS_PASSWORD: "${REDIS_PASSWORD}"
-  REDIS_QUEUE_TYMB: "${REDIS_QUEUE_TYMB}"
-  KEYCLOAK_AUTH_SERVER_URL: "${KEYCLOAK_AUTH_SERVER_URL}"
-  KEYCLOAK_REALM: "${KEYCLOAK_REALM}"
-  KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID}"
-  KEYCLOAK_CREDENTIALS_SECRET: "${KEYCLOAK_CREDENTIALS_SECRET}"
-  URL_ADDRESS: "${URL_ADDRESS}"
-  URL_FRONTEND: "${URL_FRONTEND}"
+  SPRING_DATASOURCE_URL: "${{ secrets.SPRING_DATASOURCE_URL }}"
+  SPRING_DATASOURCE_USERNAME: "${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+  SPRING_DATASOURCE_PASSWORD: "${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+  REDIS_HOST: "${{ secrets.REDIS_HOST }}"
+  REDIS_CUSTOM_PORT: "${{ secrets.REDIS_CUSTOM_PORT }}"
+  REDIS_PASSWORD: "${{ secrets.REDIS_PASSWORD }}"
+  REDIS_QUEUE_TYMB: "${{ secrets.REDIS_QUEUE_TYMB }}"
+  KEYCLOAK_AUTH_SERVER_URL: "${{ secrets.KEYCLOAK_AUTH_SERVER_URL }}"
+  KEYCLOAK_REALM: "${{ secrets.KEYCLOAK_REALM }}"
+  KEYCLOAK_CLIENT_ID: "${{ secrets.KEYCLOAK_CLIENT_ID }}"
+  KEYCLOAK_CREDENTIALS_SECRET: "${{ secrets.KEYCLOAK_CREDENTIALS_SECRET }}"
+  URL_ADDRESS: "${{ secrets.URL_ADDRESS }}"
+  URL_FRONTEND: "${{ secrets.URL_FRONTEND }}"
 ---
 
 apiVersion: v1
@@ -52,11 +52,97 @@ spec:
         image: papakao/ty-multiverse-backend:latest
         ports:
         - containerPort: 8080
-        envFrom:
-        - configMapRef:
-            name: ty-multiverse-backend-config
-        - secretRef:
-            name: ty-multiverse-backend-secrets
+        env:
+        - name: SERVER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: SERVER_PORT
+        - name: SPRING_PROFILES_ACTIVE
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: SPRING_PROFILES_ACTIVE
+        - name: LOGGING_LEVEL
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: LOGGING_LEVEL
+        - name: LOGGING_LEVEL_SPRINGFRAMEWORK
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: LOGGING_LEVEL_SPRINGFRAMEWORK
+        - name: SPRING_DATASOURCE_URL
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_URL
+        - name: SPRING_DATASOURCE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_USERNAME
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: SPRING_DATASOURCE_PASSWORD
+        - name: KEYCLOAK_AUTH_SERVER_URL
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_AUTH_SERVER_URL
+        - name: KEYCLOAK_REALM
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_REALM
+        - name: KEYCLOAK_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_CLIENT_ID
+        - name: KEYCLOAK_CREDENTIALS_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: KEYCLOAK_CREDENTIALS_SECRET
+        - name: URL_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: URL_ADDRESS
+        - name: URL_FRONTEND
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: URL_FRONTEND
+        - name: PROJECT_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: PROJECT_ENV
+        - name: REDIS_HOST
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_HOST
+        - name: REDIS_CUSTOM_PORT
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_CUSTOM_PORT
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_PASSWORD
+        - name: REDIS_QUEUE_TYMB
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: REDIS_QUEUE_TYMB
 ---
 
 apiVersion: v1
