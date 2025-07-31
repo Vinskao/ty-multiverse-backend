@@ -215,38 +215,57 @@ pipeline {
             steps {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                        script {
-                            try {
-                                // 測試集群連接
-                                sh 'kubectl cluster-info'
-                                
-                                // 檢查 deployment.yaml 文件
-                                sh 'ls -la k8s/'
-                                
-                                // 檢查 Deployment 是否存在
-                                sh '''
-                                    echo "Recreating deployment ..."
-                                        # Ensure envsubst is available
-                                        apk add --no-cache gettext >/dev/null 2>&1 || true
+                        withCredentials([
+                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                            string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
+                            string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                            string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
+                            string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
+                            string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                            string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                            string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
+                            string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
+                        ]) {
+                            script {
+                                try {
+                                    // 測試集群連接
+                                    sh 'kubectl cluster-info'
+                                    
+                                    // 檢查 deployment.yaml 文件
+                                    sh 'ls -la k8s/'
+                                    
+                                    // 檢查 Deployment 是否存在
+                                    sh '''
+                                        echo "Recreating deployment ..."
+                                            # Ensure envsubst is available
+                                            apk add --no-cache gettext >/dev/null 2>&1 || true
 
-                                        # debug: show key credentials pulled in (mask passwords)
-                                        echo "=== Effective sensitive env values ==="
-                                        echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
-                                        echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
-                                        echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+                                            # debug: show key credentials pulled in (mask passwords)
+                                            echo "=== Effective sensitive env values ==="
+                                            echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+                                            echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
+                                            echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
 
-                                        kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
-                                        envsubst < k8s/deployment.yaml | kubectl apply -f -
-                                        kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                        kubectl rollout status deployment/ty-multiverse-backend
-                                '''
-                                
-                                // 檢查部署狀態
-                                sh 'kubectl get deployments -n default'
-                                sh 'kubectl rollout status deployment/ty-multiverse-backend'
-                            } catch (Exception e) {
-                                echo "Error during deployment: ${e.message}"
-                                throw e
+                                            kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
+                                            envsubst < k8s/deployment.yaml | kubectl apply -f -
+                                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                                            kubectl rollout status deployment/ty-multiverse-backend
+                                    '''
+                                    
+                                    // 檢查部署狀態
+                                    sh 'kubectl get deployments -n default'
+                                    sh 'kubectl rollout status deployment/ty-multiverse-backend'
+                                } catch (Exception e) {
+                                    echo "Error during deployment: ${e.message}"
+                                    throw e
+                                }
                             }
                         }
                     }
