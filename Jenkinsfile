@@ -101,16 +101,16 @@ pipeline {
                                 cat > src/main/resources/env/platform.properties <<EOL
                                 env=platform
                                 spring.profiles.active=platform
-                                PROJECT_ENV=${PROJECT_ENV}
+                                PROJECT_ENV=platform
                                 SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
                                 SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
                                 SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
                                 SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
                                 SPRING_PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
                                 SPRING_PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
-                                SERVER_PORT=${SERVER_PORT}
-                                LOGGING_LEVEL=${LOGGING_LEVEL}
-                                LOGGING_LEVEL_SPRINGFRAMEWORK=${LOGGING_LEVEL_SPRINGFRAMEWORK}
+                                server.port=8080
+                                logging.level.root=DEBUG
+                                logging.level.org.springframework=DEBUG
                                 URL_ADDRESS=${URL_ADDRESS}
                                 URL_FRONTEND=${URL_FRONTEND}
                                 KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
