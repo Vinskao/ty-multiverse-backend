@@ -226,8 +226,17 @@ pipeline {
                                 // 檢查 Deployment 是否存在
                                 sh '''
                                     echo "Recreating deployment ..."
+                                        # Ensure envsubst is available
+                                        apk add --no-cache gettext >/dev/null 2>&1 || true
+
+                                        # debug: show key credentials pulled in (mask passwords)
+                                        echo "=== Effective sensitive env values ==="
+                                        echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+                                        echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
+                                        echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+
                                         kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
-                                        kubectl apply -f k8s/deployment.yaml
+                                        envsubst < k8s/deployment.yaml | kubectl apply -f -
                                         kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
                                         kubectl rollout status deployment/ty-multiverse-backend
                                 '''
