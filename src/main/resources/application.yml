@@ -26,7 +26,7 @@ spring:
       resourceserver:
         jwt:
             issuer-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@'
-  jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@/protocol/openid-connect/certs'
+            jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@/protocol/openid-connect/certs'
   datasource:
     driver-class-name: org.postgresql.Driver
     url: '@SPRING_DATASOURCE_URL@'
