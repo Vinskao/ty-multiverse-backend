@@ -79,6 +79,9 @@ pipeline {
                             mkdir -p src/main/resources/env
                         '''
                         withCredentials([
+                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
@@ -99,6 +102,11 @@ pipeline {
                                 env=platform
                                 spring.profiles.active=platform
                                 PROJECT_ENV=platform
+                                # Primary datasource configuration
+                                SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+                                SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+                                SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+                                # People datasource configuration
                                 SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
                                 SPRING_PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
                                 SPRING_PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
@@ -210,6 +218,9 @@ pipeline {
                 container('kubectl') {
                     withKubeConfig([credentialsId: 'kubeconfig-secret']) {
                         withCredentials([
+                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
                             string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
@@ -240,6 +251,7 @@ pipeline {
 
                                             # debug: show key credentials pulled in (mask passwords)
                                             echo "=== Effective sensitive env values ==="
+                                            echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
                                             echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
                                             echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
                                             echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
