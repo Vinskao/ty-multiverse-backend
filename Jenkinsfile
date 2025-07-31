@@ -225,15 +225,11 @@ pipeline {
                                 
                                 // 檢查 Deployment 是否存在
                                 sh '''
-                                    if kubectl get deployment ty-multiverse-backend -n default; then
-                                        echo "Deployment exists, updating..."
+                                    echo "Recreating deployment ..."
+                                        kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
                                         kubectl apply -f k8s/deployment.yaml
                                         kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                        kubectl rollout restart deployment ty-multiverse-backend
-                                    else
-                                        echo "Deployment does not exist, creating..."
-                                        kubectl apply -f k8s/deployment.yaml
-                                    fi
+                                        kubectl rollout status deployment/ty-multiverse-backend
                                 '''
                                 
                                 // 檢查部署狀態
