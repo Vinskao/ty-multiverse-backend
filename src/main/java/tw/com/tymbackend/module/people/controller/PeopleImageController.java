@@ -9,6 +9,9 @@ import tw.com.tymbackend.module.people.service.PeopleImageService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/people-images")
@@ -19,21 +22,26 @@ public class PeopleImageController {
     
     /**
      * Get all people images
+     * 需要 manage-users 角色才能訪問
      * 
      * @return list of all people images
      */
+    @PreAuthorize("hasRole('manage-users')")
     @GetMapping
     public ResponseEntity<List<PeopleImage>> getAllPeopleImages() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<PeopleImage> peopleImages = peopleImageService.getAllPeopleImages();
         return ResponseEntity.ok(peopleImages);
     }
     
     /**
      * Get people image by code name
+     * 登入用戶（包括 GUEST）都可以訪問
      * 
      * @param codeName the code name of the person
      * @return the people image if found
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{codeName}")
     public ResponseEntity<?> getPeopleImageByCodeName(@PathVariable String codeName) {
         try {
@@ -46,10 +54,12 @@ public class PeopleImageController {
     
     /**
      * Create a new people image
+     * 需要 manage-users 角色才能訪問
      * 
      * @param peopleImage the people image to create
      * @return the created people image
      */
+    @PreAuthorize("hasRole('manage-users')")
     @PostMapping
     public ResponseEntity<?> createPeopleImage(@RequestBody PeopleImage peopleImage) {
         try {
@@ -68,11 +78,13 @@ public class PeopleImageController {
     
     /**
      * Update an existing people image
+     * 需要 manage-users 角色才能訪問
      * 
      * @param codeName the code name of the person
      * @param peopleImage the updated people image
      * @return the updated people image
      */
+    @PreAuthorize("hasRole('manage-users')")
     @PutMapping("/{codeName}")
     public ResponseEntity<?> updatePeopleImage(@PathVariable String codeName, @RequestBody PeopleImage peopleImage) {
         try {
@@ -94,10 +106,12 @@ public class PeopleImageController {
     
     /**
      * Delete a people image
+     * 需要 manage-users 角色才能訪問
      * 
      * @param codeName the code name of the person
      * @return success or error message
      */
+    @PreAuthorize("hasRole('manage-users')")
     @DeleteMapping("/{codeName}")
     public ResponseEntity<?> deletePeopleImage(@PathVariable String codeName) {
         try {

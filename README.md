@@ -3,7 +3,129 @@
 
 ## 架構設計
 
-### 1. 核心架構
+### 1. Redis Session 架構
+
+#### 1.1 Redis Session 配置
+```mermaid
+classDiagram
+    class RedisSessionConfig {
+        +@Configuration
+        +@EnableRedisHttpSession
+        +configureRedisConnectionFactory()
+        +configureRedisTemplate()
+        +configureSessionRepository()
+    }
+    
+    class RedisConnectionFactory {
+        +LettuceConnectionFactory
+        +RedisStandaloneConfiguration
+        +RedisPassword
+        +RedisSentinelConfiguration
+    }
+    
+    class RedisTemplate {
+        +StringRedisTemplate
+        +GenericJackson2JsonRedisSerializer
+        +RedisSerializer
+        +configureSerializers()
+    }
+    
+    class SessionRepository {
+        +RedisIndexedSessionRepository
+        +SessionEventRegistry
+        +SessionRepositoryFilter
+        +configureSessionEvents()
+    }
+    
+    class SessionManagement {
+        +SessionCreationPolicy
+        +SessionTimeout
+        +SessionFixation
+        +SessionConcurrency
+    }
+    
+    RedisSessionConfig --> RedisConnectionFactory
+    RedisSessionConfig --> RedisTemplate
+    RedisSessionConfig --> SessionRepository
+    SessionRepository --> SessionManagement
+```
+
+#### 1.2 Redis Session 配置詳情
+
+**application.yml 配置**:
+```yaml
+spring:
+  data:
+    redis:
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+  session:
+    store-type: redis
+    redis:
+      namespace: tymb:sessions
+```
+
+**RedisSessionConfig.java**:
+```java
+@Configuration
+@EnableRedisHttpSession(
+    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
+    redisNamespace = "tymb:sessions"      // 命名空間
+)
+public class RedisSessionConfig {
+    
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        // 配置 Redis 連接
+    }
+    
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate() {
+        // 配置 Redis 序列化
+    }
+}
+```
+
+#### 1.3 Session 管理策略
+
+**無狀態 JWT 認證**:
+```java
+.sessionManagement(session -> session
+    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+```
+
+**Session 存儲策略**:
+- **JWT Token**: 用於 API 認證，無狀態
+- **Redis Session**: 用於 Web 應用 Session 管理
+- **Session 命名空間**: `tymb:sessions:*`
+
+#### 1.4 Redis Session 優點
+
+1. **分散式 Session 管理**
+   - 支援多實例部署
+   - Session 共享和同步
+   - 自動過期清理
+
+2. **高性能**
+   - 內存級別存取速度
+   - 持久化支援
+   - 集群高可用
+
+3. **監控和調試**
+   - Session 狀態可視化
+   - 過期時間管理
+   - 連接池監控
+
+### 2. 核心架構
 ```mermaid
 classDiagram
     class ApplicationCore {
@@ -47,9 +169,131 @@ classDiagram
     ApplicationCore --> ConfigurationManagement
 ```
 
-### 2. 領域驅動設計 (DDD) 架構
+### 2. Redis Session 架構
 
-#### 2.1 DDD 分層架構
+#### 2.1 Redis Session 配置
+```mermaid
+classDiagram
+    class RedisSessionConfig {
+        +@Configuration
+        +@EnableRedisHttpSession
+        +configureRedisConnectionFactory()
+        +configureRedisTemplate()
+        +configureSessionRepository()
+    }
+    
+    class RedisConnectionFactory {
+        +LettuceConnectionFactory
+        +RedisStandaloneConfiguration
+        +RedisPassword
+        +RedisSentinelConfiguration
+    }
+    
+    class RedisTemplate {
+        +StringRedisTemplate
+        +GenericJackson2JsonRedisSerializer
+        +RedisSerializer
+        +configureSerializers()
+    }
+    
+    class SessionRepository {
+        +RedisIndexedSessionRepository
+        +SessionEventRegistry
+        +SessionRepositoryFilter
+        +configureSessionEvents()
+    }
+    
+    class SessionManagement {
+        +SessionCreationPolicy
+        +SessionTimeout
+        +SessionFixation
+        +SessionConcurrency
+    }
+    
+    RedisSessionConfig --> RedisConnectionFactory
+    RedisSessionConfig --> RedisTemplate
+    RedisSessionConfig --> SessionRepository
+    SessionRepository --> SessionManagement
+```
+
+#### 2.2 Redis Session 配置詳情
+
+**application.yml 配置**:
+```yaml
+spring:
+  data:
+    redis:
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
+      database: 0
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+        shutdown-timeout: 100ms
+  session:
+    store-type: redis
+    redis:
+      namespace: tymb:sessions
+```
+
+**RedisSessionConfig.java**:
+```java
+@Configuration
+@EnableRedisHttpSession(
+    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
+    redisNamespace = "tymb:sessions"      // 命名空間
+)
+public class RedisSessionConfig {
+    
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        // 配置 Redis 連接
+    }
+    
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate() {
+        // 配置 Redis 序列化
+    }
+}
+```
+
+#### 2.3 Session 管理策略
+
+**無狀態 JWT 認證**:
+```java
+.sessionManagement(session -> session
+    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+```
+
+**Session 存儲策略**:
+- **JWT Token**: 用於 API 認證，無狀態
+- **Redis Session**: 用於 Web 應用 Session 管理
+- **Session 命名空間**: `tymb:sessions:*`
+
+#### 2.4 Redis Session 優點
+
+1. **分散式 Session 管理**
+   - 支援多實例部署
+   - Session 共享和同步
+   - 自動過期清理
+
+2. **高性能**
+   - 內存級別存取速度
+   - 持久化支援
+   - 集群高可用
+
+3. **監控和調試**
+   - Session 狀態可視化
+   - 過期時間管理
+   - 連接池監控
+
+### 3. 領域驅動設計 (DDD) 架構
+
+#### 3.1 DDD 分層架構
 ```mermaid
 classDiagram
     class PresentationLayer {
@@ -128,7 +372,7 @@ classDiagram
   - 資料存取器 (`DataAccessor`) 抽象化資料存取
   - 外部服務整合
 
-#### 2.2 領域模型示例
+#### 3.2 領域模型示例
 ```mermaid
 classDiagram
     class DomainEntity {
@@ -246,14 +490,14 @@ classDiagram
     Repository <|-- GalleryRepository
     Repository <|-- EditContentRepository
     PeopleRepository --> People
-    WeaponRepository --> Weapon
+    WeaponRepository --> People
     LivestockRepository --> Livestock
     GalleryRepository --> Gallery
     EditContentRepository --> EditContentVO
     People "1" -- "*" PeopleImage : images
 ```
 
-#### 2.3 領域驅動設計原則
+#### 3.3 領域驅動設計原則
 
 1. **統一語言 (Ubiquitous Language)**
    - 在代碼和文檔中使用一致的術語
@@ -283,9 +527,9 @@ classDiagram
    - 複雜物件的創建邏輯
    - 確保物件創建的完整性
 
-### 3. 設計模式與工廠架構
+### 4. 設計模式與工廠架構
 
-#### 3.1 Singleton 模式
+#### 4.1 Singleton 模式
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -326,7 +570,7 @@ classDiagram
 - **應用**: 配置類、服務類、控制器等核心組件
 - **優點**: 資源共享、狀態一致性、內存優化
 
-#### 3.2 Factory 模式
+#### 4.2 Factory 模式
 ```mermaid
 classDiagram
     class AbstractFactory {
@@ -378,7 +622,7 @@ classDiagram
 - **應用**: Repository工廠、查詢條件工廠
 - **優點**: 解耦對象創建、統一管理實例、支持擴展
 
-#### 3.3 工廠方法實現
+#### 4.3 工廠方法實現
 ```mermaid
 classDiagram
     class RepositoryFactoryImpl {
@@ -428,7 +672,7 @@ classDiagram
     ConfigurationFactory <|.. ConfigurationFactoryImpl
 ```
 
-#### 3.4 工作原理
+#### 4.4 工作原理
 ```mermaid
 sequenceDiagram
     participant Service
@@ -455,9 +699,9 @@ sequenceDiagram
 - **依賴注入**: 通過構造器注入工廠實例
 - **使用方式**: 服務層通過工廠獲取所需實例
 
-### 4. IoC/AOP 架構
+### 5. IoC/AOP 架構
 
-#### 4.1 IoC 容器
+#### 5.1 IoC 容器
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -503,7 +747,7 @@ classDiagram
     BeanPostProcessor --> DependencyResolver
 ```
 
-#### 4.2 AOP 切面
+#### 5.2 AOP 切面
 ```mermaid
 classDiagram
     class AOPFramework {
@@ -579,7 +823,7 @@ classDiagram
     AspectDefinition --> ValidationAspect
 ```
 
-### 5. 架構優勢
+### 6. 架構優勢
 
 1. **解耦與內聚**
    - IoC 實現依賴反轉
@@ -600,6 +844,220 @@ classDiagram
    - 單例資源共享
    - 工廠對象緩存
    - AOP 性能監控
+
+## 安全認證架構
+
+### 1. Keycloak JWT 認證架構
+
+#### 1.1 認證流程
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Keycloak
+    participant Backend
+    participant Database
+    
+    Client->>Keycloak: 登入請求
+    Keycloak->>Database: 驗證用戶
+    Keycloak-->>Client: 返回 JWT Token
+    Client->>Backend: API 請求 + JWT Token
+    Backend->>Keycloak: 驗證 JWT Token
+    Keycloak-->>Backend: 驗證結果
+    Backend-->>Client: API 響應
+```
+
+#### 1.2 角色系統
+```mermaid
+classDiagram
+    class JWTToken {
+        +header
+        +payload
+        +signature
+    }
+    
+    class JWTPayload {
+        +sub: String
+        +iss: String
+        +aud: String[]
+        +exp: Long
+        +iat: Long
+        +realm_access: RealmAccess
+        +resource_access: ResourceAccess
+    }
+    
+    class RealmAccess {
+        +roles: String[]
+    }
+    
+    class ResourceAccess {
+        +realm-management: RealmManagement
+        +account: Account
+    }
+    
+    class RealmManagement {
+        +roles: String[]
+    }
+    
+    class Account {
+        +roles: String[]
+    }
+    
+    class SecurityRoles {
+        +ROLE_manage-users
+        +ROLE_GUEST
+        +ROLE_offline_access
+        +ROLE_uma_authorization
+    }
+    
+    JWTToken --> JWTPayload
+    JWTPayload --> RealmAccess
+    JWTPayload --> ResourceAccess
+    ResourceAccess --> RealmManagement
+    ResourceAccess --> Account
+    RealmManagement --> SecurityRoles
+    Account --> SecurityRoles
+```
+
+#### 1.3 角色映射
+- **manage-users**: 管理員角色，來自 `resource_access.realm-management.roles`
+- **GUEST**: 訪客角色，自動分配給登入但無管理權限的用戶
+- **其他角色**: 來自 `realm_access.roles`
+
+### 2. Guardian 測試端點
+
+#### 2.1 端點說明
+```bash
+# 管理員端點 - 需要 manage-users 角色
+GET /tymb/guardian/admin
+
+# 用戶端點 - 需要登入（包括 GUEST）
+GET /tymb/guardian/user
+
+# 公開端點 - 不需要認證
+GET /tymb/guardian/public/info
+```
+
+#### 2.2 測試指令
+
+**1. 獲取 JWT Token**
+```bash
+# 獲取有 manage-users 角色的 token
+curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=peoplesystem" \
+  -d "client_secret=vjTssuy94TUlk8mipbQjMlSSlHyS3CxG" \
+  -d "username=chiaki" \
+  -d "password=password" \
+  -d "grant_type=password" \
+  -d "scope=openid profile email"
+```
+
+**2. 測試管理員端點**
+```bash
+# 使用有 manage-users 角色的 token
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
+
+# 預期響應
+# {
+#   "message": "Hello chiaki! You have manage-users role."
+# }
+```
+
+**3. 測試用戶端點**
+```bash
+# 使用任何有效 token
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
+
+# 預期響應
+# {
+#   "message": "Hello chiaki! You are authenticated."
+# }
+```
+
+**4. 測試公開端點**
+```bash
+# 不需要 token
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/public/info
+
+# 預期響應
+# {
+#   "message": "This is public information."
+# }
+```
+
+**5. 測試無權限訪問**
+```bash
+# 使用沒有 manage-users 角色的 token 訪問管理員端點
+curl -H "Authorization: Bearer GUEST_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
+
+# 預期響應
+# {
+#   "error": "Access Denied",
+#   "status": 403
+# }
+```
+
+**6. 測試未認證訪問**
+```bash
+# 不使用 token 訪問需要認證的端點
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
+
+# 預期響應
+# {
+#   "error": "Unauthorized",
+#   "status": 401
+# }
+```
+
+#### 2.3 本地測試
+```bash
+# 本地環境測試
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/tymb/guardian/admin
+
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/tymb/guardian/user
+
+curl http://localhost:8080/tymb/guardian/public/info
+```
+
+### 3. 安全配置
+
+#### 3.1 SecurityConfig 配置
+```java
+@EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
+@Configuration
+public class SecurityConfig {
+    
+    // JWT 認證轉換器
+    @Bean
+    JwtAuthenticationConverter jwtAuthenticationConverter() {
+        // 自定義角色轉換邏輯
+    }
+    
+    // 安全過濾器鏈
+    @Bean
+    SecurityFilterChain securityFilterChain(HttpSecurity http) {
+        // 配置端點權限
+    }
+}
+```
+
+#### 3.2 角色控制註解
+```java
+// 管理員權限
+@PreAuthorize("hasRole('manage-users')")
+
+// 用戶權限（包括 GUEST）
+@PreAuthorize("isAuthenticated()")
+
+// 公開端點
+// 無註解或 @PreAuthorize("permitAll()")
+```
 
 ## 錯誤處理架構
 
@@ -905,6 +1363,107 @@ classDiagram
    - 使用指標追蹤問題
    - 分析錯誤模式
    - 預防系統故障
+
+## Guardian 測試端點
+
+### 1. 端點說明
+```bash
+# 管理員端點 - 需要 manage-users 角色
+GET /tymb/guardian/admin
+
+# 用戶端點 - 需要登入（包括 GUEST）
+GET /tymb/guardian/user
+
+# 公開端點 - 不需要認證
+GET /tymb/guardian/public/info
+```
+
+### 2. 測試指令
+
+**1. 獲取 JWT Token**
+```bash
+# 獲取有 manage-users 角色的 token
+curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "client_id=peoplesystem" \
+  -d "client_secret=vjTssuy94TUlk8mipbQjMlSSlHyS3CxG" \
+  -d "username=chiaki" \
+  -d "password=password" \
+  -d "grant_type=password" \
+  -d "scope=openid profile email"
+```
+
+**2. 測試管理員端點**
+```bash
+# 使用有 manage-users 角色的 token
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
+
+# 預期響應
+# {
+#   "message": "Hello chiaki! You have manage-users role."
+# }
+```
+
+**3. 測試用戶端點**
+```bash
+# 使用任何有效 token
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
+
+# 預期響應
+# {
+#   "message": "Hello chiaki! You are authenticated."
+# }
+```
+
+**4. 測試公開端點**
+```bash
+# 不需要 token
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/public/info
+
+# 預期響應
+# {
+#   "message": "This is public information."
+# }
+```
+
+**5. 測試無權限訪問**
+```bash
+# 使用沒有 manage-users 角色的 token 訪問管理員端點
+curl -H "Authorization: Bearer GUEST_TOKEN" \
+  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
+
+# 預期響應
+# {
+#   "error": "Access Denied",
+#   "status": 403
+# }
+```
+
+**6. 測試未認證訪問**
+```bash
+# 不使用 token 訪問需要認證的端點
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
+
+# 預期響應
+# {
+#   "error": "Unauthorized",
+#   "status": 401
+# }
+```
+
+**7. 本地測試**
+```bash
+# 本地環境測試
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/tymb/guardian/admin
+
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/tymb/guardian/user
+
+curl http://localhost:8080/tymb/guardian/public/info
+```
 
 ## swagger ui
 
