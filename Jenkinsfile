@@ -117,10 +117,10 @@ pipeline {
                                 keycloak.clientId=${KEYCLOAK_CLIENT_ID}
                                 keycloak.credentials.secret=${KEYCLOAK_CREDENTIALS_SECRET}
                                 project.env=${PROJECT_ENV}
-                                redis.host=${REDIS_HOST}
-                                redis.custom-port=${REDIS_CUSTOM_PORT}
-                                redis.password=${REDIS_PASSWORD}
-                                redis.queue.tymb=${REDIS_QUEUE_TYMB}
+                                REDIS_HOST=${REDIS_HOST}
+                                REDIS_CUSTOM_PORT=${REDIS_CUSTOM_PORT}
+                                REDIS_PASSWORD=${REDIS_PASSWORD}
+                                REDIS_QUEUE_TYMB=${REDIS_QUEUE_TYMB}
                                 EOL
                             '''
                         }
