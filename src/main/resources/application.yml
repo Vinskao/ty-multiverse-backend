@@ -3,9 +3,9 @@ project:
 spring:
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
-      password:
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
       database: 0
       lettuce:
         pool:
@@ -14,6 +14,11 @@ spring:
           min-idle: 0
           max-wait: -1ms
         shutdown-timeout: 100ms
+  session:
+    store-type: redis
+    redis:
+      namespace: tymb:sessions
+
   profiles:
     active: '@env@'
   security:
