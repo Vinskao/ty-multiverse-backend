@@ -1,5 +1,5 @@
 project:
-  env: '@project.env@'
+  env: '@PROJECT_ENV@'
 spring:
   data:
     redis:
@@ -25,13 +25,13 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@'
-          jwk-set-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@/protocol/openid-connect/certs'
+            issuer-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@'
+  jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@/protocol/openid-connect/certs'
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: '@spring.datasource.url@'
-    username: '@spring.datasource.username@'
-    password: '@spring.datasource.password@'
+    url: '@SPRING_DATASOURCE_URL@'
+    username: '@SPRING_DATASOURCE_USERNAME@'
+    password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
@@ -47,9 +47,9 @@ spring:
   # People datasource configuration
   people-datasource:
     driver-class-name: org.postgresql.Driver
-    url: '@spring.people-datasource.url@'
-    username: '@spring.people-datasource.username@'
-    password: '@spring.people-datasource.password@'
+    url: '@SPRING_PEOPLE_DATASOURCE_URL@'
+    username: '@SPRING_PEOPLE_DATASOURCE_USERNAME@'
+    password: '@SPRING_PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
       minimum-idle: 5
       maximum-pool-size: 10
@@ -149,13 +149,13 @@ management:
       hibernate: true
 
 keycloak:
-  auth-server-url: '@keycloak.auth-server-url@'
-  realm: '@keycloak.realm@'
-  clientId: '@keycloak.clientId@'
+  auth-server-url: '@KEYCLOAK_AUTH_SERVER_URL@'
+  realm: '@KEYCLOAK_REALM@'
+  clientId: '@KEYCLOAK_CLIENT_ID@'
   public-client: false
   cors: true
   credentials:
-    secret: '@keycloak.credentials.secret@'
+    secret: '@KEYCLOAK_CREDENTIALS_SECRET@'
   bearer-only: true
   security-constraints:
     - authRoles: default-roles-peoplesystem
@@ -163,5 +163,5 @@ keycloak:
         - patterns:
             - /*
 url:
-  address: '@url.address@'
-  frontend: '@url.frontend@'
+  address: '@URL_ADDRESS@'
+  frontend: '@URL_FRONTEND@'
