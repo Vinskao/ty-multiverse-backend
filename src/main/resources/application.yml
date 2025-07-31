@@ -29,9 +29,9 @@ spring:
   jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@/protocol/openid-connect/certs'
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: '@SPRING_DATASOURCE_URL@'
-    username: '@SPRING_DATASOURCE_USERNAME@'
-    password: '@SPRING_DATASOURCE_PASSWORD@'
+    url: '@SPRING_PEOPLE_DATASOURCE_URL@'
+    username: '@SPRING_PEOPLE_DATASOURCE_USERNAME@'
+    password: '@SPRING_PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
       minimum-idle: 5
       maximum-pool-size: 20
