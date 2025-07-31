@@ -3,9 +3,9 @@ project:
 spring:
   data:
     redis:
-      host: '@REDIS_HOST@'
-      port: '@REDIS_CUSTOM_PORT@'
-      password: '@REDIS_PASSWORD@'
+      host: '@redis.host@'
+      port: '@redis.custom-port@'
+      password: '@redis.password@'
       database: 0
       lettuce:
         pool:
