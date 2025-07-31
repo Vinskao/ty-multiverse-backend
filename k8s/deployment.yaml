@@ -88,17 +88,17 @@ spec:
               key: LOGGING_LEVEL_SPRINGFRAMEWORK
         - name: SPRING_DATASOURCE_URL
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               name: ty-multiverse-backend-config
               key: SPRING_DATASOURCE_URL
         - name: SPRING_DATASOURCE_USERNAME
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               name: ty-multiverse-backend-config
               key: SPRING_DATASOURCE_USERNAME
         - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               name: ty-multiverse-backend-config
               key: SPRING_DATASOURCE_PASSWORD
         - name: KEYCLOAK_AUTH_SERVER_URL
