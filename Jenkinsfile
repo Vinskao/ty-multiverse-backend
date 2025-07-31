@@ -227,6 +227,7 @@ pipeline {
                                 sh '''
                                     if kubectl get deployment ty-multiverse-backend -n default; then
                                         echo "Deployment exists, updating..."
+                                        kubectl apply -f k8s/deployment.yaml
                                         kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
                                         kubectl rollout restart deployment ty-multiverse-backend
                                     else
