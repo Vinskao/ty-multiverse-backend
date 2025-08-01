@@ -162,6 +162,14 @@ public class KeycloakController {
                 + "&token=" + URLEncoder.encode(accessToken, "UTF-8")
                 + "&refreshToken=" + URLEncoder.encode(refreshToken, "UTF-8");
         
+            // 添加詳細日誌
+            log.info("=== 重定向診斷 ===");
+            log.info("前端URL: {}", frontendUrl);
+            log.info("用戶名: {}", preferredUsername);
+            log.info("Token長度: {}", accessToken.length());
+            log.info("Token前20字符: {}", accessToken.substring(0, Math.min(20, accessToken.length())));
+            log.info("完整重定向URL: {}", redirectTarget);
+        
             // 執行 HTTP 重導向
             response.sendRedirect(redirectTarget);
         } catch (Exception e) {

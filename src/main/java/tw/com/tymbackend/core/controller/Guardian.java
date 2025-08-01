@@ -2,6 +2,7 @@ package tw.com.tymbackend.core.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -21,6 +22,7 @@ public class Guardian {
     /**
      * 管理員端點 - 需要 manage-users 角色
      */
+    @PreAuthorize("hasRole('manage-users')")
     @GetMapping("/admin")
     public Map<String, Object> adminEndpoint() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -39,6 +41,7 @@ public class Guardian {
     /**
      * 用戶端點 - 需要登入（包括 GUEST）
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/user")
     public Map<String, Object> userEndpoint() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -68,8 +71,28 @@ public class Guardian {
     }
 
     /**
+     * 測試端點 - 沒有權限註解，預設需要認證
+     */
+    @GetMapping("/test-default")
+    public Map<String, Object> testDefaultAuth() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        
+        log.info("Test default endpoint accessed by user: {}", username);
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "This endpoint has no @PreAuthorize annotation");
+        response.put("user", username);
+        response.put("authenticated", authentication.isAuthenticated());
+        response.put("authorities", authentication.getAuthorities());
+        
+        return response;
+    }
+
+    /**
      * JWT Token 信息端點 - 用於調試
      */
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/token-info")
     public Map<String, Object> tokenInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

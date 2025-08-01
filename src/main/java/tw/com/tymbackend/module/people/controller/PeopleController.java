@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import tw.com.tymbackend.module.people.domain.dto.PeopleNameRequestDTO;
@@ -144,15 +145,29 @@ public class PeopleController {
         }
     }
 
-    // 取得所有人的名字
+    // 取得所有人的名字 - 需要用戶認證
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/names")
     public ResponseEntity<?> getAllPeopleNames() {
         try {
+            // 添加認證診斷日誌
+            org.springframework.security.core.Authentication auth = 
+                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+            
+            logger.info("=== 認證診斷 ===");
+            logger.info("認證對象: {}", auth);
+            logger.info("是否已認證: {}", auth.isAuthenticated());
+            logger.info("用戶名: {}", auth.getName());
+            logger.info("權限: {}", auth.getAuthorities());
+            logger.info("主要對象類型: {}", auth.getPrincipal().getClass().getSimpleName());
+            
             List<String> names = peopleService.getAllPeopleNames();
             return new ResponseEntity<>(names, HttpStatus.OK);
         } catch (RuntimeException e) {
+            logger.error("Runtime exception during getAllPeopleNames", e);
             return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
+            logger.error("Unexpected error during getAllPeopleNames", e);
             return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
