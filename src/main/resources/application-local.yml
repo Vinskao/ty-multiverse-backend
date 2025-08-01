@@ -88,6 +88,8 @@ logging:
       springframework.security: DEBUG
       springframework.security.oauth2: DEBUG
       springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+      springframework.security.oauth2.server.resource: DEBUG
+      springframework.security.oauth2.jwt: DEBUG
       hibernate:
         SQL: OFF
         type:
@@ -97,6 +99,7 @@ logging:
     # 添加JWT相關的詳細日誌
     'org.springframework.security.oauth2.jwt': DEBUG
     'org.springframework.security.oauth2.server.resource.authentication': DEBUG
+    'org.springframework.security.oauth2.server.resource.web': DEBUG
 
 server:
   port: 8080

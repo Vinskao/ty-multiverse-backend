@@ -39,12 +39,13 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        // 公開端點 - 不需要認證
-                        .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/tymb/public/**").permitAll()
-                        .requestMatchers("/keycloak/**").permitAll()  // 允許Keycloak相關端點
-                        // 其他所有端點需要認證
-                        .anyRequest().authenticated())
+                        // 需要認證的端點
+                        .requestMatchers("/guardian/admin").hasRole("manage-users")
+                        .requestMatchers("/guardian/user").authenticated()
+                        .requestMatchers("/guardian/token-info").authenticated()
+                        .requestMatchers("/guardian/test-default").authenticated()
+                        // 其他所有端點預設公開
+                        .anyRequest().permitAll())
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwkSetUri(keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs")
