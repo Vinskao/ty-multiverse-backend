@@ -3,17 +3,25 @@ project:
 spring:
   data:
     redis:
-      host: 127.0.0.1
-      port: 6379
-      password:
+      host: 138.2.46.52
+      port: 30678
+      password: RedisPassword123
       database: 0
+      timeout: 5000ms
       lettuce:
         pool:
           max-active: 3000
           max-idle: 8
           min-idle: 4
-          max-wait: 3000ms
+          max-wait: 5000ms
         shutdown-timeout: 100ms
+      # 添加錯誤處理
+      connect-timeout: 5000ms
+      command-timeout: 5000ms
+  session:
+    store-type: redis
+    redis:
+      namespace: tymb:sessions
   config:
     import: classpath:env/local.properties
   security:
@@ -77,7 +85,18 @@ logging:
     root: INFO
     org:
       springframework: INFO
+      springframework.security: DEBUG
+      springframework.security.oauth2: DEBUG
+      springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+      hibernate:
+        SQL: OFF
+        type:
+          descriptor:
+            sql: OFF
     '[io.micrometer]': INFO
+    # 添加JWT相關的詳細日誌
+    'org.springframework.security.oauth2.jwt': DEBUG
+    'org.springframework.security.oauth2.server.resource.authentication': DEBUG
 
 server:
   port: 8080
@@ -98,10 +117,18 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: metrics,health,info
+        include: health,metrics,prometheus,info,loggers,env
   endpoint:
     health:
       show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      # 禁用Redis健康檢查
+      group:
+        redis:
+          include: redis
+          show-components: never
 
 keycloak:
   auth-server-url: '@keycloak.auth-server-url@'

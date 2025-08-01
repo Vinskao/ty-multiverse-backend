@@ -42,6 +42,7 @@ public class SecurityConfig {
                         // 公開端點 - 不需要認證
                         .requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/tymb/public/**").permitAll()
+                        .requestMatchers("/keycloak/**").permitAll()  // 允許Keycloak相關端點
                         // 其他所有端點需要認證
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2

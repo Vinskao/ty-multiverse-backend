@@ -934,7 +934,7 @@ GET /tymb/guardian/admin
 GET /tymb/guardian/user
 
 # 公開端點 - 不需要認證
-GET /tymb/guardian/public/info
+GET /tymb/guardian/visitor
 ```
 
 #### 2.2 測試指令
@@ -942,12 +942,12 @@ GET /tymb/guardian/public/info
 **1. 獲取 JWT Token**
 ```bash
 # 獲取有 manage-users 角色的 token
-curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token \
+curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/xxx/protocol/openid-connect/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=peoplesystem" \
-  -d "client_secret=vjTssuy94TUlk8mipbQjMlSSlHyS3CxG" \
-  -d "username=chiaki" \
-  -d "password=password" \
+  -d "client_id=xxx" \
+  -d "client_secret=xxx" \
+  -d "username=xxx" \
+  -d "password=xxx" \
   -d "grant_type=password" \
   -d "scope=openid profile email"
 ```
@@ -979,7 +979,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 **4. 測試公開端點**
 ```bash
 # 不需要 token
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/public/info
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/visitor
 
 # 預期響應
 # {
@@ -1021,7 +1021,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   http://localhost:8080/tymb/guardian/user
 
-curl http://localhost:8080/tymb/guardian/public/info
+curl http://localhost:8080/tymb/guardian/visitor
 ```
 
 ### 3. 安全配置
@@ -1375,7 +1375,7 @@ GET /tymb/guardian/admin
 GET /tymb/guardian/user
 
 # 公開端點 - 不需要認證
-GET /tymb/guardian/public/info
+GET /tymb/guardian/visitor
 ```
 
 ### 2. 測試指令
@@ -1383,12 +1383,12 @@ GET /tymb/guardian/public/info
 **1. 獲取 JWT Token**
 ```bash
 # 獲取有 manage-users 角色的 token
-curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/protocol/openid-connect/token \
+curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/xxx/protocol/openid-connect/token \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=peoplesystem" \
-  -d "client_secret=vjTssuy94TUlk8mipbQjMlSSlHyS3CxG" \
-  -d "username=chiaki" \
-  -d "password=password" \
+  -d "client_id=xxx" \
+  -d "client_secret=xxx" \
+  -d "username=xxx" \
+  -d "password=xxx" \
   -d "grant_type=password" \
   -d "scope=openid profile email"
 ```
@@ -1420,7 +1420,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 **4. 測試公開端點**
 ```bash
 # 不需要 token
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/public/info
+curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/visitor
 
 # 預期響應
 # {
@@ -1462,7 +1462,7 @@ curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
 curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
   http://localhost:8080/tymb/guardian/user
 
-curl http://localhost:8080/tymb/guardian/public/info
+curl http://localhost:8080/tymb/guardian/visitor
 ```
 
 ## swagger ui
