@@ -10,8 +10,6 @@ import tw.com.tymbackend.module.people.service.PeopleImageService;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/people-images")
@@ -29,7 +27,6 @@ public class PeopleImageController {
     @PreAuthorize("hasRole('manage-users')")
     @GetMapping
     public ResponseEntity<List<PeopleImage>> getAllPeopleImages() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         List<PeopleImage> peopleImages = peopleImageService.getAllPeopleImages();
         return ResponseEntity.ok(peopleImages);
     }
