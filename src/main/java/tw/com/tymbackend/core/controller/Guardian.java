@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 守護者控制器
+ * 
+ * 提供不同權限等級的測試端點，用於驗證 Spring Security 和 JWT 認證功能。
+ */
 @RestController
 @RequestMapping("/guardian")
 public class Guardian {
@@ -21,6 +26,8 @@ public class Guardian {
 
     /**
      * 管理員端點 - 需要 manage-users 角色
+     * 
+     * @return 包含用戶資訊和權限的響應
      */
     @PreAuthorize("hasRole('manage-users')")
     @GetMapping("/admin")
@@ -28,10 +35,10 @@ public class Guardian {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         
-        log.info("Admin endpoint accessed by user: {}", username);
+        log.info("管理員端點被用戶訪問: {}", username);
         
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Hello " + username + "! You have manage-users role.");
+        response.put("message", "你好 " + username + "！你擁有 manage-users 角色。");
         response.put("user", username);
         response.put("authorities", authentication.getAuthorities());
         
@@ -40,6 +47,8 @@ public class Guardian {
 
     /**
      * 用戶端點 - 需要登入（包括 GUEST）
+     * 
+     * @return 包含用戶資訊的響應
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user")
@@ -47,10 +56,10 @@ public class Guardian {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         
-        log.info("User endpoint accessed by user: {}", username);
+        log.info("用戶端點被用戶訪問: {}", username);
         
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "Hello " + username + "! You are authenticated.");
+        response.put("message", "你好 " + username + "！你已通過認證。");
         response.put("user", username);
         response.put("authorities", authentication.getAuthorities());
         
@@ -59,29 +68,33 @@ public class Guardian {
 
     /**
      * 公開端點 - 不需要認證
+     * 
+     * @return 公開資訊
      */
     @GetMapping("/visitor")
     public Map<String, Object> visitorEndpoint() {
-        log.info("Visitor endpoint accessed");
+        log.info("訪客端點被訪問");
         
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "This is public information.");
+        response.put("message", "這是公開資訊。");
         
         return response;
     }
 
     /**
      * 測試端點 - 沒有權限註解，預設需要認證
+     * 
+     * @return 包含認證狀態的響應
      */
     @GetMapping("/test-default")
     public Map<String, Object> testDefaultAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         
-        log.info("Test default endpoint accessed by user: {}", username);
+        log.info("測試預設端點被用戶訪問: {}", username);
         
         Map<String, Object> response = new HashMap<>();
-        response.put("message", "This endpoint has no @PreAuthorize annotation");
+        response.put("message", "此端點沒有 @PreAuthorize 註解");
         response.put("user", username);
         response.put("authenticated", authentication.isAuthenticated());
         response.put("authorities", authentication.getAuthorities());
@@ -91,6 +104,8 @@ public class Guardian {
 
     /**
      * JWT Token 信息端點 - 用於調試
+     * 
+     * @return 包含 JWT Token 詳細資訊的響應
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/token-info")
