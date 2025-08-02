@@ -10,7 +10,7 @@
 
     <groupId>tw.com.ty</groupId>
     <artifactId>ty-multiverse-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
     <name>ty-multiverse-backend</name>
     <description>ty-multiverse-backend</description>
@@ -250,6 +250,32 @@
                 <configuration>
                     <mainClass>tw.com.tymbackend.TYMBackendApplication</mainClass> 
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <configuration>
+                            <encoding>UTF-8</encoding>
+                            <charSet>UTF-8</charSet>
+                            <show>protected</show>
+                            <author>true</author>
+                            <version>true</version>
+                            <source>17</source>
+                            <aggregate>true</aggregate>
+                            <additionalJOptions>
+                                <additionalJOption>-Xdoclint:none</additionalJOption>
+                            </additionalJOptions>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <filters>
