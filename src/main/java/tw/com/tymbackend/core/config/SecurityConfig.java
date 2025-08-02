@@ -22,6 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Spring Security 配置類
+ * 
+ * 負責配置 OAuth2 Resource Server、JWT 認證、CORS 等安全相關設定。
+ */
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
@@ -33,7 +38,13 @@ public class SecurityConfig {
     @Value("${keycloak.realm}")
     private String keycloakRealm;
 
-    // 安全過濾器鏈
+    /**
+     * 配置安全過濾器鏈
+     * 
+     * @param http HttpSecurity 實例
+     * @return 配置好的 SecurityFilterChain
+     * @throws Exception 配置異常
+     */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -56,7 +67,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // JWT 認證轉換器 - 處理 Keycloak 的角色
+    /**
+     * JWT 認證轉換器 - 處理 Keycloak 的角色
+     * 
+     * @return 配置好的 JwtAuthenticationConverter
+     */
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
@@ -64,44 +79,56 @@ public class SecurityConfig {
         return jwtAuthenticationConverter;
     }
 
-    // 自定義 JWT 權限轉換器
+    /**
+     * 自定義 JWT 權限轉換器
+     * 
+     * 負責將 JWT Token 中的角色信息轉換為 Spring Security 的權限對象。
+     */
     public static class CustomJwtGrantedAuthoritiesConverter implements org.springframework.core.convert.converter.Converter<Jwt, Collection<GrantedAuthority>> {
         
+        /**
+         * 轉換 JWT Token 為權限集合
+         * 
+         * @param jwt JWT Token
+         * @return 權限集合
+         */
         @Override
         public Collection<GrantedAuthority> convert(Jwt jwt) {
             List<GrantedAuthority> authorities = new java.util.ArrayList<>();
             
             // 處理 realm_access.roles (基本角色)
             if (jwt.hasClaim("realm_access")) {
-                Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
-                if (realmAccess != null && realmAccess.containsKey("roles")) {
-                    @SuppressWarnings("unchecked")
-                    List<String> roles = (List<String>) realmAccess.get("roles");
-                    authorities.addAll(roles.stream()
+                jwt.getClaimAsMap("realm_access")
+                    .entrySet().stream()
+                    .filter(entry -> "roles".equals(entry.getKey()))
+                    .findFirst()
+                    .map(entry -> (List<String>) entry.getValue())
+                    .ifPresent(roles -> authorities.addAll(
+                        roles.stream()
                             .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                            .collect(Collectors.toList()));
-                }
+                            .collect(Collectors.toList())
+                    ));
             }
             
             // 處理 resource_access.realm-management.roles (manage-users 角色)
             if (jwt.hasClaim("resource_access")) {
-                Map<String, Object> resourceAccess = jwt.getClaimAsMap("resource_access");
-                if (resourceAccess != null && resourceAccess.containsKey("realm-management")) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> realmManagement = (Map<String, Object>) resourceAccess.get("realm-management");
-                    if (realmManagement != null && realmManagement.containsKey("roles")) {
-                        @SuppressWarnings("unchecked")
-                        List<String> roles = (List<String>) realmManagement.get("roles");
-                        authorities.addAll(roles.stream()
-                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                                .collect(Collectors.toList()));
-                    }
-                }
+                jwt.getClaimAsMap("resource_access")
+                    .entrySet().stream()
+                    .filter(entry -> "realm-management".equals(entry.getKey()))
+                    .findFirst()
+                    .map(entry -> (Map<String, Object>) entry.getValue())
+                    .map(realmManagement -> realmManagement.get("roles"))
+                    .map(roles -> (List<String>) roles)
+                    .ifPresent(roles -> authorities.addAll(
+                        roles.stream()
+                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                            .collect(Collectors.toList())
+                    ));
             }
             
             // 如果沒有 manage-users 角色，添加 GUEST 角色
             boolean hasManageUsers = authorities.stream()
-                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_manage-users"));
+                    .anyMatch(authority -> "ROLE_manage-users".equals(authority.getAuthority()));
             
             if (!hasManageUsers) {
                 authorities.add(new SimpleGrantedAuthority("ROLE_GUEST"));
@@ -111,6 +138,11 @@ public class SecurityConfig {
         }
     }
 
+    /**
+     * CORS 配置器
+     * 
+     * @return 配置好的 WebMvcConfigurer
+     */
     @Bean
     WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -137,7 +169,11 @@ public class SecurityConfig {
         };
     }
 
-    // 密碼編碼器
+    /**
+     * 密碼編碼器
+     * 
+     * @return BCrypt 密碼編碼器
+     */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

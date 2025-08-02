@@ -26,6 +26,11 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
 
+/**
+ * Keycloak 控制器
+ * 
+ * 負責處理與 Keycloak 的 OAuth2 認證流程，包括重定向處理、登出和 Token 驗證等功能。
+ */
 @RestController
 @RequestMapping("/keycloak")
 public class KeycloakController {
@@ -50,17 +55,15 @@ public class KeycloakController {
     private String ssoUrl;
 
     /**
-     * *必要*
-     * 處理從 Keycloak 認證後重導向回來的請求。
-     * <p>
+     * 處理從 Keycloak 認證後重導向回來的請求
+     * 
      * 本方法使用授權碼向 Keycloak 取得存取憑證 (access token) 與更新憑證 (refresh token)，
      * 並呼叫 userinfo 端點以獲取使用者資訊。成功取得資料後，會將使用者名稱、電子郵件、
      * access token 以及 refresh token 附加至前端 URL 並進行重導向。
-     * </p>
      *
-     * @param code Keycloak 返回的授權碼。
-     * @param response HttpServletResponse 用於進行重導向。
-     * @throws IOException 當重導向失敗時會拋出此例外。
+     * @param code Keycloak 返回的授權碼
+     * @param response HttpServletResponse 用於進行重導向
+     * @throws IOException 當重導向失敗時會拋出此例外
      */
     @GetMapping("/redirect")
     public void keycloakRedirect(@RequestParam("code") String code, HttpServletResponse response)
@@ -71,7 +74,7 @@ public class KeycloakController {
         String tokenUrl = ssoUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
         try {
-            log.info("Received authorization code: {}", code);
+            log.info("收到授權碼: {}", code);
 
             // 建立存放 token 請求參數的 MultiValueMap
             MultiValueMap<String, String> tokenParams = new LinkedMultiValueMap<>();
@@ -101,7 +104,7 @@ public class KeycloakController {
             );
             Map<String, Object> tokenBody = tokenResponse.getBody();
             if (tokenBody == null) {
-                throw new RuntimeException("Failed to obtain token response");
+                throw new RuntimeException("無法取得 token 響應");
             }
             // 從回傳內容中取得 access token
             String accessToken = (String) tokenBody.get("access_token");
@@ -113,7 +116,7 @@ public class KeycloakController {
 
             // 若其中任一 token 為 null，表示取得失敗，則拋出異常
             if (accessToken == null || refreshToken == null) {
-                throw new RuntimeException("Failed to obtain access token");
+                throw new RuntimeException("無法取得 access token");
             }
 
             // 呼叫 Keycloak userinfo endpoint 取得使用者資訊
@@ -133,17 +136,17 @@ public class KeycloakController {
             );
             Map<String, Object> userInfo = userResponse.getBody();
 
-            log.info("User Info: {}", userInfo);
+            log.info("使用者資訊: {}", userInfo);
 
             if (userInfo == null) {
-                throw new RuntimeException("Failed to retrieve user info");
+                throw new RuntimeException("無法取得使用者資訊");
             }
 
             // 從使用者資訊中取得使用者名稱
             String preferredUsername = (String) userInfo.get("preferred_username");
             if (preferredUsername == null) {
                 // 若使用者名稱不存在，則拋出異常
-                throw new RuntimeException("Failed to retrieve user info");
+                throw new RuntimeException("無法取得使用者資訊");
             }
 
             // 從使用者資訊中取得電子郵件
@@ -174,21 +177,19 @@ public class KeycloakController {
             response.sendRedirect(redirectTarget);
         } catch (Exception e) {
             // 若有任何錯誤，記錄錯誤並回傳 500 錯誤碼
-            log.error("Error processing OAuth redirect", e);
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Error processing OAuth redirect");
+            log.error("處理 OAuth 重定向時發生錯誤", e);
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "處理 OAuth 重定向時發生錯誤");
         }
     }
 
     /**
-     * *必要*
-     * 使用提供的 refresh token 呼叫 Keycloak 的登出 API，撤銷更新憑證。
-     * <p>
+     * 使用提供的 refresh token 呼叫 Keycloak 的登出 API，撤銷更新憑證
+     * 
      * 此方法將 refresh token 與 client 資訊作為參數傳遞至 Keycloak 登出端點，
      * 若成功則回傳登出成功訊息；若失敗則回傳錯誤訊息。
-     * </p>
      *
-     * @param refreshToken 用於登出的更新憑證。
-     * @return ResponseEntity 包含登出操作結果的訊息與狀態碼。
+     * @param refreshToken 用於登出的更新憑證
+     * @return ResponseEntity 包含登出操作結果的訊息與狀態碼
      */
     @CrossOrigin
     @PostMapping("/logout")
@@ -214,26 +215,24 @@ public class KeycloakController {
             restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 
             // 若成功則回傳 200 OK 與訊息
-            return ResponseEntity.ok("Logout successful");
+            return ResponseEntity.ok("登出成功");
         } catch (Exception e) {
             // 若發生錯誤，記錄錯誤訊息並回傳 500 錯誤碼與錯誤訊息
-            log.error("Logout failed", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Logout failed");
+            log.error("登出失敗", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登出失敗");
         }
     }
 
     /**
-     * *必要*
-     * 檢查指定的 access token 是否有效，並在必要時使用 refresh token 進行續期。
-     * <p>
+     * 檢查指定的 access token 是否有效，並在必要時使用 refresh token 進行續期
+     * 
      * 此方法會先呼叫 Keycloak 的 introspection 端點檢查存取憑證 (access token) 的有效性，
      * 若 token 有效則直接回傳檢查結果；若 token 無效且同時提供了 refresh token，則會嘗試透過 refresh token 來刷新存取憑證，
      * 若刷新成功，則回傳新取得的 token 資訊並增加 "refreshed" 標記；若刷新失敗，則回傳未授權狀態。
-     * </p>
      *
-     * @param token 要檢查的存取憑證 (access token)。
-     * @param refreshToken (可選) 用於刷新存取憑證的更新憑證 (refresh token)。
-     * @return ResponseEntity 包含 token 檢查結果、刷新後的 token 資訊或錯誤訊息的回應。
+     * @param token 要檢查的存取憑證 (access token)
+     * @param refreshToken (可選) 用於刷新存取憑證的更新憑證 (refresh token)
+     * @return ResponseEntity 包含 token 檢查結果、刷新後的 token 資訊或錯誤訊息的回應
      */
     @CrossOrigin
     @PostMapping("/introspect")
@@ -263,7 +262,7 @@ public class KeycloakController {
             );
             Map<String, Object> result = introspectResponse.getBody();
             if (result == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token introspection failed");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 內省失敗");
             }
     
             // Step 2: 如果 token 還有效，直接回傳
@@ -289,7 +288,7 @@ public class KeycloakController {
                 );
                 Map<String, Object> refreshResult = refreshResponse.getBody();
                 if (refreshResult == null) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token refresh failed");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 刷新失敗");
                 }
     
                 if (refreshResult.get("access_token") != null) {
@@ -301,7 +300,7 @@ public class KeycloakController {
             // Step 4: 無法刷新，回傳 UNAUTHORIZED
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效或刷新失敗");
         } catch (Exception e) {
-            log.error("introspect failed", e);
+            log.error("內省失敗", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Token 檢查失敗");
         }
     }

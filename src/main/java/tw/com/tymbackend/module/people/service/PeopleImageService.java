@@ -11,55 +11,64 @@ import tw.com.tymbackend.module.people.domain.vo.PeopleImage;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-// 人像服務
+/**
+ * 角色頭像服務類
+ * 
+ * 負責角色頭像相關的業務邏輯處理，包括增刪改查等操作。
+ */
 @Service
 @Transactional(readOnly = true)
 public class PeopleImageService {
     private final PeopleImageRepository peopleImageRepository;
 
+    /**
+     * 建構函數
+     * 
+     * @param peopleImageRepository 角色頭像資料庫操作介面
+     */
     public PeopleImageService(PeopleImageRepository peopleImageRepository) {
         this.peopleImageRepository = peopleImageRepository;
     }
 
     /**
-     * Get all people images
+     * 獲取所有角色頭像
      * 
-     * @return list of all people images
+     * @return 所有角色頭像列表
      */
     public List<PeopleImage> getAllPeopleImages() {
         return peopleImageRepository.findAll();
     }
     
     /**
-     * Get people image by code name
+     * 根據代碼名稱獲取角色頭像
      * 
-     * @param codeName the code name of the person
-     * @return the people image
-     * @throws NoSuchElementException if the image is not found
+     * @param codeName 角色的代碼名稱
+     * @return 角色頭像
+     * @throws NoSuchElementException 如果找不到對應的頭像
      */
     public PeopleImage getPeopleImageByCodeName(String codeName) {
         PeopleImage image = peopleImageRepository.findByCodeName(codeName);
         if (image == null) {
-            throw new NoSuchElementException("No image found for code name: " + codeName);
+            throw new NoSuchElementException("找不到代碼名稱為 " + codeName + " 的頭像");
         }
         return image;
     }
     
     /**
-     * Check if a people image exists by code name
+     * 檢查角色頭像是否存在
      * 
-     * @param codeName the code name of the person
-     * @return true if the image exists, false otherwise
+     * @param codeName 角色的代碼名稱
+     * @return 如果頭像存在返回 true，否則返回 false
      */
     public boolean peopleImageExists(String codeName) {
         return peopleImageRepository.existsByCodeName(codeName);
     }
 
     /**
-     * Save a people image
+     * 保存角色頭像
      * 
-     * @param peopleImage the people image to save
-     * @return the saved people image
+     * @param peopleImage 要保存的角色頭像
+     * @return 保存後的角色頭像
      */
     @Transactional
     public PeopleImage savePeopleImage(PeopleImage peopleImage) {
@@ -67,10 +76,10 @@ public class PeopleImageService {
     }
     
     /**
-     * Delete a people image by code name
+     * 根據代碼名稱刪除角色頭像
      * 
-     * @param codeName the code name of the person
-     * @throws NoSuchElementException if the image is not found
+     * @param codeName 角色的代碼名稱
+     * @throws NoSuchElementException 如果找不到對應的頭像
      */
     @Transactional
     public void deletePeopleImage(String codeName) {
@@ -79,10 +88,10 @@ public class PeopleImageService {
     }
     
     /**
-     * Check if a people image exists
+     * 檢查代碼名稱是否唯一
      * 
-     * @param codeName the code name of the person
-     * @return true if image exists, false otherwise
+     * @param codeName 要檢查的代碼名稱
+     * @return 如果代碼名稱唯一返回 true，否則返回 false
      */
     public boolean isCodeNameUnique(String codeName) {
         return !peopleImageRepository.findAll(
@@ -91,34 +100,47 @@ public class PeopleImageService {
     }
 
     /**
-     * Find people images by code name containing (case insensitive)
+     * 根據規格查詢角色頭像
      * 
-     * @param codeNamePart part of the code name to search for
-     * @return list of people images with code names containing the specified part
+     * @param spec 查詢規格
+     * @return 符合條件的角色頭像列表
      */
     public List<PeopleImage> findBySpecification(Specification<PeopleImage> spec) {
         return peopleImageRepository.findAll(spec);
     }
 
     /**
-     * Find all people images with pagination
+     * 分頁查詢所有角色頭像
      * 
-     * @param pageable the pageable
-     * @return the page of people images
+     * @param pageable 分頁參數
+     * @return 分頁的角色頭像列表
      */
     public Page<PeopleImage> findAll(Pageable pageable) {
         return peopleImageRepository.findAll(pageable);
     }
 
     /**
-     * Find people images by multiple criteria
+     * 根據多個規格查詢角色頭像
      * 
-     * @param specs list of specifications to apply
-     * @return list of people images matching all criteria
+     * @param specs 查詢規格列表
+     * @return 符合所有條件的角色頭像列表
      */
     public List<PeopleImage> findByMultipleSpecifications(List<Specification<PeopleImage>> specs) {
         Specification<PeopleImage> combinedSpec = specs.stream()
             .reduce(Specification.where(null), Specification::and);
         return peopleImageRepository.findAll(combinedSpec);
+    }
+
+    /**
+     * 根據代碼名稱列表查詢角色頭像
+     *
+     * @param codeNames 代碼名稱列表
+     * @return 符合條件的角色頭像列表
+     */
+    public List<PeopleImage> findByCodeNames(List<String> codeNames) {
+        return codeNames.stream()
+            .map(peopleImageRepository::findByCodeName)
+            .filter(java.util.Objects::nonNull)
+            .collect(java.util.stream.Collectors.toList());
     }
 }
