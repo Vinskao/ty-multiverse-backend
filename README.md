@@ -1,11 +1,9 @@
 # TY-Multiverse-Backend
-這是我的個人網站的 Backend。
+個人網站後端系統
 
 ## 架構設計
 
 ### 1. Redis Session 架構
-
-#### 1.1 Redis Session 配置
 ```mermaid
 classDiagram
     class RedisSessionConfig {
@@ -49,81 +47,6 @@ classDiagram
     RedisSessionConfig --> SessionRepository
     SessionRepository --> SessionManagement
 ```
-
-#### 1.2 Redis Session 配置詳情
-
-**application.yml 配置**:
-```yaml
-spring:
-  data:
-    redis:
-      host: '@REDIS_HOST@'
-      port: '@REDIS_CUSTOM_PORT@'
-      password: '@REDIS_PASSWORD@'
-      database: 0
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-        shutdown-timeout: 100ms
-  session:
-    store-type: redis
-    redis:
-      namespace: tymb:sessions
-```
-
-**RedisSessionConfig.java**:
-```java
-@Configuration
-@EnableRedisHttpSession(
-    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
-    redisNamespace = "tymb:sessions"      // 命名空間
-)
-public class RedisSessionConfig {
-    
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        // 配置 Redis 連接
-    }
-    
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        // 配置 Redis 序列化
-    }
-}
-```
-
-#### 1.3 Session 管理策略
-
-**無狀態 JWT 認證**:
-```java
-.sessionManagement(session -> session
-    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-```
-
-**Session 存儲策略**:
-- **JWT Token**: 用於 API 認證，無狀態
-- **Redis Session**: 用於 Web 應用 Session 管理
-- **Session 命名空間**: `tymb:sessions:*`
-
-#### 1.4 Redis Session 優點
-
-1. **分散式 Session 管理**
-   - 支援多實例部署
-   - Session 共享和同步
-   - 自動過期清理
-
-2. **高性能**
-   - 內存級別存取速度
-   - 持久化支援
-   - 集群高可用
-
-3. **監控和調試**
-   - Session 狀態可視化
-   - 過期時間管理
-   - 連接池監控
 
 ### 2. 核心架構
 ```mermaid
@@ -169,131 +92,7 @@ classDiagram
     ApplicationCore --> ConfigurationManagement
 ```
 
-### 2. Redis Session 架構
-
-#### 2.1 Redis Session 配置
-```mermaid
-classDiagram
-    class RedisSessionConfig {
-        +@Configuration
-        +@EnableRedisHttpSession
-        +configureRedisConnectionFactory()
-        +configureRedisTemplate()
-        +configureSessionRepository()
-    }
-    
-    class RedisConnectionFactory {
-        +LettuceConnectionFactory
-        +RedisStandaloneConfiguration
-        +RedisPassword
-        +RedisSentinelConfiguration
-    }
-    
-    class RedisTemplate {
-        +StringRedisTemplate
-        +GenericJackson2JsonRedisSerializer
-        +RedisSerializer
-        +configureSerializers()
-    }
-    
-    class SessionRepository {
-        +RedisIndexedSessionRepository
-        +SessionEventRegistry
-        +SessionRepositoryFilter
-        +configureSessionEvents()
-    }
-    
-    class SessionManagement {
-        +SessionCreationPolicy
-        +SessionTimeout
-        +SessionFixation
-        +SessionConcurrency
-    }
-    
-    RedisSessionConfig --> RedisConnectionFactory
-    RedisSessionConfig --> RedisTemplate
-    RedisSessionConfig --> SessionRepository
-    SessionRepository --> SessionManagement
-```
-
-#### 2.2 Redis Session 配置詳情
-
-**application.yml 配置**:
-```yaml
-spring:
-  data:
-    redis:
-      host: '@REDIS_HOST@'
-      port: '@REDIS_CUSTOM_PORT@'
-      password: '@REDIS_PASSWORD@'
-      database: 0
-      lettuce:
-        pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
-        shutdown-timeout: 100ms
-  session:
-    store-type: redis
-    redis:
-      namespace: tymb:sessions
-```
-
-**RedisSessionConfig.java**:
-```java
-@Configuration
-@EnableRedisHttpSession(
-    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
-    redisNamespace = "tymb:sessions"      // 命名空間
-)
-public class RedisSessionConfig {
-    
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        // 配置 Redis 連接
-    }
-    
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        // 配置 Redis 序列化
-    }
-}
-```
-
-#### 2.3 Session 管理策略
-
-**無狀態 JWT 認證**:
-```java
-.sessionManagement(session -> session
-    .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-```
-
-**Session 存儲策略**:
-- **JWT Token**: 用於 API 認證，無狀態
-- **Redis Session**: 用於 Web 應用 Session 管理
-- **Session 命名空間**: `tymb:sessions:*`
-
-#### 2.4 Redis Session 優點
-
-1. **分散式 Session 管理**
-   - 支援多實例部署
-   - Session 共享和同步
-   - 自動過期清理
-
-2. **高性能**
-   - 內存級別存取速度
-   - 持久化支援
-   - 集群高可用
-
-3. **監控和調試**
-   - Session 狀態可視化
-   - 過期時間管理
-   - 連接池監控
-
 ### 3. 領域驅動設計 (DDD) 架構
-
-#### 3.1 DDD 分層架構
 ```mermaid
 classDiagram
     class PresentationLayer {
@@ -351,185 +150,51 @@ classDiagram
     CrossCuttingConcerns --> InfrastructureLayer
 ```
 
-- **表現層 (Presentation Layer)**
-  - 控制器 (`Controller`) 處理 HTTP 請求
-  - 資料傳輸物件 (`DTO`) 用於 API 請求/響應
-  - 負責與外部系統的通信
-
-- **應用層 (Application Layer)**
-  - 服務類 (`Service`) 協調領域物件
-  - 處理事務和協調多個領域物件
-  - 不包含業務規則，只負責流程協調
-
-- **領域層 (Domain Layer)**
-  - 實體 (`Entity`) 和值物件 (`ValueObject`) 包含業務邏輯
-  - 領域服務 (`DomainService`) 處理跨實體的業務邏輯
-  - 儲存庫介面 (`Repository`) 定義資料存取契約
-  - 聚合根 (`Aggregate`) 確保資料一致性
-
-- **基礎設施層 (Infrastructure Layer)**
-  - 儲存庫實現 (`RepositoryImpl`) 提供資料持久化
-  - 資料存取器 (`DataAccessor`) 抽象化資料存取
-  - 外部服務整合
-
-#### 3.2 領域模型示例
+### 4. 傷害計算策略模式架構
 ```mermaid
 classDiagram
-    class DomainEntity {
+    class DamageStrategy {
+        <<interface>>
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class DefaultDamageStrategy {
+        +calculateDamage(People, List~Weapon~) int
+        +safeInt(Integer) int
+    }
+    
+    class DamageStrategyDecorator {
         <<abstract>>
-        +Long id
-        +Long version
-        +LocalDateTime createdAt
-        +LocalDateTime updatedAt
-        +equals()
-        +hashCode()
-        +toString()
+        -DamageStrategy delegate
+        +DamageStrategyDecorator(DamageStrategy)
+        +calculateDamage(People, List~Weapon~) int
+        +safeInt(Integer) int
     }
-
-    class People {
-        +String name
-        +String nameOriginal
-        +String codeName
-        +String race
-        +String attributes
-        +String baseAttributes
-        +String bonusAttributes
-        +String stateAttributes
-        +Integer physicPower
-        +Integer magicPower
-        +Integer utilityPower
+    
+    class BonusAttributeDamageDecorator {
+        +calculateDamage(People, List~Weapon~) int
     }
-
-    class PeopleImage {
-        +String id
-        +String codeName
-        +String image
+    
+    class StateEffectDamageDecorator {
+        +@Primary
+        +calculateDamage(People, List~Weapon~) int
     }
-
-    class Weapon {
-        +String name
-        +String owner
-        +String attributes
-        +Integer baseDamage
-        +Integer bonusDamage
-        +List~String~ bonusAttributes
-        +List~String~ stateAttributes
+    
+    class WeaponDamageService {
+        -DamageStrategy damageStrategy
+        +calculateTotalDamage(String) int
     }
-
-    class Livestock {
-        +Integer id
-        +String livestock
-        +Double height
-        +Double weight
-        +Integer melee
-        +Integer magicka
-        +Integer ranged
-        +BigDecimal sellingPrice
-        +BigDecimal buyingPrice
-        +BigDecimal dealPrice
-    }
-
-    class Gallery {
-        +Integer id
-        +String imageBase64
-        +LocalDateTime uploadTime
-    }
-
-    class EditContentVO {
-        +String editor
-        +String content
-    }
-
-    class Repository {
-        <<interface>>
-        +save()
-        +findById()
-        +findAll()
-        +delete()
-        +count()
-    }
-
-    class PeopleRepository {
-        <<interface>>
-        +findByName()
-        +deleteByName()
-        +deleteAllPeople()
-    }
-
-    class WeaponRepository {
-        <<interface>>
-        +findByName()
-        +findByAttributes()
-        +findByBaseDamageBetween()
-        +findByOwner()
-    }
-
-    class LivestockRepository {
-        <<interface>>
-        +findByOwner()
-        +findByBuyer()
-        +findByLivestock()
-    }
-
-    class GalleryRepository {
-        <<interface>>
-    }
-
-    class EditContentRepository {
-        <<interface>>
-        +findByEditor()
-    }
-
-    DomainEntity <|-- People
-    DomainEntity <|-- Weapon
-    DomainEntity <|-- Livestock
-    DomainEntity <|-- Gallery
-    Repository <|-- PeopleRepository
-    Repository <|-- WeaponRepository
-    Repository <|-- LivestockRepository
-    Repository <|-- GalleryRepository
-    Repository <|-- EditContentRepository
-    PeopleRepository --> People
-    WeaponRepository --> People
-    LivestockRepository --> Livestock
-    GalleryRepository --> Gallery
-    EditContentRepository --> EditContentVO
-    People "1" -- "*" PeopleImage : images
+    
+    DamageStrategy <|.. DefaultDamageStrategy
+    DamageStrategy <|.. DamageStrategyDecorator
+    DamageStrategyDecorator <|-- BonusAttributeDamageDecorator
+    DamageStrategyDecorator <|-- StateEffectDamageDecorator
+    BonusAttributeDamageDecorator --> DefaultDamageStrategy
+    StateEffectDamageDecorator --> BonusAttributeDamageDecorator
+    WeaponDamageService --> DamageStrategy
 ```
 
-#### 3.3 領域驅動設計原則
-
-1. **統一語言 (Ubiquitous Language)**
-   - 在代碼和文檔中使用一致的術語
-   - 領域專家、開發人員和業務人員共享相同的語言
-
-2. **限界上下文 (Bounded Context)**
-   - 每個模組 (people, weapon, livestock, gallery, deckofcards, ckeditor) 代表一個限界上下文
-   - 上下文之間通過明確的介面進行通信
-
-3. **實體與值物件 (Entity vs Value Object)**
-   - 實體：具有唯一標識的物件 (如 People, Weapon)
-   - 值物件：描述事物特徵的物件，無唯一標識
-
-4. **聚合 (Aggregate)**
-   - 聚合根：People, Weapon 等
-   - 聚合邊界：確保資料一致性
-
-5. **領域服務 (Domain Service)**
-   - 處理跨實體的業務邏輯
-   - 不屬於任何單一實體的業務規則
-
-6. **儲存庫 (Repository)**
-   - 提供資料持久化抽象
-   - 隱藏資料存取細節
-
-7. **工廠 (Factory)**
-   - 複雜物件的創建邏輯
-   - 確保物件創建的完整性
-
-### 4. 設計模式與工廠架構
-
-#### 4.1 Singleton 模式
+### 5. 設計模式與工廠架構
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -566,142 +231,7 @@ classDiagram
     BeanLifecycle --> SingletonBeans
 ```
 
-- **目的**: 確保系統資源的唯一性和一致性
-- **應用**: 配置類、服務類、控制器等核心組件
-- **優點**: 資源共享、狀態一致性、內存優化
-
-#### 4.2 Factory 模式
-```mermaid
-classDiagram
-    class AbstractFactory {
-        <<interface>>
-        +createProduct()
-        +createProductA()
-        +createProductB()
-    }
-    
-    class RepositoryFactory {
-        <<interface>>
-        +getCustomRepository()
-        +getRepository()
-        +getSpecificationRepository()
-        +getJpaRepository()
-    }
-    
-    class QueryConditionFactory {
-        <<interface>>
-        +createEqualsCondition()
-        +createLikeCondition()
-        +createRangeCondition()
-        +createCompositeCondition()
-        +createInCondition()
-        +createNullCondition()
-    }
-    
-    class ServiceFactory {
-        <<interface>>
-        +createService()
-        +createServiceWithDependencies()
-        +getServiceInstance()
-    }
-    
-    class ConfigurationFactory {
-        <<interface>>
-        +createConfiguration()
-        +createDataSource()
-        +createTransactionManager()
-    }
-    
-    AbstractFactory <|-- RepositoryFactory
-    AbstractFactory <|-- QueryConditionFactory
-    AbstractFactory <|-- ServiceFactory
-    AbstractFactory <|-- ConfigurationFactory
-```
-
-- **目的**: 提供統一的對象創建接口
-- **應用**: Repository工廠、查詢條件工廠
-- **優點**: 解耦對象創建、統一管理實例、支持擴展
-
-#### 4.3 工廠方法實現
-```mermaid
-classDiagram
-    class RepositoryFactoryImpl {
-        -ApplicationContext applicationContext
-        -Map<Class<?>, Object> repositoryCache
-        -ConcurrentHashMap<String, Object> customRepositories
-        +getCustomRepository()
-        +getRepository()
-        +getSpecificationRepository()
-        +createRepositoryInstance()
-        +cacheRepository()
-    }
-    
-    class QueryConditionFactoryImpl {
-        -Map<String, QueryCondition> conditionCache
-        +createEqualsCondition()
-        +createLikeCondition()
-        +createRangeCondition()
-        +createCompositeCondition()
-        +createDynamicCondition()
-        +buildCondition()
-        +validateCondition()
-    }
-    
-    class ServiceFactoryImpl {
-        -ApplicationContext applicationContext
-        -Map<Class<?>, Object> serviceCache
-        +createService()
-        +createServiceWithDependencies()
-        +getServiceInstance()
-        +injectDependencies()
-    }
-    
-    class ConfigurationFactoryImpl {
-        -Environment environment
-        -Properties properties
-        +createConfiguration()
-        +createDataSource()
-        +createTransactionManager()
-        +loadProperties()
-        +validateConfiguration()
-    }
-    
-    RepositoryFactory <|.. RepositoryFactoryImpl
-    QueryConditionFactory <|.. QueryConditionFactoryImpl
-    ServiceFactory <|.. ServiceFactoryImpl
-    ConfigurationFactory <|.. ConfigurationFactoryImpl
-```
-
-#### 4.4 工作原理
-```mermaid
-sequenceDiagram
-    participant Service
-    participant Factory
-    participant Cache
-    participant ApplicationContext
-    participant Repository
-    
-    Service->>Factory: 請求實例
-    Factory->>Cache: 檢查緩存
-    alt 緩存命中
-        Cache-->>Factory: 返回緩存實例
-    else 緩存未命中
-        Factory->>ApplicationContext: 獲取Bean
-        ApplicationContext-->>Factory: 返回Bean
-        Factory->>Cache: 存入緩存
-    end
-    Factory-->>Service: 返回實例
-    Service->>Repository: 使用實例
-```
-
-- **註冊流程**: Spring容器掃描並註冊工廠Bean
-- **實例化**: 按需創建並緩存實例
-- **依賴注入**: 通過構造器注入工廠實例
-- **使用方式**: 服務層通過工廠獲取所需實例
-
-### 5. IoC/AOP 架構
-
-#### 5.1 IoC 容器
+### 6. IoC/AOP 架構
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -747,109 +277,9 @@ classDiagram
     BeanPostProcessor --> DependencyResolver
 ```
 
-#### 5.2 AOP 切面
-```mermaid
-classDiagram
-    class AOPFramework {
-        +AspectJ
-        +Spring AOP
-        +Proxy Creation
-        +Weaving
-    }
-    
-    class AspectDefinition {
-        +@Aspect
-        +@Pointcut
-        +@Around
-        +@Before
-        +@After
-        +@AfterReturning
-        +@AfterThrowing
-    }
-    
-    class TransactionAspect {
-        +@Transactional
-        +TransactionManager
-        +TransactionDefinition
-        +TransactionStatus
-        +beginTransaction()
-        +commitTransaction()
-        +rollbackTransaction()
-    }
-    
-    class ExceptionAspect {
-        +@ControllerAdvice
-        +@ExceptionHandler
-        +GlobalExceptionHandler
-        +handleException()
-        +logException()
-        +createErrorResponse()
-    }
-    
-    class ObservationAspect {
-        +ObservationHandler
-        +Metrics
-        +Tracing
-        +Performance Monitoring
-        +recordMetrics()
-        +startTimer()
-        +stopTimer()
-    }
-    
-    class SecurityAspect {
-        +@PreAuthorize
-        +@PostAuthorize
-        +@Secured
-        +Authentication
-        +Authorization
-        +validateAccess()
-        +checkPermissions()
-    }
-    
-    class ValidationAspect {
-        +@Valid
-        +@Validated
-        +ConstraintValidator
-        +ValidationResult
-        +validateInput()
-        +handleValidationErrors()
-    }
-    
-    AOPFramework --> AspectDefinition
-    AspectDefinition --> TransactionAspect
-    AspectDefinition --> ExceptionAspect
-    AspectDefinition --> ObservationAspect
-    AspectDefinition --> SecurityAspect
-    AspectDefinition --> ValidationAspect
-```
-
-### 6. 架構優勢
-
-1. **解耦與內聚**
-   - IoC 實現依賴反轉
-   - AOP 處理橫切關注點
-   - 工廠模式管理對象創建
-
-2. **可維護性**
-   - 清晰的職責分離
-   - 統一的異常處理
-   - 集中的配置管理
-
-3. **可擴展性**
-   - 模塊化設計
-   - 接口導向
-   - 鬆散耦合
-
-4. **性能優化**
-   - 單例資源共享
-   - 工廠對象緩存
-   - AOP 性能監控
-
 ## 安全認證架構
 
 ### 1. Keycloak JWT 認證架構
-
-#### 1.1 認證流程
 ```mermaid
 sequenceDiagram
     participant Client
@@ -866,202 +296,7 @@ sequenceDiagram
     Backend-->>Client: API 響應
 ```
 
-#### 1.2 角色系統
-```mermaid
-classDiagram
-    class JWTToken {
-        +header
-        +payload
-        +signature
-    }
-    
-    class JWTPayload {
-        +sub: String
-        +iss: String
-        +aud: String[]
-        +exp: Long
-        +iat: Long
-        +realm_access: RealmAccess
-        +resource_access: ResourceAccess
-    }
-    
-    class RealmAccess {
-        +roles: String[]
-    }
-    
-    class ResourceAccess {
-        +realm-management: RealmManagement
-        +account: Account
-    }
-    
-    class RealmManagement {
-        +roles: String[]
-    }
-    
-    class Account {
-        +roles: String[]
-    }
-    
-    class SecurityRoles {
-        +ROLE_manage-users
-        +ROLE_GUEST
-        +ROLE_offline_access
-        +ROLE_uma_authorization
-    }
-    
-    JWTToken --> JWTPayload
-    JWTPayload --> RealmAccess
-    JWTPayload --> ResourceAccess
-    ResourceAccess --> RealmManagement
-    ResourceAccess --> Account
-    RealmManagement --> SecurityRoles
-    Account --> SecurityRoles
-```
-
-#### 1.3 角色映射
-- **manage-users**: 管理員角色，來自 `resource_access.realm-management.roles`
-- **GUEST**: 訪客角色，自動分配給登入但無管理權限的用戶
-- **其他角色**: 來自 `realm_access.roles`
-
-### 2. Guardian 測試端點
-
-#### 2.1 端點說明
-```bash
-# 管理員端點 - 需要 manage-users 角色
-GET /tymb/guardian/admin
-
-# 用戶端點 - 需要登入（包括 GUEST）
-GET /tymb/guardian/user
-
-# 公開端點 - 不需要認證
-GET /tymb/guardian/visitor
-```
-
-#### 2.2 測試指令
-
-**1. 獲取 JWT Token**
-```bash
-# 獲取有 manage-users 角色的 token
-curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/xxx/protocol/openid-connect/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=xxx" \
-  -d "client_secret=xxx" \
-  -d "username=xxx" \
-  -d "password=xxx" \
-  -d "grant_type=password" \
-  -d "scope=openid profile email"
-```
-
-**2. 測試管理員端點**
-```bash
-# 使用有 manage-users 角色的 token
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
-
-# 預期響應
-# {
-#   "message": "Hello chiaki! You have manage-users role."
-# }
-```
-
-**3. 測試用戶端點**
-```bash
-# 使用任何有效 token
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
-
-# 預期響應
-# {
-#   "message": "Hello chiaki! You are authenticated."
-# }
-```
-
-**4. 測試公開端點**
-```bash
-# 不需要 token
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/visitor
-
-# 預期響應
-# {
-#   "message": "This is public information."
-# }
-```
-
-**5. 測試無權限訪問**
-```bash
-# 使用沒有 manage-users 角色的 token 訪問管理員端點
-curl -H "Authorization: Bearer GUEST_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
-
-# 預期響應
-# {
-#   "error": "Access Denied",
-#   "status": 403
-# }
-```
-
-**6. 測試未認證訪問**
-```bash
-# 不使用 token 訪問需要認證的端點
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
-
-# 預期響應
-# {
-#   "error": "Unauthorized",
-#   "status": 401
-# }
-```
-
-#### 2.3 本地測試
-```bash
-# 本地環境測試
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8080/tymb/guardian/admin
-
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8080/tymb/guardian/user
-
-curl http://localhost:8080/tymb/guardian/visitor
-```
-
-### 3. 安全配置
-
-#### 3.1 SecurityConfig 配置
-```java
-@EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
-@Configuration
-public class SecurityConfig {
-    
-    // JWT 認證轉換器
-    @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
-        // 自定義角色轉換邏輯
-    }
-    
-    // 安全過濾器鏈
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) {
-        // 配置端點權限
-    }
-}
-```
-
-#### 3.2 角色控制註解
-```java
-// 管理員權限
-@PreAuthorize("hasRole('manage-users')")
-
-// 用戶權限（包括 GUEST）
-@PreAuthorize("isAuthenticated()")
-
-// 公開端點
-// 無註解或 @PreAuthorize("permitAll()")
-```
-
 ## 錯誤處理架構
-
-### 1. 錯誤處理架構圖
 ```mermaid
 classDiagram
     class ErrorHandlingFramework {
@@ -1149,179 +384,7 @@ classDiagram
     GlobalExceptionHandler --> ExceptionMapper
 ```
 
-### 2. 模組特定異常
-```mermaid
-classDiagram
-    class BusinessException {
-        <<abstract>>
-        -ErrorCode errorCode
-        -String detail
-        -Map<String, Object> parameters
-        +BusinessException(ErrorCode)
-        +BusinessException(ErrorCode, String)
-        +BusinessException(ErrorCode, String, Throwable)
-        +getErrorCode()
-        +getDetail()
-        +getParameters()
-    }
-    
-    class PeopleException {
-        -String peopleName
-        -Long peopleId
-        +PeopleException(ErrorCode)
-        +PeopleException(ErrorCode, String)
-        +PeopleException(ErrorCode, String, Throwable)
-        +setPeopleInfo()
-        +getPeopleName()
-        +getPeopleId()
-    }
-    
-    class WeaponException {
-        -String weaponName
-        -String weaponType
-        +WeaponException(ErrorCode)
-        +WeaponException(ErrorCode, String)
-        +WeaponException(ErrorCode, String, Throwable)
-        +setWeaponInfo()
-        +getWeaponName()
-        +getWeaponType()
-    }
-    
-    class LivestockException {
-        -String livestockName
-        -String species
-        +LivestockException(ErrorCode)
-        +LivestockException(ErrorCode, String)
-        +LivestockException(ErrorCode, String, Throwable)
-        +setLivestockInfo()
-        +getLivestockName()
-        +getSpecies()
-    }
-    
-    class GalleryException {
-        -String galleryTitle
-        -String category
-        +GalleryException(ErrorCode)
-        +GalleryException(ErrorCode, String)
-        +GalleryException(ErrorCode, String, Throwable)
-        +setGalleryInfo()
-        +getGalleryTitle()
-        +getCategory()
-    }
-    
-    class ValidationException {
-        -List<String> validationErrors
-        -String fieldName
-        +ValidationException(ErrorCode)
-        +ValidationException(ErrorCode, String)
-        +addValidationError()
-        +getValidationErrors()
-        +getFieldName()
-    }
-    
-    BusinessException <|-- PeopleException
-    BusinessException <|-- WeaponException
-    BusinessException <|-- LivestockException
-    BusinessException <|-- GalleryException
-    BusinessException <|-- ValidationException
-```
-
-### 3. 錯誤處理流程
-```mermaid
-sequenceDiagram
-    participant Client
-    participant Controller
-    participant Service
-    participant Repository
-    participant Exception
-    participant GlobalExceptionHandler
-    participant ErrorResponse
-    participant Logger
-    
-    Client->>Controller: HTTP Request
-    Controller->>Service: 調用服務方法
-    Service->>Repository: 數據庫操作
-    Repository-->>Service: 返回結果/異常
-    alt 發生異常
-        Service->>Exception: 拋出業務異常
-        Exception-->>Controller: 異常傳播
-        Controller->>GlobalExceptionHandler: 捕獲異常
-        GlobalExceptionHandler->>Logger: 記錄異常
-        GlobalExceptionHandler->>ErrorResponse: 創建錯誤響應
-        GlobalExceptionHandler-->>Client: 返回錯誤響應
-    else 正常流程
-        Service-->>Controller: 返回結果
-        Controller-->>Client: 返回成功響應
-    end
-```
-
-### 4. 錯誤處理優點
-
-1. **統一錯誤格式**
-   - 所有錯誤響應格式一致
-   - 前端可以統一處理
-
-2. **標準化錯誤碼**
-   - 使用標準 HTTP 狀態碼
-
-3. **詳細錯誤信息**
-   - 包含錯誤代碼、消息和詳情
-   - 記錄錯誤發生時間和路徑
-
-4. **模組化設計**
-   - 每個模組有自己的異常類
-
 ## 監控與健康檢查
-
-### 1. Actuator 端點
-
-應用程式提供了以下 Actuator 端點用於監控：
-
-#### 1.1 健康檢查
-```
-GET https://***/tymb/actuator/health
-```
-提供應用程式的健康狀態，包括：
-- 應用程式狀態
-- 資料庫連接狀態
-- 磁碟空間
-- 其他組件狀態
-
-#### 1.2 指標信息
-```
-GET https://***/tymb/actuator/metrics
-```
-提供所有可用的指標列表，包括：
-- JVM 指標
-- 系統指標
-- 應用程式指標
-- 自定義指標
-
-#### 1.3 HikariCP 連接池指標
-```
-GET https://***/tymb/actuator/metrics/hikaricp.connections
-GET https://***/tymb/actuator/metrics/hikaricp.connections.active
-GET https://***/tymb/actuator/metrics/hikaricp.connections.idle
-GET https://***/tymb/actuator/metrics/hikaricp.connections.pending
-```
-提供連接池的詳細狀態：
-- 活動連接數
-- 空閒連接數
-- 等待連接數
-- 連接獲取時間
-- 連接使用時間
-- 連接泄漏檢測
-
-#### 1.4 Prometheus 格式指標
-```
-GET https://***/tymb/actuator/prometheus
-```
-提供 Prometheus 格式的指標數據，可用於：
-- 指標收集
-- 監控面板
-- 警報設置
-
-### 2. 監控架構
 ```mermaid
 classDiagram
     class ActuatorEndpoints {
@@ -1347,195 +410,7 @@ classDiagram
     MetricsConfig --> HikariCPMetrics
 ```
 
-### 4. 使用建議
-
-1. **健康檢查**
-   - 定期檢查應用程式健康狀態
-   - 設置自動化監控
-   - 配置警報閾值
-
-2. **性能監控**
-   - 監控關鍵指標
-   - 分析性能瓶頸
-   - 優化資源使用
-
-3. **問題診斷**
-   - 使用指標追蹤問題
-   - 分析錯誤模式
-   - 預防系統故障
-
-## Guardian 測試端點
-
-### 1. 端點說明
-```bash
-# 管理員端點 - 需要 manage-users 角色
-GET /tymb/guardian/admin
-
-# 用戶端點 - 需要登入（包括 GUEST）
-GET /tymb/guardian/user
-
-# 公開端點 - 不需要認證
-GET /tymb/guardian/visitor
-```
-
-### 2. 測試指令
-
-**1. 獲取 JWT Token**
-```bash
-# 獲取有 manage-users 角色的 token
-curl -X POST https://peoplesystem.tatdvsonorth.com/sso/realms/xxx/protocol/openid-connect/token \
-  -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "client_id=xxx" \
-  -d "client_secret=xxx" \
-  -d "username=xxx" \
-  -d "password=xxx" \
-  -d "grant_type=password" \
-  -d "scope=openid profile email"
-```
-
-**2. 測試管理員端點**
-```bash
-# 使用有 manage-users 角色的 token
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
-
-# 預期響應
-# {
-#   "message": "Hello chiaki! You have manage-users role."
-# }
-```
-
-**3. 測試用戶端點**
-```bash
-# 使用任何有效 token
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
-
-# 預期響應
-# {
-#   "message": "Hello chiaki! You are authenticated."
-# }
-```
-
-**4. 測試公開端點**
-```bash
-# 不需要 token
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/visitor
-
-# 預期響應
-# {
-#   "message": "This is public information."
-# }
-```
-
-**5. 測試無權限訪問**
-```bash
-# 使用沒有 manage-users 角色的 token 訪問管理員端點
-curl -H "Authorization: Bearer GUEST_TOKEN" \
-  https://peoplesystem.tatdvsonorth.com/tymb/guardian/admin
-
-# 預期響應
-# {
-#   "error": "Access Denied",
-#   "status": 403
-# }
-```
-
-**6. 測試未認證訪問**
-```bash
-# 不使用 token 訪問需要認證的端點
-curl https://peoplesystem.tatdvsonorth.com/tymb/guardian/user
-
-# 預期響應
-# {
-#   "error": "Unauthorized",
-#   "status": 401
-# }
-```
-
-**7. 本地測試**
-```bash
-# 本地環境測試
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8080/tymb/guardian/admin
-
-curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  http://localhost:8080/tymb/guardian/user
-
-curl http://localhost:8080/tymb/guardian/visitor
-```
-
-## swagger ui
-
-```bash
-http://localhost:8080/tymb/swagger-ui/index.html#/
-https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/
-```
-
-## image 建置
-
-```bash
-# Build image
-mvn clean package -DskipTests
-docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
-mvn -P platform install
-docker build -t papakao/ty-multiverse-backend:latest .
-docker push papakao/ty-multiverse-backend:latest
-
-mvn -P platform install
-docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
-docker push papakao/ty-multiverse-backend:latest
-
-mvn -P platform install
-docker build -t ty-multiverse-backend .
-docker run -d --name ty-multiverse-backend `
-  -e "SPRING_PROFILES_ACTIVE=platform" `
-  -e "URL_BACKEND=http://localhost:8080/tymb" `
-  -e "SPRING_DATASOURCE_URL=jdbc:postgresql://*****:****/peoplesystem" `
-  -e "SPRING_DATASOURCE_USERNAME=w*****o" `
-  -e "SPRING_DATASOURCE_PASSWORD=W*****=" `
-  -p 8080:8080 `
-  ty-multiverse-backend
-
-# Docker Agent
-docker build -t papakao/maven-docker-agent:latest -f Dockerfile.agent .
-docker push papakao/maven-docker-agent:latest
-```
-
-### 3. 並發控制
-
-#### 3.1 樂觀鎖定
-```mermaid
-classDiagram
-    class Entity {
-        +@Version
-        +version: Long
-    }
-    
-    class Service {
-        +updateEntity()
-        +handleOptimisticLocking()
-    }
-    
-    class ExceptionHandler {
-        +handleOptimisticLockingFailure()
-    }
-    
-    Entity --> Service
-    Service --> ExceptionHandler
-```
-
-#### 3.2 樂觀鎖定機制
-- **實現方式**: 使用 `@Version` 註解
-- **觸發時機**: 並發更新衝突
-- **處理策略**: 
-  - 自動重試
-  - 返回衝突狀態
-  - 提示用戶刷新
-
 ## 單元測試架構
-
-### 1. 測試架構概述
 ```mermaid
 classDiagram
     class TestConfig {
@@ -1563,39 +438,7 @@ classDiagram
     ServiceTests --> ControllerTests : uses
 ```
 
-### 2. 測試分層設計
-
-#### 2.1 配置層 (Configuration)
-- **TestConfig.java**
-  - 提供測試環境的基礎配置
-  - 使用 H2 內存數據庫
-  - 通過 `@TestConfiguration` 和 `@Primary` 確保測試環境隔離
-  - 配置測試專用的數據源和事務管理器
-
-#### 2.2 數據訪問層測試 (Repository Tests)
-- **PeopleRepositoryTest.java**
-  - 使用 `@DataJpaTest` 進行 JPA 相關測試
-  - 測試基本的 CRUD 操作
-  - 驗證數據庫操作的正確性
-  - 使用 H2 內存數據庫進行測試
-
-#### 2.3 服務層測試 (Service Tests)
-- **PeopleServiceTest.java**
-  - 使用 Mockito 進行依賴模擬
-  - 測試業務邏輯的完整性
-  - 驗證服務層方法的行為
-  - 處理異常情況的測試
-
-#### 2.4 控制器層測試 (Controller Tests)
-- **PeopleControllerTest.java**
-  - 測試 API 接口的正確性
-  - 驗證 HTTP 響應和狀態碼
-  - 測試請求參數的處理
-  - 驗證服務層的調用
-
 ## CI/CD Pipeline
-
-### 1. Pipeline Overview
 ```mermaid
 graph LR
     A[GitHub Repository] --> B[Clone and Setup]
@@ -1604,15 +447,18 @@ graph LR
     D --> E[Build Docker Image with BuildKit]
     E --> F[Debug Environment]
     F --> G[Deploy to Kubernetes]
-    
-
-    
-
 ```
 
-### 2. Pipeline Components
+## 文檔與工具
 
-#### 2.1 Agent Configuration
-- **Maven Container**: `maven:3.8.4-openjdk-17`
-- **Docker Container**: `docker:23-dind`
-- **Kubectl Container**: `bitnami/kubectl:1.30.7`
+### Swagger UI
+- 本地環境：`http://localhost:8080/tymb/swagger-ui/index.html#/`
+- 生產環境：`https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/`
+
+### JavaDoc 文檔
+- 本地環境：`http://localhost:8080/tymb/javadoc/index.html`
+- 生產環境：`https://peoplesystem.tatdvsonorth.com/tymb/javadoc/index.html`
+
+### Docker 建置
+- 建置指令：`docker build -t papakao/ty-multiverse-backend:latest .`
+- 多平台建置：`docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .`

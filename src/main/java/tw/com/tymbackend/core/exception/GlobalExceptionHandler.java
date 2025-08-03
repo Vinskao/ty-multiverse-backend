@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -84,6 +85,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
+     * 處理 JPA 樂觀鎖定失敗異常
+     * 
+     * @param ex JPA 樂觀鎖定失敗異常
+     * @param request HTTP 請求
+     * @return 錯誤響應
+     */
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<ErrorResponse> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException ex, HttpServletRequest request) {
+        logger.error("JPA 樂觀鎖定失敗: {}", ex.getMessage(), ex);
+        ErrorResponse errorResponse = ErrorResponse.fromErrorCode(ErrorCode.CONFLICT, "數據已被其他用戶修改，請重新加載後再試", request.getRequestURI());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
+    /**
      * 處理方法參數驗證失敗異常
      * 
      * @param ex 方法參數驗證失敗異常
@@ -94,10 +109,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            @NonNull MethodArgumentNotValidException ex,
-            @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
-            @NonNull WebRequest request) {
+            @SuppressWarnings("null") @NonNull MethodArgumentNotValidException ex,
+            @SuppressWarnings("null") @NonNull HttpHeaders headers,
+            @SuppressWarnings("null") @NonNull HttpStatusCode status,
+            @SuppressWarnings("null") @NonNull WebRequest request) {
         logger.error("方法參數驗證失敗: {}", ex.getMessage(), ex);
         String detail = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())
@@ -136,10 +151,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMaxUploadSizeExceededException(
-            @NonNull MaxUploadSizeExceededException ex,
-            @NonNull HttpHeaders headers,
-            @NonNull HttpStatusCode status,
-            @NonNull WebRequest request) {
+            @SuppressWarnings("null") @NonNull MaxUploadSizeExceededException ex,
+            @SuppressWarnings("null") @NonNull HttpHeaders headers,
+            @SuppressWarnings("null") @NonNull HttpStatusCode status,
+            @SuppressWarnings("null") @NonNull WebRequest request) {
         logger.error("文件上傳大小超限: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = ErrorResponse.fromErrorCode(ErrorCode.BAD_REQUEST, "文件大小超過限制", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

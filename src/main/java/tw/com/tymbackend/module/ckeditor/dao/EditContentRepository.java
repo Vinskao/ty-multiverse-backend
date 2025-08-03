@@ -45,6 +45,7 @@ public interface EditContentRepository extends StringPkRepository<EditContentVO>
      * @param editor 編輯器名稱，用作查詢條件
      * @return 對應的 EditorContent 實體，如果未找到則返回 null
      */
+    @SuppressWarnings("null")
     default EditContentVO findByEditor(String editor) {
         return findById(editor).orElse(null);
     }
