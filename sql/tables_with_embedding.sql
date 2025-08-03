@@ -107,3 +107,8 @@ COMMENT ON TABLE weapon IS 'Weapon table with vector embedding support for seman
 COMMENT ON COLUMN weapon.embedding IS 'Vector embedding of all weapon fields for semantic search';
 COMMENT ON COLUMN weapon.created_at IS 'Timestamp when the record was created';
 COMMENT ON COLUMN weapon.updated_at IS 'Timestamp when the record was last updated'; 
+
+
+-- 強制不得為 NULL，防止後續異常新增
+ALTER TABLE people
+    ALTER COLUMN version SET NOT NULL;

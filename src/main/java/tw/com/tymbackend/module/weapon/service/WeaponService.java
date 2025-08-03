@@ -5,12 +5,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -149,6 +152,7 @@ public class WeaponService {
      * Update weapon attributes
      */
     @Transactional
+    @SuppressWarnings("null")
     public Weapon updateWeaponAttributes(String name, Weapon newWeapon) {
         return weaponRepository.findById(name)
             .map(existing -> {
@@ -163,6 +167,7 @@ public class WeaponService {
      * Update weapon base damage
      */
     @Transactional
+    @SuppressWarnings("null")
     public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
         return weaponRepository.findById(name)
             .map(existing -> {
@@ -176,6 +181,7 @@ public class WeaponService {
      * Update weapon bonus damage
      */
     @Transactional
+    @SuppressWarnings("null")
     public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
         return weaponRepository.findById(name)
             .map(existing -> {
@@ -189,6 +195,7 @@ public class WeaponService {
      * Update weapon bonus attributes
      */
     @Transactional
+    @SuppressWarnings("null")
     public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
         return weaponRepository.findById(name)
             .map(existing -> {
@@ -202,6 +209,7 @@ public class WeaponService {
      * Update weapon state attributes
      */
     @Transactional
+    @SuppressWarnings("null")
     public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
         return weaponRepository.findById(name)
             .map(existing -> {

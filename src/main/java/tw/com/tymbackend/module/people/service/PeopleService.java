@@ -11,6 +11,7 @@ import org.springframework.data.domain.Sort;
 import tw.com.tymbackend.module.people.dao.PeopleRepository;
 import tw.com.tymbackend.module.people.domain.vo.People;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -141,6 +142,7 @@ public class PeopleService {
      * @return 更新後的角色，如果不存在則返回 null
      */
     @Transactional
+    @SuppressWarnings("null")
     public People update(String name, People person) {
         if (peopleRepository.existsById(name)) {
             person.setName(name);
@@ -148,6 +150,10 @@ public class PeopleService {
         }
         return null;
     }
+
+
+
+
     
     /**
      * 更新角色
@@ -155,12 +161,79 @@ public class PeopleService {
      * @param person 要更新的角色
      * @return 更新後的角色
      */
-    @Transactional
+    @Transactional(transactionManager = "peopleTransactionManager")
     public People updatePerson(People person) {
-        if (person.getName() != null && peopleRepository.existsById(person.getName())) {
-            return peopleRepository.save(person);
+        if (person.getName() != null) {
+            // 先查詢現有實體，避免版本衝突
+            Optional<People> existingOpt = peopleRepository.findById(person.getName());
+            if (existingOpt.isPresent()) {
+                People existing = existingOpt.get();
+                // 更新所有非空字段
+                updatePeopleFields(existing, person);
+                // 若歷史資料 version 為 null，初始化為 0 以避免 Hibernate NPE
+                if (existing.getVersion() == null) {
+                    existing.setVersion(0L);
+                }
+                // 呼叫 save 可確保 flush 並使用正確的 TransactionManager
+                return peopleRepository.save(existing);
+            } else {
+                // 如果不存在，拋出異常而不是嘗試插入
+                throw new RuntimeException("Character not found with name: " + person.getName());
+            }
+        } else {
+            throw new RuntimeException("Character name is required for update");
         }
-        return save(person);
+    }
+
+    /**
+     * 更新 People 實體的字段
+     * 
+     * @param existing 現有實體
+     * @param updated 包含更新數據的實體
+     */
+    private void updatePeopleFields(People existing, People updated) {
+        if (updated.getNameOriginal() != null) existing.setNameOriginal(updated.getNameOriginal());
+        if (updated.getCodeName() != null) existing.setCodeName(updated.getCodeName());
+        if (updated.getPhysicPower() != null) existing.setPhysicPower(updated.getPhysicPower());
+        if (updated.getMagicPower() != null) existing.setMagicPower(updated.getMagicPower());
+        if (updated.getUtilityPower() != null) existing.setUtilityPower(updated.getUtilityPower());
+        if (updated.getDob() != null) existing.setDob(updated.getDob());
+        if (updated.getRace() != null) existing.setRace(updated.getRace());
+        if (updated.getAttributes() != null) existing.setAttributes(updated.getAttributes());
+        if (updated.getGender() != null) existing.setGender(updated.getGender());
+        if (updated.getAssSize() != null) existing.setAssSize(updated.getAssSize());
+        if (updated.getBoobsSize() != null) existing.setBoobsSize(updated.getBoobsSize());
+        if (updated.getHeightCm() != null) existing.setHeightCm(updated.getHeightCm());
+        if (updated.getWeightKg() != null) existing.setWeightKg(updated.getWeightKg());
+        if (updated.getProfession() != null) existing.setProfession(updated.getProfession());
+        if (updated.getCombat() != null) existing.setCombat(updated.getCombat());
+        if (updated.getFavoriteFoods() != null) existing.setFavoriteFoods(updated.getFavoriteFoods());
+        if (updated.getJob() != null) existing.setJob(updated.getJob());
+        if (updated.getPhysics() != null) existing.setPhysics(updated.getPhysics());
+        if (updated.getKnownAs() != null) existing.setKnownAs(updated.getKnownAs());
+        if (updated.getPersonality() != null) existing.setPersonality(updated.getPersonality());
+        if (updated.getInterest() != null) existing.setInterest(updated.getInterest());
+        if (updated.getLikes() != null) existing.setLikes(updated.getLikes());
+        if (updated.getDislikes() != null) existing.setDislikes(updated.getDislikes());
+        if (updated.getConcubine() != null) existing.setConcubine(updated.getConcubine());
+        if (updated.getFaction() != null) existing.setFaction(updated.getFaction());
+        if (updated.getArmyId() != null) existing.setArmyId(updated.getArmyId());
+        if (updated.getArmyName() != null) existing.setArmyName(updated.getArmyName());
+        if (updated.getDeptId() != null) existing.setDeptId(updated.getDeptId());
+        if (updated.getDeptName() != null) existing.setDeptName(updated.getDeptName());
+        if (updated.getOriginArmyId() != null) existing.setOriginArmyId(updated.getOriginArmyId());
+        if (updated.getOriginArmyName() != null) existing.setOriginArmyName(updated.getOriginArmyName());
+        if (updated.getGaveBirth() != null) existing.setGaveBirth(updated.getGaveBirth());
+        if (updated.getEmail() != null) existing.setEmail(updated.getEmail());
+        if (updated.getAge() != null) existing.setAge(updated.getAge());
+        if (updated.getProxy() != null) existing.setProxy(updated.getProxy());
+        if (updated.getBaseAttributes() != null) existing.setBaseAttributes(updated.getBaseAttributes());
+        if (updated.getBonusAttributes() != null) existing.setBonusAttributes(updated.getBonusAttributes());
+        if (updated.getStateAttributes() != null) existing.setStateAttributes(updated.getStateAttributes());
+        if (updated.getEmbedding() != null) existing.setEmbedding(updated.getEmbedding());
+        
+        // 更新時間戳
+        existing.setUpdatedAt(LocalDateTime.now());
     }
 
     /**
@@ -171,6 +244,7 @@ public class PeopleService {
      * @return 更新後的角色，如果不存在則返回 null
      */
     @Transactional
+    @SuppressWarnings("null")
     public People updateAttributes(String name, People person) {
         return peopleRepository.findByName(name)
             .map(existing -> {
@@ -181,6 +255,8 @@ public class PeopleService {
             })
             .orElse(null);
     }
+
+
 
     /**
      * 根據規格查詢角色

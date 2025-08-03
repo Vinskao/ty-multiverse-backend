@@ -8,9 +8,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+import org.springframework.retry.annotation.EnableRetry;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableWebSocket
+@EnableRetry
+@EnableScheduling
 public class TYMBackendApplication {
 	// private static final Logger logger = LoggerFactory.getLogger(TYMBackendApplication.class);
 	public static void main(String[] args) {

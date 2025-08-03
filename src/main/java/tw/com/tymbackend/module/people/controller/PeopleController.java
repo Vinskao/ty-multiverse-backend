@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 import tw.com.tymbackend.module.people.domain.dto.PeopleNameRequestDTO;
 import tw.com.tymbackend.module.people.domain.vo.People;
@@ -58,6 +59,10 @@ public class PeopleController {
             // 樂觀鎖定衝突，返回衝突狀態
             logger.error("Concurrent update detected", e);
             return new ResponseEntity<>("Concurrent update detected: " + e.getMessage(), HttpStatus.CONFLICT);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // 樂觀鎖定衝突，返回衝突狀態
+            logger.error("Optimistic locking failure detected", e);
+            return new ResponseEntity<>("Character data has been modified by another user, please reload and try again", HttpStatus.CONFLICT);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
             // 數據完整性違規，返回錯誤請求狀態
             return new ResponseEntity<>("Data integrity violation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -78,23 +83,6 @@ public class PeopleController {
             return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    // 搜尋 1 個 (接收 id 傳出 JSON)
-    @PostMapping("/get")
-    public ResponseEntity<?> getPeopleById(@RequestBody PeopleNameRequestDTO request) {
-        try {
-            Optional<People> people = peopleService.getPeopleByName(request.getName());
-            if (people.isPresent()) {
-                return new ResponseEntity<>(people.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Person not found", HttpStatus.NOT_FOUND);
-            }
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {

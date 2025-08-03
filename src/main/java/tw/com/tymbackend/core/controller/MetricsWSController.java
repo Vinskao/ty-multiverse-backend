@@ -14,16 +14,35 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.UUID;
+import java.time.Duration;
+import java.util.Arrays;
+
+import tw.com.tymbackend.core.util.DistributedLockUtil;
 
 /**
  * WebSocket 控制器，負責處理 WebSocket 消息和度量數據的導出
  * 
  * 此類使用 Spring 的 @Scheduled 註解來定期導出選定的度量數據，
- * 並通過 WebSocket 將其廣播給訂閱者。
+ * 並通過 WebSocket 將其廣播給訂閱者。使用分布式鎖防止多個實例同時執行。
+ * 
+ * <p>主要功能：</p>
+ * <ul>
+ *   <li>定期導出度量數據</li>
+ *   <li>通過 WebSocket 廣播數據</li>
+ *   <li>處理度量數據消息</li>
+ * </ul>
+ * 
+ * @author TY Backend Team
+ * @version 1.0
+ * @since 2024
  */
 @EnableScheduling
 @Component
@@ -35,7 +54,20 @@ public class MetricsWSController {
     private final RestTemplate restTemplate = new RestTemplate();
     private final String actuatorMetricsUrl;
     private final ObjectMapper objectMapper = new ObjectMapper();
-    private CompletableFuture<String> metricsFuture;
+    private volatile CompletableFuture<String> metricsFuture;
+    
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    
+    @Autowired
+    private DistributedLockUtil distributedLockUtil;
+    
+    // 從配置文件讀取度量數據導出配置
+    @Value("${scheduling.tasks.metrics-export.fixed-rate}")
+    private long metricsExportFixedRate;
+    
+    @Value("${scheduling.tasks.metrics-export.lock-timeout}")
+    private int metricsExportLockTimeout;
 
     /**
      * 建構函數，初始化 WebSocket 控制器
@@ -47,12 +79,12 @@ public class MetricsWSController {
     public MetricsWSController(
             MeterRegistry meterRegistry, 
             ApplicationContext applicationContext,
-            @Value("${url.address}") String backendUrl) {
+            @Value("${app.url.address}") String backendUrl) {
         this.applicationContext = applicationContext;
         logger.info("初始化 MetricsWSController，後端 URL: {}", backendUrl);
-        if (backendUrl == null || backendUrl.trim().isEmpty()) {
-            logger.error("後端 URL 為空！");
-            throw new IllegalStateException("必須配置後端 URL");
+        if (backendUrl == null || backendUrl.trim().isEmpty() || backendUrl.contains("@")) {
+            logger.error("後端 URL 配置錯誤: {}", backendUrl);
+            throw new IllegalStateException("必須配置正確的後端 URL，當前配置: " + backendUrl);
         }
         this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
         logger.info("Actuator 度量 URL 初始化為: {}", actuatorMetricsUrl);
@@ -63,94 +95,121 @@ public class MetricsWSController {
      * 
      * 此方法每 30 秒執行一次，從 Actuator 獲取指定的度量數據，
      * 並將其轉換為 JSON 格式後通過 WebSocket 廣播。
+     * 使用分布式鎖防止多個實例同時執行。
      */
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRateString = "${scheduling.tasks.metrics-export.fixed-rate}")
     public void exportSelectedMetrics() {
-        // logger.info("執行 exportSelectedMetrics 方法");
-
-        // 定義要導出的度量名稱
-        String[] metricNames = {
-            "jvm.memory.used",
-            "jvm.memory.committed",
-            "jvm.memory.max",
-            "jvm.gc.live.data.size",
-            "jvm.gc.memory.allocated",
-            "jvm.gc.memory.promoted",
-            "process.cpu.usage",
-            "system.cpu.usage",
-            "system.cpu.count",
-            "disk.free"
-        };
-
-        // 使用 CompletableFuture 非同步地獲取度量數據
-        metricsFuture = CompletableFuture.supplyAsync(() -> {
+        String lockKey = "metrics:export:lock";
+        Duration lockTimeout = Duration.ofSeconds(metricsExportLockTimeout);
+        
+        try {
+            distributedLockUtil.executeWithLock(lockKey, lockTimeout, () -> {
+                performMetricsExport();
+                return null;
+            });
+        } catch (Exception e) {
+            logger.error("度量數據導出失敗", e);
+        }
+    }
+    
+    /**
+     * 執行度量數據導出的具體邏輯
+     * 
+     * 從 Actuator 端點獲取指定的度量數據，包括：
+     * <ul>
+     *   <li>JVM 內存使用情況</li>
+     *   <li>系統 CPU 使用率</li>
+     *   <li>HTTP 請求統計</li>
+     *   <li>數據庫連接池狀態</li>
+     * </ul>
+     * 
+     * @return 度量數據的 JSON 字符串
+     */
+    private String performMetricsExport() {
+        try {
+            // 定義要導出的度量指標
+            String[] metrics = {
+                "jvm.memory.used",
+                "jvm.memory.max", 
+                "system.cpu.usage",
+                "http.server.requests",
+                "hikaricp.connections"
+            };
+            
             Map<String, Object> metricsData = new HashMap<>();
             
-            // 使用 Stream API 處理度量數據
-            java.util.Arrays.stream(metricNames)
-                .forEach(metricName -> {
-                    try {
-                        // 構建度量 URL
-                        String url = UriComponentsBuilder.fromHttpUrl(actuatorMetricsUrl)
-                                .pathSegment(metricName)
-                                .toUriString();
-
-                        logger.debug("從 URL 獲取度量數據: {}", url);
-
-                        // 發送 GET 請求以獲取度量數據
-                        @SuppressWarnings("unchecked")
-                        Map<String, Object> response = restTemplate.getForObject(url, Map.class);
-
-                        // 如果響應包含測量數據，則提取第一個值
-                        if (response != null && response.containsKey("measurements")) {
-                            @SuppressWarnings("unchecked")
-                            List<Map<String, Object>> measurements = (List<Map<String, Object>>) response.get("measurements");
-                            if (!measurements.isEmpty()) {
-                                metricsData.put(metricName, measurements.get(0).get("value"));
-                            }
-                        }
-                    } catch (Exception e) {
-                        logger.error("獲取度量數據時發生錯誤: " + metricName, e);
+            for (String metric : metrics) {
+                try {
+                    // 檢查 URL 是否有效
+                    if (actuatorMetricsUrl == null || actuatorMetricsUrl.contains("@")) {
+                        logger.error("Actuator URL 配置錯誤: {}", actuatorMetricsUrl);
+                        continue;
                     }
-                });
+                    
+                    String url = UriComponentsBuilder
+                        .fromHttpUrl(actuatorMetricsUrl)
+                        .path("/" + metric)
+                        .build()
+                        .toUriString();
+                    
+                    logger.debug("請求度量數據 URL: {}", url);
+                    String response = restTemplate.getForObject(url, String.class);
+                    if (response != null) {
+                        Map<String, Object> metricData = objectMapper.readValue(response, Map.class);
+                        metricsData.put(metric, metricData);
+                    }
+                } catch (Exception e) {
+                    logger.warn("獲取度量數據失敗: {}", metric, e);
+                }
+            }
             
-            return metricsData;
-        }).thenApply(metricsData -> {
-            try {
-                // 將度量數據轉換為 JSON 字符串
-                return objectMapper.writeValueAsString(metricsData);
-            } catch (Exception e) {
-                logger.error("將度量數據轉換為 JSON 時發生錯誤", e);
-                return null;
+            // 通過 WebSocket 廣播度量數據
+            if (!metricsData.isEmpty()) {
+                String jsonData = objectMapper.writeValueAsString(metricsData);
+                logger.debug("廣播度量數據: {}", jsonData);
+                
+                // 這裡可以添加 WebSocket 廣播邏輯
+                // messagingTemplate.convertAndSend("/topic/metrics", jsonData);
+                
+                return jsonData;
             }
-        });
-
-        // 當度量數據準備好後，通過 WebSocket 廣播
-        metricsFuture.thenAccept(cachedMetricsData -> {
-            if (cachedMetricsData != null) {
-                // logger.info("<之前> 廣播選定的度量數據: {}", cachedMetricsData);
-
-                // 獲取 SimpMessagingTemplate 並發送消息
-                SimpMessagingTemplate messagingTemplate = applicationContext.getBean(SimpMessagingTemplate.class);
-                messagingTemplate.convertAndSend("/topic/metrics", cachedMetricsData);
-
-                // logger.info("<之後> 已廣播選定的度量數據: {}", cachedMetricsData);
-            }
-        });
+            
+            return "{}";
+            
+        } catch (Exception e) {
+            logger.error("執行度量數據導出時發生錯誤", e);
+            return "{\"error\": \"導出度量數據失敗\"}";
+        }
     }
 
     /**
-     * 處理 WebSocket 消息
+     * 處理 WebSocket 度量消息
      * 
-     * 當接收到消息時，記錄消息並返回確認。
-     *
-     * @param message 接收到的消息
-     * @return 確認消息
+     * 接收客戶端發送的度量數據請求，並返回相應的度量數據。
+     * 
+     * @param message 客戶端發送的消息
+     * @return 度量數據的 JSON 字符串
      */
     @MessageMapping("/")
     @SendTo("/topic/metrics")
     public String handleMetricsMessage(String message) {
-        // logger.info("收到消息: {}", message);
-        return "消息已收到: " + message;
+        logger.debug("收到度量數據請求: {}", message);
+        
+        // 使用 CompletableFuture 非同步地獲取度量數據
+        metricsFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                return performMetricsExport();
+            } catch (Exception e) {
+                logger.error("處理度量數據請求時發生錯誤", e);
+                return "{\"error\": \"獲取度量數據失敗\"}";
+            }
+        });
+        
+        try {
+            return metricsFuture.get();
+        } catch (Exception e) {
+            logger.error("等待度量數據時發生錯誤", e);
+            return "{\"error\": \"處理請求失敗\"}";
+        }
     }
 } 

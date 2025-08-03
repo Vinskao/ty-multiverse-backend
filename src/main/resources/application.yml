@@ -47,12 +47,12 @@ spring:
   # People datasource configuration
   people-datasource:
     driver-class-name: org.postgresql.Driver
-    url: '@SPRING_PEOPLE_DATASOURCE_URL@'
-    username: '@SPRING_PEOPLE_DATASOURCE_USERNAME@'
-    password: '@SPRING_PEOPLE_DATASOURCE_PASSWORD@'
+    url: '@PEOPLE_DATASOURCE_URL@'
+    username: '@PEOPLE_DATASOURCE_USERNAME@'
+    password: '@PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
       minimum-idle: 5
-      maximum-pool-size: 10
+      maximum-pool-size: 20
       idle-timeout: 300000
       pool-name: PeopleHikariCP
       max-lifetime: 1800000
@@ -62,6 +62,56 @@ spring:
       connection-test-query: SELECT 1
       auto-commit: false
       register-mbeans: true
+
+# 定時任務配置
+scheduling:
+  tasks:
+    # 數據清理任務 - 每天凌晨2點執行
+    cleanup:
+      cron: "0 0 2 * * ?"
+      lock-timeout: 30 # 分鐘
+    # 週報表生成 - 每週日凌晨3點執行
+    weekly-report:
+      cron: "0 0 3 ? * SUN"
+      lock-timeout: 60 # 分鐘
+    # 數據備份 - 每天凌晨4點執行
+    backup:
+      cron: "0 0 4 * * ?"
+      lock-timeout: 120 # 分鐘
+    # 健康檢查 - 每小時執行一次
+    health-check:
+      cron: "0 0 * * * ?"
+      lock-timeout: 5 # 分鐘
+    # 度量數據導出 - 每30秒執行一次
+    metrics-export:
+      fixed-rate: 30000 # 毫秒
+      lock-timeout: 25 # 秒
+
+# 分布式鎖配置
+distributed-lock:
+  # 內容保存鎖超時時間（秒）
+  content-save-timeout: 30
+  # 畜牧業數據查詢鎖超時時間（秒）
+  livestock-query-timeout: 10
+  # 畜牧業數據保存鎖超時時間（秒）
+  livestock-save-timeout: 30
+
+# 應用程序配置
+app:
+  # 後端URL配置
+  url:
+    address: '@URL_ADDRESS@'
+  # 文件上傳配置
+  file:
+    upload:
+      max-size: 10MB
+      allowed-types: jpg,jpeg,png,gif,pdf,doc,docx
+  # 日誌配置
+  logging:
+    level:
+      tw.com.tymbackend: INFO
+      org.springframework.security: DEBUG
+      org.springframework.web: DEBUG
   jpa:
     open-in-view: false
     properties:
@@ -162,6 +212,3 @@ keycloak:
       securityCollections:
         - patterns:
             - /*
-url:
-  address: '@URL_ADDRESS@'
-  frontend: '@URL_FRONTEND@'
