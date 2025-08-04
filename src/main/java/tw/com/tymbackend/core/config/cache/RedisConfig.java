@@ -9,17 +9,12 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 /**
- * Redis配置類 - 整合了Redis連接、模板和Session管理
- * 啟用Spring Session並配置Redis連接
+ * Redis配置類 - 僅用於分布式鎖和工具類
+ * Session 配置已移至 SessionConfig.java
  */
 @Configuration
-@EnableRedisHttpSession(
-    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
-    redisNamespace = "tymb:sessions"      // 命名空間
-)
 public class RedisConfig {
 
     @Value("${spring.data.redis.host:127.0.0.1}")

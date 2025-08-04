@@ -3,6 +3,8 @@ package tw.com.tymbackend.core.config.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,8 +16,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.AuthenticationEntryPoint;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import tw.com.tymbackend.core.exception.ErrorCode;
+import tw.com.tymbackend.core.exception.ErrorResponse;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,9 +31,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Spring Security 配置類
+ * Spring Security 配置類 - 混合認證策略
  * 
- * 負責配置 OAuth2 Resource Server、JWT 認證、CORS 等安全相關設定。
+ * 支持無狀態 JWT 認證和有狀態 Session 認證的混合架構：
+ * - 無狀態服務：使用 JWT Token 認證
+ * - 有狀態服務：使用 Session 認證 (CKEditor, DeckOfCards)
  */
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -39,7 +49,7 @@ public class SecurityConfig {
     private String keycloakRealm;
 
     /**
-     * 配置安全過濾器鏈
+     * 配置安全過濾器鏈 - 混合認證策略
      * 
      * @param http HttpSecurity 實例
      * @return 配置好的 SecurityFilterChain
@@ -48,26 +58,133 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // 1. CSRF 保護 (已禁用)
                 .csrf(csrf -> csrf.disable())
+                
+                // 2. 授權配置 - 混合策略
                 .authorizeHttpRequests(authorize -> authorize
                         // 公開訪問的靜態資源
                         .requestMatchers("/javadoc/**").permitAll()
                         .requestMatchers("/static/**").permitAll()
-                        // 需要認證的端點
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
+                        
+                        // 有狀態服務 - 使用 Session 認證
+                        .requestMatchers("/ckeditor/**").authenticated()
+                        .requestMatchers("/deckofcards/**").authenticated()
+                        
+                        // 無狀態服務 - 使用 JWT 認證
                         .requestMatchers("/guardian/admin").hasRole("manage-users")
                         .requestMatchers("/guardian/user").authenticated()
                         .requestMatchers("/guardian/token-info").authenticated()
                         .requestMatchers("/guardian/test-default").authenticated()
+                        .requestMatchers("/people/**").authenticated()
+                        .requestMatchers("/weapon/**").authenticated()
+                        .requestMatchers("/gallery/**").authenticated()
+                        .requestMatchers("/livestock/**").authenticated()
+                        
                         // 其他所有端點預設公開
                         .anyRequest().permitAll())
+                
+                // 3. OAuth2 Resource Server 配置 (無狀態認證)
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt
                                 .jwkSetUri(keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs")
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                
+                // 4. 會話管理 - 混合策略
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)  // 改為按需創建
+                        .maximumSessions(1)  // 每個用戶最多一個會話
+                        .maxSessionsPreventsLogin(false))  // 允許新登錄
+                
+                // 5. 錯誤處理 (連接到 Error Handler 模組)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .authenticationEntryPoint(authenticationEntryPoint())
+                        .accessDeniedHandler(accessDeniedHandler()))
+                
+                // 6. 登出配置
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler(logoutSuccessHandler())
+                        .invalidateHttpSession(true)
+                        .clearAuthentication(true)
+                        .deleteCookies("JSESSIONID"));
 
         return http.build();
+    }
+
+    /**
+     * 認證失敗處理器
+     * 
+     * 當用戶未提供有效認證憑證時觸發
+     * 
+     * @return 配置好的 AuthenticationEntryPoint
+     */
+    @Bean
+    AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authException) -> {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            
+            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
+                ErrorCode.AUTHENTICATION_FAILED, 
+                ErrorCode.AUTHENTICATION_FAILED.getMessage(), 
+                authException.getMessage()
+            );
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
+    }
+
+    /**
+     * 授權失敗處理器
+     * 
+     * 當用戶已認證但沒有足夠權限時觸發
+     * 
+     * @return 配置好的 AccessDeniedHandler
+     */
+    @Bean
+    AccessDeniedHandler accessDeniedHandler() {
+        return (request, response, accessDeniedException) -> {
+            response.setStatus(HttpStatus.FORBIDDEN.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            
+            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
+                ErrorCode.AUTHORIZATION_FAILED, 
+                ErrorCode.AUTHORIZATION_FAILED.getMessage(), 
+                accessDeniedException.getMessage()
+            );
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
+    }
+
+    /**
+     * 登出成功處理器
+     * 
+     * 當用戶成功登出時觸發
+     * 
+     * @return 配置好的 LogoutSuccessHandler
+     */
+    @Bean
+    LogoutSuccessHandler logoutSuccessHandler() {
+        return (request, response, authentication) -> {
+            response.setStatus(HttpStatus.OK.value());
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            
+            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
+                ErrorCode.LOGOUT_SUCCESS, 
+                ErrorCode.LOGOUT_SUCCESS.getMessage(), 
+                "您已成功登出系統"
+            );
+            
+            ObjectMapper objectMapper = new ObjectMapper();
+            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
     }
 
     /**

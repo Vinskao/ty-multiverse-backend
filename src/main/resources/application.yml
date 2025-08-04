@@ -19,6 +19,8 @@ spring:
     redis:
       namespace: tymb:sessions
 
+
+
   profiles:
     active: '@env@'
   security:
@@ -98,6 +100,10 @@ distributed-lock:
 
 # 應用程序配置
 app:
+  # Session 配置 - 混合認證策略
+  session:
+    enabled: true  # 啟用 Session 支持
+    timeout: 3600  # Session 超時時間（秒）
   # 後端URL配置
   url:
     address: '@URL_ADDRESS@'

@@ -8,14 +8,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.module.ckeditor.domain.dto.GetContentDTO;
-import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 import tw.com.tymbackend.module.ckeditor.service.EditContentService;
+import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;
 
 import jakarta.servlet.http.HttpSession;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * 檔案上傳控制器
@@ -39,11 +42,22 @@ public class FileUploadController {
      * @return 如果使用者已登入則返回 true，否則返回 false
      */
     private boolean isUserLoggedIn(HttpSession session, String action, String module){
-        // Comment out the actual authentication check
-        // ResponseEntity<String> response = keycloakController.checkSession(session, action, module);
-        // return response.getStatusCode() == HttpStatus.OK;
+        // 檢查 Session 是否存在
+        if (session == null) {
+            return false;
+        }
         
-        // Always return true for now (bypass authentication)
+        // 檢查用戶是否已認證
+        Object userAttribute = session.getAttribute("user_authenticated");
+        if (userAttribute == null) {
+            return false;
+        }
+        
+        // 記錄用戶活動
+        session.setAttribute("last_activity", System.currentTimeMillis());
+        session.setAttribute("last_action", action);
+        session.setAttribute("last_module", module);
+        
         return true;
     }
     
@@ -57,40 +71,46 @@ public class FileUploadController {
     @PostMapping("/save-content")
     public ResponseEntity<?> saveContent(@RequestBody EditContentVO editorContent, HttpSession session) {
         String content = editorContent.getContent();
-        String editor = editorContent.getEditor(); // Changed from getContentId() to getEditor()
+        String editor = editorContent.getEditor();
         
         try {
-            // Check if content is the same as stored
+            // 檢查使用者是否已登入
+            String action = "UPDATE";
+            
+            if(!isUserLoggedIn(session, action, module)){
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorCode.USER_NOT_LOGGED_IN.getMessage());
+            }
+            
+            // 保存編輯狀態到 Session
+            session.setAttribute("editor_draft_" + editor, content);
+            session.setAttribute("editor_last_save_" + editor, System.currentTimeMillis());
+            
+            // 檢查內容是否有變化
             Optional<EditContentVO> storedContentOpt = editContentService.getContent(editor).get();
             
-            // 如果內容存在且內容相同，則不保存
             if (storedContentOpt.isPresent() && content.equals(storedContentOpt.get().getContent())) {
-                return ResponseEntity.ok("No changes detected. Content not saved.");
+                // 內容相同，只更新 Session 中的草稿
+                return ResponseEntity.ok("No changes detected. Draft saved to session.");
             }
             
-            // 檢查使用者是否已登入
-            String action = "UPDATE"; // Hardcoded instead of using ActionTypeEnum
-            
-            // 如果使用者未登入，則返回401 Unauthorized
-            if(!isUserLoggedIn(session, action, module)){
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
-            }
-            
-            // Save the content using the service method
+            // 保存內容
             editContentService.saveContent(editorContent);
+            
+            // 清除草稿，因為已保存
+            session.removeAttribute("editor_draft_" + editor);
+            
             return ResponseEntity.ok("Content saved successfully!");
         } catch (RuntimeException e) {
-            // If content doesn't exist yet, just save it
             if (e.getMessage().contains("No content found")) {
                 String action = "CREATE";
                 
                 if(!isUserLoggedIn(session, action, module)){
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not logged in");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorCode.USER_NOT_LOGGED_IN.getMessage());
                 }
                 
-                // Save the content using the service method
+                // 保存新內容
                 editContentService.saveContent(editorContent);
-                return ResponseEntity.ok("Content saved successfully!");
+                return ResponseEntity.ok("Content created successfully!");
             }
             
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
