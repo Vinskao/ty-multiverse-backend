@@ -637,6 +637,234 @@ graph LR
     end
 ```
 
+## 設計模式相互關係詳解
+
+### 1. 策略模式 + 裝飾器模式的協作
+```mermaid
+classDiagram
+    class DamageStrategy {
+        <<interface>>
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class DefaultDamageStrategy {
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class DamageStrategyDecorator {
+        <<abstract>>
+        -DamageStrategy delegate
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class BonusAttributeDamageDecorator {
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class StateEffectDamageDecorator {
+        +@Primary
+        +calculateDamage(People, List~Weapon~) int
+    }
+    
+    class WeaponDamageService {
+        -DamageStrategy damageStrategy
+        +calculateTotalDamage(String) int
+    }
+    
+    DamageStrategy <|.. DefaultDamageStrategy
+    DamageStrategy <|.. DamageStrategyDecorator
+    DamageStrategyDecorator <|-- BonusAttributeDamageDecorator
+    DamageStrategyDecorator <|-- StateEffectDamageDecorator
+    BonusAttributeDamageDecorator --> DefaultDamageStrategy
+    StateEffectDamageDecorator --> BonusAttributeDamageDecorator
+    WeaponDamageService --> DamageStrategy
+```
+
+### 2. 責任鏈模式 + 工廠模式的整合
+```mermaid
+classDiagram
+    class SpringContainer {
+        +ApplicationContext
+        +BeanFactory
+    }
+    
+    class GlobalExceptionHandler {
+        -List~ApiExceptionHandler~ handlerChain
+        +handleGlobalException(Exception)
+    }
+    
+    class ApiExceptionHandler {
+        <<interface>>
+        +canHandle(Exception) boolean
+        +handle(Exception, HttpServletRequest) ResponseEntity
+    }
+    
+    class BusinessApiExceptionHandler {
+        +@Order(0)
+    }
+    
+    class DataIntegrityApiExceptionHandler {
+        +@Order(1)
+    }
+    
+    class ValidationApiExceptionHandler {
+        +@Order(2)
+    }
+    
+    class DefaultApiExceptionHandler {
+        +@Order(Integer.MAX_VALUE)
+    }
+    
+    SpringContainer --> GlobalExceptionHandler
+    SpringContainer --> BusinessApiExceptionHandler
+    SpringContainer --> DataIntegrityApiExceptionHandler
+    SpringContainer --> ValidationApiExceptionHandler
+    SpringContainer --> DefaultApiExceptionHandler
+    GlobalExceptionHandler --> ApiExceptionHandler
+```
+
+### 3. 模板方法模式 + 單例模式的結合
+```mermaid
+classDiagram
+    class BaseService {
+        <<abstract>>
+        +getConnection() Connection
+        +executeWithAutoClose() T
+        +executeInTransaction() T
+    }
+    
+    class PeopleService {
+        +getAllPeople() List~People~
+        +updatePerson(People) People
+    }
+    
+    class WeaponService {
+        +getAllWeapons() List~Weapon~
+        +saveWeapon(Weapon) Weapon
+    }
+    
+    class GalleryService {
+        +getAllGalleries() List~Gallery~
+        +saveGallery(Gallery) Gallery
+    }
+    
+    BaseService <|-- PeopleService
+    BaseService <|-- WeaponService
+    BaseService <|-- GalleryService
+```
+
+### 4. 代理模式 + 觀察者模式的協作
+```mermaid
+classDiagram
+    class SpringAOP {
+        +@Transactional
+        +@Around
+        +@Before
+        +@After
+    }
+    
+    class WebSocketUtil {
+        +sendMessageForAll(String)
+        +addSession(String, Session)
+        +removeSession(String)
+    }
+    
+    class MetricsWSController {
+        +@Scheduled
+        +exportMetrics()
+    }
+    
+    class LivestockWSController {
+        +broadcastLivestockUpdate(Livestock)
+    }
+    
+    SpringAOP --> WebSocketUtil
+    WebSocketUtil --> MetricsWSController
+    WebSocketUtil --> LivestockWSController
+```
+
+### 5. 適配器模式 + Repository 模式的整合
+```mermaid
+classDiagram
+    class BaseRepository {
+        <<interface>>
+        +findAll() List~T~
+        +save(T) T
+        +deleteById(ID)
+    }
+    
+    class IntegerPkRepository {
+        +findById(Integer) Optional~T~
+    }
+    
+    class StringPkRepository {
+        +findById(String) Optional~T~
+    }
+    
+    class PeopleRepository {
+        +findByName(String) Optional~People~
+    }
+    
+    class WeaponRepository {
+        +findByType(String) List~Weapon~
+    }
+    
+    BaseRepository <|-- IntegerPkRepository
+    BaseRepository <|-- StringPkRepository
+    IntegerPkRepository <|-- PeopleRepository
+    StringPkRepository <|-- WeaponRepository
+```
+
+### 6. 設計模式的層級關係
+```mermaid
+graph TB
+    subgraph "表現層 (Presentation)"
+        A[Controller + WebSocket + AOP]
+    end
+    
+    subgraph "業務層 (Business)"
+        B[Service + Strategy + Decorator]
+    end
+    
+    subgraph "數據層 (Data)"
+        C[Repository + Adapter + Template]
+    end
+    
+    subgraph "基礎層 (Infrastructure)"
+        D[Factory + Singleton + Chain]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
+```
+
+### 7. 模式協作流程
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Controller
+    participant Service
+    participant Repository
+    participant Database
+    participant WebSocket
+    
+    Client->>Controller: HTTP Request
+    Controller->>Service: 業務邏輯
+    Service->>Repository: 數據操作
+    Repository->>Database: SQL Query
+    Database-->>Repository: Result
+    Repository-->>Service: Entity
+    Service-->>Controller: DTO
+    Controller-->>Client: Response
+    
+    Note over Service,WebSocket: AOP 代理
+    Service->>WebSocket: 事件通知
+    WebSocket-->>Client: 實時更新
+```
+
+
+
 ## 文檔與工具
 
 ### Swagger UI
