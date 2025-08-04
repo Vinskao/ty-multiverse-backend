@@ -86,7 +86,7 @@ public class MetricsWSController {
             logger.error("後端 URL 配置錯誤: {}", backendUrl);
             throw new IllegalStateException("必須配置正確的後端 URL，當前配置: " + backendUrl);
         }
-        this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
+        this.actuatorMetricsUrl = backendUrl + "/tymb/actuator/metrics";
         logger.info("Actuator 度量 URL 初始化為: {}", actuatorMetricsUrl);
     }
 

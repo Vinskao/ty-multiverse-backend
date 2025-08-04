@@ -288,7 +288,7 @@ classDiagram
     WeaponDamageService --> DamageStrategy
 ```
 
-### 6. 設計模式與工廠架構
+### 6. Spring IoC 工廠模式架構
 ```mermaid
 classDiagram
     class SpringContainer {
