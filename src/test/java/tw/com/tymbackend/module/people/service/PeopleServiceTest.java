@@ -112,6 +112,7 @@ class PeopleServiceTest {
     @Test
     void updatePerson_Success() {
         // Arrange
+        when(peopleRepository.findById("Test Character")).thenReturn(Optional.of(testPeople));
         when(peopleRepository.save(any(People.class))).thenReturn(testPeople);
 
         // Act
@@ -120,6 +121,7 @@ class PeopleServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals(testPeople, result);
+        verify(peopleRepository, times(1)).findById("Test Character");
         verify(peopleRepository, times(1)).save(testPeople);
     }
 

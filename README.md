@@ -6,11 +6,11 @@
 ### 1. Redis Session 架構
 ```mermaid
 classDiagram
-    class RedisSessionConfig {
+    class RedisConfig {
         +@Configuration
         +@EnableRedisHttpSession
-        +configureRedisConnectionFactory()
-        +configureRedisTemplate()
+        +redisConnectionFactory()
+        +redisTemplate()
         +configureSessionRepository()
     }
     
@@ -42,19 +42,27 @@ classDiagram
         +SessionConcurrency
     }
     
-    RedisSessionConfig --> RedisConnectionFactory
-    RedisSessionConfig --> RedisTemplate
-    RedisSessionConfig --> SessionRepository
+    RedisConfig --> RedisConnectionFactory
+    RedisConfig --> RedisTemplate
+    RedisConfig --> SessionRepository
     SessionRepository --> SessionManagement
 ```
 
-### 2. 核心架構
+### 2. Spring Boot 核心架構
 ```mermaid
 classDiagram
-    class ApplicationCore {
-        +IoC Container
-        +Bean Management
-        +Lifecycle Control
+    class SpringBootApplication {
+        +@SpringBootApplication
+        +@ComponentScan
+        +@EnableAutoConfiguration
+        +@Configuration
+    }
+    
+    class IoCContainer {
+        +ApplicationContext
+        +BeanFactory
+        +DefaultListableBeanFactory
+        +AnnotationConfigApplicationContext
     }
     
     class DependencyInjection {
@@ -62,6 +70,8 @@ classDiagram
         +@Qualifier
         +@Primary
         +Constructor Injection
+        +Field Injection
+        +Setter Injection
     }
     
     class BeanManagement {
@@ -69,6 +79,19 @@ classDiagram
         +Prototype Scope
         +Request Scope
         +Session Scope
+        +@Component
+        +@Service
+        +@Repository
+        +@Controller
+    }
+    
+    class ConfigurationManagement {
+        +@Configuration
+        +@Bean
+        +@ComponentScan
+        +@PropertySource
+        +@Profile
+        +@Conditional
     }
     
     class AspectOriented {
@@ -77,19 +100,14 @@ classDiagram
         +@Around
         +@Before
         +@After
+        +@Transactional
     }
     
-    class ConfigurationManagement {
-        +@Configuration
-        +@Bean
-        +@ComponentScan
-        +@PropertySource
-    }
-    
-    ApplicationCore --> DependencyInjection
-    ApplicationCore --> BeanManagement
-    ApplicationCore --> AspectOriented
-    ApplicationCore --> ConfigurationManagement
+    SpringBootApplication --> IoCContainer
+    IoCContainer --> DependencyInjection
+    IoCContainer --> BeanManagement
+    IoCContainer --> ConfigurationManagement
+    IoCContainer --> AspectOriented
 ```
 
 ### 3. 領域驅動設計 (DDD) 架構
@@ -102,6 +120,9 @@ classDiagram
         +API Documentation
         +Authentication
         +Authorization
+        +Guardian.java
+        +KeycloakController.java
+        +MetricsWSController.java
     }
     
     class ApplicationLayer {
@@ -111,6 +132,7 @@ classDiagram
         +Event Handlers
         +Transaction Management
         +Orchestration
+        +ScheduledTaskService.java
     }
     
     class DomainLayer {
@@ -121,6 +143,10 @@ classDiagram
         +Domain Events
         +Business Rules
         +Repository Interfaces
+        +People.java
+        +Weapon.java
+        +Gallery.java
+        +Livestock.java
     }
     
     class InfrastructureLayer {
@@ -130,6 +156,10 @@ classDiagram
         +Message Brokers
         +File Storage
         +Caching
+        +PeopleRepository.java
+        +WeaponRepository.java
+        +GalleryRepository.java
+        +LivestockRepository.java
     }
     
     class CrossCuttingConcerns {
@@ -139,6 +169,9 @@ classDiagram
         +Error Handling
         +Monitoring
         +Configuration
+        +GlobalExceptionHandler.java
+        +SecurityConfig.java
+        +MetricsConfig.java
     }
     
     PresentationLayer --> ApplicationLayer
@@ -150,7 +183,68 @@ classDiagram
     CrossCuttingConcerns --> InfrastructureLayer
 ```
 
-### 4. 傷害計算策略模式架構
+### 4. 模組架構圖
+```mermaid
+classDiagram
+    class CoreModule {
+        +config/
+        +controller/
+        +service/
+        +exception/
+        +util/
+    }
+    
+    class PeopleModule {
+        +controller/PeopleController.java
+        +service/PeopleService.java
+        +service/WeaponDamageService.java
+        +dao/PeopleRepository.java
+        +domain/vo/People.java
+        +strategy/DamageStrategy.java
+    }
+    
+    class WeaponModule {
+        +controller/WeaponController.java
+        +service/WeaponService.java
+        +dao/WeaponRepository.java
+        +domain/vo/Weapon.java
+    }
+    
+    class GalleryModule {
+        +controller/GalleryController.java
+        +service/GalleryService.java
+        +dao/GalleryRepository.java
+        +domain/vo/Gallery.java
+    }
+    
+    class LivestockModule {
+        +controller/LivestockController.java
+        +service/LivestockService.java
+        +dao/LivestockRepository.java
+        +domain/vo/Livestock.java
+    }
+    
+    class CKEditorModule {
+        +controller/FileUploadController.java
+        +service/EditContentService.java
+        +dao/EditContentRepository.java
+        +domain/vo/EditContentVO.java
+    }
+    
+    class DeckOfCardsModule {
+        +controller/BlackjackController.java
+    }
+    
+    CoreModule --> PeopleModule
+    CoreModule --> WeaponModule
+    CoreModule --> GalleryModule
+    CoreModule --> LivestockModule
+    CoreModule --> CKEditorModule
+    CoreModule --> DeckOfCardsModule
+    PeopleModule --> WeaponModule
+```
+
+### 5. 傷害計算策略模式架構
 ```mermaid
 classDiagram
     class DamageStrategy {
@@ -194,7 +288,7 @@ classDiagram
     WeaponDamageService --> DamageStrategy
 ```
 
-### 5. 設計模式與工廠架構
+### 6. 設計模式與工廠架構
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -231,7 +325,7 @@ classDiagram
     BeanLifecycle --> SingletonBeans
 ```
 
-### 6. IoC/AOP 架構
+### 7. IoC/AOP 架構
 ```mermaid
 classDiagram
     class SpringContainer {
@@ -296,11 +390,11 @@ sequenceDiagram
     Backend-->>Client: API 響應
 ```
 
-## 錯誤處理架構
+## 錯誤處理架構 (Chain of Responsibility Pattern)
 ```mermaid
 classDiagram
     class ErrorHandlingFramework {
-        +Global Exception Handler
+        +Chain of Responsibility
         +Error Response Builder
         +Exception Mapper
         +Error Logger
@@ -350,18 +444,43 @@ classDiagram
     }
     
     class GlobalExceptionHandler {
-        -Logger logger
-        -ErrorResponseBuilder responseBuilder
-        +handleBusinessException()
-        +handleEntityNotFoundException()
-        +handleDataIntegrityViolationException()
-        +handleOptimisticLockingFailureException()
-        +handleMethodArgumentNotValidException()
-        +handleConstraintViolationException()
-        +handleBindException()
-        +handleGlobalException()
-        +logException()
-        +createErrorResponse()
+        -List~ApiExceptionHandler~ handlerChain
+        +handleGlobalException(Exception)
+        +handleMethodArgumentNotValid()
+        +handleMaxUploadSizeExceededException()
+    }
+    
+    class ApiExceptionHandler {
+        <<interface>>
+        +canHandle(Exception) boolean
+        +handle(Exception, HttpServletRequest) ResponseEntity~ErrorResponse~
+    }
+    
+    class BusinessApiExceptionHandler {
+        +@Order(0)
+        +canHandle(BusinessException)
+        +handle(BusinessException)
+    }
+    
+    class DataIntegrityApiExceptionHandler {
+        +@Order(1)
+        +canHandle(DataIntegrityViolationException)
+        +canHandle(OptimisticLockingFailureException)
+        +handle(DataIntegrityViolationException)
+        +handle(OptimisticLockingFailureException)
+    }
+    
+    class ValidationApiExceptionHandler {
+        +@Order(2)
+        +canHandle(MethodArgumentNotValidException)
+        +canHandle(ConstraintViolationException)
+        +handle(ValidationException)
+    }
+    
+    class DefaultApiExceptionHandler {
+        +@Order(Integer.MAX_VALUE)
+        +canHandle(Exception)
+        +handle(Exception)
     }
     
     class ExceptionMapper {
@@ -376,12 +495,55 @@ classDiagram
     ErrorHandlingFramework --> BusinessException
     ErrorHandlingFramework --> ErrorResponse
     ErrorHandlingFramework --> GlobalExceptionHandler
-    ErrorHandlingFramework --> ExceptionMapper
+    ErrorHandlingFramework --> ApiExceptionHandler
+    GlobalExceptionHandler --> ApiExceptionHandler
+    ApiExceptionHandler <|.. BusinessApiExceptionHandler
+    ApiExceptionHandler <|.. DataIntegrityApiExceptionHandler
+    ApiExceptionHandler <|.. ValidationApiExceptionHandler
+    ApiExceptionHandler <|.. DefaultApiExceptionHandler
     BusinessException --> ErrorCode
     ErrorResponse --> ErrorCode
     GlobalExceptionHandler --> BusinessException
     GlobalExceptionHandler --> ErrorResponse
     GlobalExceptionHandler --> ExceptionMapper
+```
+
+#### 2. 處理流程
+
+```mermaid
+sequenceDiagram
+    participant Client
+    participant GlobalExceptionHandler
+    participant BusinessHandler
+    participant DataIntegrityHandler
+    participant ValidationHandler
+    participant DefaultHandler
+    
+    Client->>GlobalExceptionHandler: 拋出異常
+    GlobalExceptionHandler->>BusinessHandler: canHandle()?
+    alt 業務異常
+        BusinessHandler-->>GlobalExceptionHandler: true
+        BusinessHandler->>GlobalExceptionHandler: handle()
+        GlobalExceptionHandler-->>Client: ErrorResponse
+    else 資料完整性異常
+        BusinessHandler-->>GlobalExceptionHandler: false
+        GlobalExceptionHandler->>DataIntegrityHandler: canHandle()?
+        DataIntegrityHandler-->>GlobalExceptionHandler: true
+        DataIntegrityHandler->>GlobalExceptionHandler: handle()
+        GlobalExceptionHandler-->>Client: ErrorResponse
+    else 驗證異常
+        DataIntegrityHandler-->>GlobalExceptionHandler: false
+        GlobalExceptionHandler->>ValidationHandler: canHandle()?
+        ValidationHandler-->>GlobalExceptionHandler: true
+        ValidationHandler->>GlobalExceptionHandler: handle()
+        GlobalExceptionHandler-->>Client: ErrorResponse
+    else 其他異常
+        ValidationHandler-->>GlobalExceptionHandler: false
+        GlobalExceptionHandler->>DefaultHandler: canHandle()?
+        DefaultHandler-->>GlobalExceptionHandler: true
+        DefaultHandler->>GlobalExceptionHandler: handle()
+        GlobalExceptionHandler-->>Client: ErrorResponse
+    end
 ```
 
 ## 監控與健康檢查
@@ -391,12 +553,22 @@ classDiagram
         +/health
         +/metrics
         +/prometheus
+        +/info
+        +/loggers
+        +/env
     }
     
     class MetricsConfig {
         +configureMetrics()
         +MeterRegistry
         +DataSource
+    }
+    
+    class MetricsWSController {
+        +@Scheduled
+        +exportMetrics()
+        +WebSocket broadcast
+        +DistributedLockUtil
     }
     
     class HikariCPMetrics {
@@ -408,6 +580,7 @@ classDiagram
     
     ActuatorEndpoints --> MetricsConfig
     MetricsConfig --> HikariCPMetrics
+    MetricsWSController --> ActuatorEndpoints
 ```
 
 ## 單元測試架構
@@ -426,6 +599,10 @@ classDiagram
     class ServiceTests {
         +@ExtendWith(MockitoExtension)
         +ServiceTest
+        +PeopleServiceTest
+        +WeaponServiceTest
+        +GalleryServiceTest
+        +LivestockServiceTest
     }
     
     class ControllerTests {
@@ -441,12 +618,33 @@ classDiagram
 ## CI/CD Pipeline
 ```mermaid
 graph LR
-    A[GitHub Repository] --> B[Clone and Setup]
-    B --> C[Build]
-    C --> D[Test]
+    A[Jenkins Pipeline] --> B[Clone Repository]
+    B --> C[Build with Maven]
+    C --> D[Run Tests]
     D --> E[Build Docker Image with BuildKit]
     E --> F[Debug Environment]
     F --> G[Deploy to Kubernetes]
+    
+    subgraph "Jenkins Stages"
+        B
+        C
+        D
+        E
+        F
+        G
+    end
+    
+    subgraph "Docker Build"
+        E1[Multi-stage build]
+        E2[Optimize layers]
+        E3[Security scan]
+    end
+    
+    subgraph "Kubernetes Deploy"
+        G1[Apply deployment.yaml]
+        G2[Health checks]
+        G3[Rollback if needed]
+    end
 ```
 
 ## 文檔與工具
