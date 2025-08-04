@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
+import tw.com.tymbackend.core.exception.ErrorCode;
 
 /**
  * Keycloak 控制器
@@ -215,11 +216,11 @@ public class KeycloakController {
             restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 
             // 若成功則回傳 200 OK 與訊息
-            return ResponseEntity.ok("登出成功");
+            return ResponseEntity.ok(ErrorCode.LOGOUT_SUCCESS.getMessage());
         } catch (Exception e) {
             // 若發生錯誤，記錄錯誤訊息並回傳 500 錯誤碼與錯誤訊息
             log.error("登出失敗", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("登出失敗");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCode.LOGOUT_FAILED.getMessage());
         }
     }
 
@@ -262,7 +263,7 @@ public class KeycloakController {
             );
             Map<String, Object> result = introspectResponse.getBody();
             if (result == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 內省失敗");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorCode.TOKEN_INTROSPECT_FAILED.getMessage());
             }
     
             // Step 2: 如果 token 還有效，直接回傳
@@ -288,7 +289,7 @@ public class KeycloakController {
                 );
                 Map<String, Object> refreshResult = refreshResponse.getBody();
                 if (refreshResult == null) {
-                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 刷新失敗");
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorCode.TOKEN_REFRESH_FAILED.getMessage());
                 }
     
                 if (refreshResult.get("access_token") != null) {
@@ -298,10 +299,10 @@ public class KeycloakController {
             }
     
             // Step 4: 無法刷新，回傳 UNAUTHORIZED
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Token 無效或刷新失敗");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ErrorCode.TOKEN_INVALID_OR_REFRESH_FAILED.getMessage());
         } catch (Exception e) {
             log.error("內省失敗", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Token 檢查失敗");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorCode.TOKEN_CHECK_FAILED.getMessage());
         }
     }
 }
