@@ -396,7 +396,6 @@ classDiagram
     class ErrorHandlingFramework {
         +Chain of Responsibility
         +Error Response Builder
-        +Exception Mapper
         +Error Logger
     }
     
@@ -483,14 +482,6 @@ classDiagram
         +handle(Exception)
     }
     
-    class ExceptionMapper {
-        +mapToErrorCode(Exception)
-        +mapToHttpStatus(Exception)
-        +mapToErrorMessage(Exception)
-        +isBusinessException(Exception)
-        +isSystemException(Exception)
-    }
-    
     ErrorHandlingFramework --> ErrorCode
     ErrorHandlingFramework --> BusinessException
     ErrorHandlingFramework --> ErrorResponse
@@ -505,7 +496,6 @@ classDiagram
     ErrorResponse --> ErrorCode
     GlobalExceptionHandler --> BusinessException
     GlobalExceptionHandler --> ErrorResponse
-    GlobalExceptionHandler --> ExceptionMapper
 ```
 
 #### 2. 處理流程

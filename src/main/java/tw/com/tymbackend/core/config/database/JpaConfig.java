@@ -3,7 +3,6 @@ package tw.com.tymbackend.core.config.database;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import tw.com.tymbackend.core.repository.StringPkRepositoryImpl;
 
 /**
  * JPA 配置類別，用於多資料來源配置
@@ -25,12 +24,12 @@ import tw.com.tymbackend.core.repository.StringPkRepositoryImpl;
 @EnableTransactionManagement
 @EnableJpaRepositories(
     basePackages = {
-        "tw.com.tymbackend.module.ckeditor.dao"
+        "tw.com.tymbackend.module.livestock.dao",
+        "tw.com.tymbackend.module.ckeditor.dao",
+        "tw.com.tymbackend.module.gallery.dao"
     },
     entityManagerFactoryRef = "primaryEntityManagerFactory",
-    transactionManagerRef = "primaryTransactionManager",
-    repositoryImplementationPostfix = "Impl",
-    repositoryBaseClass = StringPkRepositoryImpl.class
+    transactionManagerRef = "primaryTransactionManager"
 )
 public class JpaConfig {
     // Primary datasource configuration for non-people/weapon modules
