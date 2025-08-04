@@ -1,5 +1,9 @@
 project:
   env: '@project.env@'
+
+app:
+  url:
+    address: 'http://localhost:8080'
 spring:
   data:
     redis:
