@@ -69,8 +69,11 @@ CREATE INDEX idx_people_army_id ON people(army_id);
 CREATE INDEX idx_people_dept_id ON people(dept_id);
 
 -- Create indexes for weapon table
+-- 最重要的索引：支援前端API /weapons/owner/${ownerName} 和傷害計算
 CREATE INDEX idx_weapon_owner ON weapon(owner);
+-- 支援範圍查詢：WeaponService.findByBaseDamageRange()
 CREATE INDEX idx_weapon_base_damage ON weapon(base_damage);
+-- 支援加成傷害查詢
 CREATE INDEX idx_weapon_bonus_damage ON weapon(bonus_damage);
 
 -- Create vector indexes for embedding search
@@ -107,7 +110,6 @@ COMMENT ON TABLE weapon IS 'Weapon table with vector embedding support for seman
 COMMENT ON COLUMN weapon.embedding IS 'Vector embedding of all weapon fields for semantic search';
 COMMENT ON COLUMN weapon.created_at IS 'Timestamp when the record was created';
 COMMENT ON COLUMN weapon.updated_at IS 'Timestamp when the record was last updated'; 
-
 
 -- 強制不得為 NULL，防止後續異常新增
 ALTER TABLE people
