@@ -18,6 +18,10 @@ public interface WeaponRepository extends JpaRepository<Weapon, String>, JpaSpec
     
     List<Weapon> findByOwner(String owner);
     
+    // 新增：批量查詢多個擁有者的武器，避免N+1問題
+    @Query("SELECT w FROM Weapon w WHERE w.owner IN :owners")
+    List<Weapon> findByOwnersIn(@Param("owners") List<String> owners);
+    
     List<Weapon> findByBaseDamageBetween(Integer minDamage, Integer maxDamage);
     
     List<Weapon> findByAttributes(String attributes);

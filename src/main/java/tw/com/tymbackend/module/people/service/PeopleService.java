@@ -318,9 +318,8 @@ public class PeopleService {
      * @return 角色名稱列表
      */
     public List<String> getAllPeopleNames() {
-        return peopleRepository.findAll().stream()
-            .map(People::getName)
-            .collect(Collectors.toList());
+        // ✅ 優化：直接查詢名稱，避免載入所有欄位
+        return peopleRepository.findAllNames();
     }
 
     /**
@@ -330,11 +329,8 @@ public class PeopleService {
      * @return 符合條件的角色列表
      */
     public List<People> findByNames(List<String> names) {
-        return names.stream()
-            .map(this::findByName)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
-            .collect(Collectors.toList());
+        // ✅ 優化：使用批量查詢，避免N+1問題
+        return peopleRepository.findByNamesIn(names);
     }
 
     /**
@@ -344,9 +340,10 @@ public class PeopleService {
      * @return 具有匹配屬性的角色列表
      */
     public List<People> findByAttributes(List<String> attributes) {
-        return peopleRepository.findAll().stream()
-            .filter(person -> person.getAttributes() != null && 
-                   attributes.stream().anyMatch(attr -> person.getAttributes().contains(attr)))
+        // ✅ 優化：使用資料庫層級過濾，避免載入所有資料
+        return attributes.stream()
+            .flatMap(attr -> peopleRepository.findByAttributeContaining(attr).stream())
+            .distinct() // 移除重複結果
             .collect(Collectors.toList());
     }
 }
