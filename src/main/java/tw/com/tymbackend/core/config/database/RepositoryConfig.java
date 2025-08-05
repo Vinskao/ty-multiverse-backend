@@ -14,8 +14,8 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
 @EnableJpaRepositories(
     basePackages = {
         "tw.com.tymbackend.module.livestock.dao",
-        "tw.com.tymbackend.module.ckeditor.dao", 
-        "tw.com.tymbackend.module.gallery.dao"
+        "tw.com.tymbackend.module.ckeditor.dao"
+        // 移除 gallery.dao，避免與其他配置衝突
     },
     entityManagerFactoryRef = "primaryEntityManagerFactory",
     transactionManagerRef = "primaryTransactionManager",
