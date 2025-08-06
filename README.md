@@ -153,6 +153,95 @@ classDiagram
     CacheStrategy --> DistributedLock
 ```
 
+### 4.1. Redis 指令架構
+```mermaid
+classDiagram
+    class RedisCommands {
+        +String Commands
+        +Hash Commands
+        +Script Commands
+        +Key Commands
+    }
+    
+    class StringCommands {
+        +SET (快取存儲)
+        +GET (快取讀取)
+        +SETNX (分布式鎖)
+        +EXPIRE (過期時間)
+    }
+    
+    class HashCommands {
+        +HSET (Session 存儲)
+        +HGET (Session 讀取)
+        +HDEL (Session 刪除)
+        +HGETALL (完整讀取)
+    }
+    
+    class ScriptCommands {
+        +EVAL (Lua 腳本)
+        +GET (腳本內)
+        +DEL (腳本內)
+    }
+    
+    class KeyCommands {
+        +EXISTS (鍵檢查)
+        +TTL (剩餘時間)
+    }
+    
+    RedisCommands --> StringCommands
+    RedisCommands --> HashCommands
+    RedisCommands --> ScriptCommands
+    RedisCommands --> KeyCommands
+```
+
+### 4.2. Lua 腳本流程
+```mermaid
+sequenceDiagram
+    participant App as 應用層
+    participant Redis as Redis 伺服器
+    participant Lua as Lua 腳本引擎
+    
+    App->>Redis: 執行 Lua 腳本
+    Note over Redis: 分布式鎖釋放腳本
+    Redis->>Lua: 載入腳本
+    Lua->>Redis: redis.call('get', KEYS[1])
+    Redis-->>Lua: 返回鎖值
+    Lua->>Lua: 比較鎖值
+    alt 鎖值匹配
+        Lua->>Redis: redis.call('del', KEYS[1])
+        Redis-->>Lua: 刪除成功
+        Lua-->>App: 返回 1
+    else 鎖值不匹配
+        Lua-->>App: 返回 0
+    end
+```
+
+### 4.3. Redis 數據結構使用
+```mermaid
+graph TB
+    subgraph "String 類型"
+        A[分布式鎖] --> A1[SETNX lock:key value]
+        A --> A2[GET lock:key]
+        A --> A3[DEL lock:key]
+        B[快取機制] --> B1[SET cache:key value]
+        B --> B2[GET cache:key]
+        B --> B3[EXPIRE cache:key time]
+    end
+    
+    subgraph "Hash 類型"
+        C[Session 存儲] --> C1[HSET session:id field value]
+        C --> C2[HGET session:id field]
+        C --> C3[HDEL session:id field]
+        C --> C4[HGETALL session:id]
+    end
+    
+    subgraph "腳本執行"
+        D[Lua 腳本] --> D1[EVAL script keys args]
+        D --> D2[原子性操作]
+        D --> D3[複雜邏輯處理]
+    end
+```
+
 ### 5. 連線池架構
 ```mermaid
 classDiagram
