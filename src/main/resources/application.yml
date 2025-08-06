@@ -35,17 +35,30 @@ spring:
     username: '@SPRING_DATASOURCE_USERNAME@'
     password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      idle-timeout: 300000
-      pool-name: HikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      leak-detection-threshold: 120000
-      validation-timeout: 5000
-      connection-test-query: SELECT 1
-      auto-commit: false
-      register-mbeans: true
+      # 連線池大小配置
+      minimum-idle: 10                    # 增加最小閒置連線數
+      maximum-pool-size: 50               # 增加最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 600000                # 閒置連線超時 (10分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線驗證配置
+      validation-timeout: 5000            # 驗證超時 (5秒)
+      connection-test-query: SELECT 1     # 連線測試查詢
+      
+      # 連線洩漏檢測
+      leak-detection-threshold: 60000     # 連線洩漏檢測 (1分鐘)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: PrimaryHikariCP          # 連線池名稱
+      
+      # 新增：連線池監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
   # People datasource configuration
   people-datasource:
     driver-class-name: org.postgresql.Driver
@@ -53,17 +66,30 @@ spring:
     username: '@PEOPLE_DATASOURCE_USERNAME@'
     password: '@PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      idle-timeout: 300000
-      pool-name: PeopleHikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      leak-detection-threshold: 120000
-      validation-timeout: 5000
-      connection-test-query: SELECT 1
-      auto-commit: false
-      register-mbeans: true
+      # 連線池大小配置 (較小的池，因為查詢較少)
+      minimum-idle: 5                     # 最小閒置連線數
+      maximum-pool-size: 15               # 最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線驗證配置
+      validation-timeout: 5000            # 驗證超時 (5秒)
+      connection-test-query: SELECT 1     # 連線測試查詢
+      
+      # 連線洩漏檢測
+      leak-detection-threshold: 60000     # 連線洩漏檢測 (1分鐘)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: PeopleHikariCP           # 連線池名稱
+      
+      # 新增：連線池監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
 
 # 定時任務配置
 scheduling:
