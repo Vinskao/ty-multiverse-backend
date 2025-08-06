@@ -138,9 +138,7 @@ public class PeopleImageService {
      * @return 符合條件的角色頭像列表
      */
     public List<PeopleImage> findByCodeNames(List<String> codeNames) {
-        return codeNames.stream()
-            .map(peopleImageRepository::findByCodeName)
-            .filter(java.util.Objects::nonNull)
-            .collect(java.util.stream.Collectors.toList());
+        // ✅ 優化：使用批量查詢，避免N+1問題
+        return peopleImageRepository.findByCodeNamesIn(codeNames);
     }
 }

@@ -40,13 +40,26 @@ spring:
     username: '@spring.datasource.username@'
     password: '@spring.datasource.password@'
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 20
-      idle-timeout: 30000
-      pool-name: HikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      leak-detection-threshold: 2000
+      # 開發環境連線池配置 (較小規模)
+      minimum-idle: 5                     # 最小閒置連線數
+      maximum-pool-size: 20               # 最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線洩漏檢測 (開發環境較嚴格)
+      leak-detection-threshold: 2000      # 連線洩漏檢測 (2秒)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: LocalHikariCP            # 連線池名稱
+      
+      # 開發環境監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
   # People datasource configuration
   people-datasource:
     driver-class-name: org.postgresql.Driver
@@ -54,13 +67,26 @@ spring:
     username: '@spring.people-datasource.username@'
     password: '@spring.people-datasource.password@'
     hikari:
-      minimum-idle: 5
-      maximum-pool-size: 10
-      idle-timeout: 30000
-      pool-name: PeopleHikariCP
-      max-lifetime: 1800000
-      connection-timeout: 30000
-      leak-detection-threshold: 2000
+      # 開發環境 People 連線池配置 (較小規模)
+      minimum-idle: 3                     # 最小閒置連線數
+      maximum-pool-size: 10               # 最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線洩漏檢測 (開發環境較嚴格)
+      leak-detection-threshold: 2000      # 連線洩漏檢測 (2秒)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: LocalPeopleHikariCP      # 連線池名稱
+      
+      # 開發環境監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
   jpa:
     show-sql: true
     hibernate:

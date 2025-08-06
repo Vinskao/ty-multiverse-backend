@@ -1,6 +1,7 @@
 package tw.com.tymbackend.core.config.cache;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -13,8 +14,10 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 /**
  * Redis配置類 - 僅用於分布式鎖和工具類
  * Session 配置已移至 SessionConfig.java
+ * 快取配置已啟用，支援 @Cacheable 註解
  */
 @Configuration
+@EnableCaching
 public class RedisConfig {
 
     @Value("${spring.data.redis.host:127.0.0.1}")
