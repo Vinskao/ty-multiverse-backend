@@ -48,6 +48,12 @@ public class SecurityConfig {
     @Value("${keycloak.realm}")
     private String keycloakRealm;
 
+    private final ObjectMapper objectMapper;
+
+    public SecurityConfig(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
+
     /**
      * 配置安全過濾器鏈 - 混合認證策略
      * 
@@ -134,7 +140,6 @@ public class SecurityConfig {
                 authException.getMessage()
             );
             
-            ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         };
     }
@@ -158,7 +163,6 @@ public class SecurityConfig {
                 accessDeniedException.getMessage()
             );
             
-            ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         };
     }
@@ -182,7 +186,6 @@ public class SecurityConfig {
                 "您已成功登出系統"
             );
             
-            ObjectMapper objectMapper = new ObjectMapper();
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
         };
     }

@@ -204,6 +204,12 @@
             <artifactId>spring-aspects</artifactId>
         </dependency>
 
+        <!-- Jackson JSR310 Support -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+
         <!-- Spring Boot Actuator -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
