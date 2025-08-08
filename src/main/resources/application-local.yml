@@ -131,6 +131,14 @@ logging:
     'org.springframework.security.oauth2.server.resource.authentication': DEBUG
     'org.springframework.security.oauth2.server.resource.web': DEBUG
 
+# 定時任務配置
+scheduling:
+  tasks:
+    # 度量數據導出 - 每30秒執行一次
+    metrics-export:
+      fixed-rate: 30000 # 毫秒
+      lock-timeout: 10 # 秒
+
 server:
   port: 8080
   servlet:

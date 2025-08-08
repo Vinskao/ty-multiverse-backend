@@ -10,6 +10,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -86,7 +92,8 @@ public class MetricsWSController {
             logger.error("後端 URL 配置錯誤: {}", backendUrl);
             throw new IllegalStateException("必須配置正確的後端 URL，當前配置: " + backendUrl);
         }
-        this.actuatorMetricsUrl = backendUrl + "/tymb/actuator/metrics";
+        // 修復：backendUrl 已經包含 /tymb，直接加上 /actuator/metrics
+        this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
         logger.info("Actuator 度量 URL 初始化為: {}", actuatorMetricsUrl);
     }
 
@@ -127,13 +134,13 @@ public class MetricsWSController {
      */
     private String performMetricsExport() {
         try {
-            // 定義要導出的度量指標
+            // 定義要導出的度量指標（使用實際可用的 metrics 名稱）
             String[] metrics = {
                 "jvm.memory.used",
                 "jvm.memory.max", 
-                "system.cpu.usage",
-                "http.server.requests",
-                "hikaricp.connections"
+                "process.cpu.usage",
+                "hikaricp.connections.active",
+                "system.cpu.usage"
             };
             
             Map<String, Object> metricsData = new HashMap<>();
@@ -153,13 +160,30 @@ public class MetricsWSController {
                         .toUriString();
                     
                     logger.debug("請求度量數據 URL: {}", url);
-                    String response = restTemplate.getForObject(url, String.class);
-                    if (response != null) {
-                        Map<String, Object> metricData = objectMapper.readValue(response, Map.class);
+                    
+                    // 添加請求超時和錯誤處理
+                    HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.APPLICATION_JSON);
+                    HttpEntity<String> entity = new HttpEntity<>(headers);
+                    
+                    ResponseEntity<String> response = restTemplate.exchange(
+                        url, 
+                        HttpMethod.GET, 
+                        entity, 
+                        String.class
+                    );
+                    
+                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                        Map<String, Object> metricData = objectMapper.readValue(response.getBody(), Map.class);
                         metricsData.put(metric, metricData);
+                        logger.debug("成功獲取度量數據: {}", metric);
+                    } else {
+                        logger.warn("度量數據請求失敗: {} - 狀態碼: {}", metric, response.getStatusCode());
                     }
+                } catch (HttpClientErrorException.NotFound e) {
+                    logger.warn("度量端點不存在: {} - {}", metric, e.getMessage());
                 } catch (Exception e) {
-                    logger.warn("獲取度量數據失敗: {}", metric, e);
+                    logger.warn("獲取度量數據失敗: {} - {}", metric, e.getMessage());
                 }
             }
             
