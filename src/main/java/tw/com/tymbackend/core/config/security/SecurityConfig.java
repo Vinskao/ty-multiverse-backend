@@ -51,6 +51,16 @@ public class SecurityConfig {
     @Value("${keycloak.realm}")
     private String keycloakRealm;
 
+    // 允許的來源(以逗號分隔)與使用者代理關鍵字，支援以環境變數/設定覆寫
+    @Value("#{'${security.allowlist.origins:http://localhost:8000/maya-sawa,https://peoplesystem.tatdvsonorth.com/maya-sawa}'.split(',')}")
+    private java.util.List<String> allowlistedOrigins;
+
+    @Value("#{'${security.allowlist.user-agents:maya-sawa}'.split(',')}")
+    private java.util.List<String> allowlistedUserAgents;
+
+    @Value("#{'${security.allowlist.ips:127.0.0.1,::1}'.split(',')}")
+    private java.util.List<String> allowlistedIps;
+
     private final ObjectMapper objectMapper;
 
     public SecurityConfig(ObjectMapper objectMapper) {
@@ -66,12 +76,39 @@ public class SecurityConfig {
      */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        // 建立依來源(Origin/Referer/User-Agent/IP)放行的 RequestMatcher
+        RequestMatcher allowlistedSourceMatcher = request -> {
+            String origin = request.getHeader("Origin");
+            String referer = request.getHeader("Referer");
+            String userAgent = request.getHeader("User-Agent");
+            String xff = request.getHeader("X-Forwarded-For");
+            String remoteAddr = request.getRemoteAddr();
+
+            boolean originAllowed = origin != null && allowlistedOrigins.stream().anyMatch(origin::startsWith);
+            boolean refererAllowed = referer != null && allowlistedOrigins.stream().anyMatch(referer::startsWith);
+            boolean uaAllowed = userAgent != null && allowlistedUserAgents.stream()
+                    .anyMatch(ua -> userAgent.toLowerCase().contains(ua.toLowerCase()));
+
+            boolean ipAllowed = false;
+            if (xff != null && !xff.isBlank()) {
+                String firstHop = xff.split(",")[0].trim();
+                ipAllowed = allowlistedIps.stream().anyMatch(firstHop::equals);
+            }
+            if (!ipAllowed && remoteAddr != null) {
+                ipAllowed = allowlistedIps.stream().anyMatch(remoteAddr::equals);
+            }
+
+            return originAllowed || refererAllowed || uaAllowed || ipAllowed;
+        };
+
         http
                 // 1. CSRF 保護 (已禁用)
                 .csrf(csrf -> csrf.disable())
                 
                 // 2. 授權配置 - 混合策略
                 .authorizeHttpRequests(authorize -> authorize
+                        // 來源允許名單：完全放行 (優先於其他規則)
+                        .requestMatchers(allowlistedSourceMatcher).permitAll()
                         // 公開訪問的靜態資源
                         .requestMatchers("/javadoc/**").permitAll()
                         .requestMatchers("/static/**").permitAll()
