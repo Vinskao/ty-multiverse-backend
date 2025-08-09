@@ -85,16 +85,27 @@ public class MetricsWSController {
     public MetricsWSController(
             MeterRegistry meterRegistry, 
             ApplicationContext applicationContext,
-            @Value("${app.url.address}") String backendUrl) {
+            @Value("${app.url.address:http://localhost:8080/tymb}") String backendUrl) {
         this.applicationContext = applicationContext;
         logger.info("初始化 MetricsWSController，後端 URL: {}", backendUrl);
+        
+        // 確保 backendUrl 是有效的
         if (backendUrl == null || backendUrl.trim().isEmpty() || backendUrl.contains("@")) {
-            logger.error("後端 URL 配置錯誤: {}", backendUrl);
-            throw new IllegalStateException("必須配置正確的後端 URL，當前配置: " + backendUrl);
+            logger.warn("後端 URL 配置無效，使用預設值: {}", backendUrl);
+            backendUrl = "http://localhost:8080/tymb";
         }
-        // 修復：backendUrl 已經包含 /tymb，直接加上 /actuator/metrics
+        
+        // 確保 URL 以 /tymb 結尾
+        if (!backendUrl.endsWith("/tymb")) {
+            if (backendUrl.endsWith("/")) {
+                backendUrl = backendUrl + "tymb";
+            } else {
+                backendUrl = backendUrl + "/tymb";
+            }
+        }
+        
         this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
-        logger.info("Actuator 度量 URL 初始化為: {}", actuatorMetricsUrl);
+        logger.info("Actuator 度量 URL 初始化為: {} (backendUrl: {})", actuatorMetricsUrl, backendUrl);
     }
 
     /**
@@ -134,18 +145,17 @@ public class MetricsWSController {
      */
     private String performMetricsExport() {
         try {
-            // 定義要導出的度量指標（使用實際可用的 metrics 名稱）
+            // 定義要導出的度量指標（只保留確定存在的 metrics）
             String[] metrics = {
                 "jvm.memory.used",
-                "jvm.memory.max", 
                 "process.cpu.usage",
-                "hikaricp.connections.active",
-                "system.cpu.usage"
+                "hikaricp.connections.active"
             };
             
             Map<String, Object> metricsData = new HashMap<>();
             
             for (String metric : metrics) {
+                String url = null;
                 try {
                     // 檢查 URL 是否有效
                     if (actuatorMetricsUrl == null || actuatorMetricsUrl.contains("@")) {
@@ -153,13 +163,10 @@ public class MetricsWSController {
                         continue;
                     }
                     
-                    String url = UriComponentsBuilder
-                        .fromHttpUrl(actuatorMetricsUrl)
-                        .path("/" + metric)
-                        .build()
-                        .toUriString();
+                    // 直接構建 URL，避免 UriComponentsBuilder 的路徑問題
+                    url = actuatorMetricsUrl + "/" + metric;
                     
-                    logger.debug("請求度量數據 URL: {}", url);
+                    logger.info("請求度量數據 URL: {} (actuatorMetricsUrl: {})", url, actuatorMetricsUrl);
                     
                     // 添加請求超時和錯誤處理
                     HttpHeaders headers = new HttpHeaders();
@@ -181,9 +188,11 @@ public class MetricsWSController {
                         logger.warn("度量數據請求失敗: {} - 狀態碼: {}", metric, response.getStatusCode());
                     }
                 } catch (HttpClientErrorException.NotFound e) {
-                    logger.warn("度量端點不存在: {} - {}", metric, e.getMessage());
+                    logger.warn("度量端點不存在: {} - URL: {} - 錯誤: {}", metric, url, e.getMessage());
+                } catch (HttpClientErrorException e) {
+                    logger.warn("HTTP 錯誤: {} - URL: {} - 狀態碼: {} - 錯誤: {}", metric, url, e.getStatusCode(), e.getMessage());
                 } catch (Exception e) {
-                    logger.warn("獲取度量數據失敗: {} - {}", metric, e.getMessage());
+                    logger.warn("獲取度量數據失敗: {} - URL: {} - 錯誤: {}", metric, url, e.getMessage());
                 }
             }
             
