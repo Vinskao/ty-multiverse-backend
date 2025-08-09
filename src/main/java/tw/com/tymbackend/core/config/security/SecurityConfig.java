@@ -24,6 +24,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.core.exception.ErrorResponse;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.Collection;
 import java.util.List;
@@ -76,6 +79,14 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/actuator/**").permitAll()
                         
+                        // 後端服務間通信 - 完全放行 (優先級最高)
+                        .requestMatchers("/people/get-by-name").permitAll()
+                        .requestMatchers("/people/get-all").permitAll()
+                        .requestMatchers("/people/names").permitAll()
+                        .requestMatchers("/people/damageWithWeapon").permitAll()
+                        .requestMatchers("/weapons/owner/**").permitAll()
+                        .requestMatchers("/weapon/**").permitAll()
+                        
                         // 有狀態服務 - 使用 Session 認證
                         .requestMatchers("/ckeditor/**").authenticated()
                         .requestMatchers("/deckofcards/**").authenticated()
@@ -85,8 +96,6 @@ public class SecurityConfig {
                         .requestMatchers("/guardian/user").authenticated()
                         .requestMatchers("/guardian/token-info").authenticated()
                         .requestMatchers("/guardian/test-default").authenticated()
-                        .requestMatchers("/people/**").authenticated()
-                        .requestMatchers("/weapon/**").authenticated()
                         .requestMatchers("/gallery/**").authenticated()
                         .requestMatchers("/livestock/**").authenticated()
                         
