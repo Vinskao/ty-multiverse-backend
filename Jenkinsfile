@@ -89,11 +89,11 @@ pipeline {
                             string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
                             string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
                             string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
-                            string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
-                            string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                            string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
+                            string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                            string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
-                            string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                            string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
+                            string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
                             string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
                             string(credentialsId: 'PROJECT_ENV', variable: 'PROJECT_ENV')
                         ]) {
@@ -113,11 +113,11 @@ pipeline {
                                 server.port=8080
                                 logging.level.root=DEBUG
                                 logging.level.org.springframework=DEBUG
-                                URL_ADDRESS=${URL_ADDRESS}
-                                URL_FRONTEND=${URL_FRONTEND}
+                                PUBLIC_TYMB_URL=${PUBLIC_TYMB_URL}
+                                PUBLIC_FRONTEND_URL=${PUBLIC_FRONTEND_URL}
                                 KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
-                                KEYCLOAK_REALM=${KEYCLOAK_REALM}
-                                KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
+                                PUBLIC_REALM=${PUBLIC_REALM}
+                                PUBLIC_CLIENT_ID=${PUBLIC_CLIENT_ID}
                                 KEYCLOAK_CREDENTIALS_SECRET=${KEYCLOAK_CREDENTIALS_SECRET}
                                 REDIS_HOST=${REDIS_HOST}
                                 REDIS_CUSTOM_PORT=${REDIS_CUSTOM_PORT}
@@ -228,11 +228,11 @@ pipeline {
                             string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
                             string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
                             string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
-                            string(credentialsId: 'URL_ADDRESS', variable: 'URL_ADDRESS'),
-                            string(credentialsId: 'URL_FRONTEND', variable: 'URL_FRONTEND'),
+                            string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
+                            string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                            string(credentialsId: 'KEYCLOAK_REALM', variable: 'KEYCLOAK_REALM'),
-                            string(credentialsId: 'KEYCLOAK_CLIENT_ID', variable: 'KEYCLOAK_CLIENT_ID'),
+                            string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
+                            string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
                             string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
                         ]) {
                             script {

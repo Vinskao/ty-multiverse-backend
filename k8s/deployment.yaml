@@ -12,11 +12,11 @@ stringData:
   REDIS_PASSWORD: "${REDIS_PASSWORD}"
   REDIS_QUEUE_TYMB: "${REDIS_QUEUE_TYMB}"
   KEYCLOAK_AUTH_SERVER_URL: "${KEYCLOAK_AUTH_SERVER_URL}"
-  KEYCLOAK_REALM: "${KEYCLOAK_REALM}"
-  KEYCLOAK_CLIENT_ID: "${KEYCLOAK_CLIENT_ID}"
+  PUBLIC_REALM: "${PUBLIC_REALM}"
+  PUBLIC_CLIENT_ID: "${PUBLIC_CLIENT_ID}"
   KEYCLOAK_CREDENTIALS_SECRET: "${KEYCLOAK_CREDENTIALS_SECRET}"
-  URL_ADDRESS: "${URL_ADDRESS}"
-  URL_FRONTEND: "${URL_FRONTEND}"
+  PUBLIC_TYMB_URL: "${PUBLIC_TYMB_URL}"
+  PUBLIC_FRONTEND_URL: "${PUBLIC_FRONTEND_URL}"
 ---
 
 apiVersion: v1
@@ -94,31 +94,31 @@ spec:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
               key: KEYCLOAK_AUTH_SERVER_URL
-        - name: KEYCLOAK_REALM
+        - name: PUBLIC_REALM
           valueFrom:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
-              key: KEYCLOAK_REALM
-        - name: KEYCLOAK_CLIENT_ID
+              key: PUBLIC_REALM
+        - name: PUBLIC_CLIENT_ID
           valueFrom:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
-              key: KEYCLOAK_CLIENT_ID
+              key: PUBLIC_CLIENT_ID
         - name: KEYCLOAK_CREDENTIALS_SECRET
           valueFrom:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
               key: KEYCLOAK_CREDENTIALS_SECRET
-        - name: URL_ADDRESS
+        - name: PUBLIC_TYMB_URL
           valueFrom:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
-              key: URL_ADDRESS
-        - name: URL_FRONTEND
+              key: PUBLIC_TYMB_URL
+        - name: PUBLIC_FRONTEND_URL
           valueFrom:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
-              key: URL_FRONTEND
+              key: PUBLIC_FRONTEND_URL
         - name: PROJECT_ENV
           valueFrom:
             configMapKeyRef:

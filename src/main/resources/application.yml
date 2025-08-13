@@ -27,8 +27,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-            issuer-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@'
-            jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@KEYCLOAK_REALM@/protocol/openid-connect/certs'
+            issuer-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@PUBLIC_REALM@'
+            jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@PUBLIC_REALM@/protocol/openid-connect/certs'
   datasource:
     driver-class-name: org.postgresql.Driver
     url: '@SPRING_DATASOURCE_URL@'
@@ -132,7 +132,7 @@ app:
     timeout: 3600  # Session 超時時間（秒）
   # 後端URL配置
   url:
-    address: '@URL_ADDRESS@'
+    address: '@PUBLIC_TYMB_URL@'
   # 文件上傳配置
   file:
     upload:
@@ -232,8 +232,8 @@ management:
 
 keycloak:
   auth-server-url: '@KEYCLOAK_AUTH_SERVER_URL@'
-  realm: '@KEYCLOAK_REALM@'
-  clientId: '@KEYCLOAK_CLIENT_ID@'
+  realm: '@PUBLIC_REALM@'
+  clientId: '@PUBLIC_CLIENT_ID@'
   public-client: false
   cors: true
   credentials:
