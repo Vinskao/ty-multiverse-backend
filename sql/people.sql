@@ -39,8 +39,9 @@ CREATE TABLE people (
     email VARCHAR(255),
     age INT,
     proxy VARCHAR(255),
+    version INT NOT NULL DEFAULT 0, -- Added the missing version column
     -- Single embedding field for all search
-    embedding VECTOR(1536),           -- OpenAI text-embedding-ada-002 dimension
+    embedding VECTOR(1536),         -- OpenAI text-embedding-ada-002 dimension
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -55,7 +56,7 @@ CREATE TABLE weapon (
     bonus_attributes TEXT[],
     state_attributes TEXT[],
     -- Single embedding field for all search
-    embedding VECTOR(1536),           -- OpenAI text-embedding-ada-002 dimension
+    embedding VECTOR(1536),         -- OpenAI text-embedding-ada-002 dimension
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -109,8 +110,4 @@ COMMENT ON COLUMN people.updated_at IS 'Timestamp when the record was last updat
 COMMENT ON TABLE weapon IS 'Weapon table with vector embedding support for semantic search';
 COMMENT ON COLUMN weapon.embedding IS 'Vector embedding of all weapon fields for semantic search';
 COMMENT ON COLUMN weapon.created_at IS 'Timestamp when the record was created';
-COMMENT ON COLUMN weapon.updated_at IS 'Timestamp when the record was last updated'; 
-
--- 強制不得為 NULL，防止後續異常新增
-ALTER TABLE people
-    ALTER COLUMN version SET NOT NULL;
+COMMENT ON COLUMN weapon.updated_at IS 'Timestamp when the record was last updated';
