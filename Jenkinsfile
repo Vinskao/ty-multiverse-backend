@@ -20,7 +20,7 @@ pipeline {
                       name: workspace-volume
                     workingDir: /home/jenkins/agent
                   - name: kubectl
-                    image: bitnami/kubectl:1.30.7
+                    image: ghcr.io/bitnami/kubectl:1.30.1
                     command: ["/bin/sh"]
                     args: ["-c", "while true; do sleep 30; done"]
                     imagePullPolicy: Always
@@ -255,7 +255,11 @@ pipeline {
     }
     post {
         always {
-            cleanWs()
+            script {
+                if (env.WORKSPACE) {
+                    cleanWs()
+                }
+            }
         }
     }
 }
