@@ -216,11 +216,6 @@ pipeline {
             steps {
                 container('kubectl') {
                     withCredentials([
-                        // Static kube auth (ServiceAccount token based)
-                        string(credentialsId: 'KUBE_SERVER', variable: 'KUBE_SERVER'),
-                        string(credentialsId: 'KUBE_TOKEN', variable: 'KUBE_TOKEN'),
-                        string(credentialsId: 'KUBE_CA_CRT', variable: 'KUBE_CA_CRT'),
-
                         // App configs used by envsubst in k8s manifests
                         string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
                         string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
@@ -244,34 +239,12 @@ pipeline {
                                 sh '''
                                     set -e
 
-                                    # Build kubeconfig from static token to avoid exec-based plugins
-                                    mkdir -p "${WORKSPACE}/.kube"
-                                    cat > "${WORKSPACE}/.kube/config" <<EOF
-                                    apiVersion: v1
-                                    clusters:
-                                    - cluster:
-                                        certificate-authority-data: ${KUBE_CA_CRT}
-                                        server: ${KUBE_SERVER}
-                                      name: target
-                                    contexts:
-                                    - context:
-                                        cluster: target
-                                        user: sa-user
-                                      name: target
-                                    current-context: target
-                                    kind: Config
-                                    users:
-                                    - name: sa-user
-                                      user:
-                                        token: ${KUBE_TOKEN}
-                                    EOF
-                                    export KUBECONFIG="${WORKSPACE}/.kube/config"
-
-                                    # Ensure envsubst is available (Debian-based image)
+                                    # Ensure envsubst is available (try Debian then Alpine)
                                     apt-get update >/dev/null 2>&1 || true
                                     apt-get install -y --no-install-recommends gettext-base ca-certificates >/dev/null 2>&1 || true
+                                    command -v envsubst >/dev/null 2>&1 || apk add --no-cache gettext >/dev/null 2>&1 || true
 
-                                    # Test cluster connectivity
+                                    # Test cluster connectivity (in-cluster auth via ServiceAccount)
                                     kubectl cluster-info
 
                                     # Inspect manifest directory
