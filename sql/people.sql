@@ -111,3 +111,21 @@ COMMENT ON TABLE weapon IS 'Weapon table with vector embedding support for seman
 COMMENT ON COLUMN weapon.embedding IS 'Vector embedding of all weapon fields for semantic search';
 COMMENT ON COLUMN weapon.created_at IS 'Timestamp when the record was created';
 COMMENT ON COLUMN weapon.updated_at IS 'Timestamp when the record was last updated';
+
+
+DROP TABLE IF EXISTS articles;
+
+CREATE TABLE articles (
+  id BIGSERIAL PRIMARY KEY,
+  file_path VARCHAR(500) UNIQUE NOT NULL,
+  content TEXT NOT NULL,
+  file_date TIMESTAMP NOT NULL,
+  created_at TIMESTAMP NULL,
+  updated_at TIMESTAMP NULL
+);
+
+-- 索引
+CREATE INDEX articles_file_date_index ON articles (file_date);
+
+-- 軟刪除欄位
+ALTER TABLE articles ADD COLUMN deleted_at TIMESTAMP NULL;
