@@ -94,6 +94,10 @@ pipeline {
                                 SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
                                 SPRING_PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
                                 SPRING_PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
+                                # People datasource tokens for resource filtering
+                                PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
+                                PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
+                                PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
                                 server.port=8080
                                 logging.level.root=DEBUG
                                 logging.level.org.springframework=DEBUG
