@@ -56,11 +56,13 @@ pipeline {
                 script {
                     container('maven') {
                         sh '''
+                            # 確認 Dockerfile 存在
                             ls -la
                             if [ ! -f "Dockerfile" ]; then
                                 echo "Error: Dockerfile not found!"
                                 exit 1
                             fi
+                            # 創建配置目錄
                             mkdir -p src/main/resources/env
                         '''
                         withCredentials([
@@ -86,12 +88,15 @@ pipeline {
                                 env=platform
                                 spring.profiles.active=platform
                                 PROJECT_ENV=platform
+                                # Primary datasource configuration
                                 SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
                                 SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
                                 SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+                                # People datasource configuration
                                 SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
                                 SPRING_PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
                                 SPRING_PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
+                                # People datasource tokens for resource filtering
                                 PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}
                                 PEOPLE_DATASOURCE_USERNAME=${SPRING_PEOPLE_DATASOURCE_USERNAME}
                                 PEOPLE_DATASOURCE_PASSWORD=${SPRING_PEOPLE_DATASOURCE_PASSWORD}
@@ -115,6 +120,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build') {
             steps {
                 container('maven') {
@@ -122,6 +128,7 @@ pipeline {
                 }
             }
         }
+
         stage('Test') {
             steps {
                 container('maven') {
@@ -129,6 +136,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build and Push Image (Jib)') {
             steps {
                 container('maven') {
@@ -136,6 +144,7 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
                                 cd "${WORKSPACE}"
+                                # 使用 Jib 直接建置並推送（無需 Docker Daemon）
                                 mvn -B -P platform -DskipTests \
                                   com.google.cloud.tools:jib-maven-plugin:3.4.2:build \
                                   -Djib.to.image=${DOCKER_IMAGE}:${DOCKER_TAG} \
@@ -151,6 +160,7 @@ pipeline {
                 }
             }
         }
+
         stage('Debug Environment') {
             steps {
                 container('kubectl') {
@@ -161,6 +171,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
@@ -187,11 +198,17 @@ pipeline {
                                 try {
                                     sh '''
                                         set -e
+
+                                        # Ensure envsubst is available (try Debian then Alpine)
                                         if ! command -v envsubst >/dev/null 2>&1; then
                                           (apt-get update && apt-get install -y --no-install-recommends gettext-base ca-certificates) >/dev/null 2>&1 || true
                                           command -v envsubst >/dev/null 2>&1 || (apk add --no-cache gettext ca-certificates >/dev/null 2>&1 || true)
                                         fi
+
+                                        # In-cluster auth via ServiceAccount (serviceAccountName: jenkins-admin)
                                         kubectl cluster-info
+
+                                        # Ensure Docker Hub imagePullSecret exists in default namespace
                                         kubectl create secret docker-registry dockerhub-credentials \
                                           --docker-server=https://index.docker.io/v1/ \
                                           --docker-username="${DOCKER_USERNAME}" \
@@ -199,26 +216,34 @@ pipeline {
                                           --docker-email="none" \
                                           -n default \
                                           --dry-run=client -o yaml | kubectl apply -f -
+
+                                        # Inspect manifest directory
                                         ls -la k8s/
+
                                         echo "Recreating deployment ..."
                                         echo "=== Effective sensitive env values ==="
                                         echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
                                         echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
                                         echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
                                         echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+
                                         kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
                                         envsubst < k8s/deployment.yaml | kubectl apply -f -
                                         kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
                                         kubectl rollout status deployment/ty-multiverse-backend -n default
                                     '''
+
+                                    // 檢查部署狀態
                                     sh 'kubectl get deployments -n default'
                                     sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
                                 } catch (Exception e) {
                                     echo "Error during deployment: ${e.message}"
+                                    // Debug non-ready pods and recent events
                                     sh '''
                                         set +e
                                         echo "=== Debug: pods for ty-multiverse-backend ==="
                                         kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o wide || true
+
                                         echo "=== Debug: describe non-ready pods ==="
                                         for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o jsonpath='{.items[?(@.status.conditions[?(@.type=="Ready")].status!="True")].metadata.name}'); do
                                           echo "--- $p"
@@ -226,17 +251,18 @@ pipeline {
                                           echo "=== Last 200 logs for $p ==="
                                           kubectl logs -n default "$p" --tail=200 || true
                                         done
+
                                         echo "=== Recent events (default ns) ==="
                                         kubectl get events -n default --sort-by=.lastTimestamp | tail -n 100 || true
                                     '''
                                     throw e
                                 }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+                            } // end script
+                        } // end inner withCredentials
+                    } // end outer withCredentials
+                } // end container
+            } // end steps
+        } // end stage
     }
     post {
         always {
