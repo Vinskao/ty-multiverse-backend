@@ -219,6 +219,23 @@ pipeline {
                                 sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
                             } catch (Exception e) {
                                 echo "Error during deployment: ${e.message}"
+                                // Debug non-ready pods and recent events
+                                sh '''
+                                    set +e
+                                    echo "=== Debug: pods for ty-multiverse-backend ==="
+                                    kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o wide || true
+
+                                    echo "=== Debug: describe non-ready pods ==="
+                                    for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o jsonpath='{.items[?(@.status.conditions[?(@.type=="Ready")].status!="True")].metadata.name}'); do
+                                      echo "--- $p"
+                                      kubectl describe pod -n default "$p" || true
+                                      echo "=== Last 200 logs for $p ==="
+                                      kubectl logs -n default "$p" --tail=200 || true
+                                    done
+
+                                    echo "=== Recent events (default ns) ==="
+                                    kubectl get events -n default --sort-by=.lastTimestamp | tail -n 100 || true
+                                '''
                                 throw e
                             }
                         }
