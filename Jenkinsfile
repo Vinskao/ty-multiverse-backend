@@ -148,6 +148,8 @@ pipeline {
                                   -Djib.to.image=${DOCKER_IMAGE}:${DOCKER_TAG} \
                                   -Djib.to.tags=latest \
                                   -Djib.from.platforms=linux/amd64,linux/arm64 \
+                                  -Djib.from.auth.username=${DOCKER_USERNAME} \
+                                  -Djib.from.auth.password=${DOCKER_PASSWORD} \
                                   -Djib.to.auth.username=${DOCKER_USERNAME} \
                                   -Djib.to.auth.password=${DOCKER_PASSWORD}
                             '''
