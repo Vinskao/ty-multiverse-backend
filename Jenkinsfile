@@ -215,59 +215,87 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
-                    withKubeConfig([credentialsId: 'kubeconfig-secret']) {
-                        withCredentials([
-                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
-                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
-                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
-                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
-                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
-                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
-                            string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
-                            string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
-                            string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
-                            string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
-                            string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
-                            string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
-                            string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                            string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
-                            string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
-                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
-                        ]) {
-                            script {
-                                try {
-                                    // 測試集群連接
-                                    sh 'kubectl cluster-info'
-                                    
-                                    // 檢查 deployment.yaml 文件
-                                    sh 'ls -la k8s/'
-                                    
-                                    // 檢查 Deployment 是否存在
-                                    sh '''
-                                        echo "Recreating deployment ..."
-                                            # Ensure envsubst is available
-                                            apk add --no-cache gettext >/dev/null 2>&1 || true
+                    withCredentials([
+                        // Static kube auth (ServiceAccount token based)
+                        string(credentialsId: 'KUBE_SERVER', variable: 'KUBE_SERVER'),
+                        string(credentialsId: 'KUBE_TOKEN', variable: 'KUBE_TOKEN'),
+                        string(credentialsId: 'KUBE_CA_CRT', variable: 'KUBE_CA_CRT'),
 
-                                            # debug: show key credentials pulled in (mask passwords)
-                                            echo "=== Effective sensitive env values ==="
-                                            echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
-                                            echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
-                                            echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
-                                            echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+                        // App configs used by envsubst in k8s manifests
+                        string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                        string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                        string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
+                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
+                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
+                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                        string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
+                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                        string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
+                        string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
+                        string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
+                        string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                        string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
+                        string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
+                        string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
+                    ]) {
+                        script {
+                            try {
+                                sh '''
+                                    set -e
 
-                                            kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
-                                            envsubst < k8s/deployment.yaml | kubectl apply -f -
-                                            kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                            kubectl rollout status deployment/ty-multiverse-backend
-                                    '''
-                                    
-                                    // 檢查部署狀態
-                                    sh 'kubectl get deployments -n default'
-                                    sh 'kubectl rollout status deployment/ty-multiverse-backend'
-                                } catch (Exception e) {
-                                    echo "Error during deployment: ${e.message}"
-                                    throw e
-                                }
+                                    # Build kubeconfig from static token to avoid exec-based plugins
+                                    mkdir -p "${WORKSPACE}/.kube"
+                                    cat > "${WORKSPACE}/.kube/config" <<EOF
+                                    apiVersion: v1
+                                    clusters:
+                                    - cluster:
+                                        certificate-authority-data: ${KUBE_CA_CRT}
+                                        server: ${KUBE_SERVER}
+                                      name: target
+                                    contexts:
+                                    - context:
+                                        cluster: target
+                                        user: sa-user
+                                      name: target
+                                    current-context: target
+                                    kind: Config
+                                    users:
+                                    - name: sa-user
+                                      user:
+                                        token: ${KUBE_TOKEN}
+                                    EOF
+                                    export KUBECONFIG="${WORKSPACE}/.kube/config"
+
+                                    # Ensure envsubst is available (Debian-based image)
+                                    apt-get update >/dev/null 2>&1 || true
+                                    apt-get install -y --no-install-recommends gettext-base ca-certificates >/dev/null 2>&1 || true
+
+                                    # Test cluster connectivity
+                                    kubectl cluster-info
+
+                                    # Inspect manifest directory
+                                    ls -la k8s/
+
+                                    echo "Recreating deployment ..."
+                                    echo "=== Effective sensitive env values ==="
+                                    echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+                                    echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
+                                    echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
+                                    echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+
+                                    kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
+                                    envsubst < k8s/deployment.yaml | kubectl apply -f -
+                                    kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                                    kubectl rollout status deployment/ty-multiverse-backend -n default
+                                '''
+
+                                // 檢查部署狀態
+                                sh 'kubectl get deployments -n default'
+                                sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
+                            } catch (Exception e) {
+                                echo "Error during deployment: ${e.message}"
+                                throw e
                             }
                         }
                     }
