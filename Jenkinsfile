@@ -6,6 +6,8 @@ pipeline {
                 kind: Pod
                 spec:
                   serviceAccountName: jenkins-admin
+                  imagePullSecrets:
+                  - name: dockerhub-cred
                   containers:
                   - name: maven
                     image: maven:3.8.4-openjdk-17
