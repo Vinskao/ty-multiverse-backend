@@ -7,7 +7,7 @@ pipeline {
                 spec:
                   serviceAccountName: jenkins-admin
                   imagePullSecrets:
-                  - name: dockerhub-cred
+                  - name: dockerhub-credentials
                   containers:
                   - name: maven
                     image: maven:3.8.4-openjdk-17
@@ -193,7 +193,8 @@ pipeline {
                         string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
                         string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
                     ]) {
-                        script {
+                        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                            script {
                             try {
                                 sh '''
                                     set -e
@@ -206,6 +207,15 @@ pipeline {
 
                                     # In-cluster auth via ServiceAccount (serviceAccountName: jenkins-admin)
                                     kubectl cluster-info
+
+                                        # Ensure Docker Hub imagePullSecret exists in default namespace
+                                        kubectl create secret docker-registry dockerhub-credentials \
+                                          --docker-server=https://index.docker.io/v1/ \
+                                          --docker-username="${DOCKER_USERNAME}" \
+                                          --docker-password="${DOCKER_PASSWORD}" \
+                                          --docker-email="none" \
+                                          -n default \
+                                          --dry-run=client -o yaml | kubectl apply -f -
 
                                     # Inspect manifest directory
                                     ls -la k8s/
@@ -247,8 +257,8 @@ pipeline {
                                 '''
                                 throw e
                             }
+                            }
                         }
-                    }
                 }
             }
         }

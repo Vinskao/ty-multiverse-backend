@@ -49,10 +49,11 @@ spec:
         app.kubernetes.io/name: ty-multiverse-backend
     spec:
       imagePullSecrets:
-      - name: dockerhub-cred
+      - name: dockerhub-credentials
       containers:
       - name: ty-multiverse-backend
         image: papakao/ty-multiverse-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
         env:
