@@ -17,26 +17,11 @@ pipeline {
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
                     workingDir: /home/jenkins/agent
-                  - name: docker
-                    image: docker:23-dind
-                    privileged: true
-                    securityContext:
-                      privileged: true
-                    env:
-                    - name: DOCKER_HOST
-                      value: tcp://localhost:2375
-                    - name: DOCKER_TLS_CERTDIR
-                      value: ""
-                    - name: DOCKER_BUILDKIT
-                      value: "1"
-                    volumeMounts:
-                    - mountPath: /home/jenkins/agent
-                      name: workspace-volume
                   - name: kubectl
                     image: bitnami/kubectl:1.30.7
                     command: ["/bin/sh"]
                     args: ["-c", "while true; do sleep 30; done"]
-                    alwaysPull: true
+                    imagePullPolicy: Always
                     securityContext:
                       runAsUser: 0
                     volumeMounts:
@@ -146,29 +131,20 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image with BuildKit') {
+        stage('Build and Push Image (Jib)') {
             steps {
-                container('docker') {
+                container('maven') {
                     script {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
                                 cd "${WORKSPACE}"
-                                echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-                                # 確認 Dockerfile 存在
-                                ls -la
-                                if [ ! -f "Dockerfile" ]; then
-                                    echo "Error: Dockerfile not found!"
-                                    exit 1
-                                fi
-                                # 構建 Docker 鏡像
-                                docker build \
-                                    --build-arg BUILDKIT_INLINE_CACHE=1 \
-                                    --cache-from ${DOCKER_IMAGE}:latest \
-                                    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
-                                    -t ${DOCKER_IMAGE}:latest \
-                                    .
-                                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                                docker push ${DOCKER_IMAGE}:latest
+                                # 使用 Jib 直接建置並推送（無需 Docker Daemon）
+                                mvn -B -P platform -DskipTests \
+                                  com.google.cloud.tools:jib-maven-plugin:3.4.2:build \
+                                  -Djib.to.image=${DOCKER_IMAGE}:${DOCKER_TAG} \
+                                  -Djib.to.tags=latest \
+                                  -Djib.to.auth.username=${DOCKER_USERNAME} \
+                                  -Djib.to.auth.password=${DOCKER_PASSWORD}
                             '''
                         }
                     }
@@ -182,31 +158,6 @@ pipeline {
                     script {
                         echo "=== Listing all environment variables ==="
                         sh 'printenv | sort'
-                        
-                        echo "=== Checking Jenkins environment variables ==="
-                        sh '''
-                            echo "BUILD_NUMBER: ${BUILD_NUMBER}"
-                            echo "BUILD_ID: ${BUILD_ID}"
-                            echo "BUILD_URL: ${BUILD_URL}"
-                            echo "JOB_NAME: ${JOB_NAME}"
-                            echo "JOB_BASE_NAME: ${JOB_BASE_NAME}"
-                            echo "WORKSPACE: ${WORKSPACE}"
-                            echo "JENKINS_HOME: ${JENKINS_HOME}"
-                            echo "JENKINS_URL: ${JENKINS_URL}"
-                            echo "EXECUTOR_NUMBER: ${EXECUTOR_NUMBER}"
-                            echo "NODE_NAME: ${NODE_NAME}"
-                            echo "NODE_LABELS: ${NODE_LABELS}"
-                            echo "JAVA_HOME: ${JAVA_HOME}"
-                            echo "PATH: ${PATH}"
-                            echo "SHELL: ${SHELL}"
-                            echo "HOME: ${HOME}"
-                            echo "USER: ${USER}"
-                            echo "DOCKER_IMAGE: ${DOCKER_IMAGE}"
-                            echo "DOCKER_TAG: ${DOCKER_TAG}"
-                            echo "SERVER_PORT: ${SERVER_PORT}"
-                            echo "LOGGING_LEVEL: ${LOGGING_LEVEL}"
-                            echo "LOGGING_LEVEL_SPRINGFRAMEWORK: ${LOGGING_LEVEL_SPRINGFRAMEWORK}"
-                        '''
                     }
                 }
             }
@@ -215,60 +166,72 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
-                    withCredentials([
-                        // App configs used by envsubst in k8s manifests
-                        string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
-                        string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
-                        string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
-                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
-                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
-                        string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
-                        string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
-                        string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
-                        string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
-                        string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
-                        string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
-                        string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
-                        string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
-                        string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
-                        string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
-                        string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
-                    ]) {
-                        script {
-                            try {
-                                sh '''
-                                    set -e
+                    withKubeConfig([credentialsId: 'kubeconfig-secret']) {
+                        withCredentials([
+                            // App configs used by envsubst in k8s manifests
+                            string(credentialsId: 'SPRING_DATASOURCE_URL', variable: 'SPRING_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_DATASOURCE_USERNAME', variable: 'SPRING_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_DATASOURCE_PASSWORD', variable: 'SPRING_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_URL', variable: 'SPRING_PEOPLE_DATASOURCE_URL'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_USERNAME', variable: 'SPRING_PEOPLE_DATASOURCE_USERNAME'),
+                            string(credentialsId: 'SPRING_PEOPLE_DATASOURCE_PASSWORD', variable: 'SPRING_PEOPLE_DATASOURCE_PASSWORD'),
+                            string(credentialsId: 'REDIS_HOST', variable: 'REDIS_HOST'),
+                            string(credentialsId: 'REDIS_CUSTOM_PORT', variable: 'REDIS_CUSTOM_PORT'),
+                            string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD'),
+                            string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
+                            string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
+                            string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
+                            string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
+                            string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
+                            string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
+                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
+                        ]) {
+                            script {
+                                try {
+                                    sh '''
+                                        set -e
 
-                                    # Ensure envsubst is available (try Debian then Alpine)
-                                    apt-get update >/dev/null 2>&1 || true
-                                    apt-get install -y --no-install-recommends gettext-base ca-certificates >/dev/null 2>&1 || true
-                                    command -v envsubst >/dev/null 2>&1 || apk add --no-cache gettext >/dev/null 2>&1 || true
+                                        # Ensure envsubst
+                                        if ! command -v envsubst >/dev/null 2>&1; then
+                                          (apt-get update && apt-get install -y --no-install-recommends gettext-base ca-certificates) >/dev/null 2>&1 || true
+                                          command -v envsubst >/dev/null 2>&1 || (apk add --no-cache gettext ca-certificates >/dev/null 2>&1 || true)
+                                        fi
 
-                                    # Test cluster connectivity (in-cluster auth via ServiceAccount)
-                                    kubectl cluster-info
+                                        # Ensure OCI CLI if kubeconfig needs exec: oci
+                                        if ! command -v oci >/dev/null 2>&1; then
+                                          (apt-get update && apt-get install -y --no-install-recommends curl bash python3 python3-pip >/dev/null 2>&1 && \
+                                           curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults --install-dir /usr/local/bin) || \
+                                          (apk add --no-cache curl bash python3 py3-pip >/dev/null 2>&1 && \
+                                           curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh | bash -s -- --accept-all-defaults --install-dir /usr/local/bin) || true
+                                        fi
+                                        command -v oci >/dev/null 2>&1 && oci --version || true
 
-                                    # Inspect manifest directory
-                                    ls -la k8s/
+                                        # Test cluster connectivity via provided kubeconfig
+                                        kubectl cluster-info
 
-                                    echo "Recreating deployment ..."
-                                    echo "=== Effective sensitive env values ==="
-                                    echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
-                                    echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
-                                    echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
-                                    echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+                                        # Inspect manifest directory
+                                        ls -la k8s/
 
-                                    kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
-                                    envsubst < k8s/deployment.yaml | kubectl apply -f -
-                                    kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                    kubectl rollout status deployment/ty-multiverse-backend -n default
-                                '''
+                                        echo "Recreating deployment ..."
+                                        echo "=== Effective sensitive env values ==="
+                                        echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+                                        echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
+                                        echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
+                                        echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
 
-                                // 檢查部署狀態
-                                sh 'kubectl get deployments -n default'
-                                sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
-                            } catch (Exception e) {
-                                echo "Error during deployment: ${e.message}"
-                                throw e
+                                        kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
+                                        envsubst < k8s/deployment.yaml | kubectl apply -f -
+                                        kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                                        kubectl rollout status deployment/ty-multiverse-backend -n default
+                                    '''
+
+                                    // 檢查部署狀態
+                                    sh 'kubectl get deployments -n default'
+                                    sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
+                                } catch (Exception e) {
+                                    echo "Error during deployment: ${e.message}"
+                                    throw e
+                                }
                             }
                         }
                     }
