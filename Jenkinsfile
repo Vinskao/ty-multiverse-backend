@@ -19,6 +19,19 @@ pipeline {
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
                     workingDir: /home/jenkins/agent
+                  - name: docker
+                    image: docker:23-dind
+                    privileged: true
+                    securityContext:
+                      privileged: true
+                    env:
+                    - name: DOCKER_TLS_CERTDIR
+                      value: ""
+                    - name: DOCKER_BUILDKIT
+                      value: "1"
+                    volumeMounts:
+                    - mountPath: /home/jenkins/agent
+                      name: workspace-volume
                   - name: kubectl
                     image: bitnami/kubectl:1.30.7
                     command: ["/bin/sh"]
@@ -137,23 +150,29 @@ pipeline {
             }
         }
 
-        stage('Build and Push Image (Jib)') {
+        stage('Build Docker Image with BuildKit') {
             steps {
-                container('maven') {
+                container('docker') {
                     script {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
                                 cd "${WORKSPACE}"
-                                # 使用 Jib 直接建置並推送（無需 Docker Daemon）
-                                mvn -B -P platform -DskipTests \
-                                  com.google.cloud.tools:jib-maven-plugin:3.4.2:build \
-                                  -Djib.to.image=${DOCKER_IMAGE}:${DOCKER_TAG} \
-                                  -Djib.to.tags=latest \
-                                  -Djib.from.platforms=linux/amd64,linux/arm64 \
-                                  -Djib.from.auth.username=${DOCKER_USERNAME} \
-                                  -Djib.from.auth.password=${DOCKER_PASSWORD} \
-                                  -Djib.to.auth.username=${DOCKER_USERNAME} \
-                                  -Djib.to.auth.password=${DOCKER_PASSWORD}
+                                echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                                # 確認 Dockerfile 存在
+                                ls -la
+                                if [ ! -f "Dockerfile" ]; then
+                                    echo "Error: Dockerfile not found!"
+                                    exit 1
+                                fi
+                                # 構建 Docker 鏡像（啟用 BuildKit 與多平台參數）
+                                docker build \
+                                    --build-arg BUILDKIT_INLINE_CACHE=1 \
+                                    --cache-from ${DOCKER_IMAGE}:latest \
+                                    -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
+                                    -t ${DOCKER_IMAGE}:latest \
+                                    .
+                                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                                docker push ${DOCKER_IMAGE}:latest
                             '''
                         }
                     }
