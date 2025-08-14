@@ -158,6 +158,7 @@ app:
       enabled: false
 
 url:
+  address: '@PUBLIC_TYMB_URL@'
   frontend: '@PUBLIC_FRONTEND_URL@'
 
 springdoc:
