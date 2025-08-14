@@ -20,7 +20,7 @@ pipeline {
                       name: workspace-volume
                     workingDir: /home/jenkins/agent
                   - name: kubectl
-                    image: ghcr.io/bitnami/kubectl:1.30.1
+                    image: bitnami/kubectl:1.30.7
                     command: ["/bin/sh"]
                     args: ["-c", "while true; do sleep 30; done"]
                     imagePullPolicy: Always
