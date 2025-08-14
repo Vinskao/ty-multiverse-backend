@@ -36,7 +36,7 @@ import tw.com.tymbackend.core.exception.ErrorCode;
 @RequestMapping("/keycloak")
 public class KeycloakController {
 
-	@Value("${url.frontend:${app.url.address}}")
+	@Value("${url.frontend}")
 	private String frontendUrl;
 
 	private static final Logger log = LoggerFactory.getLogger(KeycloakController.class);
