@@ -44,7 +44,7 @@ public class KeycloakController {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@Value("${url.address}")
+	@Value("${app.url.address}")
 	private String backendUrl;
 	@Value("${keycloak.realm}")
 	private String realm;
