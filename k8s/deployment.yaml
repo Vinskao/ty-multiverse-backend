@@ -48,6 +48,8 @@ spec:
       labels:
         app.kubernetes.io/name: ty-multiverse-backend
     spec:
+      imagePullSecrets:
+      - name: dockerhub-cred
       containers:
       - name: ty-multiverse-backend
         image: papakao/ty-multiverse-backend:latest
