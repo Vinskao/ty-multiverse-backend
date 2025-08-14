@@ -147,6 +147,7 @@ pipeline {
                                   com.google.cloud.tools:jib-maven-plugin:3.4.2:build \
                                   -Djib.to.image=${DOCKER_IMAGE}:${DOCKER_TAG} \
                                   -Djib.to.tags=latest \
+                                  -Djib.from.platforms=linux/amd64,linux/arm64 \
                                   -Djib.to.auth.username=${DOCKER_USERNAME} \
                                   -Djib.to.auth.password=${DOCKER_PASSWORD}
                             '''
