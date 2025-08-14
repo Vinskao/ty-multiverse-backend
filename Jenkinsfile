@@ -195,18 +195,18 @@ pipeline {
                     ]) {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             script {
-                            try {
-                                sh '''
-                                    set -e
+                                try {
+                                    sh '''
+                                        set -e
 
-                                    # Ensure envsubst is available (try Debian then Alpine)
-                                    if ! command -v envsubst >/dev/null 2>&1; then
-                                      (apt-get update && apt-get install -y --no-install-recommends gettext-base ca-certificates) >/dev/null 2>&1 || true
-                                      command -v envsubst >/dev/null 2>&1 || (apk add --no-cache gettext ca-certificates >/dev/null 2>&1 || true)
-                                    fi
+                                        # Ensure envsubst is available (try Debian then Alpine)
+                                        if ! command -v envsubst >/dev/null 2>&1; then
+                                          (apt-get update && apt-get install -y --no-install-recommends gettext-base ca-certificates) >/dev/null 2>&1 || true
+                                          command -v envsubst >/dev/null 2>&1 || (apk add --no-cache gettext ca-certificates >/dev/null 2>&1 || true)
+                                        fi
 
-                                    # In-cluster auth via ServiceAccount (serviceAccountName: jenkins-admin)
-                                    kubectl cluster-info
+                                        # In-cluster auth via ServiceAccount (serviceAccountName: jenkins-admin)
+                                        kubectl cluster-info
 
                                         # Ensure Docker Hub imagePullSecret exists in default namespace
                                         kubectl create secret docker-registry dockerhub-credentials \
@@ -217,52 +217,52 @@ pipeline {
                                           -n default \
                                           --dry-run=client -o yaml | kubectl apply -f -
 
-                                    # Inspect manifest directory
-                                    ls -la k8s/
+                                        # Inspect manifest directory
+                                        ls -la k8s/
 
-                                    echo "Recreating deployment ..."
-                                    echo "=== Effective sensitive env values ==="
-                                    echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
-                                    echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
-                                    echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
-                                    echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
+                                        echo "Recreating deployment ..."
+                                        echo "=== Effective sensitive env values ==="
+                                        echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
+                                        echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
+                                        echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
+                                        echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
 
-                                    kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
-                                    envsubst < k8s/deployment.yaml | kubectl apply -f -
-                                    kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                    kubectl rollout status deployment/ty-multiverse-backend -n default
-                                '''
+                                        kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
+                                        envsubst < k8s/deployment.yaml | kubectl apply -f -
+                                        kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
+                                        kubectl rollout status deployment/ty-multiverse-backend -n default
+                                    '''
 
-                                // 檢查部署狀態
-                                sh 'kubectl get deployments -n default'
-                                sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
-                            } catch (Exception e) {
-                                echo "Error during deployment: ${e.message}"
-                                // Debug non-ready pods and recent events
-                                sh '''
-                                    set +e
-                                    echo "=== Debug: pods for ty-multiverse-backend ==="
-                                    kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o wide || true
+                                    // 檢查部署狀態
+                                    sh 'kubectl get deployments -n default'
+                                    sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
+                                } catch (Exception e) {
+                                    echo "Error during deployment: ${e.message}"
+                                    // Debug non-ready pods and recent events
+                                    sh '''
+                                        set +e
+                                        echo "=== Debug: pods for ty-multiverse-backend ==="
+                                        kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o wide || true
 
-                                    echo "=== Debug: describe non-ready pods ==="
-                                    for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o jsonpath='{.items[?(@.status.conditions[?(@.type=="Ready")].status!="True")].metadata.name}'); do
-                                      echo "--- $p"
-                                      kubectl describe pod -n default "$p" || true
-                                      echo "=== Last 200 logs for $p ==="
-                                      kubectl logs -n default "$p" --tail=200 || true
-                                    done
+                                        echo "=== Debug: describe non-ready pods ==="
+                                        for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o jsonpath='{.items[?(@.status.conditions[?(@.type=="Ready")].status!="True")].metadata.name}'); do
+                                          echo "--- $p"
+                                          kubectl describe pod -n default "$p" || true
+                                          echo "=== Last 200 logs for $p ==="
+                                          kubectl logs -n default "$p" --tail=200 || true
+                                        done
 
-                                    echo "=== Recent events (default ns) ==="
-                                    kubectl get events -n default --sort-by=.lastTimestamp | tail -n 100 || true
-                                '''
-                                throw e
-                            }
-                            }
-                        }
-                }
-            }
-        }
-    }
+                                        echo "=== Recent events (default ns) ==="
+                                        kubectl get events -n default --sort-by=.lastTimestamp | tail -n 100 || true
+                                    '''
+                                    throw e
+                                }
+                            } // end script
+                        } // end inner withCredentials
+                    } // end outer withCredentials
+                } // end container
+            } // end steps
+        } // end stage
     post {
         always {
             script {
