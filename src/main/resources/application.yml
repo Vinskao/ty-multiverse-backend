@@ -156,6 +156,10 @@ app:
   devtools:
     restart:
       enabled: false
+
+url:
+  frontend: '@PUBLIC_FRONTEND_URL@'
+
 springdoc:
   api-docs:
     enabled: true
