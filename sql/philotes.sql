@@ -121,11 +121,10 @@ CREATE TABLE articles (
   content TEXT NOT NULL,
   file_date TIMESTAMP NOT NULL,
   created_at TIMESTAMP NULL,
-  updated_at TIMESTAMP NULL
+  updated_at TIMESTAMP NULL,
+  deleted_at TIMESTAMP NULL,
+  embedding vector(1536)
 );
 
 -- 索引
 CREATE INDEX articles_file_date_index ON articles (file_date);
-
--- 軟刪除欄位
-ALTER TABLE articles ADD COLUMN deleted_at TIMESTAMP NULL;
