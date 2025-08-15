@@ -4,7 +4,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.handler.TextWebSocketHandler;
 import jakarta.websocket.Session;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,7 +24,8 @@ import java.util.stream.Collectors;
  */
 @Configuration
 @EnableWebSocketMessageBroker
-public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
+@EnableWebSocket
+public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
 
     // 線上 Session 管理
     private static final Map<String, Session> ONLINE_SESSION = new ConcurrentHashMap<>();
@@ -114,5 +122,39 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("*")
                 .withSockJS();
+    }
+
+    /**
+     * 註冊 WebSocket 處理器
+     *
+     * @param registry WebSocket 處理器註冊表
+     */
+    @Override
+    public void registerWebSocketHandlers(@SuppressWarnings("null") WebSocketHandlerRegistry registry) {
+        // 註冊專門的 metrics WebSocket 端點
+        registry.addHandler(new MetricsWebSocketHandler(), "/metrics")
+                .setAllowedOrigins("*");
+    }
+
+    /**
+     * Metrics WebSocket 處理器
+     */
+    public static class MetricsWebSocketHandler extends TextWebSocketHandler {
+        
+        @Override
+        public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+            // 連接建立時發送歡迎消息
+            session.sendMessage(new TextMessage("{\"type\":\"connection\",\"message\":\"Connected to metrics WebSocket\"}"));
+        }
+
+        @Override
+        protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
+            // 處理收到的消息
+            String payload = message.getPayload();
+            
+            // 這裡可以添加獲取 metrics 的邏輯
+            String response = "{\"type\":\"metrics\",\"data\":\"Metrics data will be implemented here\"}";
+            session.sendMessage(new TextMessage(response));
+        }
     }
 } 
