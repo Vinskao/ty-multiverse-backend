@@ -13,6 +13,13 @@ pipeline {
                     image: maven:3.9.8-eclipse-temurin-21
                     command: ["cat"]
                     tty: true
+                    resources:
+                      requests:
+                        cpu: "200m"
+                        memory: "512Mi"
+                      limits:
+                        cpu: "1000m"
+                        memory: "2Gi"
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
@@ -24,6 +31,13 @@ pipeline {
                     privileged: true
                     securityContext:
                       privileged: true
+                    resources:
+                      requests:
+                        cpu: "100m"
+                        memory: "256Mi"
+                      limits:
+                        cpu: "500m"
+                        memory: "1Gi"
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
@@ -39,6 +53,13 @@ pipeline {
                     imagePullPolicy: Always
                     securityContext:
                       runAsUser: 0
+                    resources:
+                      requests:
+                        cpu: "50m"
+                        memory: "128Mi"
+                      limits:
+                        cpu: "200m"
+                        memory: "256Mi"
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
