@@ -5,7 +5,9 @@ package tw.com.tymbackend;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import org.springframework.retry.annotation.EnableRetry;
@@ -14,6 +16,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableWebSocket
 @EnableRetry
+@EnableAsync
 @EnableScheduling
 public class TYMBackendApplication {
 	// private static final Logger logger = LoggerFactory.getLogger(TYMBackendApplication.class);
@@ -30,14 +33,9 @@ public class TYMBackendApplication {
         return new ServerEndpointExporter();
     }
 
-    @Bean(name = "threadPoolTaskExecutor")
-    ThreadPoolTaskExecutor threadPoolTaskExecutor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);  // 核心執行緒數
-        executor.setMaxPoolSize(50);   // 最大執行緒數
-        executor.setQueueCapacity(100); // 任務隊列容量
-        executor.setThreadNamePrefix("Async-"); // 執行緒名稱前綴
-        executor.initialize();
-        return executor;
+    @Bean(name = "threadPoolTaskExecutor", destroyMethod = "shutdown")
+    ExecutorService threadPoolTaskExecutor() {
+        // 使用每任務一個 Virtual Thread 的執行器
+        return Executors.newVirtualThreadPerTaskExecutor();
     }
 }

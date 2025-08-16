@@ -122,6 +122,10 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocke
         registry.addEndpoint("/ws")
                 .setAllowedOrigins("*")
                 .withSockJS();
+        
+        // 同時支援原生 WebSocket
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins("*");
     }
 
     /**
@@ -141,10 +145,23 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocke
      */
     public static class MetricsWebSocketHandler extends TextWebSocketHandler {
         
+        private static final java.util.Set<WebSocketSession> sessions = java.util.concurrent.ConcurrentHashMap.newKeySet();
+        private static final org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+        private static final com.fasterxml.jackson.databind.ObjectMapper objectMapper = new com.fasterxml.jackson.databind.ObjectMapper();
+        
         @Override
         public void afterConnectionEstablished(WebSocketSession session) throws Exception {
+            sessions.add(session);
             // 連接建立時發送歡迎消息
-            session.sendMessage(new TextMessage("{\"type\":\"connection\",\"message\":\"Connected to metrics WebSocket\"}"));
+            session.sendMessage(new TextMessage("{\"type\":\"connection\",\"message\":\"Connected to metrics WebSocket\",\"timestamp\":\"" + java.time.Instant.now() + "\"}"));
+            
+            // 立即發送一次 metrics 數據
+            sendMetricsToSession(session);
+        }
+        
+        @Override
+        public void afterConnectionClosed(WebSocketSession session, org.springframework.web.socket.CloseStatus status) throws Exception {
+            sessions.remove(session);
         }
 
         @Override
@@ -152,9 +169,100 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocke
             // 處理收到的消息
             String payload = message.getPayload();
             
-            // 這裡可以添加獲取 metrics 的邏輯
-            String response = "{\"type\":\"metrics\",\"data\":\"Metrics data will be implemented here\"}";
-            session.sendMessage(new TextMessage(response));
+            if ("get-metrics".equals(payload) || "{\"type\":\"get-metrics\"}".equals(payload)) {
+                // 發送 metrics 數據
+                sendMetricsToSession(session);
+            } else {
+                // 發送確認消息
+                String response = "{\"type\":\"ack\",\"message\":\"Message received\",\"payload\":\"" + payload + "\",\"timestamp\":\"" + java.time.Instant.now() + "\"}";
+                session.sendMessage(new TextMessage(response));
+            }
+        }
+        
+        /**
+         * 發送 metrics 數據到指定 session
+         */
+        private void sendMetricsToSession(WebSocketSession session) {
+            try {
+                String metricsData = getMetricsData();
+                session.sendMessage(new TextMessage(metricsData));
+            } catch (Exception e) {
+                try {
+                    String errorResponse = "{\"type\":\"error\",\"message\":\"Failed to get metrics\",\"error\":\"" + e.getMessage() + "\",\"timestamp\":\"" + java.time.Instant.now() + "\"}";
+                    session.sendMessage(new TextMessage(errorResponse));
+                } catch (Exception ex) {
+                    // 忽略發送錯誤消息時的異常
+                }
+            }
+        }
+        
+        /**
+         * 獲取 metrics 數據
+         */
+        private String getMetricsData() throws Exception {
+            String baseUrl = "http://localhost:8080/tymb/actuator/metrics";
+            
+            // 定義要獲取的 metrics
+            String[] metrics = {
+                "jvm.memory.used",
+                "process.cpu.usage", 
+                "hikaricp.connections.active",
+                "http.server.requests",
+                "jvm.threads.live",
+                "system.cpu.usage"
+            };
+            
+            java.util.Map<String, Object> metricsData = new java.util.HashMap<>();
+            metricsData.put("type", "metrics");
+            metricsData.put("timestamp", java.time.Instant.now().toString());
+            metricsData.put("data", new java.util.HashMap<>());
+            
+            for (String metric : metrics) {
+                try {
+                    String url = baseUrl + "/" + metric;
+                    String response = restTemplate.getForObject(url, String.class);
+                    
+                    if (response != null) {
+                        java.util.Map<String, Object> metricData = objectMapper.readValue(response, java.util.Map.class);
+                        ((java.util.Map<String, Object>) metricsData.get("data")).put(metric, metricData);
+                    }
+                } catch (Exception e) {
+                    // 記錄錯誤但繼續處理其他 metrics
+                    ((java.util.Map<String, Object>) metricsData.get("data")).put(metric, "{\"error\":\"" + e.getMessage() + "\"}");
+                }
+            }
+            
+            return objectMapper.writeValueAsString(metricsData);
+        }
+        
+        /**
+         * 廣播 metrics 數據到所有連接的 session
+         */
+        public static void broadcastMetrics() {
+            final String metricsData = getMetricsDataForBroadcast();
+            
+            sessions.removeIf(session -> {
+                try {
+                    if (session.isOpen()) {
+                        session.sendMessage(new TextMessage(metricsData));
+                        return false;
+                    }
+                } catch (Exception e) {
+                    // 發送失敗，移除 session
+                }
+                return true;
+            });
+        }
+        
+        /**
+         * 獲取用於廣播的 metrics 數據
+         */
+        private static String getMetricsDataForBroadcast() {
+            try {
+                return new MetricsWebSocketHandler().getMetricsData();
+            } catch (Exception e) {
+                return "{\"type\":\"error\",\"message\":\"Failed to get metrics\",\"error\":\"" + e.getMessage() + "\",\"timestamp\":\"" + java.time.Instant.now() + "\"}";
+            }
         }
     }
 } 
