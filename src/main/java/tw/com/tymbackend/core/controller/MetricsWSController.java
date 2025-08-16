@@ -123,6 +123,15 @@ public class MetricsWSController {
         try {
             distributedLockUtil.executeWithLock(lockKey, lockTimeout, () -> {
                 performMetricsExport();
+                
+                // 同時廣播到原生 WebSocket 端點
+                try {
+                    tw.com.tymbackend.core.config.websocket.WebSocketUtil.MetricsWebSocketHandler.broadcastMetrics();
+                    logger.debug("已廣播 metrics 到原生 WebSocket 端點");
+                } catch (Exception e) {
+                    logger.warn("廣播到原生 WebSocket 失敗", e);
+                }
+                
                 return null;
             });
         } catch (Exception e) {

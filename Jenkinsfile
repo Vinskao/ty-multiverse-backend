@@ -10,7 +10,7 @@ pipeline {
                   - name: dockerhub-credentials
                   containers:
                   - name: maven
-                    image: maven:3.8.4-openjdk-17
+                    image: maven:3.9.8-eclipse-temurin-21
                     command: ["cat"]
                     tty: true
                     volumeMounts:

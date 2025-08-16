@@ -1,5 +1,5 @@
-# Start with a base image that has Java (using Eclipse Temurin for JDK 17)
-FROM eclipse-temurin:17-jdk
+# Start with a base image that has Java (using Eclipse Temurin for JDK 21)
+FROM eclipse-temurin:21-jre
 
 # Set the working directory
 WORKDIR /app
