@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import tw.com.tymbackend.core.exception.ErrorCode;
 
 /**
@@ -67,10 +68,11 @@ public class KeycloakController {
 	 * @throws IOException 當重導向失敗時會拋出此例外
 	 */
 	@GetMapping("/redirect")
-	public void keycloakRedirect(@RequestParam("code") String code, HttpServletResponse response)
+	public void keycloakRedirect(@RequestParam("code") String code, HttpServletRequest request, HttpServletResponse response)
 			throws IOException {
-		// 組合重導向用的 URI，此 URI 與 token 請求同時使用
-		String redirectUri = backendUrl + "/keycloak/redirect";
+		// 使用實際請求的完整 URL 作為 redirect_uri，確保與前端授權時完全一致
+		String redirectUri = request.getRequestURL().toString();
+		log.info("後端使用的 redirectUri: {}", redirectUri);
 		// 組合 token 請求 URL：Keycloak Token Endpoint
 		String tokenUrl = ssoUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
