@@ -24,7 +24,7 @@ public class PeopleDataSourceConfig {
         this.properties = properties;
     }
 
-    @Bean(name = "peopleDataSource")
+    @Bean(name = "peopleDataSource", destroyMethod = "close")
     public DataSource peopleDataSource() {
         return DataSourceBuilder.create()
                 .url(properties.getUrl())

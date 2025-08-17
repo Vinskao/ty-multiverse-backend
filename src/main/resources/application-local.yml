@@ -7,9 +7,9 @@ app:
 spring:
   data:
     redis:
-      host: 138.2.46.52
-      port: 30678
-      password: RedisPassword123
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
       database: 0
       timeout: 5000ms
       lettuce:
@@ -23,7 +23,7 @@ spring:
       connect-timeout: 5000ms
       command-timeout: 5000ms
   session:
-    store-type: redis
+    store-type: '@spring.session.store-type@'
     redis:
       namespace: tymb:sessions
   config:
@@ -186,5 +186,5 @@ keycloak:
         - patterns:
             - /*
 url:
-  address: http://localhost:8080/tymb
-  frontend: http://localhost:4321/tymultiverse/
+  address: '@PUBLIC_TYMB_URL@'
+  frontend: '@PUBLIC_FRONTEND_URL@'

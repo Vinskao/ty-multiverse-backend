@@ -24,9 +24,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.core.exception.ErrorResponse;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
-import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.annotation.Order;
 
 import java.util.Collection;
 import java.util.List;
@@ -65,6 +64,20 @@ public class SecurityConfig {
 
     public SecurityConfig(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+    }
+
+    /**
+     * 專用於 /keycloak/** 的無狀態過濾器鏈，避免使用 Session 與 Redis 交互
+     */
+    @Bean
+    @Order(0)
+    SecurityFilterChain keycloakSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher("/keycloak/**")
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        return http.build();
     }
 
     /**
@@ -135,6 +148,9 @@ public class SecurityConfig {
                         .requestMatchers("/guardian/test-default").authenticated()
                         .requestMatchers("/gallery/**").authenticated()
                         .requestMatchers("/livestock/**").authenticated()
+                        
+                        // Keycloak 相關端點 - 無狀態，不使用 session
+                        .requestMatchers("/keycloak/**").permitAll()
                         
                         // 其他所有端點預設公開
                         .anyRequest().permitAll())

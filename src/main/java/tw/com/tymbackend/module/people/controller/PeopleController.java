@@ -133,8 +133,7 @@ public class PeopleController {
         }
     }
 
-    // 取得所有人的名字 - 需要用戶認證
-    @PreAuthorize("isAuthenticated()")
+    // 取得所有人的名字
     @GetMapping("/names")
     public ResponseEntity<?> getAllPeopleNames() {
         try {
