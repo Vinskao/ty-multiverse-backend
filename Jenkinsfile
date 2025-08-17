@@ -178,22 +178,74 @@ pipeline {
                         withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                             sh '''
                                 cd "${WORKSPACE}"
-                                echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                                
+                                # Docker login with retry mechanism
+                                echo "Attempting Docker login..."
+                                for i in {1..3}; do
+                                    echo "Docker login attempt $i/3"
+                                    if echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; then
+                                        echo "Docker login successful"
+                                        break
+                                    else
+                                        echo "Docker login attempt $i failed"
+                                        if [ $i -eq 3 ]; then
+                                            echo "All Docker login attempts failed"
+                                            exit 1
+                                        fi
+                                        echo "Waiting 10 seconds before retry..."
+                                        sleep 10
+                                    fi
+                                done
+                                
                                 # 確認 Dockerfile 存在
                                 ls -la
                                 if [ ! -f "Dockerfile" ]; then
                                     echo "Error: Dockerfile not found!"
                                     exit 1
                                 fi
+                                
                                 # 構建 Docker 鏡像（啟用 BuildKit 與多平台參數）
+                                echo "Building Docker image..."
                                 docker build \
                                     --build-arg BUILDKIT_INLINE_CACHE=1 \
                                     --cache-from ${DOCKER_IMAGE}:latest \
                                     -t ${DOCKER_IMAGE}:${DOCKER_TAG} \
                                     -t ${DOCKER_IMAGE}:latest \
                                     .
-                                docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                                docker push ${DOCKER_IMAGE}:latest
+                                    
+                                # Push with retry mechanism
+                                echo "Pushing Docker images..."
+                                for i in {1..3}; do
+                                    echo "Push attempt $i/3 for ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                                    if docker push ${DOCKER_IMAGE}:${DOCKER_TAG}; then
+                                        echo "Successfully pushed ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                                        break
+                                    else
+                                        echo "Push attempt $i failed for ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                                        if [ $i -eq 3 ]; then
+                                            echo "All push attempts failed for ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                                            exit 1
+                                        fi
+                                        echo "Waiting 10 seconds before retry..."
+                                        sleep 10
+                                    fi
+                                done
+                                
+                                for i in {1..3}; do
+                                    echo "Push attempt $i/3 for ${DOCKER_IMAGE}:latest"
+                                    if docker push ${DOCKER_IMAGE}:latest; then
+                                        echo "Successfully pushed ${DOCKER_IMAGE}:latest"
+                                        break
+                                    else
+                                        echo "Push attempt $i failed for ${DOCKER_IMAGE}:latest"
+                                        if [ $i -eq 3 ]; then
+                                            echo "All push attempts failed for ${DOCKER_IMAGE}:latest"
+                                            exit 1
+                                        fi
+                                        echo "Waiting 10 seconds before retry..."
+                                        sleep 10
+                                    fi
+                                done
                             '''
                         }
                     }
