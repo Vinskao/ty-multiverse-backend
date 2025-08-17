@@ -177,8 +177,15 @@ public class PeopleService {
                 // 呼叫 save 可確保 flush 並使用正確的 TransactionManager
                 return peopleRepository.save(existing);
             } else {
-                // 如果不存在，拋出異常而不是嘗試插入
-                throw new RuntimeException("Character not found with name: " + person.getName());
+                // 若不存在，改為插入（UPSERT 行為）
+                if (person.getVersion() == null) {
+                    person.setVersion(0L);
+                }
+                if (person.getCreatedAt() == null) {
+                    person.setCreatedAt(LocalDateTime.now());
+                }
+                person.setUpdatedAt(LocalDateTime.now());
+                return peopleRepository.save(person);
             }
         } else {
             throw new RuntimeException("Character name is required for update");
