@@ -144,11 +144,28 @@ public class PeopleService {
     @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
     @SuppressWarnings("null")
     public People update(String name, People person) {
-        if (peopleRepository.existsById(name)) {
+        // 先查詢現有實體
+        Optional<People> existingOpt = peopleRepository.findById(name);
+        if (existingOpt.isPresent()) {
+            // 如果存在，更新現有實體
+            People existing = existingOpt.get();
+            updatePeopleFields(existing, person);
+            if (existing.getVersion() == null) {
+                existing.setVersion(0L);
+            }
+            return peopleRepository.save(existing);
+        } else {
+            // 如果不存在，插入新實體（UPSERT 行為）
             person.setName(name);
+            if (person.getVersion() == null) {
+                person.setVersion(0L);
+            }
+            if (person.getCreatedAt() == null) {
+                person.setCreatedAt(LocalDateTime.now());
+            }
+            person.setUpdatedAt(LocalDateTime.now());
             return peopleRepository.save(person);
         }
-        return null;
     }
 
 
@@ -253,14 +270,31 @@ public class PeopleService {
     @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
     @SuppressWarnings("null")
     public People updateAttributes(String name, People person) {
-        return peopleRepository.findByName(name)
-            .map(existing -> {
-                existing.setBaseAttributes(person.getBaseAttributes());
-                existing.setBonusAttributes(person.getBonusAttributes());
-                existing.setStateAttributes(person.getStateAttributes());
-                return peopleRepository.save(existing);
-            })
-            .orElse(null);
+        // 先查詢現有實體
+        Optional<People> existingOpt = peopleRepository.findById(name);
+        if (existingOpt.isPresent()) {
+            // 如果存在，只更新屬性欄位
+            People existing = existingOpt.get();
+            existing.setBaseAttributes(person.getBaseAttributes());
+            existing.setBonusAttributes(person.getBonusAttributes());
+            existing.setStateAttributes(person.getStateAttributes());
+            existing.setUpdatedAt(LocalDateTime.now());
+            if (existing.getVersion() == null) {
+                existing.setVersion(0L);
+            }
+            return peopleRepository.save(existing);
+        } else {
+            // 如果不存在，建立新實體並設定屬性（UPSERT 行為）
+            People newPerson = new People();
+            newPerson.setName(name);
+            newPerson.setBaseAttributes(person.getBaseAttributes());
+            newPerson.setBonusAttributes(person.getBonusAttributes());
+            newPerson.setStateAttributes(person.getStateAttributes());
+            newPerson.setVersion(0L);
+            newPerson.setCreatedAt(LocalDateTime.now());
+            newPerson.setUpdatedAt(LocalDateTime.now());
+            return peopleRepository.save(newPerson);
+        }
     }
 
 
