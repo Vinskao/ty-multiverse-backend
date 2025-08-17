@@ -38,9 +38,9 @@ spring:
     username: '@SPRING_DATASOURCE_USERNAME@'
     password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置
-      minimum-idle: 10                    # 增加最小閒置連線數
-      maximum-pool-size: 50               # 增加最大連線池大小
+      # 連線池大小配置（降低以避免吃滿 DB 連線）
+      minimum-idle: 1
+      maximum-pool-size: 5
       
       # 連線生命週期配置
       idle-timeout: 600000                # 閒置連線超時 (10分鐘)
@@ -69,9 +69,9 @@ spring:
     username: '@PEOPLE_DATASOURCE_USERNAME@'
     password: '@PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置 (較小的池，因為查詢較少)
-      minimum-idle: 5                     # 最小閒置連線數
-      maximum-pool-size: 15               # 最大連線池大小
+      # 連線池大小配置（進一步降低，與主資料源合計控制總連線數）
+      minimum-idle: 1
+      maximum-pool-size: 5
       
       # 連線生命週期配置
       idle-timeout: 300000                # 閒置連線超時 (5分鐘)

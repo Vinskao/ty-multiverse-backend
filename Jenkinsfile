@@ -15,11 +15,11 @@ pipeline {
                     tty: true
                     resources:
                       requests:
-                        cpu: "100m"
-                        memory: "256Mi"
+                        cpu: "25m"
+                        memory: "128Mi"
                       limits:
-                        cpu: "500m"
-                        memory: "1Gi"
+                        cpu: "200m"
+                        memory: "512Mi"
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
@@ -33,11 +33,11 @@ pipeline {
                       privileged: true
                     resources:
                       requests:
-                        cpu: "50m"
-                        memory: "128Mi"
+                        cpu: "10m"
+                        memory: "64Mi"
                       limits:
-                        cpu: "200m"
-                        memory: "512Mi"
+                        cpu: "100m"
+                        memory: "256Mi"
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
@@ -55,11 +55,11 @@ pipeline {
                       runAsUser: 0
                     resources:
                       requests:
+                        cpu: "5m"
+                        memory: "32Mi"
+                      limits:
                         cpu: "25m"
                         memory: "64Mi"
-                      limits:
-                        cpu: "100m"
-                        memory: "128Mi"
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
