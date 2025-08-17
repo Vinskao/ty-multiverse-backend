@@ -15,11 +15,11 @@ pipeline {
                     tty: true
                     resources:
                       requests:
-                        cpu: "25m"
-                        memory: "128Mi"
+                        cpu: "100m"
+                        memory: "1024Mi"
                       limits:
-                        cpu: "200m"
-                        memory: "512Mi"
+                        cpu: "500m"
+                        memory: "2048Mi"
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
@@ -33,11 +33,11 @@ pipeline {
                       privileged: true
                     resources:
                       requests:
-                        cpu: "10m"
-                        memory: "64Mi"
+                        cpu: "50m"
+                        memory: "512Mi"
                       limits:
-                        cpu: "100m"
-                        memory: "256Mi"
+                        cpu: "200m"
+                        memory: "1024Mi"
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
@@ -55,11 +55,11 @@ pipeline {
                       runAsUser: 0
                     resources:
                       requests:
-                        cpu: "5m"
-                        memory: "32Mi"
-                      limits:
                         cpu: "25m"
-                        memory: "64Mi"
+                        memory: "256Mi"
+                      limits:
+                        cpu: "100m"
+                        memory: "512Mi"
                     volumeMounts:
                     - mountPath: /home/jenkins/agent
                       name: workspace-volume
@@ -158,7 +158,7 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
-                    sh 'mvn clean package -P platform -DskipTests'
+                    sh 'MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true clean package -P platform -DskipTests'
                 }
             }
         }
@@ -166,7 +166,7 @@ pipeline {
         stage('Test') {
             steps {
                 container('maven') {
-                    sh 'mvn test -P platform'
+                    sh 'MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true test -P platform'
                 }
             }
         }
