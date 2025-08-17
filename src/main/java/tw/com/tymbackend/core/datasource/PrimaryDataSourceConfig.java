@@ -26,7 +26,7 @@ public class PrimaryDataSourceConfig {
     }
 
     @Primary
-    @Bean(name = "primaryDataSource")
+    @Bean(name = "primaryDataSource", destroyMethod = "close")
     public DataSource primaryDataSource() {
         return DataSourceBuilder.create()
                 .url(properties.getUrl())
