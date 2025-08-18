@@ -26,6 +26,9 @@ import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.core.exception.ErrorResponse;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.core.annotation.Order;
+import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
+import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
+import org.springframework.util.AntPathMatcher;
 
 import java.util.Collection;
 import java.util.List;
@@ -157,6 +160,7 @@ public class SecurityConfig {
                 
                 // 3. OAuth2 Resource Server 配置 (無狀態認證)
                 .oauth2ResourceServer(oauth2 -> oauth2
+                        .bearerTokenResolver(customBearerTokenResolver())
                         .jwt(jwt -> jwt
                                 .jwkSetUri(keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs")
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())))
@@ -203,6 +207,43 @@ public class SecurityConfig {
             );
             
             response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
+        };
+    }
+
+    /**
+     * 自訂 Bearer Token 解析器
+     *
+     * 對於公開端點（permitAll），即使帶有 Authorization 標頭也不進行 JWT 解析，
+     * 以避免因無效/過期 Token 造成 401 錯誤。
+     */
+    @Bean
+    BearerTokenResolver customBearerTokenResolver() {
+        DefaultBearerTokenResolver delegate = new DefaultBearerTokenResolver();
+        AntPathMatcher pathMatcher = new AntPathMatcher();
+
+        // 與 authorizeHttpRequests 中的 permitAll 清單保持一致
+        List<String> publicPatterns = List.of(
+                "/people/get-by-name",
+                "/people/get-all",
+                "/people/names",
+                "/people/damageWithWeapon",
+                "/weapons/owner/**",
+                "/weapon/**"
+        );
+
+        return request -> {
+            String requestUri = request.getRequestURI();
+            String contextPath = request.getContextPath();
+            final String pathWithinApp = (contextPath != null && !contextPath.isEmpty() && requestUri.startsWith(contextPath))
+                    ? requestUri.substring(contextPath.length())
+                    : requestUri;
+
+            boolean isPublic = publicPatterns.stream().anyMatch(pattern -> pathMatcher.match(pattern, pathWithinApp));
+            if (isPublic) {
+                return null; // 不解析 Token，視為匿名訪問
+            }
+
+            return delegate.resolve(request);
         };
     }
 
