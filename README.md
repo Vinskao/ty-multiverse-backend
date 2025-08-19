@@ -14,15 +14,22 @@ classDiagram
         +@EnableScheduling
     }
     
-    class SecurityConfig {
-        +@EnableWebSecurity
-        +@EnableMethodSecurity
+    %% Security & Authentication Module
+    class SecurityModule {
+        +SecurityConfig
+        +Guardian Controller
+        +KeycloakController
         +JWT Authentication
         +OAuth2 Resource Server
         +Session Management
         +CORS Configuration
+        +Custom Bearer Token Resolver
+        +User Management
+        +Token Validation
+        +Admin Operations
     }
     
+    %% Core Config Modules
     class RedisConfig {
         +@EnableCaching
         +RedisConnectionFactory
@@ -32,34 +39,120 @@ classDiagram
         +Distributed Lock
     }
     
-    class PrimaryDataSourceConfig {
-        +PrimaryHikariCP (5 connections)
-        +livestock.dao
-        +ckeditor.dao
-        +gallery.dao
+    class DatabaseConfig {
+        +JpaAuditingConfig
+        +RepositoryConfig
     }
     
-    class PeopleDataSourceConfig {
-        +PeopleHikariCP (5 connections)
-        +people.dao
-        +weapon.dao
+    class HttpConfig {
+        +RestTemplateConfig
+        +WebConfig
     }
     
+    class SessionConfig {
+        +Session Management
+        +Redis Session Store
+    }
+    
+    class ThreadConfig {
+        +RetryConfig
+        +Async Configuration
+    }
+    
+    %% Metrics & WebSocket Module
+    class MetricsWebSocketModule {
+        +MetricsConfig
+        +WebSocketConfig
+        +MetricsWSController
+        +Micrometer Configuration
+        +Prometheus Metrics
+        +WebSocketUtil
+        +Real-time Communication
+        +Real-time Metrics
+        +WebSocket Endpoints
+        +Performance Monitoring
+    }
+    
+
+    
+    %% CRUD Module
+    class CRUDModule {
+        +BaseService
+        +RepositoryModule
+        +BaseEntity
+        +Generic CRUD Operations
+        +Transaction Management
+        +Error Handling
+        +BaseRepository Interface
+        +IntegerPkRepository
+        +StringPkRepository
+        +Common Query Methods
+        +Audit Fields
+        +Version Control
+        +Common Properties
+    }
+    
+
+    
+    %% Core Exception Modules
+    class ExceptionModule {
+        +GlobalExceptionHandler
+        +ErrorCode Definitions
+        +ErrorResponse Format
+        +BusinessException
+        +ApiExceptionHandler
+        +BusinessApiExceptionHandler
+        +ValidationApiExceptionHandler
+        +DataIntegrityApiExceptionHandler
+        +DefaultApiExceptionHandler
+    }
+    
+
+    
+
+    
+
+    
+    %% External Systems
     class Database {
-        +PostgreSQL Primary
-        +PostgreSQL People
+        +PostgreSQL Primary DB
+        +PostgreSQL People DB
+        +PrimaryDataSourceModule
+        +PeopleDataSourceModule
         +Indexed Queries
         +Batch Operations
+        +Connection Pooling
     }
     
-    TYMBackendApplication --> SecurityConfig
+    class Redis {
+        +Cache Storage
+        +Session Store
+        +DistributedLockUtil
+        +Concurrency Control
+        +Resource Protection
+    }
+    
+    %% Core Application Layer (第一層 - 核心應用層)
+    TYMBackendApplication --> SecurityModule
+    TYMBackendApplication --> ExceptionModule
+    TYMBackendApplication --> CRUDModule
+    
+    %% Configuration Layer (第二層 - 配置層)
+    SecurityModule --> RedisConfig
+    SecurityModule --> SessionConfig
     TYMBackendApplication --> RedisConfig
-    TYMBackendApplication --> PrimaryDataSourceConfig
-    TYMBackendApplication --> PeopleDataSourceConfig
-    SecurityConfig --> RedisConfig
-    PrimaryDataSourceConfig --> Database
-    PeopleDataSourceConfig --> Database
-    RedisConfig --> Database
+    TYMBackendApplication --> DatabaseConfig
+    TYMBackendApplication --> ThreadConfig
+    TYMBackendApplication --> MetricsWebSocketModule
+    
+    %% CRUD & Database Layer (第二層 - CRUD與數據庫層)
+    CRUDModule --> HttpConfig
+    CRUDModule --> DatabaseConfig
+    
+    %% External Systems Layer (第三層 - 外部系統層)
+    RedisConfig --> Redis
+    SessionConfig --> Redis
+    CRUDModule --> Database
 ```
 
 ### 2. 模組架構
