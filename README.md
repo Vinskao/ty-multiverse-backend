@@ -6,23 +6,43 @@
 ### 1. 核心架構
 ```mermaid
 classDiagram
-    class SpringBootApplication {
+    class TYMBackendApplication {
         +@SpringBootApplication
+        +@EnableWebSocket
+        +@EnableRetry
+        +@EnableAsync
+        +@EnableScheduling
+    }
+    
+    class SecurityConfig {
+        +@EnableWebSecurity
+        +@EnableMethodSecurity
+        +JWT Authentication
+        +OAuth2 Resource Server
+        +Session Management
+        +CORS Configuration
+    }
+    
+    class RedisConfig {
         +@EnableCaching
-        +@EnableJpaRepositories
-    }
-    
-    class HikariCP {
-        +PrimaryHikariCP (50 connections)
-        +PeopleHikariCP (15 connections)
-        +Connection Pool Management
-    }
-    
-    class RedisCache {
-        +@Cacheable
+        +RedisConnectionFactory
+        +RedisTemplate
         +damage-calculations
-        +Session Storage
+        +tymb:sessions
         +Distributed Lock
+    }
+    
+    class PrimaryDataSourceConfig {
+        +PrimaryHikariCP (5 connections)
+        +livestock.dao
+        +ckeditor.dao
+        +gallery.dao
+    }
+    
+    class PeopleDataSourceConfig {
+        +PeopleHikariCP (5 connections)
+        +people.dao
+        +weapon.dao
     }
     
     class Database {
@@ -32,10 +52,14 @@ classDiagram
         +Batch Operations
     }
     
-    SpringBootApplication --> HikariCP
-    SpringBootApplication --> RedisCache
-    HikariCP --> Database
-    RedisCache --> Database
+    TYMBackendApplication --> SecurityConfig
+    TYMBackendApplication --> RedisConfig
+    TYMBackendApplication --> PrimaryDataSourceConfig
+    TYMBackendApplication --> PeopleDataSourceConfig
+    SecurityConfig --> RedisConfig
+    PrimaryDataSourceConfig --> Database
+    PeopleDataSourceConfig --> Database
+    RedisConfig --> Database
 ```
 
 ### 2. 模組架構
@@ -144,8 +168,13 @@ classDiagram
     
     class DistributedLock {
         +lock:content:save
-        +lock:metrics:export
-        +lock:livestock:query
+        +lock:metrics:export:lock
+        +lock:livestock:getAll:lock
+        +lock:livestock:save
+        +lock:scheduled:cleanup:old:data:lock
+        +lock:scheduled:generate:weekly:report:lock
+        +lock:scheduled:backup:data:lock
+        +lock:scheduled:health:check:lock
     }
     
     CacheStrategy --> DamageCache
@@ -252,15 +281,15 @@ classDiagram
     }
     
     class PrimaryPool {
-        +maximum-pool-size: 50
-        +minimum-idle: 10
+        +maximum-pool-size: 5
+        +minimum-idle: 1
         +connection-timeout: 30s
         +leak-detection-threshold: 60s
     }
     
     class PeoplePool {
-        +maximum-pool-size: 15
-        +minimum-idle: 5
+        +maximum-pool-size: 5
+        +minimum-idle: 1
         +connection-timeout: 30s
         +leak-detection-threshold: 60s
     }
