@@ -1,11 +1,12 @@
 # TY-Multiverse-Backend
-個人網站後端系統
+Personal Website Backend System
 
-## 架構設計
+## Architecture Design
 
-### 1. 核心架構
+### 1. Core Architecture
 ```mermaid
 classDiagram
+    %% Application Layer
     class TYMBackendApplication {
         +@SpringBootApplication
         +@EnableWebSocket
@@ -14,22 +15,29 @@ classDiagram
         +@EnableScheduling
     }
     
-    %% Security & Authentication Module
-    class SecurityModule {
-        +SecurityConfig
-        +Guardian Controller
-        +KeycloakController
+    %% Security Layer
+    class SecurityConfig {
+        +@EnableWebSecurity
+        +@EnableMethodSecurity
         +JWT Authentication
         +OAuth2 Resource Server
-        +Session Management
         +CORS Configuration
-        +Custom Bearer Token Resolver
-        +User Management
-        +Token Validation
-        +Admin Operations
     }
     
-    %% Core Config Modules
+    class KeycloakController {
+        +OAuth2 Redirect
+        +Token Exchange
+        +User Info
+        +Token Introspect
+    }
+    
+    class Guardian {
+        +User Management
+        +Admin Operations
+        +Token Validation
+    }
+    
+    %% Configuration Layer
     class RedisConfig {
         +@EnableCaching
         +RedisConnectionFactory
@@ -39,131 +47,75 @@ classDiagram
         +Distributed Lock
     }
     
-    class DatabaseConfig {
-        +JpaAuditingConfig
-        +RepositoryConfig
+    class PrimaryDataSourceConfig {
+        +PrimaryHikariCP (5 connections)
+        +maximum-pool-size: 5
+        +minimum-idle: 1
+        +connection-timeout: 30s
+        +leak-detection-threshold: 60s
     }
     
-    class HttpConfig {
-        +RestTemplateConfig
-        +WebConfig
+    class PeopleDataSourceConfig {
+        +PeopleHikariCP (5 connections)
+        +maximum-pool-size: 5
+        +minimum-idle: 1
+        +connection-timeout: 30s
+        +leak-detection-threshold: 60s
     }
     
     class SessionConfig {
-        +Session Management
+        +@EnableRedisHttpSession
         +Redis Session Store
+        +Session Timeout
+        +Session Fixation
     }
     
-    class ThreadConfig {
-        +RetryConfig
-        +Async Configuration
-    }
-    
-    %% Metrics & WebSocket Module
-    class MetricsWebSocketModule {
-        +MetricsConfig
-        +WebSocketConfig
-        +MetricsWSController
-        +Micrometer Configuration
-        +Prometheus Metrics
-        +WebSocketUtil
-        +Real-time Communication
-        +Real-time Metrics
-        +WebSocket Endpoints
-        +Performance Monitoring
-    }
-    
-
-    
-    %% CRUD Module
-    class CRUDModule {
-        +BaseService
-        +RepositoryModule
-        +BaseEntity
-        +Generic CRUD Operations
-        +Transaction Management
-        +Error Handling
-        +BaseRepository Interface
-        +IntegerPkRepository
-        +StringPkRepository
-        +Common Query Methods
-        +Audit Fields
-        +Version Control
-        +Common Properties
-    }
-    
-
-    
-    %% Core Exception Modules
-    class ExceptionModule {
-        +GlobalExceptionHandler
-        +ErrorCode Definitions
-        +ErrorResponse Format
-        +BusinessException
-        +ApiExceptionHandler
-        +BusinessApiExceptionHandler
-        +ValidationApiExceptionHandler
-        +DataIntegrityApiExceptionHandler
-        +DefaultApiExceptionHandler
-    }
-    
-
-    
-
-    
-
-    
-    %% External Systems
+    %% Infrastructure Layer
     class Database {
-        +PostgreSQL Primary DB
-        +PostgreSQL People DB
-        +PrimaryDataSourceModule
-        +PeopleDataSourceModule
+        +PostgreSQL Primary
+        +PostgreSQL People
         +Indexed Queries
         +Batch Operations
-        +Connection Pooling
     }
     
     class Redis {
         +Cache Storage
         +Session Store
-        +DistributedLockUtil
+        +Distributed Lock
         +Concurrency Control
-        +Resource Protection
     }
     
-    %% Core Application Layer (第一層 - 核心應用層)
-    TYMBackendApplication --> SecurityModule
-    TYMBackendApplication --> ExceptionModule
-    TYMBackendApplication --> CRUDModule
-    
-    %% Configuration Layer (第二層 - 配置層)
-    SecurityModule --> RedisConfig
-    SecurityModule --> SessionConfig
+    %% Layer Relationships
+    TYMBackendApplication --> SecurityConfig
     TYMBackendApplication --> RedisConfig
-    TYMBackendApplication --> DatabaseConfig
-    TYMBackendApplication --> ThreadConfig
-    TYMBackendApplication --> MetricsWebSocketModule
+    TYMBackendApplication --> PrimaryDataSourceConfig
+    TYMBackendApplication --> PeopleDataSourceConfig
+    TYMBackendApplication --> SessionConfig
     
-    %% CRUD & Database Layer (第二層 - CRUD與數據庫層)
-    CRUDModule --> HttpConfig
-    CRUDModule --> DatabaseConfig
+    SecurityConfig --> KeycloakController
+    SecurityConfig --> Guardian
+    SecurityConfig --> SessionConfig
     
-    %% External Systems Layer (第三層 - 外部系統層)
+    SessionConfig --> RedisConfig
     RedisConfig --> Redis
-    SessionConfig --> Redis
-    CRUDModule --> Database
+    
+    PrimaryDataSourceConfig --> Database
+    PeopleDataSourceConfig --> Database
 ```
 
-### 2. 模組架構
+### 2. Module Architecture
 ```mermaid
 classDiagram
     class PeopleModule {
         +PeopleController
         +PeopleService
         +WeaponDamageService
+        +PeopleImageService
         +PeopleRepository
+        +PeopleImageRepository
         +People.java
+        +PeopleImage.java
+        +DamageStrategy Pattern
     }
     
     class WeaponModule {
@@ -183,6 +135,7 @@ classDiagram
     class LivestockModule {
         +LivestockController
         +LivestockService
+        +LivestockWSController
         +LivestockRepository
         +Livestock.java
     }
@@ -193,14 +146,16 @@ classDiagram
         +EditContentRepository
         +EditContentVO.java
     }
+  
     
+    %% Module Dependencies
     PeopleModule --> WeaponModule
     PeopleModule --> GalleryModule
     PeopleModule --> LivestockModule
     PeopleModule --> CKEditorModule
 ```
 
-### 3. 資料庫優化架構
+### 3. Database Optimization Architecture
 ```mermaid
 classDiagram
     class DatabaseOptimization {
@@ -208,6 +163,19 @@ classDiagram
         +Composite Indexes
         +Vector Indexes (pgvector)
         +Batch Queries
+        +Connection Pooling
+    }
+    
+    class PrimaryDatabase {
+        +livestock Table
+        +ckeditor Table
+        +gallery Table
+        +people_image Table
+    }
+    
+    class PeopleDatabase {
+        +people Table
+        +weapon Table
     }
     
     class PeopleTable {
@@ -230,14 +198,17 @@ classDiagram
         +Batch Operations
         +Selective Columns
         +Caching Strategy
+        +@Cacheable
     }
     
-    DatabaseOptimization --> PeopleTable
-    DatabaseOptimization --> WeaponTable
+    DatabaseOptimization --> PrimaryDatabase
+    DatabaseOptimization --> PeopleDatabase
+    PeopleDatabase --> PeopleTable
+    PeopleDatabase --> WeaponTable
     DatabaseOptimization --> QueryOptimization
 ```
 
-### 4. 快取架構
+### 4. Cache Architecture
 ```mermaid
 classDiagram
     class CacheStrategy {
@@ -274,103 +245,61 @@ classDiagram
     CacheStrategy --> SessionCache
     CacheStrategy --> DistributedLock
 ```
-
-### 4.1. Redis 指令架構
-```mermaid
-classDiagram
-    class RedisCommands {
-        +String Commands
-        +Hash Commands
-        +Script Commands
-        +Key Commands
-    }
-    
-    class StringCommands {
-        +SET (快取存儲)
-        +GET (快取讀取)
-        +SETNX (分布式鎖)
-        +EXPIRE (過期時間)
-    }
-    
-    class HashCommands {
-        +HSET (Session 存儲)
-        +HGET (Session 讀取)
-        +HDEL (Session 刪除)
-        +HGETALL (完整讀取)
-    }
-    
-    class ScriptCommands {
-        +EVAL (Lua 腳本)
-        +GET (腳本內)
-        +DEL (腳本內)
-    }
-    
-    class KeyCommands {
-        +EXISTS (鍵檢查)
-        +TTL (剩餘時間)
-    }
-    
-    RedisCommands --> StringCommands
-    RedisCommands --> HashCommands
-    RedisCommands --> ScriptCommands
-    RedisCommands --> KeyCommands
-```
-
-### 4.2. Lua 腳本流程
+### 4.2. Lua Script Flow
 ```mermaid
 sequenceDiagram
-    participant App as 應用層
-    participant Redis as Redis 伺服器
-    participant Lua as Lua 腳本引擎
+    participant App as Application Layer
+    participant Redis as Redis Server
+    participant Lua as Lua Script Engine
     
-    App->>Redis: 執行 Lua 腳本
-    Note over Redis: 分布式鎖釋放腳本
-    Redis->>Lua: 載入腳本
+    App->>Redis: Execute Lua Script
+    Note over Redis: Distributed Lock Release Script
+    Redis->>Lua: Load Script
     Lua->>Redis: redis.call('get', KEYS[1])
-    Redis-->>Lua: 返回鎖值
-    Lua->>Lua: 比較鎖值
-    alt 鎖值匹配
+    Redis-->>Lua: Return Lock Value
+    Lua->>Lua: Compare Lock Value
+    alt Lock Value Matches
         Lua->>Redis: redis.call('del', KEYS[1])
-        Redis-->>Lua: 刪除成功
-        Lua-->>App: 返回 1
-    else 鎖值不匹配
-        Lua-->>App: 返回 0
+        Redis-->>Lua: Delete Success
+        Lua-->>App: Return 1
+    else Lock Value Mismatch
+        Lua-->>App: Return 0
     end
 ```
 
-### 4.3. Redis 數據結構使用
+### 4.2.1. Distributed Lock Usage Scenario
 ```mermaid
-graph TB
-    subgraph "String 類型"
-        A[分布式鎖] --> A1[SETNX lock:key value]
-        A --> A2[GET lock:key]
-        A --> A3[DEL lock:key]
-        B[快取機制] --> B1[SET cache:key value]
-        B --> B2[GET cache:key]
-        B --> B3[EXPIRE cache:key time]
-    end
+sequenceDiagram
+    participant Client as Client
+    participant Service as Service Layer
+    participant LockUtil as DistributedLockUtil
+    participant Redis as Redis
     
-    subgraph "Hash 類型"
-        C[Session 存儲] --> C1[HSET session:id field value]
-        C --> C2[HGET session:id field]
-        C --> C3[HDEL session:id field]
-        C --> C4[HGETALL session:id]
-    end
-    
-    subgraph "腳本執行"
-        D[Lua 腳本] --> D1[EVAL script keys args]
-        D --> D2[原子性操作]
-        D --> D3[複雜邏輯處理]
+    Client->>Service: Request Operation
+    Service->>LockUtil: executeWithLock(lockKey, timeout, operation)
+    LockUtil->>Redis: SETNX lockKey value
+    alt Lock Acquisition Success
+        Redis-->>LockUtil: true
+        LockUtil->>Service: Execute Operation
+        Service-->>LockUtil: Operation Result
+        LockUtil->>Redis: DEL lockKey
+        LockUtil-->>Service: Return Result
+        Service-->>Client: Success Response
+    else Lock Acquisition Failed
+        Redis-->>LockUtil: false
+        LockUtil-->>Service: Throw Exception
+        Service-->>Client: Operation Skipped
     end
 ```
 
-### 5. 連線池架構
+### 5. Connection Pool Architecture
 ```mermaid
 classDiagram
     class HikariCPConfig {
-        +PrimaryHikariCP
-        +PeopleHikariCP
+        +PrimaryDataSourceConfig
+        +PeopleDataSourceConfig
         +Connection Management
+        +destroyMethod="close"
     }
     
     class PrimaryPool {
@@ -378,6 +307,9 @@ classDiagram
         +minimum-idle: 1
         +connection-timeout: 30s
         +leak-detection-threshold: 60s
+        +idle-timeout: 600000
+        +max-lifetime: 1800000
+        +pool-name: PrimaryHikariCP
     }
     
     class PeoplePool {
@@ -385,6 +317,9 @@ classDiagram
         +minimum-idle: 1
         +connection-timeout: 30s
         +leak-detection-threshold: 60s
+        +idle-timeout: 300000
+        +max-lifetime: 1800000
+        +pool-name: PeopleHikariCP
     }
     
     class PoolMonitoring {
@@ -392,6 +327,8 @@ classDiagram
         +IdleConnections
         +WaitingThreads
         +ConnectionTimeout
+        +register-mbeans: true
+        +auto-commit: false
     }
     
     HikariCPConfig --> PrimaryPool
@@ -399,20 +336,23 @@ classDiagram
     HikariCPConfig --> PoolMonitoring
 ```
 
-### 6. 安全認證架構
+### 6. Security Authentication Architecture
 ```mermaid
 classDiagram
     class SecurityConfig {
         +@EnableWebSecurity
         +@EnableMethodSecurity
         +JWT Authentication
-        +Session Management
+        +OAuth2 Resource Server
+        +CORS Configuration
+        +Stateless Keycloak Endpoints
     }
     
     class JWTValidation {
         +OAuth2ResourceServer
         +JwtDecoder
         +CustomJwtGrantedAuthoritiesConverter
+        +Bearer Token Resolver
     }
     
     class Authorization {
@@ -420,20 +360,33 @@ classDiagram
         +ROLE_MANAGE_USERS
         +ROLE_ADMIN
         +ROLE_USER
+        +permitAll() for /people/names
+        +authenticated() for protected endpoints
     }
     
     class SessionManagement {
         +Redis Session Storage
         +Session Timeout
         +Session Fixation
+        +@EnableRedisHttpSession
+        +tymb:sessions namespace
+    }
+    
+    class KeycloakController {
+        +OAuth2 Redirect
+        +Token Exchange
+        +User Info
+        +Token Introspect
+        +Dynamic redirectUri
     }
     
     SecurityConfig --> JWTValidation
     SecurityConfig --> Authorization
     SecurityConfig --> SessionManagement
+    SecurityConfig --> KeycloakController
 ```
 
-### 7. 錯誤處理架構
+### 7. Error Handling Architecture
 ```mermaid
 classDiagram
     class GlobalExceptionHandler {
@@ -467,120 +420,90 @@ classDiagram
     GlobalExceptionHandler --> DefaultApiExceptionHandler
 ```
 
-### 8. 監控架構
+### 8. Monitoring Architecture
 ```mermaid
 classDiagram
     class ActuatorEndpoints {
-        +/health
-        +/metrics
-        +/prometheus
-        +/info
-        +/loggers
-        +/env
+        +/actuator/health
+        +/actuator/metrics
+        +/actuator/prometheus
+        +/actuator/info
+        +/actuator/loggers
+        +/actuator/env
+        +/actuator/beans
+        +/actuator/mappings
     }
     
     class MetricsConfig {
         +MeterRegistry
         +HikariCP Metrics
         +Custom Metrics
+        +Micrometer Configuration
+        +Prometheus Metrics
+        +@EnableMetrics
+        +Metrics Export
     }
     
     class MetricsWSController {
-        +@Scheduled
+        +@Scheduled(fixedRate = 5000)
         +WebSocket Broadcast
         +Distributed Lock
+        +Real-time Metrics
+        +@MessageMapping("/metrics")
+        +@SendTo("/topic/metrics")
     }
     
     class HealthChecks {
         +Database Health
         +Redis Health
         +Application Health
+        +Connection Pool Health
+        +Disk Space Health
+        +Custom Health Indicators
+    }
+    
+    class WebSocketConfig {
+        +@EnableWebSocket
+        +@EnableWebSocketMessageBroker
+        +ServerEndpointExporter
+        +Real-time Communication
+        +STOMP Configuration
+    }
+    
+    class ScheduledTaskService {
+        +@Scheduled Tasks
+        +Distributed Lock
+        +Health Monitoring
+        +Performance Metrics
+        +Cleanup Operations
+    }
+    
+    class LoggingConfig {
+        +Logback Configuration
+        +Structured Logging
+        +Log Levels
+        +Performance Logging
     }
     
     ActuatorEndpoints --> MetricsConfig
     MetricsConfig --> MetricsWSController
     MetricsConfig --> HealthChecks
+    MetricsWSController --> WebSocketConfig
+    ScheduledTaskService --> MetricsConfig
+    ScheduledTaskService --> HealthChecks
+    LoggingConfig --> ActuatorEndpoints
 ```
 
-### 9. 部署架構
-```mermaid
-classDiagram
-    class DockerBuild {
-        +Multi-stage Build
-        +BuildKit Optimization
-        +Security Scan
-    }
-    
-    class KubernetesDeploy {
-        +Deployment
-        +Service
-        +ConfigMap
-        +Secret
-    }
-    
-    class CI_CD {
-        +Jenkins Pipeline
-        +Maven Build
-        +Docker Build
-        +K8s Deploy
-    }
-    
-    class Monitoring {
-        +Prometheus
-        +Grafana
-        +Logging
-    }
-    
-    DockerBuild --> KubernetesDeploy
-    CI_CD --> DockerBuild
-    CI_CD --> KubernetesDeploy
-    KubernetesDeploy --> Monitoring
-```
-
-### 10. 效能優化架構
-```mermaid
-classDiagram
-    class PerformanceOptimization {
-        +Database Indexing
-        +Connection Pooling
-        +Caching Strategy
-        +N+1 Query Fix
-    }
-    
-    class DatabaseOptimization {
-        +B-Tree Indexes
-        +Composite Indexes
-        +Vector Indexes
-        +Batch Queries
-    }
-    
-    class CacheOptimization {
-        +Redis Caching
-        +@Cacheable
-        +TTL Management
-    }
-    
-    class QueryOptimization {
-        +IN Clause
-        +Selective Columns
-        +Batch Operations
-    }
-    
-    PerformanceOptimization --> DatabaseOptimization
-    PerformanceOptimization --> CacheOptimization
-    PerformanceOptimization --> QueryOptimization
-```
-
-## 文檔與工具
+## Documentation and Tools
 
 ### Swagger UI
-- 本地環境：`http://localhost:8080/tymb/swagger-ui/index.html#/`
-- 生產環境：`https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/`
+- Local Environment: `http://localhost:8080/tymb/swagger-ui/index.html#/`
+- Production Environment: `https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html#/`
 
-### JavaDoc 文檔
-- 本地環境：`http://localhost:8080/tymb/javadoc/index.html`
-- 生產環境：`https://peoplesystem.tatdvsonorth.com/tymb/javadoc/index.html`
+### JavaDoc Documentation
+- Local Environment: `http://localhost:8080/tymb/javadoc/index.html`
+- Production Environment: `https://peoplesystem.tatdvsonorth.com/tymb/javadoc/index.html`
 
-### Docker 建置
-- 建置指令：`docker build -t papakao/ty-multiverse-backend:latest .`
-- 多平台建置：`docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .`
+### Docker Build
+- Build Command: `docker build -t papakao/ty-multiverse-backend:latest .`
+- Multi-platform Build: `docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .`
