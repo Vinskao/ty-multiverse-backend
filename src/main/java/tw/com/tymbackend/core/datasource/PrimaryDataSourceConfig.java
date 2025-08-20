@@ -14,7 +14,7 @@ import java.util.Properties;
 
 /**
  * Primary DataSource Configuration
- * Used for all tables except people and weapon tables
+ * Used for all tables including people and weapon tables
  */
 @Configuration
 public class PrimaryDataSourceConfig {
@@ -44,7 +44,9 @@ public class PrimaryDataSourceConfig {
         em.setPackagesToScan(
             "tw.com.tymbackend.module.livestock.domain.vo", 
             "tw.com.tymbackend.module.ckeditor.domain.vo",
-            "tw.com.tymbackend.module.gallery.domain.vo"
+            "tw.com.tymbackend.module.gallery.domain.vo",
+            "tw.com.tymbackend.module.people.domain.vo",
+            "tw.com.tymbackend.module.weapon.domain.vo"
         );
         
         HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
