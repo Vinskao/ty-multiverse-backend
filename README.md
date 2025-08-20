@@ -132,14 +132,6 @@ classDiagram
         +Gallery.java
     }
     
-    class LivestockModule {
-        +LivestockController
-        +LivestockService
-        +LivestockWSController
-        +LivestockRepository
-        +Livestock.java
-    }
-    
     class CKEditorModule {
         +FileUploadController
         +EditContentService
@@ -151,7 +143,6 @@ classDiagram
     %% Module Dependencies
     PeopleModule --> WeaponModule
     PeopleModule --> GalleryModule
-    PeopleModule --> LivestockModule
     PeopleModule --> CKEditorModule
 ```
 
@@ -167,7 +158,6 @@ classDiagram
     }
     
     class PrimaryDatabase {
-        +livestock Table
         +ckeditor Table
         +gallery Table
         +people_image Table
@@ -233,8 +223,6 @@ classDiagram
     class DistributedLock {
         +lock:content:save
         +lock:metrics:export:lock
-        +lock:livestock:getAll:lock
-        +lock:livestock:save
         +lock:scheduled:cleanup:old:data:lock
         +lock:scheduled:generate:weekly:report:lock
         +lock:scheduled:backup:data:lock

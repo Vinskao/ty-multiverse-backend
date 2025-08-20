@@ -42,7 +42,6 @@ public class PrimaryDataSourceConfig {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(primaryDataSource());
         em.setPackagesToScan(
-            "tw.com.tymbackend.module.livestock.domain.vo", 
             "tw.com.tymbackend.module.ckeditor.domain.vo",
             "tw.com.tymbackend.module.gallery.domain.vo",
             "tw.com.tymbackend.module.people.domain.vo",

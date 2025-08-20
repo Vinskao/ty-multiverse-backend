@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @ConfigurationProperties(prefix = "spring.people-datasource")
-@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true")
 public class PeopleDataSourceProperties {
     
     private String url;

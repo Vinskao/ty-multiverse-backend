@@ -147,6 +147,8 @@ pipeline {
                                 REDIS_CUSTOM_PORT=${REDIS_CUSTOM_PORT}
                                 REDIS_PASSWORD=${REDIS_PASSWORD}
                                 REDIS_QUEUE_TYMB=${REDIS_QUEUE_TYMB}
+                                # 明确禁用people-datasource
+                                SPRING_PEOPLE_DATASOURCE_ENABLED=false
                                 EOL
                             '''
                         }
