@@ -139,10 +139,6 @@ scheduling:
 distributed-lock:
   # 內容保存鎖超時時間（秒）
   content-save-timeout: 30
-  # 畜牧業數據查詢鎖超時時間（秒）
-  livestock-query-timeout: 10
-  # 畜牧業數據保存鎖超時時間（秒）
-  livestock-save-timeout: 30
 
 # 應用程序配置
 app:

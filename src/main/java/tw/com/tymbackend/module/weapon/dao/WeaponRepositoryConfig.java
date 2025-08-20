@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
  * 使用條件註解禁用此配置，保留配置備用
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true")
 @EnableJpaRepositories(
     basePackages = "tw.com.tymbackend.module.weapon.dao",
     entityManagerFactoryRef = "peopleEntityManagerFactory",

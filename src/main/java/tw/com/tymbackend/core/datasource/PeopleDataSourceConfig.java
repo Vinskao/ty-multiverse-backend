@@ -17,7 +17,7 @@ import java.util.Properties;
  * 使用條件註解禁用此配置，保留配置備用
  */
 @Configuration
-@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true", matchIfMissing = false)
+@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true")
 public class PeopleDataSourceConfig {
 
     private final PeopleDataSourceProperties properties;

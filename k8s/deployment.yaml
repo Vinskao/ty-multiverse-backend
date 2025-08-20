@@ -154,6 +154,8 @@ spec:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
               key: REDIS_QUEUE_TYMB
+        - name: SPRING_PEOPLE_DATASOURCE_ENABLED
+          value: "false"
 ---
 
 apiVersion: v1

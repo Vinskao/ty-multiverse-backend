@@ -13,7 +13,6 @@ import tw.com.tymbackend.core.repository.IntegerPkRepositoryImpl;
 @Configuration
 @EnableJpaRepositories(
     basePackages = {
-        "tw.com.tymbackend.module.livestock.dao",
         "tw.com.tymbackend.module.ckeditor.dao",
         "tw.com.tymbackend.module.gallery.dao"
     },
