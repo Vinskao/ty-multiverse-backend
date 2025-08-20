@@ -10,13 +10,28 @@ spring:
       port: '@REDIS_CUSTOM_PORT@'
       password: '@REDIS_PASSWORD@'
       database: 0
+      timeout: 5000ms  # 连接超时时间
       lettuce:
+        # 连接池配置优化
         pool:
           max-active: 8
           max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
+          min-idle: 2
+          max-wait: 5000ms
+          time-between-eviction-runs: 30s
+          min-evictable-idle-time: 60s
         shutdown-timeout: 100ms
+        # 添加连接重试和错误处理配置
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30s
+        # 连接重试配置
+        retry:
+          max-attempts: 3
+          initial-interval: 1000ms
+          max-interval: 5000ms
+          multiplier: 2.0
   session:
     store-type: redis
     redis:
@@ -62,14 +77,16 @@ spring:
       # 新增：連線池監控配置
       allow-pool-suspension: false        # 不允許暫停連線池
       initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
-  # People datasource configuration
+      
+  # People datasource configuration (已禁用，保留配置備用)
   people-datasource:
+    enabled: false  # 禁用此數據源
     driver-class-name: org.postgresql.Driver
     url: '@PEOPLE_DATASOURCE_URL@'
     username: '@PEOPLE_DATASOURCE_USERNAME@'
     password: '@PEOPLE_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置（進一步降低，與主資料源合計控制總連線數）
+      # 連線池大小配置（已禁用）
       minimum-idle: 1
       maximum-pool-size: 5
       
@@ -113,9 +130,9 @@ scheduling:
     health-check:
       cron: "0 0 * * * ?"
       lock-timeout: 5 # 分鐘
-    # 度量數據導出 - 每30秒執行一次
+    # 度量數據導出 - 每3分鐘執行一次（減少頻率避免Redis連接問題）
     metrics-export:
-      fixed-rate: 30000 # 毫秒
+      fixed-rate: 180000 # 毫秒 (3分鐘)
       lock-timeout: 25 # 秒
 
 # 分布式鎖配置

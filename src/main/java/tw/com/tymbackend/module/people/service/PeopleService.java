@@ -73,6 +73,16 @@ public class PeopleService {
     public Optional<People> getPeopleByName(String name) {
         return peopleRepository.findByName(name);
     }
+    
+    /**
+     * 根據ID查詢角色
+     * 
+     * @param id 角色ID
+     * @return 角色資訊，如果不存在則返回空
+     */
+    public Optional<People> findById(String id) {
+        return peopleRepository.findById(id);
+    }
 
     /**
      * 保存角色
@@ -80,7 +90,7 @@ public class PeopleService {
      * @param person 要保存的角色
      * @return 保存後的角色
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public People save(People person) {
         return peopleRepository.save(person);
     }
@@ -91,7 +101,7 @@ public class PeopleService {
      * @param person 要新增的角色
      * @return 新增後的角色
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public People insertPerson(People person) {
         return save(person);
     }
@@ -102,7 +112,7 @@ public class PeopleService {
      * @param peopleList 要保存的角色列表
      * @return 保存後的角色列表
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public List<People> saveAll(List<People> peopleList) {
         return peopleRepository.saveAll(peopleList);
     }
@@ -113,7 +123,7 @@ public class PeopleService {
      * @param peopleList 要保存的角色列表
      * @return 保存後的角色列表
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public List<People> saveAllPeople(List<People> peopleList) {
         return saveAll(peopleList);
     }
@@ -121,7 +131,7 @@ public class PeopleService {
     /**
      * 刪除所有角色
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public void deleteAll() {
         peopleRepository.deleteAll();
     }
@@ -129,7 +139,7 @@ public class PeopleService {
     /**
      * 刪除所有角色
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public void deleteAllPeople() {
         deleteAll();
     }
@@ -141,7 +151,7 @@ public class PeopleService {
      * @param person 要更新的角色資訊
      * @return 更新後的角色，如果不存在則返回 null
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     @SuppressWarnings("null")
     public People update(String name, People person) {
         // 先查詢現有實體
@@ -178,7 +188,7 @@ public class PeopleService {
      * @param person 要更新的角色
      * @return 更新後的角色
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     public People updatePerson(People person) {
         if (person.getName() != null) {
             // 先查詢現有實體，避免版本衝突
@@ -267,7 +277,7 @@ public class PeopleService {
      * @param person 包含新屬性的角色
      * @return 更新後的角色，如果不存在則返回 null
      */
-    @Transactional(transactionManager = "peopleTransactionManager", readOnly = false)
+    @Transactional(readOnly = false)
     @SuppressWarnings("null")
     public People updateAttributes(String name, People person) {
         // 先查詢現有實體

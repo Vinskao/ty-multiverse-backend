@@ -1,5 +1,6 @@
 package tw.com.tymbackend.core.datasource;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,10 +13,11 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 /**
- * People DataSource Configuration
- * Used specifically for people table only
+ * People DataSource Configuration (已禁用)
+ * 使用條件註解禁用此配置，保留配置備用
  */
 @Configuration
+@ConditionalOnProperty(name = "spring.people-datasource.enabled", havingValue = "true", matchIfMissing = false)
 public class PeopleDataSourceConfig {
 
     private final PeopleDataSourceProperties properties;
@@ -79,4 +81,4 @@ public class PeopleDataSourceConfig {
         transactionManager.setDefaultTimeout(30);
         return transactionManager;
     }
-} 
+}
