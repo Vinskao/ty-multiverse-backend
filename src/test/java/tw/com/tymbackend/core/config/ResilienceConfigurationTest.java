@@ -17,7 +17,7 @@ class ResilienceConfigurationTest {
         Bucket apiRateLimiter = config.apiRateLimiter();
         assertNotNull(apiRateLimiter);
         
-        // 測試前100個請求應該通過（放寬限制後）
+        // 測試前100個請求應該通過（基本限制）
         for (int i = 0; i < 100; i++) {
             assertTrue(apiRateLimiter.tryConsume(1), "第 " + (i + 1) + " 個請求應該通過");
         }
@@ -33,7 +33,7 @@ class ResilienceConfigurationTest {
         Bucket batchApiRateLimiter = config.batchApiRateLimiter();
         assertNotNull(batchApiRateLimiter);
         
-        // 測試前50個請求應該通過（放寬限制後）
+        // 測試前50個請求應該通過（基本限制）
         for (int i = 0; i < 50; i++) {
             assertTrue(batchApiRateLimiter.tryConsume(1), "第 " + (i + 1) + " 個批量請求應該通過");
         }
