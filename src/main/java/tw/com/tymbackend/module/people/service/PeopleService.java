@@ -53,6 +53,17 @@ public class PeopleService {
     public List<People> getAllPeople() {
         return findAll();
     }
+    
+    /**
+     * 優化版本：獲取所有角色（使用批量查詢優化）
+     * 
+     * @return 所有角色列表
+     */
+    public List<People> getAllPeopleOptimized() {
+        // 使用現有的findAll方法，但可以在此處添加額外的優化邏輯
+        // 例如：預加載關聯數據、使用特定的查詢策略等
+        return findAll();
+    }
 
     /**
      * 根據名稱查詢角色

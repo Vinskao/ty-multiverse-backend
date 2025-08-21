@@ -149,6 +149,13 @@ pipeline {
                                 REDIS_QUEUE_TYMB=${REDIS_QUEUE_TYMB}
                                 # 明确禁用people-datasource
                                 SPRING_PEOPLE_DATASOURCE_ENABLED=false
+                                # RabbitMQ 配置 - Production 環境啟用
+                                RABBITMQ_ENABLED=true
+                                RABBITMQ_HOST=rabbitmq-service
+                                RABBITMQ_PORT=5672
+                                RABBITMQ_USERNAME=admin
+                                RABBITMQ_PASSWORD=admin123
+                                RABBITMQ_VIRTUAL_HOST=/
                                 EOL
                             '''
                         }

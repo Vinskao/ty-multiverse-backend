@@ -1,6 +1,8 @@
 package tw.com.tymbackend.core.config.http;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -10,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  * 負責配置靜態資源映射，包括 JavaDoc 文件的訪問路徑。
  */
 @Configuration
+@EnableAspectJAutoProxy
 public class WebConfig implements WebMvcConfigurer {
 
     /**
@@ -33,5 +36,20 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/")
                 .setCachePeriod(3600)
                 .resourceChain(true);
+    }
+
+    /**
+     * 配置CORS跨域請求
+     * 
+     * @param registry CORS註冊表
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);
     }
 }

@@ -39,6 +39,8 @@ spring:
 
 
 
+
+
   profiles:
     active: '@env@'
   security:
@@ -265,3 +267,26 @@ keycloak:
       securityCollections:
         - patterns:
             - /*
+
+  # RabbitMQ 配置
+  rabbitmq:
+    enabled: ${RABBITMQ_ENABLED:false}  # 預設禁用，production 環境啟用
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:admin123}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
+    # 連接池配置
+    listener:
+      simple:
+        concurrency: 2
+        max-concurrency: 4
+        prefetch: 1
+        default-requeue-rejected: false
+    # 重試配置
+    retry:
+      enabled: true
+      initial-interval: 1000
+      max-attempts: 3
+      max-interval: 10000
+      multiplier: 1.0

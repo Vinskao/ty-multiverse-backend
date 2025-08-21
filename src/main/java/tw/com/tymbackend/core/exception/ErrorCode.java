@@ -400,7 +400,29 @@ public enum ErrorCode {
      * 
      * @see HttpStatus#OK
      */
-    CORS_ENABLED(HttpStatus.OK, "CONFIG_002", "CORS 已啟用");
+    CORS_ENABLED(HttpStatus.OK, "CONFIG_002", "CORS 已啟用"),
+    
+    // ==================== Resilience 相關錯誤 ====================
+    
+    /**
+     * 請求頻率過高
+     * 
+     * 當客戶端請求頻率超過系統限制時使用此錯誤碼。
+     * 通常發生在 Rate Limiter 觸發限制時。
+     * 
+     * @see HttpStatus#TOO_MANY_REQUESTS
+     */
+    RATE_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "RESIL_001", "請求頻率過高，請稍後再試"),
+    
+    /**
+     * 系統並發處理繁忙
+     * 
+     * 當系統並發處理能力達到上限時使用此錯誤碼。
+     * 通常發生在 Bulkhead 模式觸發時。
+     * 
+     * @see HttpStatus#TOO_MANY_REQUESTS
+     */
+    BULKHEAD_FULL(HttpStatus.TOO_MANY_REQUESTS, "RESIL_002", "系統並發處理繁忙，請稍後再試");
     
     /** HTTP 狀態碼 */
     private final HttpStatus httpStatus;
