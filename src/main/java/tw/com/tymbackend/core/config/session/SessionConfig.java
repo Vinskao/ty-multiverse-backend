@@ -6,7 +6,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
-import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 
 /**
  * Session 配置類 - 專門為有狀態服務提供 Session 支持
@@ -23,7 +22,7 @@ import org.springframework.session.web.context.AbstractHttpSessionApplicationIni
     maxInactiveIntervalInSeconds = 3600,  // 1小時過期
     redisNamespace = "tymb:sessions"      // 命名空間
 )
-public class SessionConfig extends AbstractHttpSessionApplicationInitializer {
+public class SessionConfig {
 
 	/**
 	 * 配置 Session Cookie 序列化器
