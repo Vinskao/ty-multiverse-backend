@@ -5,6 +5,9 @@ app:
   url:
     address: 'http://localhost:8080'
 spring:
+  # RabbitMQ 配置 - 本機環境禁用
+  rabbitmq:
+    enabled: false
   data:
     redis:
       host: '@REDIS_HOST@'
@@ -130,6 +133,8 @@ logging:
     'org.springframework.security.oauth2.jwt': DEBUG
     'org.springframework.security.oauth2.server.resource.authentication': DEBUG
     'org.springframework.security.oauth2.server.resource.web': DEBUG
+    org.springframework.amqp: OFF  # 禁用 RabbitMQ 相關日誌
+    com.rabbitmq: OFF
 
 # 定時任務配置
 scheduling:

@@ -156,6 +156,19 @@ spec:
               key: REDIS_QUEUE_TYMB
         - name: SPRING_PEOPLE_DATASOURCE_ENABLED
           value: "false"
+        # RabbitMQ 配置 - Production 環境啟用
+        - name: RABBITMQ_ENABLED
+          value: "true"
+        - name: RABBITMQ_HOST
+          value: "rabbitmq-service"
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USERNAME
+          value: "admin"
+        - name: RABBITMQ_PASSWORD
+          value: "admin123"
+        - name: RABBITMQ_VIRTUAL_HOST
+          value: "/"
 ---
 
 apiVersion: v1

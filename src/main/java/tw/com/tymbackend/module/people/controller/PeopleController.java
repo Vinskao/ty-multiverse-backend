@@ -12,9 +12,12 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import tw.com.tymbackend.module.people.domain.dto.PeopleNameRequestDTO;
 import tw.com.tymbackend.module.people.domain.vo.People;
 import tw.com.tymbackend.module.people.service.PeopleService;
+import tw.com.tymbackend.core.service.AsyncMessageService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/people")
@@ -24,6 +27,9 @@ public class PeopleController {
 
     @Autowired
     private PeopleService peopleService;
+    
+    @Autowired(required = false)
+    private AsyncMessageService asyncMessageService;
 
     // 插入 1 個 (接收 JSON)
     @PostMapping("/insert")
@@ -93,8 +99,20 @@ public class PeopleController {
     // 搜尋所有 (傳出 JSON)
     @PostMapping("/get-all")
     public ResponseEntity<?> getAllPeople() {
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            String requestId = asyncMessageService.sendPeopleGetAllRequest();
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "角色列表獲取請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
+        }
+        
+        // 本地環境，同步處理
         try {
-            List<People> people = peopleService.getAllPeople();
+            // 使用優化的批量查詢方法，但保持相同的API介面
+            List<People> people = peopleService.getAllPeopleOptimized();
             return new ResponseEntity<>(people, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

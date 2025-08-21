@@ -46,6 +46,16 @@ public class WeaponService {
     }
     
     /**
+     * Get weapons by multiple owners (batch query)
+     * 
+     * @param owners list of weapon owners
+     * @return list of weapons belonging to the specified owners
+     */
+    public List<Weapon> getWeaponsByOwners(List<String> owners) {
+        return weaponRepository.findByOwnersIn(owners);
+    }
+    
+    /**
      * Get weapon by name (ID)
      */
     public Optional<Weapon> getWeaponById(String name) {
