@@ -6,6 +6,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
+import org.springframework.session.web.context.AbstractHttpSessionApplicationInitializer;
 
 /**
  * Session 配置類 - 專門為有狀態服務提供 Session 支持
@@ -22,12 +23,12 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
     maxInactiveIntervalInSeconds = 3600,  // 1小時過期
     redisNamespace = "tymb:sessions"      // 命名空間
 )
-public class SessionConfig {
+public class SessionConfig extends AbstractHttpSessionApplicationInitializer {
 
 	/**
 	 * 配置 Session Cookie 序列化器
 	 * 
-	 * 自定義 Session Cookie 的屬性，提高安全性
+	 * 自定義 Session Cookie 的屬性，提高安全性和穩定性
 	 * 
 	 * @return 配置好的 CookieSerializer
 	 */
@@ -40,6 +41,7 @@ public class SessionConfig {
 		serializer.setCookieMaxAge(3600);         // Cookie 最大年齡 (秒)
 		serializer.setUseHttpOnlyCookie(true);    // 僅 HTTP 訪問
 		serializer.setUseSecureCookie(false);     // 開發環境不使用 HTTPS
+		serializer.setSameSite("Lax");            // 設置 SameSite 屬性
 		return serializer;
 	}
 } 

@@ -59,10 +59,10 @@ spec:
         resources:
           requests:
             cpu: "25m"      # 降低 CPU 請求
-            memory: "256Mi"  # 請求 256MB 記憶體
+            memory: "512Mi"  # 請求 512MB 記憶體
           limits:
             cpu: "50m"      # 降低 CPU 限制
-            memory: "512Mi"  # 限制最多 512MB 記憶體
+            memory: "1Gi"  # 限制最多 1GB 記憶體
         env:
         - name: SERVER_PORT
           valueFrom:
@@ -169,6 +169,14 @@ spec:
           value: "admin123"
         - name: RABBITMQ_VIRTUAL_HOST
           value: "/"
+        # JVM 記憶體配置
+        - name: JAVA_OPTS
+          value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
+        # Session 配置
+        - name: APP_SESSION_ENABLED
+          value: "true"
+        - name: APP_SESSION_TIMEOUT
+          value: "3600"
 ---
 
 apiVersion: v1
