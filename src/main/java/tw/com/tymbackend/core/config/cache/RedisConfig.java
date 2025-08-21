@@ -50,7 +50,7 @@ public class RedisConfig {
     }
 
     /**
-     * 配置Redis模板
+     * 配置Redis模板 - 用於一般對象
      */
     @Bean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
@@ -62,6 +62,24 @@ public class RedisConfig {
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         template.setHashKeySerializer(new StringRedisSerializer());
         template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        
+        template.afterPropertiesSet();
+        return template;
+    }
+
+    /**
+     * 配置Redis模板 - 專門用於String類型
+     */
+    @Bean
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        
+        // 設置序列化器
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new StringRedisSerializer());
+        template.setHashValueSerializer(new StringRedisSerializer());
         
         template.afterPropertiesSet();
         return template;

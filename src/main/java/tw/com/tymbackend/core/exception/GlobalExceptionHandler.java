@@ -16,8 +16,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.session.SessionRepository;
-import org.springframework.session.data.redis.RedisSessionRepository;
+
 import java.util.List;
 import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.core.exception.handler.ApiExceptionHandler;
