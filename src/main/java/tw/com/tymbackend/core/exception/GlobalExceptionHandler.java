@@ -16,6 +16,8 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.session.SessionRepository;
+import org.springframework.session.data.redis.RedisSessionRepository;
 import java.util.List;
 import tw.com.tymbackend.core.exception.ErrorCode;
 import tw.com.tymbackend.core.exception.handler.ApiExceptionHandler;
@@ -69,6 +71,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error("文件上傳大小超限: {}", ex.getMessage(), ex);
         ErrorResponse errorResponse = ErrorResponse.fromErrorCode(ErrorCode.BAD_REQUEST, "文件大小超過限制", ex.getMessage());
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
+     * 處理 Session 失效異常
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ErrorResponse> handleSessionInvalidatedException(IllegalStateException ex, HttpServletRequest request) {
+        if (ex.getMessage() != null && ex.getMessage().contains("Session was invalidated")) {
+            logger.warn("Session 已失效，重新建立 Session: {}", request.getRequestURI());
+            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(ErrorCode.UNAUTHORIZED, "Session 已失效，請重新登入", request.getRequestURI());
+            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+        // 如果不是 Session 失效，交給責任鏈處理
+        return handleGlobalException(ex, request);
     }
 
     /**

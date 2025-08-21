@@ -36,6 +36,9 @@ spring:
     store-type: redis
     redis:
       namespace: tymb:sessions
+      flush-mode: on-save
+      cleanup-cron: "0 0 * * * *"
+    timeout: 3600s
 
 
 
