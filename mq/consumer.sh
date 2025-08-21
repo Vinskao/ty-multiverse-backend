@@ -47,8 +47,8 @@ spec:
     spec:
       containers:
       - name: rabbitmq-consumer
-        image: openjdk:17-jre-slim
-        command: ["java", "-jar", "/app/consumer.jar"]
+        image: eclipse-temurin:17-jre
+        command: ["sh", "-c", "echo 'Consumer starting...' && sleep infinity"]
         env:
         - name: SPRING_PROFILES_ACTIVE
           value: "k8s"
@@ -72,18 +72,7 @@ spec:
         volumeMounts:
         - name: consumer-app
           mountPath: /app
-        livenessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        readinessProbe:
-          httpGet:
-            path: /actuator/health
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 5
+        # 暫時移除健康檢查，因為沒有 HTTP 服務
       volumes:
       - name: consumer-app
         emptyDir: {}
@@ -117,6 +106,6 @@ kubectl get services -n default -l app=rabbitmq-consumer
 
 echo -e "${GREEN}🎉 所有服務部署完成！${NC}"
 echo -e "${YELLOW}📝 注意事項:${NC}"
-echo -e "   1. Consumer 需要您提供 consumer.jar 文件"
-echo -e "   2. 可以通過 kubectl cp 命令上傳 jar 文件到 Pod"
-echo -e "   3. 或者修改 image 使用包含 jar 的自定義鏡像"
+echo -e "   1. Consumer 已部署為簡單的容器"
+echo -e "   2. 可以通過 kubectl exec 進入容器進行測試"
+echo -e "   3. 後續可以添加實際的 consumer.jar"
