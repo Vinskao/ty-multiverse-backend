@@ -485,9 +485,9 @@ classDiagram
 ### 9. RabbitMQ Data Flow Architecture
 ```mermaid
 graph LR
-    A[Backend<br/>Producer] --> B[RabbitMQ<br/>Queue]
-    B --> C[Consumer<br/>Pod]
-    C --> D[PostgreSQL<br/>DB]
+    A[Backend<br/>Spring Boot<br/>REST Endpoints] --> B[RabbitMQ<br/>Message Queue]
+    B --> C[Consumer<br/>Spring Boot<br/>JDBC Processing]
+    C --> D[PostgreSQL<br/>Database]
     
     classDef producer fill:#e1f5fe
     classDef mq fill:#f3e5f5
@@ -499,6 +499,12 @@ graph LR
     class C consumer
     class D database
 ```
+
+**架構說明：**
+- **Backend (Producer)**: Spring Boot 應用程式，提供 REST API 端點，負責接收請求並發送訊息到 RabbitMQ
+- **Consumer**: Spring Boot 應用程式，使用 JDBC 處理訊息並將數據寫入 PostgreSQL 資料庫
+- **RabbitMQ**: 訊息佇列，實現非同步處理和解耦
+- **PostgreSQL**: 主要資料庫，儲存處理後的數據
 
 ## Documentation and Tools
 
