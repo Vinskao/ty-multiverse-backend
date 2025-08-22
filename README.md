@@ -499,11 +499,17 @@ graph TB
     subgraph "Consumer Services"
         F[Consumer Service<br/>Message Processing]
         G[Batch Operations<br/>Error Recovery]
+        H[Data Processing Logic]
+    end
+    
+    subgraph "Database Layer"
+        I[Primary PostgreSQL<br/>Main Database]
+        J[People PostgreSQL<br/>People Database]
     end
     
     subgraph "Environment"
-        H[Local: localhost:5672<br/>Health Check: Disabled]
-        I[Production: rabbitmq-service<br/>Health Check: Enabled]
+        K[Local: localhost:5672<br/>Health Check: Disabled]
+        L[Production: rabbitmq-service<br/>Health Check: Enabled]
     end
     
     %% Data Flow
@@ -513,21 +519,26 @@ graph TB
     D --> E
     E --> F
     F --> G
+    G --> H
+    H --> I
+    H --> J
     
     %% Environment Configuration
-    H -.-> D
-    I -.-> D
+    K -.-> D
+    L -.-> D
     
     %% Styling
     classDef backend fill:#e1f5fe
     classDef mq fill:#f3e5f5
     classDef consumer fill:#e8f5e8
+    classDef database fill:#ffebee
     classDef env fill:#fff3e0
     
     class A,B,C backend
     class D,E mq
-    class F,G consumer
-    class H,I env
+    class F,G,H consumer
+    class I,J database
+    class K,L env
 ```
 
 ## Documentation and Tools
