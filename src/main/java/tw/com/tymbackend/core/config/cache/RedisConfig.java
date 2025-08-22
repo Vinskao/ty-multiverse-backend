@@ -66,22 +66,4 @@ public class RedisConfig {
         template.afterPropertiesSet();
         return template;
     }
-
-    /**
-     * 配置Redis模板 - 專門用於String類型
-     */
-    @Bean
-    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        
-        // 設置序列化器
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new StringRedisSerializer());
-        template.setHashKeySerializer(new StringRedisSerializer());
-        template.setHashValueSerializer(new StringRedisSerializer());
-        
-        template.afterPropertiesSet();
-        return template;
-    }
 } 
