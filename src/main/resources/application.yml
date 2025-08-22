@@ -153,7 +153,7 @@ distributed-lock:
 app:
   # Session 配置 - 混合認證策略
   session:
-    enabled: true  # 啟用 Session 支持
+    enabled: false  # 暫時禁用 Session 支持
     timeout: 1800  # Session 超時時間（秒），與 spring.session.timeout 保持一致
   # 後端URL配置
   url:

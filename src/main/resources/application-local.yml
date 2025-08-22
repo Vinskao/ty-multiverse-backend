@@ -116,7 +116,7 @@ spring:
   # Session 配置
   app:
     session:
-      enabled: true
+      enabled: false  # 暫時禁用 Session 支持
       timeout: 1800
 springdoc:
   api-docs:
