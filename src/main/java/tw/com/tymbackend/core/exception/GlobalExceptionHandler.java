@@ -79,8 +79,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> handleSessionInvalidatedException(IllegalStateException ex, HttpServletRequest request) {
         if (ex.getMessage() != null && ex.getMessage().contains("Session was invalidated")) {
             logger.warn("Session 已失效，重新建立 Session: {}", request.getRequestURI());
-            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(ErrorCode.UNAUTHORIZED, "Session 已失效，請重新登入", request.getRequestURI());
-            return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+            
+            // 檢查是否已經有響應被發送
+            try {
+                // 返回 200 狀態碼而不是 401，避免前端重定向到登入頁面
+                ErrorResponse errorResponse = new ErrorResponse(HttpStatus.OK.value(), "SESSION_004", "Session 已重新建立", request.getRequestURI());
+                return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+            } catch (Exception responseEx) {
+                // 如果響應已經被發送，記錄錯誤但不拋出異常
+                logger.debug("響應已發送，忽略 Session 無效錯誤: {}", request.getRequestURI());
+                return null;
+            }
         }
         // 如果不是 Session 失效，交給責任鏈處理
         return handleGlobalException(ex, request);

@@ -19,8 +19,9 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 @Configuration
 @ConditionalOnProperty(name = "app.session.enabled", havingValue = "true")
 @EnableRedisHttpSession(
-    maxInactiveIntervalInSeconds = 3600,  // 1小時過期
-    redisNamespace = "tymb:sessions"      // 命名空間
+    maxInactiveIntervalInSeconds = 1800,  // 30分鐘過期，與 application.yml 保持一致
+    redisNamespace = "tymb:sessions",     // 命名空間
+    flushMode = org.springframework.session.FlushMode.ON_SAVE  // 只在保存時刷新
 )
 public class SessionConfig {
 
@@ -43,4 +44,6 @@ public class SessionConfig {
 		serializer.setSameSite("Lax");            // 設置 SameSite 屬性
 		return serializer;
 	}
+
+
 } 

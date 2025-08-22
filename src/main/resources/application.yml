@@ -37,8 +37,12 @@ spring:
     redis:
       namespace: tymb:sessions
       flush-mode: on-save
+      save-mode: on-set-attribute
       cleanup-cron: "0 0 * * * *"
-    timeout: 3600s
+    timeout: 30m  # 改為 30 分鐘，避免過長
+    # 添加 Session 配置來改善穩定性
+    create: always
+    tracking-modes: cookie
 
 
 
@@ -194,6 +198,7 @@ logging:
     root: INFO
     org:
       springframework: INFO
+      springframework.session: DEBUG  # 添加 Session 調試日誌
       hibernate:
         SQL: OFF
         type:
