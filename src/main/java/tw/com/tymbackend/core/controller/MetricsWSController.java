@@ -154,55 +154,45 @@ public class MetricsWSController {
      */
     private String performMetricsExport() {
         try {
-            // 定義要導出的度量指標（只保留確定存在的 metrics）
-            String[] metrics = {
-                "jvm.memory.used",
-                "process.cpu.usage",
-                "hikaricp.connections.active"
-            };
+            // 只使用健康檢查端點，因為其他 metrics 端點已被禁用
+            String healthUrl = actuatorMetricsUrl.replace("/metrics", "/health");
             
             Map<String, Object> metricsData = new HashMap<>();
             
-            for (String metric : metrics) {
-                String url = null;
-                try {
-                    // 檢查 URL 是否有效
-                    if (actuatorMetricsUrl == null || actuatorMetricsUrl.contains("@")) {
-                        logger.error("Actuator URL 配置錯誤: {}", actuatorMetricsUrl);
-                        continue;
-                    }
-                    
-                    // 直接構建 URL，避免 UriComponentsBuilder 的路徑問題
-                    url = actuatorMetricsUrl + "/" + metric;
-                    
-                    logger.info("請求度量數據 URL: {} (actuatorMetricsUrl: {})", url, actuatorMetricsUrl);
-                    
-                    // 添加請求超時和錯誤處理
-                    HttpHeaders headers = new HttpHeaders();
-                    headers.setContentType(MediaType.APPLICATION_JSON);
-                    HttpEntity<String> entity = new HttpEntity<>(headers);
-                    
-                    ResponseEntity<String> response = restTemplate.exchange(
-                        url, 
-                        HttpMethod.GET, 
-                        entity, 
-                        String.class
-                    );
-                    
-                    if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
-                        Map<String, Object> metricData = objectMapper.readValue(response.getBody(), Map.class);
-                        metricsData.put(metric, metricData);
-                        logger.debug("成功獲取度量數據: {}", metric);
-                    } else {
-                        logger.warn("度量數據請求失敗: {} - 狀態碼: {}", metric, response.getStatusCode());
-                    }
-                } catch (HttpClientErrorException.NotFound e) {
-                    logger.warn("度量端點不存在: {} - URL: {} - 錯誤: {}", metric, url, e.getMessage());
-                } catch (HttpClientErrorException e) {
-                    logger.warn("HTTP 錯誤: {} - URL: {} - 狀態碼: {} - 錯誤: {}", metric, url, e.getStatusCode(), e.getMessage());
-                } catch (Exception e) {
-                    logger.warn("獲取度量數據失敗: {} - URL: {} - 錯誤: {}", metric, url, e.getMessage());
+            try {
+                // 檢查 URL 是否有效
+                if (healthUrl == null || healthUrl.contains("@")) {
+                    logger.error("Health URL 配置錯誤: {}", healthUrl);
+                    return "{\"error\": \"Health URL 配置錯誤\"}";
                 }
+                
+                logger.info("請求健康檢查數據 URL: {} (actuatorMetricsUrl: {})", healthUrl, actuatorMetricsUrl);
+                
+                // 添加請求超時和錯誤處理
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                HttpEntity<String> entity = new HttpEntity<>(headers);
+                
+                ResponseEntity<String> response = restTemplate.exchange(
+                    healthUrl, 
+                    HttpMethod.GET, 
+                    entity, 
+                    String.class
+                );
+                
+                if (response.getStatusCode().is2xxSuccessful() && response.getBody() != null) {
+                    Map<String, Object> healthData = objectMapper.readValue(response.getBody(), Map.class);
+                    metricsData.put("health", healthData);
+                    logger.debug("成功獲取健康檢查數據");
+                } else {
+                    logger.warn("健康檢查請求失敗 - 狀態碼: {}", response.getStatusCode());
+                }
+            } catch (HttpClientErrorException.NotFound e) {
+                logger.warn("健康檢查端點不存在 - URL: {} - 錯誤: {}", healthUrl, e.getMessage());
+            } catch (HttpClientErrorException e) {
+                logger.warn("HTTP 錯誤 - URL: {} - 狀態碼: {} - 錯誤: {}", healthUrl, e.getStatusCode(), e.getMessage());
+            } catch (Exception e) {
+                logger.warn("獲取健康檢查數據失敗 - URL: {} - 錯誤: {}", healthUrl, e.getMessage());
             }
             
             // 通過 WebSocket 廣播度量數據

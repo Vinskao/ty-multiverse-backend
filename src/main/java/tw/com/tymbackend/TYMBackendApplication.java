@@ -13,7 +13,10 @@ import org.springframework.web.socket.server.standard.ServerEndpointExporter;
 import org.springframework.retry.annotation.EnableRetry;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.springframework.boot.autoconfigure.session.SessionAutoConfiguration.class,
+    org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration.class
+})
 @EnableWebSocket
 @EnableRetry
 @EnableAsync
