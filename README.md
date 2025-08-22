@@ -482,6 +482,54 @@ classDiagram
     LoggingConfig --> ActuatorEndpoints
 ```
 
+### 9. RabbitMQ Data Flow Architecture
+```mermaid
+graph TB
+    subgraph "Backend Application"
+        A[TYMBackendApplication]
+        B[AsyncMessageService]
+        C[RabbitMQConfig]
+    end
+    
+    subgraph "Message Broker"
+        D[RabbitMQ Server<br/>4.1 Management]
+        E[Message Queue<br/>Async Processing]
+    end
+    
+    subgraph "Consumer Services"
+        F[Consumer Service<br/>Message Processing]
+        G[Batch Operations<br/>Error Recovery]
+    end
+    
+    subgraph "Environment"
+        H[Local: localhost:5672<br/>Health Check: Disabled]
+        I[Production: rabbitmq-service<br/>Health Check: Enabled]
+    end
+    
+    %% Data Flow
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    
+    %% Environment Configuration
+    H -.-> D
+    I -.-> D
+    
+    %% Styling
+    classDef backend fill:#e1f5fe
+    classDef mq fill:#f3e5f5
+    classDef consumer fill:#e8f5e8
+    classDef env fill:#fff3e0
+    
+    class A,B,C backend
+    class D,E mq
+    class F,G consumer
+    class H,I env
+```
+
 ## Documentation and Tools
 
 ### Swagger UI
