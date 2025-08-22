@@ -26,9 +26,15 @@ spring:
       connect-timeout: 5000ms
       command-timeout: 5000ms
   session:
-    store-type: '@spring.session.store-type@'
+    store-type: redis
     redis:
       namespace: tymb:sessions
+      flush-mode: on-save
+      save-mode: on-set-attribute
+      cleanup-cron: "0 0 * * * *"  # 每天清理過期 Session
+    timeout: 30m  # 30 分鐘過期
+    create: always
+    tracking-modes: cookie
   config:
     import: classpath:env/local.properties
   security:
@@ -107,6 +113,11 @@ spring:
   devtools:
     restart:
       enabled: false
+  # Session 配置
+  app:
+    session:
+      enabled: true
+      timeout: 1800
 springdoc:
   api-docs:
     enabled: true
@@ -118,6 +129,7 @@ logging:
     root: INFO
     org:
       springframework: INFO
+      # springframework.session: DEBUG  # 暫時關閉，訊息太多
       springframework.security: DEBUG
       springframework.security.oauth2: DEBUG
       springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
