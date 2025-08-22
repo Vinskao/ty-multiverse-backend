@@ -485,7 +485,7 @@ classDiagram
 ### 9. RabbitMQ Data Flow Architecture
 ```mermaid
 graph TB
-    subgraph "Backend Application"
+    subgraph "Backend Application (Producer)"
         A[TYMBackendApplication]
         B[AsyncMessageService]
         C[RabbitMQConfig]
@@ -496,17 +496,12 @@ graph TB
         E[Message Queue<br/>Async Processing]
     end
     
-    subgraph "Consumer Services"
-        F[Consumer Service 1<br/>Message Processing]
-        G[Consumer Service 2<br/>Message Processing]
-        H[Consumer Service 3<br/>Message Processing]
-        I[Batch Operations<br/>Error Recovery]
-        J[Data Processing Logic]
+    subgraph "Consumer Application (Consumer)"
+        F[Consumer Pod<br/>Message Processing & DB Write]
     end
     
-    subgraph "Database Layer"
-        I[Primary PostgreSQL<br/>Main Database<br/>No MQ Connection]
-        J[People PostgreSQL<br/>People Database<br/>MQ Connected]
+    subgraph "Database"
+        K[People PostgreSQL<br/>People Database]
     end
     
     %% Data Flow
@@ -515,23 +510,18 @@ graph TB
     C --> D
     D --> E
     E --> F
-    E --> G
-    E --> H
-    F --> I
-    G --> I
-    H --> I
-    I --> J
+    F --> K
     
     %% Styling
-    classDef backend fill:#e1f5fe
+    classDef producer fill:#e1f5fe
     classDef mq fill:#f3e5f5
     classDef consumer fill:#e8f5e8
     classDef database fill:#ffebee
     
-    class A,B,C backend
+    class A,B,C producer
     class D,E mq
-    class F,G,H consumer
-    class I,J database
+    class F consumer
+    class K database
 ```
 
 ## Documentation and Tools
