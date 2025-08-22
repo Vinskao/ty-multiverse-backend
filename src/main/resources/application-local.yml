@@ -5,9 +5,32 @@ app:
   url:
     address: 'http://localhost:8080'
 spring:
-  # RabbitMQ 配置 - 本機環境禁用
+  # RabbitMQ 配置 - 本機環境可選啟用
   rabbitmq:
-    enabled: false
+    enabled: true  # 啟用 RabbitMQ 連接
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    # 連接池配置
+    listener:
+      simple:
+        concurrency: 1
+        max-concurrency: 2
+        prefetch: 1
+        default-requeue-rejected: false
+    # 重試配置
+    retry:
+      enabled: true
+      initial-interval: 1000
+      max-attempts: 3
+      max-interval: 5000
+      multiplier: 1.0
+    # 健康檢查配置
+    health:
+      check:
+        enabled: true
   data:
     redis:
       host: '@REDIS_HOST@'
