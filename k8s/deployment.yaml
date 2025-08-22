@@ -174,7 +174,7 @@ spec:
           value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
         # Session 配置
         - name: APP_SESSION_ENABLED
-          value: "true"
+          value: "false"  # 暫時禁用 Session 支持
         - name: APP_SESSION_TIMEOUT
           value: "1800"  # 30分鐘，與應用程序配置保持一致
         - name: SPRING_SESSION_REDIS_FLUSH_MODE

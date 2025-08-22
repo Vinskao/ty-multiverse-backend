@@ -1,13 +1,10 @@
 package tw.com.tymbackend.core.config.http;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import tw.com.tymbackend.core.config.session.SessionDiagnosticInterceptor;
 
 /**
  * Web MVC 配置類
@@ -17,9 +14,6 @@ import tw.com.tymbackend.core.config.session.SessionDiagnosticInterceptor;
 @Configuration
 @EnableAspectJAutoProxy
 public class WebConfig implements WebMvcConfigurer {
-    
-    @Autowired(required = false)
-    private SessionDiagnosticInterceptor sessionDiagnosticInterceptor;
 
     /**
      * 配置靜態資源處理器
@@ -59,18 +53,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(3600);
     }
     
-    /**
-     * 配置攔截器
-     * 
-     * @param registry 攔截器註冊表
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        // 註冊 Session 診斷攔截器
-        if (sessionDiagnosticInterceptor != null) {
-            registry.addInterceptor(sessionDiagnosticInterceptor)
-                    .addPathPatterns("/**")
-                    .excludePathPatterns("/actuator/**", "/static/**", "/favicon.ico");
-        }
-    }
+
 }
