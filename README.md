@@ -509,11 +509,6 @@ graph TB
         J[People PostgreSQL<br/>People Database<br/>MQ Connected]
     end
     
-    subgraph "Environment"
-        K[Local: localhost:5672<br/>Health Check: Disabled]
-        L[Production: rabbitmq-service<br/>Health Check: Enabled]
-    end
-    
     %% Data Flow
     A --> B
     B --> C
@@ -526,24 +521,17 @@ graph TB
     G --> I
     H --> I
     I --> J
-    J --> L
-    
-    %% Environment Configuration
-    K -.-> D
-    L -.-> D
     
     %% Styling
     classDef backend fill:#e1f5fe
     classDef mq fill:#f3e5f5
     classDef consumer fill:#e8f5e8
     classDef database fill:#ffebee
-    classDef env fill:#fff3e0
     
     class A,B,C backend
     class D,E mq
     class F,G,H consumer
     class I,J database
-    class K,L env
 ```
 
 ## Documentation and Tools
