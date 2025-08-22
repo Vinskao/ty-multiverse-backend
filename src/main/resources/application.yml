@@ -154,7 +154,7 @@ app:
   # Session 配置 - 混合認證策略
   session:
     enabled: true  # 啟用 Session 支持
-    timeout: 3600  # Session 超時時間（秒）
+    timeout: 1800  # Session 超時時間（秒），與 spring.session.timeout 保持一致
   # 後端URL配置
   url:
     address: '@PUBLIC_TYMB_URL@'
@@ -198,7 +198,7 @@ logging:
     root: INFO
     org:
       springframework: INFO
-      springframework.session: DEBUG  # 添加 Session 調試日誌
+      # springframework.session: DEBUG  # 暫時關閉，訊息太多
       hibernate:
         SQL: OFF
         type:

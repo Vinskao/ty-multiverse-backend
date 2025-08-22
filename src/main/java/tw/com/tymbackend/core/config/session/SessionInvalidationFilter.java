@@ -36,6 +36,14 @@ public class SessionInvalidationFilter extends OncePerRequestFilter {
                                   HttpServletResponse response, 
                                   FilterChain filterChain) throws ServletException, IOException {
         
+        String requestURI = request.getRequestURI();
+        String userAgent = request.getHeader("User-Agent");
+        
+        // 記錄請求信息，特別關注 K8s 相關的請求
+        if (isK8sRelatedRequest(requestURI, userAgent)) {
+            logger.info("🔍 K8s 相關請求 - URI: {}, UserAgent: {}", requestURI, userAgent);
+        }
+        
         try {
             // 檢查 Session 是否有效
             HttpSession session = request.getSession(false);
@@ -45,7 +53,8 @@ public class SessionInvalidationFilter extends OncePerRequestFilter {
                     session.getAttribute("_session_validity_check");
                 } catch (IllegalStateException e) {
                     if (e.getMessage() != null && e.getMessage().contains("Session was invalidated")) {
-                        logger.debug("檢測到無效的 Session，將在響應完成後清理: {}", session.getId());
+                        logger.warn("⚠️ 檢測到無效的 Session - URI: {}, SessionID: {}, UserAgent: {}", 
+                            requestURI, session.getId(), userAgent);
                         // 將 Session 標記為需要清理
                         request.setAttribute("_session_invalidated", true);
                     }
@@ -58,7 +67,7 @@ public class SessionInvalidationFilter extends OncePerRequestFilter {
         } catch (Exception e) {
             // 捕獲所有異常，避免 Session 相關錯誤影響請求處理
             if (e.getMessage() != null && e.getMessage().contains("Session was invalidated")) {
-                logger.warn("Session 無效錯誤已捕獲並忽略: {}", request.getRequestURI());
+                logger.warn("⚠️ Session 無效錯誤已捕獲並忽略 - URI: {}, UserAgent: {}", requestURI, userAgent);
                 // 返回 200 狀態碼，避免前端重定向
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().write("{\"code\":200,\"message\":\"Session 已重新建立\"}");
@@ -66,6 +75,26 @@ public class SessionInvalidationFilter extends OncePerRequestFilter {
             }
             throw e;
         }
+    }
+    
+    /**
+     * 判斷是否為 K8s 相關的請求
+     */
+    private boolean isK8sRelatedRequest(String uri, String userAgent) {
+        // K8s health check 相關
+        if (uri.contains("/actuator/health") || uri.contains("/actuator/liveness") || uri.contains("/actuator/readiness")) {
+            return true;
+        }
+        
+        // K8s 相關的 User-Agent
+        if (userAgent != null && (
+            userAgent.contains("kube-probe") || 
+            userAgent.contains("k8s") || 
+            userAgent.contains("kubernetes"))) {
+            return true;
+        }
+        
+        return false;
     }
     
     @Override
