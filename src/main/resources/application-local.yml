@@ -25,16 +25,7 @@ spring:
       # 添加錯誤處理
       connect-timeout: 5000ms
       command-timeout: 5000ms
-  session:
-    store-type: redis
-    redis:
-      namespace: tymb:sessions
-      flush-mode: on-save
-      save-mode: on-set-attribute
-      cleanup-cron: "0 0 * * * *"  # 每天清理過期 Session
-    timeout: 30m  # 30 分鐘過期
-    create: always
-    tracking-modes: cookie
+
   config:
     import: classpath:env/local.properties
   security:
@@ -175,7 +166,7 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: health,metrics,prometheus,info,loggers,env
+        include: health
   endpoint:
     health:
       show-details: always

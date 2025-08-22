@@ -177,10 +177,7 @@ spec:
           value: "false"  # 暫時禁用 Session 支持
         - name: APP_SESSION_TIMEOUT
           value: "1800"  # 30分鐘，與應用程序配置保持一致
-        - name: SPRING_SESSION_REDIS_FLUSH_MODE
-          value: "on_save"
-        - name: SPRING_SESSION_REDIS_SAVE_MODE
-          value: "on_set_attribute"
+
 ---
 
 apiVersion: v1
