@@ -22,28 +22,8 @@ services:
 
   rabbitmq-consumer:
     image: eclipse-temurin:17-jre
+    container_name: rabbitmq-consumer
     command: ["sh", "-c", "echo 'Consumer starting...' && sleep infinity"]
-    environment:
-      SPRING_PROFILES_ACTIVE: "k8s"
-      RABBITMQ_HOST: "rabbitmq"
-      RABBITMQ_PORT: "5672"
-      RABBITMQ_USERNAME: "admin"
-      RABBITMQ_PASSWORD: "admin123"
-      RABBITMQ_VIRTUAL_HOST: "/"
-    depends_on:
-      - rabbitmq
-    volumes:
-      - consumer-app:/app
-    restart: unless-stopped
-    scale: 3
-    networks:
-      - rabbitmq-network
-
-  # 本地開發環境 Consumer
-  rabbitmq-consumer-local:
-    image: eclipse-temurin:17-jre
-    container_name: rabbitmq-consumer-local
-    command: ["sh", "-c", "echo 'Local Consumer starting...' && sleep infinity"]
     environment:
       SPRING_PROFILES_ACTIVE: "local"
       RABBITMQ_HOST: "rabbitmq"
@@ -65,7 +45,6 @@ services:
 
 volumes:
   rabbitmq-data:
-  consumer-app:
 
 networks:
   rabbitmq-network:
