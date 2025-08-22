@@ -497,14 +497,16 @@ graph TB
     end
     
     subgraph "Consumer Services"
-        F[Consumer Service<br/>Message Processing]
-        G[Batch Operations<br/>Error Recovery]
-        H[Data Processing Logic]
+        F[Consumer Service 1<br/>Message Processing]
+        G[Consumer Service 2<br/>Message Processing]
+        H[Consumer Service 3<br/>Message Processing]
+        I[Batch Operations<br/>Error Recovery]
+        J[Data Processing Logic]
     end
     
     subgraph "Database Layer"
-        I[Primary PostgreSQL<br/>Main Database]
-        J[People PostgreSQL<br/>People Database]
+        I[Primary PostgreSQL<br/>Main Database<br/>No MQ Connection]
+        J[People PostgreSQL<br/>People Database<br/>MQ Connected]
     end
     
     subgraph "Environment"
@@ -518,10 +520,13 @@ graph TB
     C --> D
     D --> E
     E --> F
-    F --> G
-    G --> H
+    E --> G
+    E --> H
+    F --> I
+    G --> I
     H --> I
-    H --> J
+    I --> J
+    J --> L
     
     %% Environment Configuration
     K -.-> D
