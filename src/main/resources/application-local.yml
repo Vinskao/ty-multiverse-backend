@@ -130,8 +130,13 @@ spring:
   # Session 配置
   app:
     session:
-      enabled: false  # 暫時禁用 Session 支持
+      enabled: true  # 本地環境啟用 Session 支持
       timeout: 1800
+      cookie:
+        name: JSESSIONID
+        path: /
+        http-only: true
+        secure: false
 springdoc:
   api-docs:
     enabled: true

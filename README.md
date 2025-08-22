@@ -201,6 +201,14 @@ classDiagram
 ### 4. Cache Architecture
 ```mermaid
 classDiagram
+    class RedisConfig {
+        +@EnableCaching
+        +@EnableRedisHttpSession
+        +RedisConnectionFactory
+        +RedisTemplate
+        +Connection Pool
+    }
+    
     class CacheStrategy {
         +@Cacheable
         +Redis Storage
@@ -218,6 +226,8 @@ classDiagram
         +tymb:sessions
         +CKEditor Drafts
         +Game States
+        +User Sessions
+        +Session Timeout
     }
     
     class DistributedLock {
@@ -229,9 +239,17 @@ classDiagram
         +lock:scheduled:health:check:lock
     }
     
+    class MessageQueue {
+        +qa_tymb_queue
+        +Async Processing
+        +Message Persistence
+    }
+    
+    RedisConfig --> CacheStrategy
     CacheStrategy --> DamageCache
     CacheStrategy --> SessionCache
     CacheStrategy --> DistributedLock
+    RedisConfig --> MessageQueue
 ```
 ### 4.2. Lua Script Flow
 ```mermaid
@@ -489,15 +507,20 @@ graph LR
     B --> C[Consumer<br/>Spring Boot<br/>JDBC Processing]
     C --> D[PostgreSQL<br/>Database]
     
+    A --> E[Redis<br/>Session & Cache]
+    C --> E
+    
     classDef producer fill:#e1f5fe
     classDef mq fill:#f3e5f5
     classDef consumer fill:#e8f5e8
     classDef database fill:#ffebee
+    classDef cache fill:#fff3e0
     
     class A producer
     class B mq
     class C consumer
     class D database
+    class E cache
 ```
 
 **架構說明：**
@@ -505,6 +528,9 @@ graph LR
 - **Consumer**: Spring Boot 應用程式，使用 JDBC 處理訊息並將數據寫入 PostgreSQL 資料庫
 - **RabbitMQ**: 訊息佇列，實現非同步處理和解耦
 - **PostgreSQL**: 主要資料庫，儲存處理後的數據
+- **Redis**: 會話儲存、快取和分散式鎖，支援 `tymb:sessions` 和 `damage-calculations` 命名空間
+- **Session 使用**: 目前僅 CKEditor 和 DeckOfCards 模組使用 Session 認證
+- **其他模組**: 使用 JWT 無狀態認證
 
 ## Documentation and Tools
 
