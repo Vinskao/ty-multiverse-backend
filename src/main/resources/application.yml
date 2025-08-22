@@ -32,17 +32,7 @@ spring:
           initial-interval: 1000ms
           max-interval: 5000ms
           multiplier: 2.0
-  session:
-    store-type: redis
-    redis:
-      namespace: tymb:sessions
-      flush-mode: on-save
-      save-mode: on-set-attribute
-      cleanup-cron: "0 0 * * * *"
-    timeout: 30m  # 改為 30 分鐘，避免過長
-    # 添加 Session 配置來改善穩定性
-    create: always
-    tracking-modes: cookie
+
 
 
 
@@ -225,7 +215,7 @@ management:
     web:
       base-path: /actuator
       exposure:
-        include: health,metrics,prometheus,info,loggers,env
+        include: health
   endpoint:
     health:
       show-details: always
