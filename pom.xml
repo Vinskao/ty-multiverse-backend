@@ -268,58 +268,8 @@
                     <mainClass>tw.com.tymbackend.TYMBackendApplication</mainClass> 
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>3.5.0</version>
-                <executions>
-                    <execution>
-                        <id>aggregate</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>aggregate</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF-8</encoding>
-                            <charSet>UTF-8</charSet>
-                            <show>protected</show>
-                            <author>true</author>
-                            <version>true</version>
-                            <source>17</source>
-                            <aggregate>true</aggregate>
-                            <reportOutputDirectory>${project.build.directory}/classes/static</reportOutputDirectory>
-                            <destDir>javadoc</destDir>
-                            <additionalJOptions>
-                                <additionalJOption>-Xdoclint:none</additionalJOption>
-                            </additionalJOptions>
-                            <failOnError>false</failOnError>
-                            <quiet>true</quiet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-javadoc</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/classes/static/javadoc</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.build.directory}/site/apidocs</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+
+
         </plugins>
         <filters>
             <filter>src/main/resources/env/${env}.properties</filter>

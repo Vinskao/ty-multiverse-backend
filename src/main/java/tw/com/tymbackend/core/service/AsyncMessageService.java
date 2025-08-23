@@ -109,13 +109,12 @@ public class AsyncMessageService {
      * @return 路由鍵
      */
     private String getRoutingKey(String queueName) {
-        switch (queueName) {
-            case RabbitMQConfig.DAMAGE_CALCULATION_QUEUE:
-                return "damage.calculation";
-            case RabbitMQConfig.PEOPLE_GET_ALL_QUEUE:
-                return "people.get.all";
-            default:
-                throw new IllegalArgumentException("未知的隊列名稱: " + queueName);
+        if (RabbitMQConfig.DAMAGE_CALCULATION_QUEUE.equals(queueName)) {
+            return "damage.calculation";
+        } else if (RabbitMQConfig.PEOPLE_GET_ALL_QUEUE.equals(queueName)) {
+            return "people.get.all";
+        } else {
+            throw new IllegalArgumentException("未知的隊列名稱: " + queueName);
         }
     }
 }

@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.module.weapon.service.WeaponService;
+import tw.com.tymbackend.module.weapon.service.WeaponProducerService;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 
 import java.util.List;
@@ -15,13 +16,28 @@ public class WeaponController {
 
     @Autowired
     private WeaponService weaponService;
+    
+    @Autowired(required = false)
+    private WeaponProducerService weaponProducerService;
 
     /**
      * Get all weapons
      */
     @GetMapping
-    public ResponseEntity<List<Weapon>> getAllWeapons() {
-        return ResponseEntity.ok(weaponService.getAllWeapons());
+    public ResponseEntity<?> getAllWeapons() {
+        if (weaponProducerService != null) {
+            // 使用 Producer 模式發送消息到 RabbitMQ
+            String requestId = weaponProducerService.sendGetAllWeaponsRequest();
+            Map<String, Object> response = Map.of(
+                "message", "Get all weapons request sent to queue",
+                "requestId", requestId,
+                "status", "PENDING"
+            );
+            return ResponseEntity.accepted().body(response);
+        } else {
+            // 直接處理（本地模式）
+            return ResponseEntity.ok(weaponService.getAllWeapons());
+        }
     }
 
     /**
@@ -46,8 +62,20 @@ public class WeaponController {
      * Create or update a weapon
      */
     @PostMapping
-    public ResponseEntity<Weapon> saveWeapon(@RequestBody Weapon weapon) {
-        return ResponseEntity.ok(weaponService.saveWeaponSmart(weapon));
+    public ResponseEntity<?> saveWeapon(@RequestBody Weapon weapon) {
+        if (weaponProducerService != null) {
+            // 使用 Producer 模式發送消息到 RabbitMQ
+            String requestId = weaponProducerService.sendSaveWeaponRequest(weapon);
+            Map<String, Object> response = Map.of(
+                "message", "Save weapon request sent to queue",
+                "requestId", requestId,
+                "status", "PENDING"
+            );
+            return ResponseEntity.accepted().body(response);
+        } else {
+            // 直接處理（本地模式）
+            return ResponseEntity.ok(weaponService.saveWeaponSmart(weapon));
+        }
     }
 
     /**

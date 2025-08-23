@@ -12,6 +12,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import tw.com.tymbackend.module.people.domain.dto.PeopleNameRequestDTO;
 import tw.com.tymbackend.module.people.domain.vo.People;
 import tw.com.tymbackend.module.people.service.PeopleService;
+import tw.com.tymbackend.module.people.service.PeopleProducerService;
 import tw.com.tymbackend.core.service.AsyncMessageService;
 
 import java.util.List;
@@ -29,14 +30,28 @@ public class PeopleController {
     private PeopleService peopleService;
     
     @Autowired(required = false)
+    private PeopleProducerService peopleProducerService;
+    
+    @Autowired(required = false)
     private AsyncMessageService asyncMessageService;
 
     // 插入 1 個 (接收 JSON)
     @PostMapping("/insert")
     public ResponseEntity<?> insertPeople(@RequestBody People people) {
         try {
-            People savedPeople = peopleService.insertPerson(people);
-            return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+            if (peopleProducerService != null) {
+                // 使用 Producer 模式發送消息到 RabbitMQ
+                String requestId = peopleProducerService.sendInsertPeopleRequest(people);
+                Map<String, Object> response = new HashMap<>();
+                response.put("message", "Insert request sent to queue");
+                response.put("requestId", requestId);
+                response.put("status", "PENDING");
+                return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+            } else {
+                // 直接處理（本地模式）
+                People savedPeople = peopleService.insertPerson(people);
+                return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+            }
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
