@@ -20,29 +20,6 @@ services:
       timeout: 10s
       retries: 5
 
-  rabbitmq-consumer:
-    image: eclipse-temurin:17-jre
-    container_name: rabbitmq-consumer
-    command: ["sh", "-c", "echo 'Consumer starting...' && sleep infinity"]
-    environment:
-      SPRING_PROFILES_ACTIVE: "local"
-      RABBITMQ_HOST: "rabbitmq"
-      RABBITMQ_PORT: "5672"
-      RABBITMQ_USERNAME: "admin"
-      RABBITMQ_PASSWORD: "admin123"
-      RABBITMQ_VIRTUAL_HOST: "/"
-      # 本地環境配置
-      SPRING_RABBITMQ_ENABLED: "true"
-      APP_SESSION_ENABLED: "false"
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    volumes:
-      - ./consumer-app:/app
-    restart: unless-stopped
-    networks:
-      - rabbitmq-network
-
 volumes:
   rabbitmq-data:
 
