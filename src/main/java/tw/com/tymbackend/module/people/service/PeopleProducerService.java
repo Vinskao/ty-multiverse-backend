@@ -163,6 +163,26 @@ public class PeopleProducerService {
     }
     
     /**
+     * 發送刪除所有角色請求
+     */
+    public String sendDeleteAllPeopleRequest() {
+        String requestId = UUID.randomUUID().toString();
+        
+        PeopleMessageDTO message = new PeopleMessageDTO(
+            requestId,
+            "DELETE_ALL",
+            null,
+            null
+        );
+        
+        sendMessage(QueueNames.PEOPLE_DELETE_ALL.getQueueName(), message);
+        
+        logger.info("發送刪除所有角色請求到 RabbitMQ: requestId={}", requestId);
+        
+        return requestId;
+    }
+    
+    /**
      * 發送傷害計算請求
      */
     public String sendDamageCalculationRequest(String characterName) {
@@ -219,6 +239,8 @@ public class PeopleProducerService {
                 return "people.get.by.name";
             case "people-delete":
                 return "people.delete";
+            case "people-delete-all":
+                return "people.delete.all";
             case "people-damage-calculation":
                 return "people.damage.calculation";
             default:

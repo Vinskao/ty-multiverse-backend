@@ -29,6 +29,9 @@ public class JacksonConfig {
         // 註冊 JavaTimeModule 以支援 Java 8 時間類型
         objectMapper.registerModule(new JavaTimeModule());
         
+        // 配置字符編碼
+        objectMapper.configure(com.fasterxml.jackson.core.JsonGenerator.Feature.ESCAPE_NON_ASCII, false);
+        
         return objectMapper;
     }
 }

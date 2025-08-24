@@ -16,7 +16,7 @@ spring:
     # 連接池配置
     listener:
       simple:
-        concurrency: 1
+        concurrency: 2
         max-concurrency: 2
         prefetch: 1
         default-requeue-rejected: false
@@ -40,9 +40,9 @@ spring:
       timeout: 5000ms
       lettuce:
         pool:
-          max-active: 3000
-          max-idle: 8
-          min-idle: 4
+          max-active: 2
+          max-idle: 2
+          min-idle: 1
           max-wait: 5000ms
         shutdown-timeout: 100ms
       # 添加錯誤處理
@@ -64,8 +64,8 @@ spring:
     password: '@spring.datasource.password@'
     hikari:
       # 開發環境連線池配置 (較小規模)
-      minimum-idle: 5                     # 最小閒置連線數
-      maximum-pool-size: 20               # 最大連線池大小
+      minimum-idle: 1                     # 最小閒置連線數
+      maximum-pool-size: 2               # 最大連線池大小
       
       # 連線生命週期配置
       idle-timeout: 300000                # 閒置連線超時 (5分鐘)
@@ -91,8 +91,8 @@ spring:
     password: '@spring.people-datasource.password@'
     hikari:
       # 開發環境 People 連線池配置 (較小規模)
-      minimum-idle: 3                     # 最小閒置連線數
-      maximum-pool-size: 10               # 最大連線池大小
+      minimum-idle: 1                     # 最小閒置連線數
+      maximum-pool-size: 2               # 最大連線池大小
       
       # 連線生命週期配置
       idle-timeout: 300000                # 閒置連線超時 (5分鐘)
@@ -121,6 +121,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: false
+        connection:
+          characterEncoding: UTF-8
+          useUnicode: true
   main:
     allow-bean-definition-overriding: true
     web-application-type: servlet
@@ -164,8 +167,8 @@ logging:
     'org.springframework.security.oauth2.jwt': DEBUG
     'org.springframework.security.oauth2.server.resource.authentication': DEBUG
     'org.springframework.security.oauth2.server.resource.web': DEBUG
-    org.springframework.amqp: OFF  # 禁用 RabbitMQ 相關日誌
-    com.rabbitmq: OFF
+    org.springframework.amqp: DEBUG  # 啟用 RabbitMQ 相關日誌
+    com.rabbitmq: DEBUG
 
 # 定時任務配置
 scheduling:
@@ -179,9 +182,14 @@ server:
   port: 8080
   servlet:
     context-path: /tymb
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   tomcat:
     connection-timeout: 20000
     max-http-form-post-size: 3145728
+    uri-encoding: UTF-8
   error:
     whitelabel:
       enabled: true
