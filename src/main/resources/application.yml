@@ -14,9 +14,9 @@ spring:
       lettuce:
         # 连接池配置优化
         pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 2
+          max-active: 2
+          max-idle: 2
+          min-idle: 1
           max-wait: 5000ms
           time-between-eviction-runs: 30s
           min-evictable-idle-time: 60s
@@ -44,7 +44,7 @@ spring:
     listener:
       simple:
         concurrency: 2
-        max-concurrency: 4
+        max-concurrency: 2
         prefetch: 1
         default-requeue-rejected: false
     # 重試配置
@@ -78,9 +78,9 @@ spring:
     username: '@SPRING_DATASOURCE_USERNAME@'
     password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置（降低以避免吃滿 DB 連線）
+      # 連線池大小配置
       minimum-idle: 1
-      maximum-pool-size: 5
+      maximum-pool-size: 2
       
       # 連線生命週期配置
       idle-timeout: 600000                # 閒置連線超時 (10分鐘)
@@ -113,7 +113,7 @@ spring:
     hikari:
       # 連線池大小配置（已禁用）
       minimum-idle: 1
-      maximum-pool-size: 5
+      maximum-pool-size: 2
       
       # 連線生命週期配置
       idle-timeout: 300000                # 閒置連線超時 (5分鐘)
@@ -226,9 +226,14 @@ server:
   port: 8080
   servlet:
     context-path: /tymb
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
   tomcat:
     connection-timeout: 20000
     max-http-form-post-size: 3145728
+    uri-encoding: UTF-8
   error:
     whitelabel:
       enabled: true

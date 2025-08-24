@@ -32,6 +32,7 @@ public class RabbitMQConfig {
     public static final String PEOPLE_INSERT_MULTIPLE_QUEUE = QueueNames.PEOPLE_INSERT_MULTIPLE.getQueueName();
     public static final String PEOPLE_GET_BY_NAME_QUEUE = QueueNames.PEOPLE_GET_BY_NAME.getQueueName();
     public static final String PEOPLE_DELETE_QUEUE = QueueNames.PEOPLE_DELETE.getQueueName();
+    public static final String PEOPLE_DELETE_ALL_QUEUE = QueueNames.PEOPLE_DELETE_ALL.getQueueName();
     public static final String PEOPLE_DAMAGE_CALCULATION_QUEUE = QueueNames.PEOPLE_DAMAGE_CALCULATION.getQueueName();
     public static final String WEAPON_GET_ALL_QUEUE = QueueNames.WEAPON_GET_ALL.getQueueName();
     public static final String WEAPON_GET_BY_NAME_QUEUE = QueueNames.WEAPON_GET_BY_NAME.getQueueName();
@@ -46,12 +47,34 @@ public class RabbitMQConfig {
     // 交換機名稱
     public static final String TYMB_EXCHANGE = "tymb-exchange";
     
+    // 回應交換機和隊列名稱
+    public static final String PEOPLE_RESPONSE_EXCHANGE = "people-response";
+    public static final String WEAPON_RESPONSE_EXCHANGE = "weapon-response";
+    public static final String PEOPLE_RESPONSE_QUEUE = "people.response.queue";
+    public static final String WEAPON_RESPONSE_QUEUE = "weapon.response.queue";
+    public static final String PEOPLE_RESPONSE_ROUTING_KEY = "people.response";
+    public static final String WEAPON_RESPONSE_ROUTING_KEY = "weapon.response";
+    public static final String PEOPLE_GET_ALL_RESPONSE_ROUTING_KEY = "people.get-all.response";
+    
     /**
      * 創建 RabbitMQ 交換機
      */
     @Bean
     public DirectExchange tymbExchange() {
         return new DirectExchange(TYMB_EXCHANGE);
+    }
+    
+    /**
+     * 創建回應交換機
+     */
+    @Bean
+    public DirectExchange peopleResponseExchange() {
+        return new DirectExchange(PEOPLE_RESPONSE_EXCHANGE);
+    }
+    
+    @Bean
+    public DirectExchange weaponResponseExchange() {
+        return new DirectExchange(WEAPON_RESPONSE_EXCHANGE);
     }
     
     /**
@@ -108,6 +131,13 @@ public class RabbitMQConfig {
     @Bean
     public Queue peopleDeleteQueue() {
         return QueueBuilder.durable(QueueNames.PEOPLE_DELETE.getQueueName())
+                .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
+                .build();
+    }
+    
+    @Bean
+    public Queue peopleDeleteAllQueue() {
+        return QueueBuilder.durable(QueueNames.PEOPLE_DELETE_ALL.getQueueName())
                 .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
                 .build();
     }
@@ -186,6 +216,23 @@ public class RabbitMQConfig {
     }
     
     /**
+     * 創建回應隊列
+     */
+    @Bean
+    public Queue peopleResponseQueue() {
+        return QueueBuilder.durable(PEOPLE_RESPONSE_QUEUE)
+                .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
+                .build();
+    }
+    
+    @Bean
+    public Queue weaponResponseQueue() {
+        return QueueBuilder.durable(WEAPON_RESPONSE_QUEUE)
+                .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
+                .build();
+    }
+    
+    /**
      * 綁定傷害計算隊列到交換機
      */
     @Bean
@@ -241,6 +288,13 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(peopleDeleteQueue)
                 .to(tymbExchange)
                 .with("people.delete");
+    }
+    
+    @Bean
+    public Binding peopleDeleteAllBinding(Queue peopleDeleteAllQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleDeleteAllQueue)
+                .to(tymbExchange)
+                .with("people.delete.all");
     }
     
     @Bean
@@ -314,6 +368,30 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(weaponUpdateBaseDamageQueue)
                 .to(tymbExchange)
                 .with("weapon.update.base.damage");
+    }
+    
+    /**
+     * 綁定回應隊列到交換機
+     */
+    @Bean
+    public Binding peopleResponseBinding(Queue peopleResponseQueue, DirectExchange peopleResponseExchange) {
+        return BindingBuilder.bind(peopleResponseQueue)
+                .to(peopleResponseExchange)
+                .with(PEOPLE_RESPONSE_ROUTING_KEY);
+    }
+    
+    @Bean
+    public Binding peopleGetAllResponseBinding(Queue peopleResponseQueue, DirectExchange peopleResponseExchange) {
+        return BindingBuilder.bind(peopleResponseQueue)
+                .to(peopleResponseExchange)
+                .with(PEOPLE_GET_ALL_RESPONSE_ROUTING_KEY);
+    }
+    
+    @Bean
+    public Binding weaponResponseBinding(Queue weaponResponseQueue, DirectExchange weaponResponseExchange) {
+        return BindingBuilder.bind(weaponResponseQueue)
+                .to(weaponResponseExchange)
+                .with(WEAPON_RESPONSE_ROUTING_KEY);
     }
     
     /**

@@ -38,77 +38,66 @@ public class PeopleController {
     // 插入 1 個 (接收 JSON)
     @PostMapping("/insert")
     public ResponseEntity<?> insertPeople(@RequestBody People people) {
-        try {
-            if (peopleProducerService != null) {
-                // 使用 Producer 模式發送消息到 RabbitMQ
-                String requestId = peopleProducerService.sendInsertPeopleRequest(people);
-                Map<String, Object> response = new HashMap<>();
-                response.put("message", "Insert request sent to queue");
-                response.put("requestId", requestId);
-                response.put("status", "PENDING");
-                return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-            } else {
-                // 直接處理（本地模式）
-                People savedPeople = peopleService.insertPerson(people);
-                return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
-            }
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (peopleProducerService != null) {
+            String requestId = peopleProducerService.sendInsertPeopleRequest(people);
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "角色插入請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
         }
+        
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 更新 1 個 (接收 JSON)
     @PostMapping("/update")
     public ResponseEntity<?> updatePeople(@RequestBody People people) {
-        try {
-            // 驗證輸入
-            if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
-                return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
-            }
-            
-            // 嘗試更新
-            People updatedPeople = peopleService.updatePerson(people);
-            return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            logger.error("Invalid input while updating person", e);
-            return new ResponseEntity<>("Person not found: " + e.getMessage(), HttpStatus.NOT_FOUND);
-        } catch (org.hibernate.StaleObjectStateException e) {
-            // 樂觀鎖定衝突，返回衝突狀態
-            logger.error("Concurrent update detected", e);
-            return new ResponseEntity<>("Concurrent update detected: " + e.getMessage(), HttpStatus.CONFLICT);
-        } catch (ObjectOptimisticLockingFailureException e) {
-            // 樂觀鎖定衝突，返回衝突狀態
-            logger.error("Optimistic locking failure detected", e);
-            return new ResponseEntity<>("Character data has been modified by another user, please reload and try again", HttpStatus.CONFLICT);
-        } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            // 數據完整性違規，返回錯誤請求狀態
-            return new ResponseEntity<>("Data integrity violation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            logger.error("Runtime exception during update", e);
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            logger.error("Unexpected error during update", e);
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 驗證輸入
+        if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
+            return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
         }
+        
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (peopleProducerService != null) {
+            String requestId = peopleProducerService.sendUpdatePeopleRequest(people);
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "角色更新請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
+        }
+        
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 插入多個 (接收 JSON)
     @PostMapping("/insert-multiple")
     public ResponseEntity<?> insertMultiplePeople(@RequestBody List<People> peopleList) {
-        try {
-            List<People> savedPeople = peopleService.saveAllPeople(peopleList);
-            return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (peopleProducerService != null) {
+            String requestId = peopleProducerService.sendInsertMultiplePeopleRequest(peopleList);
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "批量角色插入請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
         }
+        
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 搜尋所有 (傳出 JSON)
@@ -124,46 +113,51 @@ public class PeopleController {
             return ResponseEntity.accepted().body(response);
         }
         
-        // 本地環境，同步處理
-        try {
-            // 使用優化的批量查詢方法，但保持相同的API介面
-            List<People> people = peopleService.getAllPeopleOptimized();
-            return new ResponseEntity<>(people, HttpStatus.OK);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 搜尋 name (接收 name 傳出 JSON)
     @PostMapping("/get-by-name")
     public ResponseEntity<?> getPeopleByName(@RequestBody PeopleNameRequestDTO request) {
-        try {
-            Optional<People> people = peopleService.getPeopleByName(request.getName());
-            if (people.isPresent()) {
-                return new ResponseEntity<>(people.get(), HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>("Person not found", HttpStatus.NOT_FOUND);
-            }
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (peopleProducerService != null) {
+            String requestId = peopleProducerService.sendGetPeopleByNameRequest(request.getName());
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "角色查詢請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
         }
+        
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 刪除所有
     @PostMapping("/delete-all")
     public ResponseEntity<?> deleteAllPeople() {
-        try {
-            peopleService.deleteAllPeople();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (peopleProducerService != null) {
+            String requestId = peopleProducerService.sendDeleteAllPeopleRequest();
+            Map<String, Object> response = new HashMap<>();
+            response.put("requestId", requestId);
+            response.put("status", "processing");
+            response.put("message", "刪除所有角色請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted().body(response);
         }
+        
+        // RabbitMQ 未啟用時，返回錯誤
+        Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put("error", "RabbitMQ 未啟用");
+        errorResponse.put("message", "此 API 需要 RabbitMQ 異步處理，請確保 RabbitMQ 已正確配置");
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(errorResponse);
     }
 
     // 取得所有人的名字

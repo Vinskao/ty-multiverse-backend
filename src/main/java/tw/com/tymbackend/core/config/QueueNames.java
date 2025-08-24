@@ -21,6 +21,7 @@ public enum QueueNames {
     PEOPLE_INSERT_MULTIPLE("people-insert-multiple"),
     PEOPLE_GET_BY_NAME("people-get-by-name"),
     PEOPLE_DELETE("people-delete"),
+    PEOPLE_DELETE_ALL("people-delete-all"),
     PEOPLE_DAMAGE_CALCULATION("people-damage-calculation"),
     
     // Weapon 模組隊列
@@ -84,6 +85,7 @@ public enum QueueNames {
             PEOPLE_GET_ALL,
             PEOPLE_GET_BY_NAME,
             PEOPLE_DELETE,
+            PEOPLE_DELETE_ALL,
             PEOPLE_DAMAGE_CALCULATION
         };
     }

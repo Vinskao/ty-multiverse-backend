@@ -1,74 +1,90 @@
 package tw.com.tymbackend.core.message;
 
-import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 /**
- * Producer 響應 DTO
+ * Producer 回應消息 DTO
  * 
- * 用於統一處理 producer 模式的響應格式
+ * 用於封裝從 Consumer 回傳給 Producer 的數據
  * 
  * @author TY Backend Team
  * @version 1.0
  * @since 2024
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProducerResponseDTO {
     
-    private String message;
+    /**
+     * 請求ID，用於匹配原始請求
+     */
     private String requestId;
+    
+    /**
+     * 回應狀態
+     */
     private String status;
-    private LocalDateTime timestamp;
+    
+    /**
+     * 回應消息
+     */
+    private String message;
+    
+    /**
+     * 回應數據
+     */
     private Object data;
     
-    public ProducerResponseDTO() {
-        this.timestamp = LocalDateTime.now();
-    }
+    /**
+     * 時間戳
+     */
+    private Long timestamp;
     
-    public ProducerResponseDTO(String message, String requestId, String status) {
-        this();
-        this.message = message;
+    /**
+     * 錯誤代碼（如果有錯誤）
+     */
+    private String errorCode;
+    
+    /**
+     * 錯誤詳情（如果有錯誤）
+     */
+    private String errorDetails;
+    
+    /**
+     * 建構函數
+     */
+    public ProducerResponseDTO(String requestId, String status, String message, Object data) {
         this.requestId = requestId;
         this.status = status;
-    }
-    
-    public ProducerResponseDTO(String message, String requestId, String status, Object data) {
-        this(message, requestId, status);
+        this.message = message;
         this.data = data;
-    }
-    
-    // Getters and Setters
-    public String getMessage() { return message; }
-    public void setMessage(String message) { this.message = message; }
-    
-    public String getRequestId() { return requestId; }
-    public void setRequestId(String requestId) { this.requestId = requestId; }
-    
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }
-    
-    public LocalDateTime getTimestamp() { return timestamp; }
-    public void setTimestamp(LocalDateTime timestamp) { this.timestamp = timestamp; }
-    
-    public Object getData() { return data; }
-    public void setData(Object data) { this.data = data; }
-    
-    /**
-     * 創建成功響應
-     */
-    public static ProducerResponseDTO success(String message, String requestId) {
-        return new ProducerResponseDTO(message, requestId, "PENDING");
+        this.timestamp = System.currentTimeMillis();
     }
     
     /**
-     * 創建成功響應（帶數據）
+     * 成功回應建構函數
      */
-    public static ProducerResponseDTO success(String message, String requestId, Object data) {
-        return new ProducerResponseDTO(message, requestId, "PENDING", data);
+    public static ProducerResponseDTO success(String requestId, String message, Object data) {
+        return new ProducerResponseDTO(requestId, "SUCCESS", message, data);
     }
     
     /**
-     * 創建錯誤響應
+     * 錯誤回應建構函數
      */
-    public static ProducerResponseDTO error(String message, String requestId) {
-        return new ProducerResponseDTO(message, requestId, "ERROR");
+    public static ProducerResponseDTO error(String requestId, String message, String errorCode, String errorDetails) {
+        ProducerResponseDTO response = new ProducerResponseDTO(requestId, "ERROR", message, null);
+        response.setErrorCode(errorCode);
+        response.setErrorDetails(errorDetails);
+        return response;
+    }
+    
+    /**
+     * 處理中回應建構函數
+     */
+    public static ProducerResponseDTO processing(String requestId, String message) {
+        return new ProducerResponseDTO(requestId, "PROCESSING", message, null);
     }
 }

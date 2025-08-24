@@ -545,3 +545,13 @@ graph LR
 ### Docker Build
 - Build Command: `docker build -t papakao/ty-multiverse-backend:latest .`
 - Multi-platform Build: `docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .`
+
+## Producer Test APIs
+
+### People Module Producer APIs
+
+#### 1. Get All People (Producer Mode)
+```bash
+# 發送獲取所有角色請求到 RabbitMQ
+curl -X POST http://localhost:8080/tymb/people/get-all
+```
