@@ -46,7 +46,7 @@ public class AsyncMessageService {
         
         AsyncMessageDTO message = new AsyncMessageDTO(
             requestId,
-            "/people/damageWithWeapon",
+            "/tymb/people/damageWithWeapon",
             "GET",
             characterName
         );
@@ -68,7 +68,7 @@ public class AsyncMessageService {
         
         AsyncMessageDTO message = new AsyncMessageDTO(
             requestId,
-            "/people/get-all",
+            "/tymb/people/get-all",
             "POST",
             null
         );
@@ -111,7 +111,7 @@ public class AsyncMessageService {
     private String getRoutingKey(String queueName) {
         switch (queueName) {
             case RabbitMQConfig.DAMAGE_CALCULATION_QUEUE:
-                return "damage.calculation";
+                return "people.damage.calculation";
             case RabbitMQConfig.PEOPLE_GET_ALL_QUEUE:
                 return "people.get.all";
             default:
