@@ -5,9 +5,13 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import jakarta.annotation.PostConstruct;
 
 /**
  * RabbitMQ 配置類別
@@ -21,12 +25,22 @@ import org.springframework.context.annotation.Configuration;
  * @since 2024
  */
 @Configuration
+@EnableRabbit
 @ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true")
 public class RabbitMQConfig {
+    
+    private static final Logger logger = LoggerFactory.getLogger(RabbitMQConfig.class);
+    
+    @PostConstruct
+    public void init() {
+        logger.info("=== RabbitMQConfig 已初始化 ===");
+        logger.info("RabbitMQ 配置已啟用");
+    }
     
     // 隊列名稱定義
     public static final String DAMAGE_CALCULATION_QUEUE = "damage-calculation";
     public static final String PEOPLE_GET_ALL_QUEUE = "people-get-all";
+    public static final String ASYNC_RESULT_QUEUE = "async-result";
     
     // 交換機名稱
     public static final String TYMB_EXCHANGE = "tymb-exchange";
@@ -39,13 +53,16 @@ public class RabbitMQConfig {
         return new DirectExchange(TYMB_EXCHANGE);
     }
     
+    // TTL 設定（5分鐘 = 300000毫秒）
+    private static final long MESSAGE_TTL = 300000;
+    
     /**
      * 創建傷害計算隊列
      */
     @Bean
     public Queue damageCalculationQueue() {
         return QueueBuilder.durable(DAMAGE_CALCULATION_QUEUE)
-                .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
     
@@ -55,7 +72,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue peopleGetAllQueue() {
         return QueueBuilder.durable(PEOPLE_GET_ALL_QUEUE)
-                .withArgument("x-message-ttl", 300000) // 5分鐘 TTL
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
     
@@ -77,6 +94,26 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(peopleGetAllQueue)
                 .to(tymbExchange)
                 .with("people.get.all");
+    }
+    
+    /**
+     * 創建異步結果隊列
+     */
+    @Bean
+    public Queue asyncResultQueue() {
+        return QueueBuilder.durable(ASYNC_RESULT_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+    
+    /**
+     * 綁定異步結果隊列到交換機
+     */
+    @Bean
+    public Binding asyncResultBinding(Queue asyncResultQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(asyncResultQueue)
+                .to(tymbExchange)
+                .with("async.result");
     }
     
     /**

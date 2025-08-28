@@ -25,17 +25,22 @@ public class AsyncMessageDTO {
     
     @JsonProperty("timestamp")
     private Long timestamp;
-    
+
+    @JsonProperty("source")
+    private String source;
+
     public AsyncMessageDTO() {
         this.timestamp = System.currentTimeMillis();
+        this.source = "producer";
     }
-    
+
     public AsyncMessageDTO(String requestId, String endpoint, String method, Object payload) {
         this.requestId = requestId;
         this.endpoint = endpoint;
         this.method = method;
         this.payload = payload;
         this.timestamp = System.currentTimeMillis();
+        this.source = "producer";
     }
     
     // Getters and Setters
@@ -78,7 +83,15 @@ public class AsyncMessageDTO {
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
-    
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
     @Override
     public String toString() {
         return "AsyncMessageDTO{" +
@@ -87,6 +100,7 @@ public class AsyncMessageDTO {
                 ", method='" + method + '\'' +
                 ", payload=" + payload +
                 ", timestamp=" + timestamp +
+                ", source='" + source + '\'' +
                 '}';
     }
 }
