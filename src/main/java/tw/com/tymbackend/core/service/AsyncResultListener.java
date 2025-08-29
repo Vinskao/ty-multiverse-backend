@@ -38,20 +38,20 @@ public class AsyncResultListener {
     
     /**
      * 監聽異步結果隊列
-     * 
+     *
      * @param messageJson 結果消息 JSON
      */
     @RabbitListener(queues = RabbitMQConfig.ASYNC_RESULT_QUEUE)
     public void handleAsyncResult(String messageJson) {
         logger.info("=== AsyncResultListener 被觸發 ===");
         logger.info("收到的原始消息: {}", messageJson);
-        
+
         try {
-            // 解析結果消息
+            // 解析來自消費者的結果消息
             AsyncResultMessage resultMessage = objectMapper.readValue(messageJson, AsyncResultMessage.class);
-            logger.info("解析成功! requestId={}, status={}, source={}", 
+            logger.info("解析成功! requestId={}, status={}, source={}",
                 resultMessage.getRequestId(), resultMessage.getStatus(), resultMessage.getSource());
-            
+
             // 根據狀態處理結果
             switch (resultMessage.getStatus()) {
                 case "completed":
@@ -65,9 +65,9 @@ public class AsyncResultListener {
                 default:
                     logger.warn("未知的結果狀態: {}", resultMessage.getStatus());
             }
-            
+
             logger.info("=== AsyncResultListener 處理完成 ===");
-            
+
         } catch (Exception e) {
             logger.error("=== AsyncResultListener 處理失敗 ===");
             logger.error("消息內容: {}", messageJson);
@@ -77,41 +77,45 @@ public class AsyncResultListener {
     
     /**
      * 處理完成狀態的結果
-     * 
-     * @param resultMessage 結果消息
+     *
+     * @param resultMessage 來自消費者的結果消息
      */
-    private void handleCompletedResult(AsyncResultMessage resultMessage) {
+    private void handleCompletedResult(tw.com.tymbackend.core.message.AsyncResultMessage resultMessage) {
         try {
-            logger.info("處理完成結果: requestId={}, source={}", 
+            logger.info("處理完成結果: requestId={}, source={}",
                 resultMessage.getRequestId(), resultMessage.getSource());
-            
+
             // 存儲完成結果到 Redis
             asyncResultService.storeCompletedResult(
-                resultMessage.getRequestId(), 
+                resultMessage.getRequestId(),
                 resultMessage.getData()
             );
-            
+
+            logger.info("成功存儲完成結果到Redis: requestId={}", resultMessage.getRequestId());
+
         } catch (Exception e) {
             logger.error("處理完成結果失敗: requestId={}", resultMessage.getRequestId(), e);
         }
     }
-    
+
     /**
      * 處理失敗狀態的結果
-     * 
-     * @param resultMessage 結果消息
+     *
+     * @param resultMessage 來自消費者的結果消息
      */
-    private void handleFailedResult(AsyncResultMessage resultMessage) {
+    private void handleFailedResult(tw.com.tymbackend.core.message.AsyncResultMessage resultMessage) {
         try {
-            logger.info("處理失敗結果: requestId={}, source={}, error={}", 
+            logger.info("處理失敗結果: requestId={}, source={}, error={}",
                 resultMessage.getRequestId(), resultMessage.getSource(), resultMessage.getError());
-            
+
             // 存儲失敗結果到 Redis
             asyncResultService.storeFailedResult(
-                resultMessage.getRequestId(), 
+                resultMessage.getRequestId(),
                 resultMessage.getError()
             );
-            
+
+            logger.info("成功存儲失敗結果到Redis: requestId={}", resultMessage.getRequestId());
+
         } catch (Exception e) {
             logger.error("處理失敗結果失敗: requestId={}", resultMessage.getRequestId(), e);
         }
