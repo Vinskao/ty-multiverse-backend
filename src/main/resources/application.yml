@@ -41,23 +41,34 @@ spring:
     password: ${RABBITMQ_PASSWORD:admin123}
     virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
     # 連接池配置
+    cache:
+      # 通道和連接緩存優化
+      channel:
+        size: 10
+        checkout-timeout: 10000
+      connection:
+        size: 5
+        mode: connection
     listener:
       simple:
-        concurrency: 2
-        max-concurrency: 4
+        # 由我們自訂的 listenerContainerFactory 接管執行器與並發，這裡維持保守值
+        concurrency: 1
+        max-concurrency: 1
         prefetch: 1
         default-requeue-rejected: false
-    # 重試配置
-    retry:
-      enabled: true
-      initial-interval: 1000
-      max-attempts: 3
-      max-interval: 10000
-      multiplier: 1.0
-    # 健康檢查配置
-    health:
-      check:
-        enabled: ${RABBITMQ_ENABLED:false}  # 與 RabbitMQ 啟用狀態一致
+        # 消費超時配置
+        receive-timeout: 30000
+        recovery-interval: 10000
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 5
+          max-interval: 30000
+          multiplier: 2.0
+        # 健康檢查配置
+        health:
+          check:
+            enabled: ${RABBITMQ_ENABLED:false}  # 與 RabbitMQ 啟用狀態一致
 
 
 
@@ -81,27 +92,30 @@ spring:
       # 連線池大小配置（降低以避免吃滿 DB 連線）
       minimum-idle: 1
       maximum-pool-size: 5
-      
+
       # 連線生命週期配置
       idle-timeout: 600000                # 閒置連線超時 (10分鐘)
       max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
       connection-timeout: 30000           # 連線超時 (30秒)
-      
+
       # 連線驗證配置
       validation-timeout: 5000            # 驗證超時 (5秒)
       connection-test-query: SELECT 1     # 連線測試查詢
-      
+
       # 連線洩漏檢測
       leak-detection-threshold: 60000     # 連線洩漏檢測 (1分鐘)
-      
+
       # 效能優化配置
       auto-commit: false                  # 自動提交關閉
       register-mbeans: true               # 註冊 MBean 用於監控
       pool-name: PrimaryHikariCP          # 連線池名稱
-      
+
       # 新增：連線池監控配置
       allow-pool-suspension: false        # 不允許暫停連線池
       initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+
+      # 連線重試配置
+      connection-init-sql: SET timezone = 'UTC'  # 初始化 SQL
       
   # People datasource configuration (已禁用，保留配置備用)
   people-datasource:
@@ -185,6 +199,30 @@ app:
       tw.com.tymbackend: INFO
       org.springframework.security: DEBUG
       org.springframework.web: DEBUG
+  # 應用重試配置
+  retry:
+    database:
+      enabled: true
+      max-attempts: 10
+      initial-interval: 2000ms
+      max-interval: 60000ms
+      multiplier: 1.5
+    rabbitmq:
+      enabled: true
+      max-attempts: 5
+      initial-interval: 1000ms
+      max-interval: 30000ms
+      multiplier: 2.0
+  # 並發控制配置
+  concurrency:
+    max-concurrent-requests: 2
+    try-acquire-timeout-ms: 200
+  # 連接健康檢查配置
+  connection:
+    health-check:
+      enabled: true
+      max-retries: 30
+      retry-interval-seconds: 10
   jpa:
     open-in-view: false
     properties:
@@ -229,6 +267,11 @@ server:
   tomcat:
     connection-timeout: 20000
     max-http-form-post-size: 3145728
+    # 保守控制併發連線數，避免 CPU 飆升
+    max-connections: 100
+    threads:
+      max: 20
+      min-spare: 2
   error:
     whitelabel:
       enabled: true
