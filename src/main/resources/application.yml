@@ -337,4 +337,9 @@ keycloak:
         - patterns:
             - /*
 
+# gRPC Configuration
+grpc:
+  enabled: ${GRPC_ENABLED:false}  # 默认禁用，通过环境变量启用
+  port: ${GRPC_PORT:50051}
+
 

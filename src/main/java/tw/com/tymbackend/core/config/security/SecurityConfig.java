@@ -380,12 +380,15 @@ public class SecurityConfig {
                         .allowedOrigins(
                             "http://localhost:4321", 
                             "http://localhost:8080", 
+                            "http://localhost:8082",  // Gateway 本地端口
                             "http://localhost:8000", 
                             "https://peoplesystem.tatdvsonorth.com",
                             "https://peoplesystem.tatdvsonorth.com/tymultiverse",
                             "http://127.0.0.1:4321", 
-                            "http://127.0.0.1:8080", 
-                            "http://127.0.0.1:8000"
+                            "http://127.0.0.1:8080",
+                            "http://127.0.0.1:8082",  // Gateway 本地端口
+                            "http://127.0.0.1:8000",
+                            "http://ty-multiverse-gateway-service:8082"  // K8s Gateway 服务
                         )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
