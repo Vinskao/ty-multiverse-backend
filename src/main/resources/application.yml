@@ -1,0 +1,345 @@
+project:
+  env: '@PROJECT_ENV@'
+spring:
+  threads:
+    virtual:
+      enabled: true
+  data:
+    redis:
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
+      database: 0
+      timeout: 5000ms  # 连接超时时间
+      lettuce:
+        # 连接池配置优化
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 2
+          max-wait: 5000ms
+          time-between-eviction-runs: 30s
+          min-evictable-idle-time: 60s
+        shutdown-timeout: 100ms
+        # 添加连接重试和错误处理配置
+        cluster:
+          refresh:
+            adaptive: true
+            period: 30s
+        # 连接重试配置
+        retry:
+          max-attempts: 3
+          initial-interval: 1000ms
+          max-interval: 5000ms
+          multiplier: 2.0
+  # RabbitMQ 配置 - Production 環境
+  rabbitmq:
+    enabled: ${RABBITMQ_ENABLED:false}  # 預設禁用，production 環境啟用
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USERNAME:admin}
+    password: ${RABBITMQ_PASSWORD:admin123}
+    virtual-host: ${RABBITMQ_VIRTUAL_HOST:/}
+    # 連接池配置
+    cache:
+      # 通道和連接緩存優化
+      channel:
+        size: 10
+        checkout-timeout: 10000
+      connection:
+        size: 5
+        mode: connection
+    listener:
+      simple:
+        # 由我們自訂的 listenerContainerFactory 接管執行器與並發，這裡維持保守值
+        concurrency: 1
+        max-concurrency: 1
+        prefetch: 1
+        default-requeue-rejected: false
+        # 消費超時配置
+        receive-timeout: 30000
+        recovery-interval: 10000
+        retry:
+          enabled: true
+          initial-interval: 1000
+          max-attempts: 5
+          max-interval: 30000
+          multiplier: 2.0
+        # 健康檢查配置
+        health:
+          check:
+            enabled: ${RABBITMQ_ENABLED:false}  # 與 RabbitMQ 啟用狀態一致
+
+
+
+
+
+
+  profiles:
+    active: '@env@'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+            issuer-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@PUBLIC_REALM@'
+            jwk-set-uri: '@KEYCLOAK_AUTH_SERVER_URL@/realms/@PUBLIC_REALM@/protocol/openid-connect/certs'
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: '@SPRING_DATASOURCE_URL@'
+    username: '@SPRING_DATASOURCE_USERNAME@'
+    password: '@SPRING_DATASOURCE_PASSWORD@'
+    hikari:
+      # 連線池大小配置（降低以避免吃滿 DB 連線）
+      minimum-idle: 1
+      maximum-pool-size: 5
+
+      # 連線生命週期配置
+      idle-timeout: 600000                # 閒置連線超時 (10分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+
+      # 連線驗證配置
+      validation-timeout: 5000            # 驗證超時 (5秒)
+      connection-test-query: SELECT 1     # 連線測試查詢
+
+      # 連線洩漏檢測
+      leak-detection-threshold: 60000     # 連線洩漏檢測 (1分鐘)
+
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: PrimaryHikariCP          # 連線池名稱
+
+      # 新增：連線池監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+
+      # 連線重試配置
+      connection-init-sql: SET timezone = 'UTC'  # 初始化 SQL
+      
+  # People datasource configuration (已禁用，保留配置備用)
+  people-datasource:
+    enabled: false  # 禁用此數據源
+    driver-class-name: org.postgresql.Driver
+    url: '@PEOPLE_DATASOURCE_URL@'
+    username: '@PEOPLE_DATASOURCE_USERNAME@'
+    password: '@PEOPLE_DATASOURCE_PASSWORD@'
+    hikari:
+      # 連線池大小配置（已禁用）
+      minimum-idle: 1
+      maximum-pool-size: 5
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線驗證配置
+      validation-timeout: 5000            # 驗證超時 (5秒)
+      connection-test-query: SELECT 1     # 連線測試查詢
+      
+      # 連線洩漏檢測
+      leak-detection-threshold: 60000     # 連線洩漏檢測 (1分鐘)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: PeopleHikariCP           # 連線池名稱
+      
+      # 新增：連線池監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+
+# 定時任務配置
+scheduling:
+  tasks:
+    # 數據清理任務 - 每天凌晨2點執行
+    cleanup:
+      cron: "0 0 2 * * ?"
+      lock-timeout: 30 # 分鐘
+    # 週報表生成 - 每週日凌晨3點執行
+    weekly-report:
+      cron: "0 0 3 ? * SUN"
+      lock-timeout: 60 # 分鐘
+    # 數據備份 - 每天凌晨4點執行
+    backup:
+      cron: "0 0 4 * * ?"
+      lock-timeout: 120 # 分鐘
+    # 健康檢查 - 每小時執行一次
+    health-check:
+      cron: "0 0 * * * ?"
+      lock-timeout: 5 # 分鐘
+    # 度量數據導出 - 每3分鐘執行一次（減少頻率避免Redis連接問題）
+    metrics-export:
+      fixed-rate: 180000 # 毫秒 (3分鐘)
+      lock-timeout: 25 # 秒
+
+# 分布式鎖配置
+distributed-lock:
+  # 內容保存鎖超時時間（秒）
+  content-save-timeout: 30
+
+# 應用程序配置
+app:
+  # Session 配置 - 混合認證策略
+  session:
+    enabled: false  # 暫時禁用 Session 支持
+    timeout: 1800  # Session 超時時間（秒），與 spring.session.timeout 保持一致
+  # 後端URL配置
+  url:
+    address: '@PUBLIC_TYMB_URL@'
+  # 文件上傳配置
+  file:
+    upload:
+      max-size: 10MB
+      allowed-types: jpg,jpeg,png,gif,pdf,doc,docx
+  # 日誌配置
+  logging:
+    level:
+      tw.com.tymbackend: INFO
+      org.springframework.security: DEBUG
+      org.springframework.web: DEBUG
+  # 應用重試配置
+  retry:
+    database:
+      enabled: true
+      max-attempts: 10
+      initial-interval: 2000ms
+      max-interval: 60000ms
+      multiplier: 1.5
+    rabbitmq:
+      enabled: true
+      max-attempts: 5
+      initial-interval: 1000ms
+      max-interval: 30000ms
+      multiplier: 2.0
+  # 並發控制配置
+  concurrency:
+    max-concurrent-requests: 2
+    try-acquire-timeout-ms: 200
+  # 連接健康檢查配置
+  connection:
+    health-check:
+      enabled: true
+      max-retries: 30
+      retry-interval-seconds: 10
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        connection:
+          provider_disables_autocommit: true
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: servlet
+  devtools:
+    restart:
+      enabled: false
+
+url:
+  address: '@PUBLIC_TYMB_URL@'
+  frontend: '@PUBLIC_FRONTEND_URL@'
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+      # springframework.session: DEBUG  # 暫時關閉，訊息太多
+      hibernate:
+        SQL: OFF
+        type:
+          descriptor:
+            sql: OFF
+    '[io.micrometer]': INFO
+
+server:
+  port: 8080
+  servlet:
+    context-path: /tymb
+  tomcat:
+    connection-timeout: 20000
+    max-http-form-post-size: 3145728
+    # 保守控制併發連線數，避免 CPU 飆升
+    max-connections: 100
+    threads:
+      max: 20
+      min-spare: 2
+  error:
+    whitelabel:
+      enabled: true
+  max-http-request-header-size: 3145728
+  ssl:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name:tym-backend}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      sla:
+        http.server.requests: 10ms, 50ms, 100ms, 200ms, 400ms
+    enable:
+      jvm: true
+      process: true
+      system: true
+      logback: true
+      tomcat: true
+      jdbc: true
+      hikaricp: true
+      http: true
+      jms: true
+      kafka: true
+      mongodb: true
+      redis: true
+      rabbit: true
+      cache: true
+      hibernate: true
+
+
+
+keycloak:
+  auth-server-url: '@KEYCLOAK_AUTH_SERVER_URL@'
+  realm: '@PUBLIC_REALM@'
+  clientId: '@PUBLIC_CLIENT_ID@'
+  public-client: false
+  cors: true
+  credentials:
+    secret: '@KEYCLOAK_CREDENTIALS_SECRET@'
+  bearer-only: true
+  security-constraints:
+    - authRoles: default-roles-peoplesystem
+      securityCollections:
+        - patterns:
+            - /*
+
+# gRPC Configuration
+grpc:
+  enabled: ${GRPC_ENABLED:false}  # 默认禁用，通过环境变量启用
+  port: ${GRPC_PORT:50051}
+
+

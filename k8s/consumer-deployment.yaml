@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: message-consumer
+  labels:
+    app: message-consumer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: message-consumer
+  template:
+    metadata:
+      labels:
+        app: message-consumer
+    spec:
+      containers:
+      - name: consumer
+        image: openjdk:17-jre-slim
+        command: ["java", "-jar", "/app/consumer.jar"]
+        env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: "k8s"
+        - name: RABBITMQ_HOST
+          value: "rabbitmq-service"
+        - name: RABBITMQ_PORT
+          value: "5672"
+        - name: RABBITMQ_USERNAME
+          value: "admin"
+        - name: RABBITMQ_PASSWORD
+          value: "admin123"
+        - name: RABBITMQ_VIRTUAL_HOST
+          value: "/"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"
+        volumeMounts:
+        - name: consumer-app
+          mountPath: /app
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+      volumes:
+      - name: consumer-app
+        emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: consumer-service
+  labels:
+    app: message-consumer
+spec:
+  selector:
+    app: message-consumer
+  ports:
+  - name: http
+    port: 8080
+    targetPort: 8080
+  type: ClusterIP

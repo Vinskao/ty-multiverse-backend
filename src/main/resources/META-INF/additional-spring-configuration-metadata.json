@@ -1,0 +1,142 @@
+{"properties": [
+  {
+    "name": "url.address",
+    "type": "java.lang.String",
+    "description": "A description for 'url.address'"
+  },
+  {
+    "name": "project.env",
+    "type": "java.lang.String",
+    "description": "A description for 'project.env'"
+  },
+  {
+    "name": "url.frontend",
+    "type": "java.lang.String",
+    "description": "A description for 'url.frontend'"
+  },
+  {
+    "name": "url.sso",
+    "type": "java.lang.String",
+    "description": "A description for 'url.sso'"
+  },
+  {
+    "name": "keycloak.clientId",
+    "type": "java.lang.String",
+    "description": "A description for 'keycloak.clientId'"
+  },
+  {
+    "name": "spring.people-datasource.driver-class-name",
+    "type": "java.lang.String",
+    "description": "Database driver class name for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.url",
+    "type": "java.lang.String",
+    "description": "Database URL for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.username",
+    "type": "java.lang.String",
+    "description": "Database username for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.password",
+    "type": "java.lang.String",
+    "description": "Database password for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.minimum-idle",
+    "type": "java.lang.Integer",
+    "description": "Minimum number of idle connections in the pool for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.maximum-pool-size",
+    "type": "java.lang.Integer",
+    "description": "Maximum number of connections in the pool for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.idle-timeout",
+    "type": "java.lang.Long",
+    "description": "Maximum amount of time that a connection can sit idle in the pool for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.pool-name",
+    "type": "java.lang.String",
+    "description": "Pool name for people datasource HikariCP"
+  },
+  {
+    "name": "spring.people-datasource.hikari.max-lifetime",
+    "type": "java.lang.Long",
+    "description": "Maximum lifetime of a connection in the pool for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.connection-timeout",
+    "type": "java.lang.Long",
+    "description": "Connection timeout for people datasource"
+  },
+  {
+    "name": "spring.people-datasource.hikari.leak-detection-threshold",
+    "type": "java.lang.Long",
+    "description": "Leak detection threshold for people datasource"
+  },
+  {
+    "name": "spring.datasource.url",
+    "type": "java.lang.String",
+    "description": "Database URL for primary datasource"
+  },
+  {
+    "name": "spring.datasource.username",
+    "type": "java.lang.String",
+    "description": "Database username for primary datasource"
+  },
+  {
+    "name": "spring.datasource.password",
+    "type": "java.lang.String",
+    "description": "Database password for primary datasource"
+  },
+  {
+    "name": "spring.datasource.driver-class-name",
+    "type": "java.lang.String",
+    "description": "Database driver class name for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.minimum-idle",
+    "type": "java.lang.Integer",
+    "description": "Minimum number of idle connections in the pool for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.maximum-pool-size",
+    "type": "java.lang.Integer",
+    "description": "Maximum number of connections in the pool for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.idle-timeout",
+    "type": "java.lang.Long",
+    "description": "Maximum amount of time that a connection can sit idle in the pool for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.pool-name",
+    "type": "java.lang.String",
+    "description": "Pool name for primary datasource HikariCP"
+  },
+  {
+    "name": "spring.datasource.hikari.max-lifetime",
+    "type": "java.lang.Long",
+    "description": "Maximum lifetime of a connection in the pool for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.connection-timeout",
+    "type": "java.lang.Long",
+    "description": "Connection timeout for primary datasource"
+  },
+  {
+    "name": "spring.datasource.hikari.leak-detection-threshold",
+    "type": "java.lang.Long",
+    "description": "Leak detection threshold for primary datasource"
+  },
+  {
+    "name": "project.env",
+    "type": "java.lang.String",
+    "description": "A description for 'project.env'"
+  }
+]}

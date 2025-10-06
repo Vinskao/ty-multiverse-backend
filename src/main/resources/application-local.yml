@@ -1,0 +1,226 @@
+project:
+  env: '@project.env@'
+
+app:
+  url:
+    address: 'http://localhost:8080'
+spring:
+  # RabbitMQ 配置 - 本機環境可選啟用
+  rabbitmq:
+    enabled: true  # 啟用 RabbitMQ 連接
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin123
+    virtual-host: /
+    # 連接池配置
+    listener:
+      simple:
+        concurrency: 1
+        max-concurrency: 2
+        prefetch: 1
+        default-requeue-rejected: false
+    # 重試配置
+    retry:
+      enabled: true
+      initial-interval: 1000
+      max-attempts: 3
+      max-interval: 5000
+      multiplier: 1.0
+    # 健康檢查配置
+    health:
+      check:
+        enabled: true
+  data:
+    redis:
+      host: '@REDIS_HOST@'
+      port: '@REDIS_CUSTOM_PORT@'
+      password: '@REDIS_PASSWORD@'
+      database: 0
+      timeout: 5000ms
+      lettuce:
+        pool:
+          max-active: 3000
+          max-idle: 8
+          min-idle: 4
+          max-wait: 5000ms
+        shutdown-timeout: 100ms
+      # 添加錯誤處理
+      connect-timeout: 5000ms
+      command-timeout: 5000ms
+
+  config:
+    import: classpath:env/local.properties
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@'
+          jwk-set-uri: '@keycloak.auth-server-url@/realms/@keycloak.realm@/protocol/openid-connect/certs'
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: '@spring.datasource.url@'
+    username: '@spring.datasource.username@'
+    password: '@spring.datasource.password@'
+    hikari:
+      # 開發環境連線池配置 (較小規模)
+      minimum-idle: 5                     # 最小閒置連線數
+      maximum-pool-size: 20               # 最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線洩漏檢測 (開發環境較嚴格)
+      leak-detection-threshold: 2000      # 連線洩漏檢測 (2秒)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: LocalHikariCP            # 連線池名稱
+      
+      # 開發環境監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+  # People datasource configuration
+  people-datasource:
+    driver-class-name: org.postgresql.Driver
+    url: '@spring.people-datasource.url@'
+    username: '@spring.people-datasource.username@'
+    password: '@spring.people-datasource.password@'
+    hikari:
+      # 開發環境 People 連線池配置 (較小規模)
+      minimum-idle: 3                     # 最小閒置連線數
+      maximum-pool-size: 10               # 最大連線池大小
+      
+      # 連線生命週期配置
+      idle-timeout: 300000                # 閒置連線超時 (5分鐘)
+      max-lifetime: 1800000               # 連線最大生命週期 (30分鐘)
+      connection-timeout: 30000           # 連線超時 (30秒)
+      
+      # 連線洩漏檢測 (開發環境較嚴格)
+      leak-detection-threshold: 2000      # 連線洩漏檢測 (2秒)
+      
+      # 效能優化配置
+      auto-commit: false                  # 自動提交關閉
+      register-mbeans: true               # 註冊 MBean 用於監控
+      pool-name: LocalPeopleHikariCP      # 連線池名稱
+      
+      # 開發環境監控配置
+      allow-pool-suspension: false        # 不允許暫停連線池
+      initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: servlet
+  devtools:
+    restart:
+      enabled: false
+  # Session 配置
+  app:
+    session:
+      enabled: true  # 本地環境啟用 Session 支持
+      timeout: 1800
+      cookie:
+        name: JSESSIONID
+        path: /
+        http-only: true
+        secure: false
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework: INFO
+      # springframework.session: DEBUG  # 暫時關閉，訊息太多
+      springframework.security: DEBUG
+      springframework.security.oauth2: DEBUG
+      springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+      springframework.security.oauth2.server.resource: DEBUG
+      springframework.security.oauth2.jwt: DEBUG
+      hibernate:
+        SQL: OFF
+        type:
+          descriptor:
+            sql: OFF
+    '[io.micrometer]': INFO
+    # 添加JWT相關的詳細日誌
+    'org.springframework.security.oauth2.jwt': DEBUG
+    'org.springframework.security.oauth2.server.resource.authentication': DEBUG
+    'org.springframework.security.oauth2.server.resource.web': DEBUG
+    org.springframework.amqp: OFF  # 禁用 RabbitMQ 相關日誌
+    com.rabbitmq: OFF
+
+# 定時任務配置
+scheduling:
+  tasks:
+    # 度量數據導出 - 每30秒執行一次
+    metrics-export:
+      fixed-rate: 30000 # 毫秒
+      lock-timeout: 10 # 秒
+
+server:
+  port: 8080
+  servlet:
+    context-path: /tymb
+  tomcat:
+    connection-timeout: 20000
+    max-http-form-post-size: 3145728
+  error:
+    whitelabel:
+      enabled: true
+  max-http-request-header-size: 3145728
+  ssl:
+    enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      # 禁用Redis健康檢查
+      group:
+        redis:
+          include: redis
+          show-components: never
+
+keycloak:
+  auth-server-url: '@keycloak.auth-server-url@'
+  realm: '@keycloak.realm@'
+  resource: '@keycloak.clientId@'
+  public-client: false
+  cors: true
+  credentials:
+    secret: '@keycloak.credentials.secret@'
+  bearer-only: true
+  security-constraints:
+    - authRoles: default-roles-peoplesystem
+      securityCollections:
+        - patterns:
+            - /*
+url:
+  address: '@PUBLIC_TYMB_URL@'
+  frontend: '@PUBLIC_FRONTEND_URL@'
