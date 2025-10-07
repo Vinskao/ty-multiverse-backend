@@ -323,13 +323,13 @@ management:
 
 
 keycloak:
-  auth-server-url: '@KEYCLOAK_AUTH_SERVER_URL@'
-  realm: '@PUBLIC_REALM@'
-  clientId: '@PUBLIC_CLIENT_ID@'
+  auth-server-url: ${keycloak.auth-server-url}
+  realm: ${keycloak.realm}
+  clientId: ${keycloak.clientId}
   public-client: false
   cors: true
   credentials:
-    secret: '@KEYCLOAK_CREDENTIALS_SECRET@'
+    secret: ${keycloak.credentials.secret}
   bearer-only: true
   security-constraints:
     - authRoles: default-roles-peoplesystem
