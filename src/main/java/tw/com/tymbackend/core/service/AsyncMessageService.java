@@ -1,7 +1,5 @@
 package tw.com.tymbackend.core.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -31,9 +29,6 @@ public class AsyncMessageService {
     
     @Autowired
     private RabbitTemplate rabbitTemplate;
-    
-    @Autowired
-    private ObjectMapper objectMapper;
     
     /**
      * 發送傷害計算請求到 RabbitMQ
@@ -88,14 +83,12 @@ public class AsyncMessageService {
      */
     private void sendMessage(String queueName, AsyncMessageDTO message) {
         try {
-            String messageJson = objectMapper.writeValueAsString(message);
-            rabbitTemplate.convertAndSend(RabbitMQConfig.TYMB_EXCHANGE, getRoutingKey(queueName), messageJson);
+            // 直接發送對象，RabbitTemplate 的 Jackson2JsonMessageConverter 會自動序列化
+            rabbitTemplate.convertAndSend(RabbitMQConfig.TYMB_EXCHANGE, getRoutingKey(queueName), message);
             
-            logger.debug("消息已發送到隊列 {}: {}", queueName, messageJson);
+            logger.debug("消息已發送到隊列 {}: requestId={}, endpoint={}", 
+                queueName, message.getRequestId(), message.getEndpoint());
             
-        } catch (JsonProcessingException e) {
-            logger.error("序列化消息失敗: {}", e.getMessage(), e);
-            throw new RuntimeException("消息序列化失敗", e);
         } catch (Exception e) {
             logger.error("發送消息到 RabbitMQ 失敗: {}", e.getMessage(), e);
             throw new RuntimeException("消息發送失敗", e);
