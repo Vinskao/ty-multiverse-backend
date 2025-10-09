@@ -5,10 +5,44 @@ Personal Website Backend System
 
 ### 啟動指令
 
+#### 完整構建和啟動（推薦用於全新專案或清理後）
+
+```bash
+# 方法 1：正確的編譯指令（推薦）
+mvn clean generate-sources compile
+mvn spring-boot:run
+
+# 或使用 Maven Wrapper
+./mvnw clean generate-sources compile
+./mvnw spring-boot:run
+
+# 方法 2：一次性執行（包含編譯和運行）
+mvn clean generate-sources compile spring-boot:run
+
+# 或使用 Maven Wrapper
+./mvnw clean generate-sources compile spring-boot:run
+```
+
+**📋 指令說明：**
+- `clean` - 清空舊的編譯結果
+- `generate-sources` - 生成 protobuf gRPC 類別
+- `compile` - 編譯所有源代碼
+- `spring-boot:run` - 啟動 Spring Boot 應用
+
+#### 快速啟動（日常開發使用）
+
 ```bash
 # 啟動後端服務（包含 gRPC 服務器）
 mvn spring-boot:run
+
+# 或使用 Maven Wrapper
+./mvnw spring-boot:run
 ```
+
+**Maven vs Maven Wrapper：**
+- `mvn`: 使用系統安裝的 Maven（需要手動安裝）
+- `./mvnw`: Maven Wrapper，自動下載並使用專案指定的 Maven 版本（推薦）
+- 功能相同，但 Maven Wrapper 確保團隊成員使用相同版本，避免版本衝突
 
 **服務器啟動資訊：**
 - **HTTP API**: `http://localhost:8080/tymb`

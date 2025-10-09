@@ -24,6 +24,18 @@ service PeopleService {
   rpc DeletePeople(DeletePeopleRequest) returns (DeletePeopleResponse);
 }
 
+// Keycloak Service - 認證服務
+service KeycloakService {
+  // OAuth2 重定向處理
+  rpc ProcessAuthRedirect(AuthRedirectRequest) returns (AuthRedirectResponse);
+  
+  // 用戶登出
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+  
+  // Token 驗證與刷新
+  rpc IntrospectToken(IntrospectTokenRequest) returns (IntrospectTokenResponse);
+}
+
 // People 数据模型 - 完整字段映射
 message PeopleData {
   string name = 1;                    // 主键
@@ -117,6 +129,49 @@ message PeopleResponse {
 message DeletePeopleResponse {
   bool success = 1;
   string message = 2;
+}
+
+// Keycloak 相關消息定義
+message AuthRedirectRequest {
+  string code = 1;
+  string redirect_uri = 2;
+}
+
+message AuthRedirectResponse {
+  bool success = 1;
+  string message = 2;
+  UserInfo user_info = 3;
+  string access_token = 4;
+  string refresh_token = 5;
+}
+
+message UserInfo {
+  string username = 1;
+  string email = 2;
+  string name = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+message LogoutRequest {
+  string refresh_token = 1;
+}
+
+message LogoutResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message IntrospectTokenRequest {
+  string access_token = 1;
+  string refresh_token = 2; // 可選
+}
+
+message IntrospectTokenResponse {
+  bool active = 1;
+  string message = 2;
+  string new_access_token = 3; // 如果刷新了
+  string new_refresh_token = 4;
 }
 
 

@@ -321,7 +321,26 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>tw.com.tymbackend.TYMBackendApplication</mainClass> 
+                    <mainClass>tw.com.tymbackend.TYMBackendApplication</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- Maven Compiler Plugin - 確保註解處理和 Lombok 正確工作 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>21</source>
+                    <target>21</target>
+                    <encoding>UTF-8</encoding>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             
@@ -338,10 +357,16 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>default</id>
+                        <id>protobuf-compile</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>grpc-compile</id>
+                        <phase>generate-sources</phase>
+                        <goals>
                             <goal>compile-custom</goal>
                         </goals>
                     </execution>

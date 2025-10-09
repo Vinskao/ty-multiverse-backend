@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tw.com.tymbackend.grpc.people.PeopleServiceGrpc;
 import tw.com.tymbackend.grpc.people.*;
 import tw.com.tymbackend.module.people.domain.vo.People;
 import tw.com.tymbackend.module.people.service.PeopleService;
