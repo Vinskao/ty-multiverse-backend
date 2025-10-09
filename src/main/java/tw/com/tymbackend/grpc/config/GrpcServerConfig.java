@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tw.com.tymbackend.grpc.service.GrpcPeopleServiceImpl;
+import tw.com.tymbackend.grpc.service.GrpcKeycloakServiceImpl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -35,6 +36,9 @@ public class GrpcServerConfig {
     @Autowired
     private GrpcPeopleServiceImpl grpcPeopleService;
 
+    @Autowired
+    private GrpcKeycloakServiceImpl grpcKeycloakService;
+
     private Server grpcServer;
 
     @PostConstruct
@@ -43,11 +47,12 @@ public class GrpcServerConfig {
         
         grpcServer = ServerBuilder.forPort(grpcPort)
                 .addService(grpcPeopleService.bindService())
+                .addService(grpcKeycloakService.bindService())
                 .build()
                 .start();
         
         logger.info("✅ gRPC Server 已启动在端口: {}", grpcPort);
-        logger.info("📡 可用服务: PeopleService");
+        logger.info("📡 可用服务: PeopleService, KeycloakService");
         
         // 添加关闭钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
