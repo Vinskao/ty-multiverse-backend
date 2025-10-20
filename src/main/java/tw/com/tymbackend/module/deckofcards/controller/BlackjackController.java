@@ -3,7 +3,7 @@ package tw.com.tymbackend.module.deckofcards.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
-import tw.com.tymbackend.core.exception.ErrorCode;
+import tw.com.ty.common.exception.ErrorCode;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;

@@ -20,8 +20,29 @@
         <grpc.version>1.58.0</grpc.version>
         <protobuf.version>4.32.1</protobuf.version>
         <protoc.version>4.32.1</protoc.version>
+        <env>local</env>
     </properties>
     <dependencies>
+        <!-- Common module for shared error handling and AOP logging -->
+        <dependency>
+            <groupId>tw.com.ty</groupId>
+            <artifactId>ty-multiverse-common</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+        <!-- AOP support for common module logging aspect -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <!-- AspectJ runtime for AOP support -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>1.9.20</version>
+        </dependency>
+
         <!-- security -->
 
         <dependency>
@@ -107,11 +128,6 @@
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>5.0.1</version> <!-- Use the latest version available -->
-        </dependency>
-        <dependency>
-            <groupId>org.springdoc</groupId>
-            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -300,7 +316,24 @@
             <version>1.3.2</version>
         </dependency>
     </dependencies>
-    
+
+    <!-- GitHub Packages 發布配置 -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Vinskao/ty-multiverse-backend</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/Vinskao/ty-multiverse-common</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <!-- gRPC BOM - 統一管理所有 gRPC 相關版本 -->
@@ -425,6 +458,12 @@
         </resources>
     </build>
     <profiles>
+        <profile>
+            <id>github</id>
+            <properties>
+                <!-- GitHub Packages deployment profile -->
+            </properties>
+        </profile>
         <profile>
             <id>platform</id>
             <properties>

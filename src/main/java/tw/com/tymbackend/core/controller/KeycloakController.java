@@ -26,7 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
-import tw.com.tymbackend.core.exception.ErrorCode;
+import tw.com.ty.common.exception.ErrorCode;
 
 /**
  * Keycloak 控制器

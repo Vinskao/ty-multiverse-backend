@@ -137,11 +137,6 @@ spring:
         path: /
         http-only: true
         secure: false
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
 
 logging:
   level:
