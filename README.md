@@ -1,6 +1,47 @@
 # TY-Multiverse-Backend
 Personal Website Backend System
 
+## 🔧 開發環境設定
+
+### 依賴管理架構
+
+本專案使用 **統一的依賴管理架構**，透過 Maven 從本地或遠端倉庫引用共用程式庫 `ty-multiverse-common`。
+
+#### 架構說明
+- **統一 common 模組**：所有共用程式碼集中在單一專案中管理
+- **自動依賴解析**：Maven 自動處理模組間的依賴關係
+- **版本同步**：所有專案使用相同版本的 common 模組
+
+#### 開發環境設定
+```bash
+# 確保 common 模組已建置並安裝到本地倉庫
+cd ../ty-multiverse-common
+mvn clean install
+
+# 檢查依賴關係
+mvn dependency:tree | grep ty-multiverse-common
+```
+
+#### Common 模組更新流程
+```bash
+# 1. 在 common 目錄中進行開發
+cd ../ty-multiverse-common
+git checkout -b feature/new-enhancement
+# ... 修改程式碼 ...
+
+# 2. 建置並安裝到本地倉庫
+mvn clean install
+
+# 3. 提交並推送變更
+git add .
+git commit -m "Add new enhancement"
+git push origin feature/new-enhancement
+
+# 4. 其他專案會自動使用更新後的版本
+cd ../ty-multiverse-backend
+mvn clean compile  # 自動使用新版本的 common
+```
+
 ## 🚀 本地開發啟動
 
 ### 啟動指令
@@ -68,6 +109,111 @@ Gateway gRPC Client → Backend gRPC Server → 直接查詢數據庫 → 返回
 - ✅ 適合開發和測試環境
 
 **備註：** 如需異步處理模式，可以參考 Consumer 項目的 README 配置 RabbitMQ。
+
+## 🛡️ Middleware/Filter 架構設計
+
+### 為什麼需要 Middleware？
+
+在現代 Web 應用中，請求處理不應該只關注業務邏輯。Middleware（中間件）允許我們在請求的各個階段插入橫切關注點，而無需修改核心業務代碼。
+
+**核心原理：**
+- **請求生命週期**：HTTP請求 → Tomcat → Filter鏈 → Spring MVC → Interceptor鏈 → Controller
+- **責任鏈模式**：每個中間件都可以處理請求、傳遞控制權，或終止請求
+- **AOP概念**：在不修改原始代碼的情況下添加額外功能
+
+### Backend 中間件使用情況
+
+#### 1. Servlet Filter 層級
+
+**RequestConcurrencyLimiter** - 請求併發控制：
+```java
+@Component
+public class RequestConcurrencyLimiter implements Filter {
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) {
+        // 實現請求併發限制邏輯
+        // 防止過多併發請求影響系統穩定性
+    }
+}
+```
+- **位置**：Spring MVC 之前，最早的防線
+- **職責**：控制請求併發數量，保護系統資源
+
+#### 2. AOP Aspect 層級
+
+**RateLimiterAspect** - 限流保護：
+```java
+@Aspect
+@Component
+public class RateLimiterAspect {
+    @Around("@annotation(RateLimit)")
+    public Object enforceRateLimit(ProceedingJoinPoint joinPoint) throws Throwable {
+        // 實現基於 Redis 的分散式限流
+        // 防止 API 濫用和惡意攻擊
+    }
+}
+```
+- **位置**：方法執行前攔截
+- **職責**：API 調用頻率控制，防止服務過載
+
+#### 3. Spring Security Filter 鏈
+
+**JWT 認證過濾器**：
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) {
+        http.addFilterBefore(jwtAuthenticationFilter(),
+                           UsernamePasswordAuthenticationFilter.class);
+    }
+}
+```
+- **位置**：Security 過濾器鏈中
+- **職責**：JWT Token 驗證，用戶身份認證
+
+### 中間件選擇指南
+
+| 需求場景 | 推薦方案 | 理由 |
+|---------|----------|------|
+| 🔐 **身份認證** | Filter | 在業務邏輯前就攔截無效請求 |
+| 📊 **日誌記錄** | Interceptor | 需要知道具體的 Controller 方法 |
+| ⚡ **性能監控** | Aspect/Filter | 精確測量方法執行時間 |
+| 🛡️ **統一錯誤處理** | @ControllerAdvice | 所有異常的集中處理點 |
+| 🚦 **請求限流** | Filter/Aspect | 早期拒絕過多請求，節省資源 |
+
+### 架構優勢
+
+1. **關注點分離**：業務邏輯與基礎設施邏輯完全解耦
+2. **代碼重用**：通用功能（如認證、限流）可在多個服務間共享
+3. **易於測試**：每個中間件都可以單獨測試
+4. **易於維護**：修改中間件邏輯不會影響業務代碼
+5. **性能優化**：可以在最早階段拒絕無效請求
+
+### 配置方式
+
+```properties
+# 中間件相關配置
+app.middleware.concurrency.max-requests=100
+app.middleware.rate-limit.enabled=true
+app.middleware.rate-limit.requests-per-minute=60
+
+# Spring Security 配置
+spring.security.enabled=true
+jwt.secret=your-secret-key
+```
+
+### 監控與調試
+
+- **日誌記錄**：每個中間件都應記錄關鍵操作
+- **性能指標**：監控中間件處理時間和成功率
+- **健康檢查**：確保中間件正常運行
+
+**相關文件：**
+- `src/main/java/tw/com/tymbackend/config/SecurityConfig.java`
+- `src/main/java/tw/com/tymbackend/filter/RequestConcurrencyLimiter.java`
+- `src/main/java/tw/com/tymbackend/aspect/RateLimiterAspect.java`
 
 ## Architecture Design
 
@@ -774,7 +920,8 @@ sequenceDiagram
 - **服務器配置**: `GrpcServerConfig` 配置並啟動 gRPC 服務器
 - **依賴注入**: Spring 容器管理服務實例和依賴關係
 - **條件啟用**: 透過 `grpc.enabled=true` 環境變數控制 gRPC 服務啟用
-- **錯誤處理**: 統一的異常處理和日誌記錄機制
+- **錯誤處理**: 統一的異常處理機制
+- **請求響應日誌**: 自動記錄所有 Controller 的請求和響應日誌
 - **效能優化**: 使用連接池和快取提升服務效能
 
 **技術特點：**

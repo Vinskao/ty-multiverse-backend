@@ -22,8 +22,8 @@ import org.springframework.security.web.authentication.logout.LogoutSuccessHandl
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import tw.com.tymbackend.core.exception.ErrorCode;
-import tw.com.tymbackend.core.exception.ErrorResponse;
+import tw.com.ty.common.exception.ErrorCode;
+import tw.com.ty.common.exception.ErrorResponse;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;

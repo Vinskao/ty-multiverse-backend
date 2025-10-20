@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import tw.com.tymbackend.core.exception.ErrorCode;
+import tw.com.ty.common.exception.ErrorCode;
 import tw.com.tymbackend.module.ckeditor.domain.dto.GetContentDTO;
 import tw.com.tymbackend.module.ckeditor.service.EditContentService;
 import tw.com.tymbackend.module.ckeditor.domain.vo.EditContentVO;

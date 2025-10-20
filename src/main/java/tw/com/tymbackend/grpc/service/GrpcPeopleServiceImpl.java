@@ -20,10 +20,17 @@ import java.util.Optional;
 
 /**
  * gRPC People Service 实现
- * 
+ *
  * <p>提供 People 相关的 gRPC 服务</p>
  * <p>支持异步模式：通过 RabbitMQ + Consumer 处理请求</p>
- * 
+ * <p>使用 gRPC ServerInterceptor 责任链：</p>
+ * <ul>
+ *   <li>RateLimitInterceptor - 限流控制</li>
+ *   <li>AuthInterceptor - JWT认证</li>
+ *   <li>LoggingInterceptor - 请求日志记录</li>
+ *   <li>ErrorHandlingInterceptor - 异常转换</li>
+ * </ul>
+ *
  * @author TY Team
  * @version 2.0
  */

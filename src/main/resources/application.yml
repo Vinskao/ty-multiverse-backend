@@ -240,12 +240,6 @@ url:
   address: '@PUBLIC_TYMB_URL@'
   frontend: '@PUBLIC_FRONTEND_URL@'
 
-springdoc:
-  api-docs:
-    enabled: true
-  swagger-ui:
-    path: /swagger-ui.html
-    enabled: true
 
 logging:
   level:

@@ -16,7 +16,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import tw.com.tymbackend.grpc.people.KeycloakServiceGrpc;
 import tw.com.tymbackend.grpc.people.*;
-import tw.com.tymbackend.core.exception.ErrorCode;
+import tw.com.ty.common.exception.ErrorCode;
 
 import java.util.Map;
 
