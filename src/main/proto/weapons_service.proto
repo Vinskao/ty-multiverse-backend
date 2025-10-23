@@ -1,0 +1,130 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "tw.com.tymbackend.grpc.weapons";
+option java_outer_classname = "WeaponsServiceProto";
+
+package tymbackend.weapons;
+
+// Weapons Service - 武器服务
+service WeaponService {
+  // 获取所有武器
+  rpc GetAllWeapons(GetAllWeaponsRequest) returns (GetAllWeaponsResponse);
+
+  // 根据名称/ID获取武器
+  rpc GetWeaponById(GetWeaponByIdRequest) returns (WeaponResponse);
+
+  // 根据所有者获取武器
+  rpc GetWeaponsByOwner(GetWeaponsByOwnerRequest) returns (GetWeaponsByOwnerResponse);
+
+  // 创建武器
+  rpc CreateWeapon(WeaponData) returns (WeaponResponse);
+
+  // 更新武器
+  rpc UpdateWeapon(UpdateWeaponRequest) returns (WeaponResponse);
+
+  // 删除武器
+  rpc DeleteWeapon(DeleteWeaponRequest) returns (DeleteWeaponResponse);
+
+  // 检查武器是否存在
+  rpc CheckWeaponExists(CheckWeaponExistsRequest) returns (CheckWeaponExistsResponse);
+
+  // 更新武器属性
+  rpc UpdateWeaponAttributes(UpdateWeaponAttributesRequest) returns (WeaponResponse);
+
+  // 按伤害范围查询
+  rpc FindByDamageRange(FindByDamageRangeRequest) returns (FindByDamageRangeResponse);
+
+  // 按属性查询
+  rpc FindByAttribute(FindByAttributeRequest) returns (FindByAttributeResponse);
+}
+
+// Weapon 数据模型 - 完整字段映射
+message WeaponData {
+  string name = 1;                    // 武器名称（主键）
+  string owner = 2;                   // 武器拥有者
+  string attributes = 3;              // 武器属性
+  int32 base_damage = 4;              // 基础伤害值
+  int32 bonus_damage = 5;             // 加成伤害值
+
+  // 数组属性
+  repeated string bonus_attributes = 6;  // 加成属性列表
+  repeated string state_attributes = 7;  // 状态属性列表
+
+  // 元数据
+  string created_at = 8;              // 创建时间
+  string updated_at = 9;              // 更新时间
+  int64 version = 10;                 // 版本号(乐观锁)
+}
+
+// 请求和响应消息
+message GetAllWeaponsRequest {}
+
+message GetAllWeaponsResponse {
+  repeated WeaponData weapons = 1;
+}
+
+message GetWeaponByIdRequest {
+  string name = 1;
+}
+
+message GetWeaponsByOwnerRequest {
+  string owner = 1;
+}
+
+message GetWeaponsByOwnerResponse {
+  repeated WeaponData weapons = 1;
+}
+
+message UpdateWeaponRequest {
+  string name = 1;
+  WeaponData weapon = 2;
+}
+
+message DeleteWeaponRequest {
+  string name = 1;
+}
+
+message DeleteWeaponResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CheckWeaponExistsRequest {
+  string name = 1;
+}
+
+message CheckWeaponExistsResponse {
+  bool exists = 1;
+  string message = 2;
+}
+
+message UpdateWeaponAttributesRequest {
+  string name = 1;
+  string attributes = 2;
+}
+
+message FindByDamageRangeRequest {
+  int32 min_damage = 1;
+  int32 max_damage = 2;
+}
+
+message FindByDamageRangeResponse {
+  repeated WeaponData weapons = 1;
+}
+
+message FindByAttributeRequest {
+  string attribute = 1;
+}
+
+message FindByAttributeResponse {
+  repeated WeaponData weapons = 1;
+}
+
+message WeaponResponse {
+  bool success = 1;
+  string message = 2;
+  WeaponData weapon = 3;
+}
+
+

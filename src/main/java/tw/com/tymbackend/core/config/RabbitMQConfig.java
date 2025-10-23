@@ -41,6 +41,7 @@ public class RabbitMQConfig {
     // 隊列名稱定義
     public static final String DAMAGE_CALCULATION_QUEUE = "damage-calculation";
     public static final String PEOPLE_GET_ALL_QUEUE = "people-get-all";
+    public static final String DECKOFCARDS_QUEUE = "deckofcards";
     public static final String ASYNC_RESULT_QUEUE = "async-result";
     
     // 交換機名稱
@@ -95,6 +96,26 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(peopleGetAllQueue)
                 .to(tymbExchange)
                 .with("people.get.all");
+    }
+
+    /**
+     * 創建 Deckofcards 隊列
+     */
+    @Bean
+    public Queue deckofcardsQueue() {
+        return QueueBuilder.durable(DECKOFCARDS_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 綁定 Deckofcards 隊列到交換機
+     */
+    @Bean
+    public Binding deckofcardsBinding(Queue deckofcardsQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(deckofcardsQueue)
+                .to(tymbExchange)
+                .with("deckofcards");
     }
     
     /**
