@@ -245,7 +245,7 @@ classDiagram
         +Token Introspect
     }
     
-    class Guardian {
+    class Auth {
         +User Management
         +Admin Operations
         +Token Validation
@@ -307,7 +307,7 @@ classDiagram
     TYMBackendApplication --> SessionConfig
     
     SecurityConfig --> KeycloakController
-    SecurityConfig --> Guardian
+    SecurityConfig --> Auth
     SecurityConfig --> SessionConfig
     
     SessionConfig --> RedisConfig

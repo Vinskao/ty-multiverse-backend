@@ -11,7 +11,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import tw.com.tymbackend.grpc.service.GrpcPeopleServiceImpl;
-import tw.com.tymbackend.grpc.service.GrpcKeycloakServiceImpl;
+import tw.com.tymbackend.grpc.service.GrpcWeaponServiceImpl;
+import tw.com.tymbackend.grpc.service.GrpcGalleryServiceImpl;
+import tw.com.tymbackend.grpc.service.GrpcDeckofcardsServiceImpl;
+import tw.com.tymbackend.grpc.service.GrpcCkeditorServiceImpl;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -38,7 +41,16 @@ public class GrpcServerConfig {
     private GrpcPeopleServiceImpl grpcPeopleService;
 
     @Autowired
-    private GrpcKeycloakServiceImpl grpcKeycloakService;
+    private GrpcWeaponServiceImpl grpcWeaponService;
+
+    @Autowired
+    private GrpcGalleryServiceImpl grpcGalleryService;
+
+    @Autowired
+    private GrpcDeckofcardsServiceImpl grpcDeckofcardsService;
+
+    @Autowired
+    private GrpcCkeditorServiceImpl grpcCkeditorService;
 
     @Autowired
     private ServerInterceptor loggingInterceptor;
@@ -67,13 +79,16 @@ public class GrpcServerConfig {
                 .intercept(errorHandlingInterceptor)  // 4. 错误处理拦截器
                 // 注册服务
                 .addService(grpcPeopleService.bindService())
-                .addService(grpcKeycloakService.bindService())
+                .addService(grpcWeaponService.bindService())
+                .addService(grpcGalleryService.bindService())
+                .addService(grpcDeckofcardsService.bindService())
+                .addService(grpcCkeditorService.bindService())
                 .build()
                 .start();
 
         logger.info("✅ gRPC Server 已启动在端口: {}", grpcPort);
         logger.info("🛡️  已启用 gRPC Interceptor: RateLimit -> Auth -> Logging -> ErrorHandling");
-        logger.info("📡 可用服务: PeopleService, KeycloakService");
+        logger.info("📡 可用服务: PeopleService, WeaponService, GalleryService, DeckofcardsService, CkeditorService");
 
         // 添加关闭钩子
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {

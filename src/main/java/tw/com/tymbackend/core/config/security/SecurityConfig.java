@@ -145,10 +145,13 @@ public class SecurityConfig {
                         .requestMatchers("/deckofcards/**").authenticated()
                         
                         // 無狀態服務 - 使用 JWT 認證
-                        .requestMatchers("/guardian/admin").hasRole("manage-users")
-                        .requestMatchers("/guardian/user").authenticated()
-                        .requestMatchers("/guardian/token-info").authenticated()
-                        .requestMatchers("/guardian/test-default").authenticated()
+                        .requestMatchers("/auth/admin").hasRole("manage-users")
+                        .requestMatchers("/auth/user").authenticated()
+                        .requestMatchers("/auth/token-info").authenticated()
+                        .requestMatchers("/auth/test-default").authenticated()
+                        .requestMatchers("/auth/test").authenticated()
+                        .requestMatchers("/auth/logout-test").authenticated()
+                        .requestMatchers("/auth/health").permitAll()
                         .requestMatchers("/gallery/**").authenticated()
                         .requestMatchers("/livestock/**").authenticated()
                         

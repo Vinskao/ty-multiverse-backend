@@ -55,23 +55,50 @@ public class AsyncMessageService {
     
     /**
      * 發送角色列表獲取請求到 RabbitMQ
-     * 
+     *
      * @return 請求ID
      */
     public String sendPeopleGetAllRequest() {
         String requestId = UUID.randomUUID().toString();
-        
+
         AsyncMessageDTO message = new AsyncMessageDTO(
             requestId,
             "/tymb/people/get-all",
             "POST",
             null
         );
-        
+
         sendMessage(RabbitMQConfig.PEOPLE_GET_ALL_QUEUE, message);
-        
+
         logger.info("發送角色列表獲取請求到 RabbitMQ: requestId={}", requestId);
-        
+
+        return requestId;
+    }
+
+    /**
+     * 發送 Deckofcards 遊戲請求到 RabbitMQ
+     *
+     * @param action 遊戲動作 (start, hit, stand, status, double, split)
+     * @param payload 額外數據
+     * @return 請求ID
+     */
+    public String sendDeckofcardsRequest(String action, Object payload) {
+        String requestId = UUID.randomUUID().toString();
+
+        String endpoint = "/blackjack/" + action;
+        String method = action.equals("status") ? "GET" : "POST";
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            endpoint,
+            method,
+            payload
+        );
+
+        sendMessage(RabbitMQConfig.DECKOFCARDS_QUEUE, message);
+
+        logger.info("發送 Deckofcards {} 請求到 RabbitMQ: requestId={}", action, requestId);
+
         return requestId;
     }
     
@@ -97,7 +124,7 @@ public class AsyncMessageService {
     
     /**
      * 根據隊列名稱獲取路由鍵
-     * 
+     *
      * @param queueName 隊列名稱
      * @return 路由鍵
      */
@@ -107,6 +134,8 @@ public class AsyncMessageService {
                 return "people.damage.calculation";
             case RabbitMQConfig.PEOPLE_GET_ALL_QUEUE:
                 return "people.get.all";
+            case RabbitMQConfig.DECKOFCARDS_QUEUE:
+                return "deckofcards";
             default:
                 throw new IllegalArgumentException("未知的隊列名稱: " + queueName);
         }
