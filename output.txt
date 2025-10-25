@@ -1,0 +1,189 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for tw.com.ty:ty-multiverse-backend:jar:1.0
+[WARNING] 'dependencies.dependency.(groupId:artifactId:type:classifier)' must be unique: org.springframework.boot:spring-boot-starter-aop:jar -> duplicate declaration of version (?) @ line 201, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Detecting the operating system and CPU architecture
+[INFO] ------------------------------------------------------------------------
+[INFO] os.detected.name: windows
+[INFO] os.detected.arch: x86_64
+[INFO] os.detected.bitness: 64
+[INFO] os.detected.version: 10.0
+[INFO] os.detected.version.major: 10
+[INFO] os.detected.version.minor: 0
+[INFO] os.detected.classifier: windows-x86_64
+[INFO] 
+[INFO] ------------------< tw.com.ty:ty-multiverse-backend >-------------------
+[INFO] Building ty-multiverse-backend 1.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.7:run (default-cli) > test-compile @ ty-multiverse-backend >>>
+[INFO] 
+[INFO] --- protobuf:0.6.1:compile (protobuf-compile) @ ty-multiverse-backend ---
+[INFO] Compiling 5 proto file(s) to F:\002-workspace\ty-multiverse\ty-multiverse-backend\target\generated-sources\protobuf\java
+[INFO] 
+[INFO] --- protobuf:0.6.1:compile-custom (grpc-compile) @ ty-multiverse-backend ---
+[INFO] Compiling 5 proto file(s) to F:\002-workspace\ty-multiverse\ty-multiverse-backend\target\generated-sources\protobuf\grpc-java
+[INFO] 
+[INFO] --- build-helper:3.3.0:add-source (add-source) @ ty-multiverse-backend ---
+[INFO] Source directory: F:\002-workspace\ty-multiverse\ty-multiverse-backend\target\generated-sources\protobuf\java added.
+[INFO] Source directory: F:\002-workspace\ty-multiverse\ty-multiverse-backend\target\generated-sources\protobuf\grpc-java added.
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ ty-multiverse-backend ---
+[INFO] Copying 5 resources from src\main\resources to target\classes
+[INFO] Copying 5 resources from src\main\proto to target\classes
+[INFO] Copying 5 resources from src\main\proto to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ ty-multiverse-backend ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 263 source files with javac [debug release 21] to target\classes
+[INFO] /F:/002-workspace/ty-multiverse/ty-multiverse-backend/src/main/java/tw/com/tymbackend/core/controller/MetricsWSController.java: Some input files use unchecked or unsafe operations.
+[INFO] /F:/002-workspace/ty-multiverse/ty-multiverse-backend/src/main/java/tw/com/tymbackend/core/controller/MetricsWSController.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ ty-multiverse-backend ---
+[INFO] skip non existing resourceDirectory F:\002-workspace\ty-multiverse\ty-multiverse-backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ ty-multiverse-backend ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 9 source files with javac [debug release 21] to target\test-classes
+[INFO] /F:/002-workspace/ty-multiverse/ty-multiverse-backend/src/test/java/tw/com/tymbackend/module/people/service/PeopleImageServiceTest.java: Some input files use unchecked or unsafe operations.
+[INFO] /F:/002-workspace/ty-multiverse/ty-multiverse-backend/src/test/java/tw/com/tymbackend/module/people/service/PeopleImageServiceTest.java: Recompile with -Xlint:unchecked for details.
+[INFO] 
+[INFO] <<< spring-boot:3.2.7:run (default-cli) < test-compile @ ty-multiverse-backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.7:run (default-cli) @ ty-multiverse-backend ---
+[INFO] Attaching agents: []
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.7)
+
+2025-10-25T01:09:55.527+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.com.tymbackend.TYMBackendApplication   : Starting TYMBackendApplication using Java 21.0.6 with PID 15544 (F:\002-workspace\ty-multiverse\ty-multiverse-backend\target\classes started by VinsKao in F:\002-workspace\ty-multiverse\ty-multiverse-backend)
+2025-10-25T01:09:55.529+08:00 DEBUG 15544 --- [  restartedMain] [                                                 ] t.com.tymbackend.TYMBackendApplication   : Running with Spring Boot v3.2.7, Spring v6.1.10
+2025-10-25T01:09:55.530+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.com.tymbackend.TYMBackendApplication   : The following 1 profile is active: "local"
+2025-10-25T01:09:55.567+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2025-10-25T01:09:55.569+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2025-10-25T01:09:56.201+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-10-25T01:09:56.201+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-25T01:09:56.280+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 73 ms. Found 2 JPA repository interfaces.
+2025-10-25T01:09:56.281+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-10-25T01:09:56.282+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-10-25T01:09:56.291+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 8 ms. Found 3 JPA repository interfaces.
+2025-10-25T01:09:56.619+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2025-10-25T01:09:56.620+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-10-25T01:09:56.656+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface tw.com.tymbackend.module.ckeditor.dao.EditContentRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-25T01:09:56.658+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface tw.com.tymbackend.module.gallery.dao.GalleryRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-25T01:09:56.658+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface tw.com.tymbackend.module.people.dao.PeopleImageRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-25T01:09:56.660+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface tw.com.tymbackend.module.people.dao.PeopleRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-25T01:09:56.661+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface tw.com.tymbackend.module.weapon.dao.WeaponRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-10-25T01:09:56.661+08:00  INFO 15544 --- [  restartedMain] [                                                 ] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 34 ms. Found 0 Redis repository interfaces.
+2025-10-25T01:09:57.452+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-10-25T01:09:57.461+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-10-25T01:09:57.481+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.25]
+2025-10-25T01:09:57.635+08:00  INFO 15544 --- [  restartedMain] [                                                 ] org.apache.jasper.servlet.TldScanner     : At least one JAR was scanned for TLDs yet contained no TLDs. Enable debug logging for this logger for a complete list of JARs that were scanned but no TLDs were found in them. Skipping unneeded JARs during scanning can improve startup time and JSP compilation time.
+2025-10-25T01:09:57.638+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.a.c.c.C.[Tomcat].[localhost].[/tymb]   : Initializing Spring embedded WebApplicationContext
+2025-10-25T01:09:57.639+08:00  INFO 15544 --- [  restartedMain] [                                                 ] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2069 ms
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+2025-10-25T01:09:57.842+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.c.web.RequestConcurrencyLimiter  : RequestConcurrencyLimiter initialized: permits=2, timeoutMs=200
+2025-10-25T01:09:58.095+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-10-25T01:09:58.135+08:00  INFO 15544 --- [  restartedMain] [                                                 ] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.9.Final
+2025-10-25T01:09:58.159+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-10-25T01:09:58.432+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-10-25T01:09:58.453+08:00  WARN 15544 --- [  restartedMain] [                                                 ] org.hibernate.orm.deprecation            : HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-10-25T01:09:59.199+08:00  INFO 15544 --- [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-10-25T01:09:59.273+08:00  INFO 15544 --- [  restartedMain] [                                                 ] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@5f31ff0e
+2025-10-25T01:09:59.274+08:00  INFO 15544 --- [  restartedMain] [                                                 ] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-10-25T01:09:59.311+08:00  INFO 15544 --- [  restartedMain] [                                                 ] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-10-25T01:09:59.361+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.core.config.RabbitMQConfig         : === RabbitMQConfig 已初始化 ===
+2025-10-25T01:09:59.362+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.core.config.RabbitMQConfig         : RabbitMQ 配置已啟用
+2025-10-25T01:09:59.546+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : ConnectionHealthChecker initialized with:
+2025-10-25T01:09:59.547+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   :   - Health check enabled: true
+2025-10-25T01:09:59.547+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   :   - Max retries: 30
+2025-10-25T01:09:59.548+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   :   - Retry interval: 10 seconds
+2025-10-25T01:09:59.924+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-10-25T01:10:00.336+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.controller.MetricsWSController   : 初始化 MetricsWSController，後端 URL: http://localhost:8080
+2025-10-25T01:10:00.338+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.controller.MetricsWSController   : Actuator 度量 URL 初始化為: http://localhost:8080/tymb/actuator/metrics (backendUrl: http://localhost:8080/tymb)
+2025-10-25T01:10:00.360+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.core.service.AsyncResultListener   : === AsyncResultListener 已註冊為 Spring Bean ===
+2025-10-25T01:10:00.369+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.core.service.AsyncResultListener   : AsyncResultListener 正在監聽隊列: async-result
+2025-10-25T01:10:00.496+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.grpc.config.GrpcServerConfig       : 🚀 启动 gRPC Server，端口: 50051
+2025-10-25T01:10:00.741+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.grpc.config.GrpcServerConfig       : ✅ gRPC Server 已启动在端口: 50051
+2025-10-25T01:10:00.743+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.grpc.config.GrpcServerConfig       : 🛡️  已启用 gRPC Interceptor: RateLimit -> Auth -> Logging -> ErrorHandling
+2025-10-25T01:10:00.743+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.grpc.config.GrpcServerConfig       : 📡 可用服务: PeopleService, WeaponService, GalleryService, DeckofcardsService, CkeditorService
+2025-10-25T01:10:00.901+08:00  WARN 15544 --- [  restartedMain] [                                                 ] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-10-25T01:10:00.932+08:00 DEBUG 15544 --- [  restartedMain] [                                                 ] swordEncoderAuthenticationManagerBuilder : No authenticationProviders and no parentAuthenticationManager defined. Returning null.
+2025-10-25T01:10:01.399+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 1 endpoint(s) beneath base path '/actuator'
+2025-10-25T01:10:01.478+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.s.web.DefaultSecurityFilterChain     : Will secure Or [Mvc [pattern='/keycloak/**']] with [org.springframework.security.web.session.DisableEncodeUrlFilter@6bc23d, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@614a1b63, org.springframework.security.web.context.SecurityContextHolderFilter@4edb000d, org.springframework.security.web.header.HeaderWriterFilter@54b1d246, org.springframework.web.filter.CorsFilter@78cd0130, org.springframework.security.web.authentication.logout.LogoutFilter@6d483bf1, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@655bb182, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@33adf947, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@725ea198, org.springframework.security.web.session.SessionManagementFilter@22f84725, org.springframework.security.web.access.ExceptionTranslationFilter@26b3d293, org.springframework.security.web.access.intercept.AuthorizationFilter@5e239c73]
+2025-10-25T01:10:01.556+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.s.web.DefaultSecurityFilterChain     : Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@449e218c, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@ed553bd, org.springframework.security.web.context.SecurityContextHolderFilter@4cce1003, org.springframework.security.web.header.HeaderWriterFilter@7752a717, org.springframework.web.filter.CorsFilter@1123eda, org.springframework.security.web.authentication.logout.LogoutFilter@7c6fe7ec, org.springframework.security.web.session.ConcurrentSessionFilter@49f45861, org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter@131b3359, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@950ca0f, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@5e630445, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@65ab76a9, org.springframework.security.web.session.SessionManagementFilter@863f712, org.springframework.security.web.access.ExceptionTranslationFilter@1ea2b452, org.springframework.security.web.access.intercept.AuthorizationFilter@356729c9]
+2025-10-25T01:10:02.201+08:00  WARN 15544 --- [  restartedMain] [                                                 ] o.s.b.d.a.OptionalLiveReloadServer       : Unable to start LiveReload server
+2025-10-25T01:10:02.357+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/tymb'
+2025-10-25T01:10:02.571+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.m.s.b.SimpleBrokerMessageHandler     : Starting...
+2025-10-25T01:10:02.572+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.m.s.b.SimpleBrokerMessageHandler     : BrokerAvailabilityEvent[available=true, SimpleBrokerMessageHandler [org.springframework.messaging.simp.broker.DefaultSubscriptionRegistry@6c10a24c]]
+2025-10-25T01:10:02.572+08:00  INFO 15544 --- [  restartedMain] [                                                 ] o.s.m.s.b.SimpleBrokerMessageHandler     : Started.
+2025-10-25T01:10:02.625+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.com.tymbackend.TYMBackendApplication   : Started TYMBackendApplication in 7.406 seconds (process running for 7.763)
+2025-10-25T01:10:03.305+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : 🔍 開始執行應用啟動連接檢查...
+2025-10-25T01:10:03.306+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : 🔍 檢查資料庫連接...
+2025-10-25T01:10:03.315+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : ✅ 資料庫連接正常 (嘗試次數: 1)
+2025-10-25T01:10:03.316+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : 🔍 檢查 RabbitMQ 連接...
+2025-10-25T01:10:03.359+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : ✅ RabbitMQ 連接正常 (嘗試次數: 1)
+2025-10-25T01:10:03.360+08:00  INFO 15544 --- [  restartedMain] [                                                 ] t.c.t.c.config.ConnectionHealthChecker   : ✅ 所有連接檢查通過，應用正常啟動
+2025-10-25T01:10:03.375+08:00 DEBUG 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.core.util.DistributedLockUtil      : 成功獲取分布式鎖: metrics:export:lock
+2025-10-25T01:10:03.376+08:00  INFO 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.c.controller.MetricsWSController   : 請求健康檢查數據 URL: http://localhost:8080/tymb/actuator/health (actuatorMetricsUrl: http://localhost:8080/tymb/actuator/metrics)
+2025-10-25T01:10:04.010+08:00  INFO 15544 --- [omcat-handler-0] [                                                 ] o.a.c.c.C.[Tomcat].[localhost].[/tymb]   : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-10-25T01:10:04.011+08:00  INFO 15544 --- [omcat-handler-0] [                                                 ] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2025-10-25T01:10:04.013+08:00  INFO 15544 --- [omcat-handler-0] [                                                 ] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2025-10-25T01:10:04.119+08:00 DEBUG 15544 --- [omcat-handler-0] [68fbb2ec9604678f070db6bcf2dd6936-070db6bcf2dd6936] o.s.security.web.FilterChainProxy        : Securing GET /actuator/health
+2025-10-25T01:10:04.131+08:00 DEBUG 15544 --- [omcat-handler-0] [68fbb2ec9604678f070db6bcf2dd6936-51ffa0e3ab46e198] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.137+08:00 DEBUG 15544 --- [omcat-handler-0] [68fbb2ec9604678f070db6bcf2dd6936-74109a3f918e1ffa] o.s.security.web.FilterChainProxy        : Secured GET /actuator/health
+2025-10-25T01:10:04.480+08:00 DEBUG 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.c.controller.MetricsWSController   : 成功獲取健康檢查數據
+2025-10-25T01:10:04.480+08:00 DEBUG 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.c.controller.MetricsWSController   : 廣播度量數據: {"health":{"status":"UP","components":{"db":{"status":"UP","details":{"database":"PostgreSQL","validationQuery":"isValid()"}},"diskSpace":{"status":"UP","details":{"total":951820742656,"free":191275745280,"threshold":10485760,"path":"F:\\002-workspace\\ty-multiverse\\ty-multiverse-backend\\.","exists":true}},"livenessState":{"status":"UP"},"ping":{"status":"UP"},"rabbit":{"status":"UP","details":{"version":"4.1.3"}},"readinessState":{"status":"UP"},"redis":{"status":"UP","details":{"version":"7.2.10"}}},"groups":["liveness","readiness","redis"]}}
+2025-10-25T01:10:04.488+08:00 DEBUG 15544 --- [omcat-handler-1] [68fbb2ec0f1f15f3741880386379c584-741880386379c584] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/jvm.memory.used
+2025-10-25T01:10:04.488+08:00 DEBUG 15544 --- [omcat-handler-1] [68fbb2ec0f1f15f3741880386379c584-108d853ae5c4cc86] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.488+08:00 DEBUG 15544 --- [omcat-handler-1] [68fbb2ec0f1f15f3741880386379c584-df23e3601cca75f7] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/jvm.memory.used
+2025-10-25T01:10:04.501+08:00 DEBUG 15544 --- [omcat-handler-1] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.503+08:00 DEBUG 15544 --- [omcat-handler-1] [68fbb2ec1c266af4104c364fce971139-ccb2c330566e56d8] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.513+08:00 DEBUG 15544 --- [omcat-handler-1] [68fbb2ec1c266af4104c364fce971139-ccb2c330566e56d8] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.585+08:00 DEBUG 15544 --- [omcat-handler-2] [68fbb2ecec84bce8afe6106313823ddb-afe6106313823ddb] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/process.cpu.usage
+2025-10-25T01:10:04.587+08:00 DEBUG 15544 --- [omcat-handler-2] [68fbb2ecec84bce8afe6106313823ddb-3e6c0cc3e87626a5] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.588+08:00 DEBUG 15544 --- [omcat-handler-2] [68fbb2ecec84bce8afe6106313823ddb-c185a37abf119c38] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/process.cpu.usage
+2025-10-25T01:10:04.593+08:00 DEBUG 15544 --- [omcat-handler-2] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.598+08:00 DEBUG 15544 --- [omcat-handler-2] [68fbb2ec7bc3563965caa62ea612434c-2acef050205ff456] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.601+08:00 DEBUG 15544 --- [omcat-handler-2] [68fbb2ec7bc3563965caa62ea612434c-2acef050205ff456] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.605+08:00 DEBUG 15544 --- [omcat-handler-3] [68fbb2ec478a00a0195478576d89f225-195478576d89f225] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/hikaricp.connections.active
+2025-10-25T01:10:04.606+08:00 DEBUG 15544 --- [omcat-handler-3] [68fbb2ec478a00a0195478576d89f225-3af890eb3696af95] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.607+08:00 DEBUG 15544 --- [omcat-handler-3] [68fbb2ec478a00a0195478576d89f225-1e45fcab361ef43e] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/hikaricp.connections.active
+2025-10-25T01:10:04.612+08:00 DEBUG 15544 --- [omcat-handler-3] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.614+08:00 DEBUG 15544 --- [omcat-handler-3] [68fbb2ecd861e8db7b8054c592ffe4e4-cc1597dfad41d679] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.616+08:00 DEBUG 15544 --- [omcat-handler-3] [68fbb2ecd861e8db7b8054c592ffe4e4-cc1597dfad41d679] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.619+08:00 DEBUG 15544 --- [omcat-handler-4] [68fbb2ec7ef93fccd76126348db032eb-d76126348db032eb] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/http.server.requests
+2025-10-25T01:10:04.620+08:00 DEBUG 15544 --- [omcat-handler-4] [68fbb2ec7ef93fccd76126348db032eb-13cab4b54c1b146c] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.621+08:00 DEBUG 15544 --- [omcat-handler-4] [68fbb2ec7ef93fccd76126348db032eb-e009639717c0d3dd] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/http.server.requests
+2025-10-25T01:10:04.621+08:00 DEBUG 15544 --- [omcat-handler-4] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.621+08:00 DEBUG 15544 --- [omcat-handler-4] [68fbb2ec2635d0740315aaef82430fd2-4e4f35c43c5904da] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.626+08:00 DEBUG 15544 --- [omcat-handler-4] [68fbb2ec2635d0740315aaef82430fd2-4e4f35c43c5904da] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.629+08:00 DEBUG 15544 --- [omcat-handler-5] [68fbb2ec6a6d244d358e637a6cc323ab-358e637a6cc323ab] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/jvm.threads.live
+2025-10-25T01:10:04.632+08:00 DEBUG 15544 --- [omcat-handler-5] [68fbb2ec6a6d244d358e637a6cc323ab-abf0056d684a6dc1] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.632+08:00 DEBUG 15544 --- [omcat-handler-5] [68fbb2ec6a6d244d358e637a6cc323ab-f7df0e3737068cf6] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/jvm.threads.live
+2025-10-25T01:10:04.635+08:00 DEBUG 15544 --- [omcat-handler-5] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.637+08:00 DEBUG 15544 --- [omcat-handler-5] [68fbb2ecef7c98e5b242a15eed9471cc-145bb64935e629ae] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.638+08:00 DEBUG 15544 --- [omcat-handler-5] [68fbb2ecef7c98e5b242a15eed9471cc-145bb64935e629ae] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.643+08:00 DEBUG 15544 --- [omcat-handler-6] [68fbb2ec525af90a54ab278c04f604a8-54ab278c04f604a8] o.s.security.web.FilterChainProxy        : Securing GET /actuator/metrics/system.cpu.usage
+2025-10-25T01:10:04.644+08:00 DEBUG 15544 --- [omcat-handler-6] [68fbb2ec525af90a54ab278c04f604a8-29ef9ec4d4098246] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.644+08:00 DEBUG 15544 --- [omcat-handler-6] [68fbb2ec525af90a54ab278c04f604a8-e25b505ad1488e10] o.s.security.web.FilterChainProxy        : Secured GET /actuator/metrics/system.cpu.usage
+2025-10-25T01:10:04.648+08:00 DEBUG 15544 --- [omcat-handler-6] [                                                 ] o.s.security.web.FilterChainProxy        : Securing GET /error
+2025-10-25T01:10:04.649+08:00 DEBUG 15544 --- [omcat-handler-6] [68fbb2ec445e83e2c143ea2fa9dcb832-78975dc8e35be18e] o.s.security.web.FilterChainProxy        : Secured GET /error
+2025-10-25T01:10:04.651+08:00 DEBUG 15544 --- [omcat-handler-6] [68fbb2ec445e83e2c143ea2fa9dcb832-78975dc8e35be18e] o.s.s.w.a.AnonymousAuthenticationFilter  : Set SecurityContextHolder to anonymous SecurityContext
+2025-10-25T01:10:04.655+08:00 DEBUG 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.c.controller.MetricsWSController   : 已廣播 metrics 到原生 WebSocket 端點
+2025-10-25T01:10:04.691+08:00 DEBUG 15544 --- [MessageBroker-1] [68fbb2ea605f77d35a01366ee04fcee0-5a01366ee04fcee0] t.c.t.core.util.DistributedLockUtil      : 成功釋放分布式鎖: metrics:export:lock
