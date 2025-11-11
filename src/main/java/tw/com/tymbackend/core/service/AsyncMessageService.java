@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import tw.com.tymbackend.core.config.RabbitMQConfig;
 import tw.com.tymbackend.core.message.AsyncMessageDTO;
+import jakarta.annotation.PostConstruct;
 
 import java.util.UUID;
 
@@ -22,13 +23,19 @@ import java.util.UUID;
  * @since 2024
  */
 @Service
-@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true")
+//@ConditionalOnProperty(name = "async-message-service.enabled", havingValue = "true") // 完全移除條件，讓它總是創建
 public class AsyncMessageService {
     
     private static final Logger logger = LoggerFactory.getLogger(AsyncMessageService.class);
-    
+
     @Autowired
     private RabbitTemplate rabbitTemplate;
+
+    @PostConstruct
+    public void init() {
+        logger.info("=== AsyncMessageService 已初始化 ===");
+        logger.info("AsyncMessageService Bean 已創建，RabbitMQ 異步處理已啟用");
+    }
     
     /**
      * 發送傷害計算請求到 RabbitMQ
@@ -71,6 +78,210 @@ public class AsyncMessageService {
         sendMessage(RabbitMQConfig.PEOPLE_GET_ALL_QUEUE, message);
 
         logger.info("發送角色列表獲取請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送角色按名稱獲取請求到 RabbitMQ
+     *
+     * @param name 角色名稱
+     * @return 請求ID
+     */
+    public String sendPeopleGetByNameRequest(String name) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/get-by-name",
+            "POST",
+            name
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_GET_BY_NAME_QUEUE, message);
+
+        logger.info("發送角色按名稱獲取請求到 RabbitMQ: name={}, requestId={}", name, requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送角色刪除全部請求到 RabbitMQ
+     *
+     * @return 請求ID
+     */
+    public String sendPeopleDeleteAllRequest() {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/delete-all",
+            "POST",
+            null
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE, message);
+
+        logger.info("發送角色刪除全部請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器列表獲取請求到 RabbitMQ
+     *
+     * @return 請求ID
+     */
+    public String sendWeaponGetAllRequest() {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons",
+            "GET",
+            null
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_GET_ALL_QUEUE, message);
+
+        logger.info("發送武器列表獲取請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器按名稱獲取請求到 RabbitMQ
+     *
+     * @param name 武器名稱
+     * @return 請求ID
+     */
+    public String sendWeaponGetByNameRequest(String name) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons/" + name,
+            "GET",
+            name
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_GET_BY_NAME_QUEUE, message);
+
+        logger.info("發送武器按名稱獲取請求到 RabbitMQ: name={}, requestId={}", name, requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器按擁有者獲取請求到 RabbitMQ
+     *
+     * @param owner 擁有者名稱
+     * @return 請求ID
+     */
+    public String sendWeaponGetByOwnerRequest(String owner) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons/owner/" + owner,
+            "GET",
+            owner
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_GET_BY_OWNER_QUEUE, message);
+
+        logger.info("發送武器按擁有者獲取請求到 RabbitMQ: owner={}, requestId={}", owner, requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器保存請求到 RabbitMQ
+     *
+     * @param weapon 武器對象
+     * @return 請求ID
+     */
+    public String sendWeaponSaveRequest(Object weapon) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons",
+            "POST",
+            weapon
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_SAVE_QUEUE, message);
+
+        logger.info("發送武器保存請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器刪除請求到 RabbitMQ
+     *
+     * @param name 武器名稱
+     * @return 請求ID
+     */
+    public String sendWeaponDeleteRequest(String name) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons/" + name,
+            "DELETE",
+            name
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_DELETE_QUEUE, message);
+
+        logger.info("發送武器刪除請求到 RabbitMQ: name={}, requestId={}", name, requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器刪除全部請求到 RabbitMQ
+     *
+     * @return 請求ID
+     */
+    public String sendWeaponDeleteAllRequest() {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons/delete-all",
+            "DELETE",
+            null
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_DELETE_ALL_QUEUE, message);
+
+        logger.info("發送武器刪除全部請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送武器存在檢查請求到 RabbitMQ
+     *
+     * @param name 武器名稱
+     * @return 請求ID
+     */
+    public String sendWeaponExistsRequest(String name) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/weapons/exists/" + name,
+            "GET",
+            name
+        );
+
+        sendMessage(RabbitMQConfig.WEAPON_EXISTS_QUEUE, message);
+
+        logger.info("發送武器存在檢查請求到 RabbitMQ: name={}, requestId={}", name, requestId);
 
         return requestId;
     }
@@ -134,6 +345,24 @@ public class AsyncMessageService {
                 return "people.damage.calculation";
             case RabbitMQConfig.PEOPLE_GET_ALL_QUEUE:
                 return "people.get.all";
+            case RabbitMQConfig.PEOPLE_GET_BY_NAME_QUEUE:
+                return "people.get.by.name";
+            case RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE:
+                return "people.delete.all";
+            case RabbitMQConfig.WEAPON_GET_ALL_QUEUE:
+                return "weapon.get.all";
+            case RabbitMQConfig.WEAPON_GET_BY_NAME_QUEUE:
+                return "weapon.get.by.name";
+            case RabbitMQConfig.WEAPON_GET_BY_OWNER_QUEUE:
+                return "weapon.get.by.owner";
+            case RabbitMQConfig.WEAPON_SAVE_QUEUE:
+                return "weapon.save";
+            case RabbitMQConfig.WEAPON_DELETE_QUEUE:
+                return "weapon.delete";
+            case RabbitMQConfig.WEAPON_DELETE_ALL_QUEUE:
+                return "weapon.delete.all";
+            case RabbitMQConfig.WEAPON_EXISTS_QUEUE:
+                return "weapon.exists";
             case RabbitMQConfig.DECKOFCARDS_QUEUE:
                 return "deckofcards";
             default:

@@ -12,6 +12,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import tw.com.tymbackend.core.service.AuthService;
+import tw.com.ty.common.response.BackendApiResponse;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,19 +39,19 @@ public class AuthController {
      */
     @PreAuthorize("hasRole('manage-users')")
     @GetMapping("/admin")
-    public ResponseEntity<Map<String, Object>> adminEndpoint() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> adminEndpoint() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         log.info("管理員端點被用戶訪問: {}", username);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "你好 " + username + "！你擁有 manage-users 角色。");
-        response.put("user", username);
-        response.put("authorities", authentication.getAuthorities());
-        response.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "你好 " + username + "！你擁有 manage-users 角色。");
+        data.put("user", username);
+        data.put("authorities", authentication.getAuthorities());
+        data.put("timestamp", System.currentTimeMillis());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("管理员权限验证成功", data));
     }
 
     /**
@@ -60,19 +61,19 @@ public class AuthController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/user")
-    public ResponseEntity<Map<String, Object>> userEndpoint() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> userEndpoint() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         log.info("用戶端點被用戶訪問: {}", username);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "你好 " + username + "！你已通過認證。");
-        response.put("user", username);
-        response.put("authorities", authentication.getAuthorities());
-        response.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "你好 " + username + "！你已通過認證。");
+        data.put("user", username);
+        data.put("authorities", authentication.getAuthorities());
+        data.put("timestamp", System.currentTimeMillis());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("用户认证验证成功", data));
     }
 
     /**
@@ -81,14 +82,14 @@ public class AuthController {
      * @return 公開資訊
      */
     @GetMapping("/visitor")
-    public ResponseEntity<Map<String, Object>> visitorEndpoint() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> visitorEndpoint() {
         log.info("訪客端點被訪問");
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "這是公開資訊。");
-        response.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "這是公開資訊。");
+        data.put("timestamp", System.currentTimeMillis());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("公开访问成功", data));
     }
 
     /**
@@ -97,20 +98,20 @@ public class AuthController {
      * @return 包含認證狀態的響應
      */
     @GetMapping("/test-default")
-    public ResponseEntity<Map<String, Object>> testDefaultAuth() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> testDefaultAuth() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         log.info("測試預設端點被用戶訪問: {}", username);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "此端點沒有 @PreAuthorize 註解");
-        response.put("user", username);
-        response.put("authenticated", authentication.isAuthenticated());
-        response.put("authorities", authentication.getAuthorities());
-        response.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("message", "此端點沒有 @PreAuthorize 註解");
+        data.put("user", username);
+        data.put("authenticated", authentication.isAuthenticated());
+        data.put("authorities", authentication.getAuthorities());
+        data.put("timestamp", System.currentTimeMillis());
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("默认认证测试成功", data));
     }
 
     /**
@@ -120,23 +121,23 @@ public class AuthController {
      */
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/token-info")
-    public ResponseEntity<Map<String, Object>> tokenInfo() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> tokenInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("authenticated", authentication.isAuthenticated());
-        response.put("name", authentication.getName());
-        response.put("authorities", authentication.getAuthorities());
-        response.put("timestamp", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("authenticated", authentication.isAuthenticated());
+        data.put("name", authentication.getName());
+        data.put("authorities", authentication.getAuthorities());
+        data.put("timestamp", System.currentTimeMillis());
 
         if (authentication.getPrincipal() instanceof Jwt) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
-            response.put("token_type", "JWT");
-            response.put("issued_at", jwt.getIssuedAt());
-            response.put("expires_at", jwt.getExpiresAt());
-            response.put("issuer", jwt.getIssuer());
-            response.put("audience", jwt.getAudience());
-            response.put("subject", jwt.getSubject());
+            data.put("token_type", "JWT");
+            data.put("issued_at", jwt.getIssuedAt());
+            data.put("expires_at", jwt.getExpiresAt());
+            data.put("issuer", jwt.getIssuer());
+            data.put("audience", jwt.getAudience());
+            data.put("subject", jwt.getSubject());
 
             // 添加JWT claims信息
             Map<String, Object> claims = new HashMap<>();
@@ -147,10 +148,10 @@ public class AuthController {
             claims.put("name", jwt.getClaimAsString("name"));
             claims.put("given_name", jwt.getClaimAsString("given_name"));
             claims.put("family_name", jwt.getClaimAsString("family_name"));
-            response.put("claims", claims);
+            data.put("claims", claims);
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("Token信息获取成功", data));
     }
 
     /**
@@ -161,7 +162,7 @@ public class AuthController {
      */
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/test")
-    public ResponseEntity<Map<String, Object>> authTest(
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> authTest(
             @RequestParam(value = "refreshToken", required = false) String refreshToken) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -174,66 +175,66 @@ public class AuthController {
 
         log.info("執行完整認證測試，用戶: {}", authentication.getName());
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("current_user", authentication.getName());
-        response.put("authorities", authentication.getAuthorities());
-        response.put("current_token_available", currentToken != null);
-        response.put("test_initiated", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("current_user", authentication.getName());
+        data.put("authorities", authentication.getAuthorities());
+        data.put("current_token_available", currentToken != null);
+        data.put("test_initiated", System.currentTimeMillis());
 
         // 調用 AuthService 進行完整測試
         if (currentToken != null) {
             try {
                 Map<String, Object> authResult = authService.performAuthTest(currentToken, refreshToken);
-                response.putAll(authResult);
+                data.putAll(authResult);
 
             } catch (Exception e) {
                 log.error("認證測試失敗", e);
-                response.put("error", "AUTH_TEST_FAILED");
-                response.put("error_message", e.getMessage());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(BackendApiResponse.internalError("认证测试失败", e.getMessage()));
             }
         }
 
-        response.put("test_completed", System.currentTimeMillis());
-        return ResponseEntity.ok(response);
+        data.put("test_completed", System.currentTimeMillis());
+        return ResponseEntity.ok(BackendApiResponse.success("认证测试成功", data));
     }
 
     /**
      * 登出測試 - 測試 AuthService 登出功能
+     * 移除认证要求，因为logout时用户可能已经失效或无认证状态
      *
      * @param refreshToken 刷新令牌
      * @return 登出測試結果
      */
-    @PreAuthorize("isAuthenticated()")
     @PostMapping("/logout-test")
-    public ResponseEntity<Map<String, Object>> logoutTest(@RequestParam("refreshToken") String refreshToken) {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> logoutTest(@RequestParam("refreshToken") String refreshToken) {
+        // 获取当前认证信息（可能为null）
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication != null ? authentication.getName() : "anonymous";
 
-        log.info("執行登出測試，用戶: {}", authentication.getName());
+        log.info("執行登出測試，用戶: {}", username);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("user", authentication.getName());
-        response.put("logout_initiated", System.currentTimeMillis());
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", username);
+        data.put("logout_initiated", System.currentTimeMillis());
 
         try {
             Map<String, Object> logoutResult = authService.performLogoutTest(refreshToken);
-            response.putAll(logoutResult);
+            data.putAll(logoutResult);
 
-            // 登出成功後清除 Spring Security 上下文
+            // 登出成功後清除 Spring Security 上下文（如果存在的话）
             if (Boolean.TRUE.equals(logoutResult.get("logout_successful"))) {
                 SecurityContextHolder.clearContext();
-                response.put("security_context_cleared", true);
+                data.put("security_context_cleared", true);
             }
 
         } catch (Exception e) {
             log.error("登出測試失敗", e);
-            response.put("error", "LOGOUT_TEST_FAILED");
-            response.put("error_message", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(BackendApiResponse.internalError("登出测试失败", e.getMessage()));
         }
 
-        response.put("test_completed", System.currentTimeMillis());
-        return ResponseEntity.ok(response);
+        data.put("test_completed", System.currentTimeMillis());
+        return ResponseEntity.ok(BackendApiResponse.success("登出测试成功", data));
     }
 
     /**
@@ -242,32 +243,32 @@ public class AuthController {
      * @return 認證系統健康檢查結果
      */
     @GetMapping("/health")
-    public ResponseEntity<Map<String, Object>> authHealthCheck() {
+    public ResponseEntity<BackendApiResponse<Map<String, Object>>> authHealthCheck() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         log.info("執行認證健康檢查");
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("timestamp", System.currentTimeMillis());
-        response.put("authentication_exists", authentication != null);
-        response.put("authenticated", authentication != null && authentication.isAuthenticated());
+        Map<String, Object> data = new HashMap<>();
+        data.put("timestamp", System.currentTimeMillis());
+        data.put("authentication_exists", authentication != null);
+        data.put("authenticated", authentication != null && authentication.isAuthenticated());
 
         if (authentication != null) {
-            response.put("principal_type", authentication.getPrincipal().getClass().getSimpleName());
-            response.put("authorities_count", authentication.getAuthorities().size());
-            response.put("name", authentication.getName());
-            response.put("authorities", authentication.getAuthorities());
+            data.put("principal_type", authentication.getPrincipal().getClass().getSimpleName());
+            data.put("authorities_count", authentication.getAuthorities().size());
+            data.put("name", authentication.getName());
+            data.put("authorities", authentication.getAuthorities());
         }
 
         // 調用 AuthService 進行健康檢查
         try {
             Map<String, Object> healthResult = authService.performHealthCheck();
-            response.putAll(healthResult);
+            data.putAll(healthResult);
         } catch (Exception e) {
-            response.put("service_error", "HEALTH_CHECK_FAILED");
-            response.put("service_error_message", e.getMessage());
+            data.put("service_error", "HEALTH_CHECK_FAILED");
+            data.put("service_error_message", e.getMessage());
         }
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(BackendApiResponse.success("认证健康检查完成", data));
     }
 }

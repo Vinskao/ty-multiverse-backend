@@ -1,7 +1,7 @@
 package tw.com.tymbackend.module.weapon.exception;
 
 import tw.com.ty.common.exception.BusinessException;
-import tw.com.ty.common.exception.ErrorCode;
+import tw.com.ty.common.response.ErrorCode;
 
 /**
  * Weapon 模組的特定異常類

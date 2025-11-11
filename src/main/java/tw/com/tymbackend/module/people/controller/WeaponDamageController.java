@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import tw.com.tymbackend.module.people.service.WeaponDamageService;
 import tw.com.tymbackend.module.people.domain.dto.BatchDamageRequestDTO;
 import tw.com.tymbackend.module.people.domain.dto.BatchDamageResponseDTO;
+import tw.com.ty.common.response.BackendApiResponse;
 
 @RestController
 @RequestMapping("/people")
@@ -33,15 +34,17 @@ public class WeaponDamageController {
      * 同步處理：直接調用業務邏輯並返回結果
      */
     @GetMapping("/damageWithWeapon")
-    public ResponseEntity<?> damageWithWeapon(@RequestParam("name") String name) {
+    public ResponseEntity<BackendApiResponse<Integer>> damageWithWeapon(@RequestParam("name") String name) {
         try {
             int result = weaponDamageService.calculateDamageWithWeapon(name);
             if (result == -1) {
-                return ResponseEntity.badRequest().body("Character not found or invalid");
+                return ResponseEntity.status(400)
+                    .body(BackendApiResponse.badRequest("Character not found or invalid"));
             }
-            return ResponseEntity.ok(result);
+            return ResponseEntity.ok(BackendApiResponse.success("Damage calculation successful", result));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body("Internal server error: " + e.getMessage());
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("Internal server error", e.getMessage()));
         }
     }
 

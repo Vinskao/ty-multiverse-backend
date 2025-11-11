@@ -27,7 +27,7 @@ import jakarta.annotation.PostConstruct;
  */
 @Configuration
 @EnableRabbit
-@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true")
+//@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true") // 臨時註釋掉條件進行測試
 public class RabbitMQConfig {
     
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQConfig.class);
@@ -41,6 +41,15 @@ public class RabbitMQConfig {
     // 隊列名稱定義
     public static final String DAMAGE_CALCULATION_QUEUE = "damage-calculation";
     public static final String PEOPLE_GET_ALL_QUEUE = "people-get-all";
+    public static final String PEOPLE_GET_BY_NAME_QUEUE = "people-get-by-name";
+    public static final String PEOPLE_DELETE_ALL_QUEUE = "people-delete-all";
+    public static final String WEAPON_GET_ALL_QUEUE = "weapon-get-all";
+    public static final String WEAPON_GET_BY_NAME_QUEUE = "weapon-get-by-name";
+    public static final String WEAPON_GET_BY_OWNER_QUEUE = "weapon-get-by-owner";
+    public static final String WEAPON_SAVE_QUEUE = "weapon-save";
+    public static final String WEAPON_DELETE_QUEUE = "weapon-delete";
+    public static final String WEAPON_DELETE_ALL_QUEUE = "weapon-delete-all";
+    public static final String WEAPON_EXISTS_QUEUE = "weapon-exists";
     public static final String DECKOFCARDS_QUEUE = "deckofcards";
     public static final String ASYNC_RESULT_QUEUE = "async-result";
     
@@ -77,6 +86,96 @@ public class RabbitMQConfig {
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
+
+    /**
+     * 創建角色按名稱獲取隊列
+     */
+    @Bean
+    public Queue peopleGetByNameQueue() {
+        return QueueBuilder.durable(PEOPLE_GET_BY_NAME_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建角色刪除全部隊列
+     */
+    @Bean
+    public Queue peopleDeleteAllQueue() {
+        return QueueBuilder.durable(PEOPLE_DELETE_ALL_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器獲取全部隊列
+     */
+    @Bean
+    public Queue weaponGetAllQueue() {
+        return QueueBuilder.durable(WEAPON_GET_ALL_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器按名稱獲取隊列
+     */
+    @Bean
+    public Queue weaponGetByNameQueue() {
+        return QueueBuilder.durable(WEAPON_GET_BY_NAME_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器按擁有者獲取隊列
+     */
+    @Bean
+    public Queue weaponGetByOwnerQueue() {
+        return QueueBuilder.durable(WEAPON_GET_BY_OWNER_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器保存隊列
+     */
+    @Bean
+    public Queue weaponSaveQueue() {
+        return QueueBuilder.durable(WEAPON_SAVE_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器刪除隊列
+     */
+    @Bean
+    public Queue weaponDeleteQueue() {
+        return QueueBuilder.durable(WEAPON_DELETE_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器刪除全部隊列
+     */
+    @Bean
+    public Queue weaponDeleteAllQueue() {
+        return QueueBuilder.durable(WEAPON_DELETE_ALL_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建武器存在檢查隊列
+     */
+    @Bean
+    public Queue weaponExistsQueue() {
+        return QueueBuilder.durable(WEAPON_EXISTS_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
     
     /**
      * 綁定傷害計算隊列到交換機
@@ -96,6 +195,96 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(peopleGetAllQueue)
                 .to(tymbExchange)
                 .with("people.get.all");
+    }
+
+    /**
+     * 綁定角色按名稱獲取隊列到交換機
+     */
+    @Bean
+    public Binding peopleGetByNameBinding(Queue peopleGetByNameQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleGetByNameQueue)
+                .to(tymbExchange)
+                .with("people.get.by.name");
+    }
+
+    /**
+     * 綁定角色刪除全部隊列到交換機
+     */
+    @Bean
+    public Binding peopleDeleteAllBinding(Queue peopleDeleteAllQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleDeleteAllQueue)
+                .to(tymbExchange)
+                .with("people.delete.all");
+    }
+
+    /**
+     * 綁定武器獲取全部隊列到交換機
+     */
+    @Bean
+    public Binding weaponGetAllBinding(Queue weaponGetAllQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponGetAllQueue)
+                .to(tymbExchange)
+                .with("weapon.get.all");
+    }
+
+    /**
+     * 綁定武器按名稱獲取隊列到交換機
+     */
+    @Bean
+    public Binding weaponGetByNameBinding(Queue weaponGetByNameQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponGetByNameQueue)
+                .to(tymbExchange)
+                .with("weapon.get.by.name");
+    }
+
+    /**
+     * 綁定武器按擁有者獲取隊列到交換機
+     */
+    @Bean
+    public Binding weaponGetByOwnerBinding(Queue weaponGetByOwnerQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponGetByOwnerQueue)
+                .to(tymbExchange)
+                .with("weapon.get.by.owner");
+    }
+
+    /**
+     * 綁定武器保存隊列到交換機
+     */
+    @Bean
+    public Binding weaponSaveBinding(Queue weaponSaveQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponSaveQueue)
+                .to(tymbExchange)
+                .with("weapon.save");
+    }
+
+    /**
+     * 綁定武器刪除隊列到交換機
+     */
+    @Bean
+    public Binding weaponDeleteBinding(Queue weaponDeleteQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponDeleteQueue)
+                .to(tymbExchange)
+                .with("weapon.delete");
+    }
+
+    /**
+     * 綁定武器刪除全部隊列到交換機
+     */
+    @Bean
+    public Binding weaponDeleteAllBinding(Queue weaponDeleteAllQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponDeleteAllQueue)
+                .to(tymbExchange)
+                .with("weapon.delete.all");
+    }
+
+    /**
+     * 綁定武器存在檢查隊列到交換機
+     */
+    @Bean
+    public Binding weaponExistsBinding(Queue weaponExistsQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(weaponExistsQueue)
+                .to(tymbExchange)
+                .with("weapon.exists");
     }
 
     /**

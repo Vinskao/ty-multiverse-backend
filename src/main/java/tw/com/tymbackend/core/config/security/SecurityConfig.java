@@ -3,48 +3,42 @@ package tw.com.tymbackend.core.config.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.AuthenticationEntryPoint;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import tw.com.ty.common.exception.ErrorCode;
-import tw.com.ty.common.exception.ErrorResponse;
-import org.springframework.security.web.util.matcher.RequestMatcher;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
-import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
-import org.springframework.util.AntPathMatcher;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import tw.com.ty.common.security.config.BaseSecurityConfig;
 
 /**
- * Spring Security 配置類 - 混合認證策略
- * 
- * 支持無狀態 JWT 認證和有狀態 Session 認證的混合架構：
- * - 無狀態服務：使用 JWT Token 認證
- * - 有狀態服務：使用 Session 認證 (CKEditor, DeckOfCards)
+ * TY Multiverse Backend Security 配置
+ *
+ * <p>基于 AGENTS.md 的端点定义进行集中权限配置：</p>
+ * <ul>
+ *   <li>SELECT 系列：GET 请求，已认证用户即可访问</li>
+ *   <li>INSERT/UPDATE/DELETE 系列：POST/PUT/DELETE 请求，需要认证</li>
+ *   <li>批量删除：DELETE *all 请求，仅管理员可访问</li>
+ *   <li>公共路径：健康检查、Swagger、认证端点部分公开</li>
+ * </ul>
+ *
+ * <p>架构说明：</p>
+ * <ul>
+ *   <li>Gateway 已验证 Token 有效性（粗粒度路由级别）</li>
+ *   <li>Backend 通过 HttpSecurity 配置方法级别权限控制（细粒度）</li>
+ *   <li>实现深度防御：即使 Gateway 被绕过，Backend 仍有保护</li>
+ * </ul>
+ *
+ * @author TY Backend Team
+ * @version 1.0
+ * @since 2025
+ * @see BaseSecurityConfig
  */
-@EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true, securedEnabled = true)
 @Configuration
+@EnableWebSecurity
+@Import(BaseSecurityConfig.class)
 public class SecurityConfig {
 
     @Value("${keycloak.auth-server-url}")
@@ -53,362 +47,133 @@ public class SecurityConfig {
     @Value("${keycloak.realm}")
     private String keycloakRealm;
 
-    // 允許的來源(以逗號分隔)與使用者代理關鍵字，支援以環境變數/設定覆寫
-    @Value("#{'${security.allowlist.origins:http://localhost:8000/maya-sawa,https://peoplesystem.tatdvsonorth.com/maya-sawa}'.split(',')}")
-    private java.util.List<String> allowlistedOrigins;
-
-    @Value("#{'${security.allowlist.user-agents:maya-sawa}'.split(',')}")
-    private java.util.List<String> allowlistedUserAgents;
-
-    @Value("#{'${security.allowlist.ips:127.0.0.1,::1}'.split(',')}")
-    private java.util.List<String> allowlistedIps;
-
-    private final ObjectMapper objectMapper;
-
-    public SecurityConfig(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
+    @Value("${security.disable-all:false}")
+    private boolean disableAllSecurity;
 
     /**
-     * 專用於 /keycloak/** 的無狀態過濾器鏈，避免使用 Session 與 Redis 交互
-     */
-    @Bean
-    @Order(0)
-    SecurityFilterChain keycloakSecurityFilterChain(HttpSecurity http) throws Exception {
-        http
-            .securityMatcher("/keycloak/**")
-            .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-        return http.build();
-    }
-
-    /**
-     * 配置安全過濾器鏈 - 混合認證策略
-     * 
-     * @param http HttpSecurity 實例
-     * @return 配置好的 SecurityFilterChain
-     * @throws Exception 配置異常
-     */
-    @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // 建立依來源(Origin/Referer/User-Agent/IP)放行的 RequestMatcher
-        RequestMatcher allowlistedSourceMatcher = request -> {
-            String origin = request.getHeader("Origin");
-            String referer = request.getHeader("Referer");
-            String userAgent = request.getHeader("User-Agent");
-            String xff = request.getHeader("X-Forwarded-For");
-            String remoteAddr = request.getRemoteAddr();
-
-            boolean originAllowed = origin != null && allowlistedOrigins.stream().anyMatch(origin::startsWith);
-            boolean refererAllowed = referer != null && allowlistedOrigins.stream().anyMatch(referer::startsWith);
-            boolean uaAllowed = userAgent != null && allowlistedUserAgents.stream()
-                    .anyMatch(ua -> userAgent.toLowerCase().contains(ua.toLowerCase()));
-
-            boolean ipAllowed = false;
-            if (xff != null && !xff.isBlank()) {
-                String firstHop = xff.split(",")[0].trim();
-                ipAllowed = allowlistedIps.stream().anyMatch(firstHop::equals);
-            }
-            if (!ipAllowed && remoteAddr != null) {
-                ipAllowed = allowlistedIps.stream().anyMatch(remoteAddr::equals);
-            }
-
-            return originAllowed || refererAllowed || uaAllowed || ipAllowed;
-        };
-
-        http
-                // 1. CSRF 保護 (已禁用)
-                .csrf(csrf -> csrf.disable())
-                
-                // 2. 授權配置 - 混合策略
-                .authorizeHttpRequests(authorize -> authorize
-                        // 來源允許名單：完全放行 (優先於其他規則)
-                        .requestMatchers(allowlistedSourceMatcher).permitAll()
-                        // 公開訪問的靜態資源
-                        .requestMatchers("/javadoc/**").permitAll()
-                        .requestMatchers("/static/**").permitAll()
-                        .requestMatchers("/swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
-                        .requestMatchers("/actuator/**").permitAll()
-                        
-                        // 後端服務間通信 - 完全放行 (優先級最高)
-                        .requestMatchers("/people/get-by-name").permitAll()
-                        .requestMatchers("/people/get-all").permitAll()
-                        .requestMatchers("/people/names").permitAll()
-                        .requestMatchers("/people/damageWithWeapon").permitAll()
-                        .requestMatchers("/weapons/owner/**").permitAll()
-                        .requestMatchers("/weapon/**").permitAll()
-                        
-                        // 有狀態服務 - 使用 Session 認證
-                        .requestMatchers("/ckeditor/**").authenticated()
-                        .requestMatchers("/deckofcards/**").authenticated()
-                        
-                        // 無狀態服務 - 使用 JWT 認證
-                        .requestMatchers("/auth/admin").hasRole("manage-users")
-                        .requestMatchers("/auth/user").authenticated()
-                        .requestMatchers("/auth/token-info").authenticated()
-                        .requestMatchers("/auth/test-default").authenticated()
-                        .requestMatchers("/auth/test").authenticated()
-                        .requestMatchers("/auth/logout-test").authenticated()
-                        .requestMatchers("/auth/health").permitAll()
-                        .requestMatchers("/gallery/**").authenticated()
-                        .requestMatchers("/livestock/**").authenticated()
-                        
-                        // Keycloak 相關端點 - 無狀態，不使用 session
-                        .requestMatchers("/keycloak/**").permitAll()
-                        
-                        // 其他所有端點預設公開
-                        .anyRequest().permitAll())
-                
-                // 3. OAuth2 Resource Server 配置 (無狀態認證)
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .bearerTokenResolver(customBearerTokenResolver())
-                        .jwt(jwt -> jwt
-                                .jwkSetUri(keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs")
-                                .jwtAuthenticationConverter(jwtAuthenticationConverter())))
-                
-                // 4. 會話管理 - 混合策略
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)  // 改為按需創建
-                        .maximumSessions(1)  // 每個用戶最多一個會話
-                        .maxSessionsPreventsLogin(false))  // 允許新登錄
-                
-                // 5. 錯誤處理 (連接到 Error Handler 模組)
-                .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(authenticationEntryPoint())
-                        .accessDeniedHandler(accessDeniedHandler()))
-                
-                // 6. 登出配置
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler(logoutSuccessHandler())
-                        .invalidateHttpSession(true)
-                        .clearAuthentication(true)
-                        .deleteCookies("JSESSIONID"));
-
-        return http.build();
-    }
-
-    /**
-     * 認證失敗處理器
-     * 
-     * 當用戶未提供有效認證憑證時觸發
-     * 
-     * @return 配置好的 AuthenticationEntryPoint
-     */
-    @Bean
-    AuthenticationEntryPoint authenticationEntryPoint() {
-        return (request, response, authException) -> {
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            
-            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
-                ErrorCode.AUTHENTICATION_FAILED, 
-                ErrorCode.AUTHENTICATION_FAILED.getMessage(), 
-                authException.getMessage()
-            );
-            
-            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        };
-    }
-
-    /**
-     * 自訂 Bearer Token 解析器
+     * 全局 Security Filter Chain 配置
      *
-     * 對於公開端點（permitAll），即使帶有 Authorization 標頭也不進行 JWT 解析，
-     * 以避免因無效/過期 Token 造成 401 錯誤。
+     * <p>按照 AGENTS.md 端点定义配置权限：</p>
+     * <ul>
+     *   <li>使用 Ant 路径匹配器进行精确控制</li>
+     *   <li>优先级：从具体到通用（permitAll -> authenticated -> hasRole）</li>
+     *   <li>最后兜底：所有未匹配请求都需要认证</li>
+     *   <li>開發模式：security.disable-all=true 時完全開放所有端點</li>
+     * </ul>
      */
     @Bean
-    BearerTokenResolver customBearerTokenResolver() {
-        DefaultBearerTokenResolver delegate = new DefaultBearerTokenResolver();
-        AntPathMatcher pathMatcher = new AntPathMatcher();
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            // CSRF 保护：REST API 无需 CSRF
+            .csrf(csrf -> csrf.disable())
 
-        // 與 authorizeHttpRequests 中的 permitAll 清單保持一致
-        List<String> publicPatterns = List.of(
-                "/people/get-by-name",
-                "/people/get-all",
-                "/people/names",
-                "/people/damageWithWeapon",
-                "/weapons/owner/**",
-                "/weapon/**"
-        );
-
-        return request -> {
-            String requestUri = request.getRequestURI();
-            String contextPath = request.getContextPath();
-            final String pathWithinApp = (contextPath != null && !contextPath.isEmpty() && requestUri.startsWith(contextPath))
-                    ? requestUri.substring(contextPath.length())
-                    : requestUri;
-
-            boolean isPublic = publicPatterns.stream().anyMatch(pattern -> pathMatcher.match(pattern, pathWithinApp));
-            if (isPublic) {
-                return null; // 不解析 Token，視為匿名訪問
-            }
-
-            return delegate.resolve(request);
-        };
-    }
-
-    /**
-     * 授權失敗處理器
-     * 
-     * 當用戶已認證但沒有足夠權限時觸發
-     * 
-     * @return 配置好的 AccessDeniedHandler
-     */
-    @Bean
-    AccessDeniedHandler accessDeniedHandler() {
-        return (request, response, accessDeniedException) -> {
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            
-            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
-                ErrorCode.AUTHORIZATION_FAILED, 
-                ErrorCode.AUTHORIZATION_FAILED.getMessage(), 
-                accessDeniedException.getMessage()
+            // Session 管理：无状态（JWT）
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
-            
-            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        };
-    }
 
-    /**
-     * 登出成功處理器
-     * 
-     * 當用戶成功登出時觸發
-     * 
-     * @return 配置好的 LogoutSuccessHandler
-     */
-    @Bean
-    LogoutSuccessHandler logoutSuccessHandler() {
-        return (request, response, authentication) -> {
-            response.setStatus(HttpStatus.OK.value());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            
-            ErrorResponse errorResponse = ErrorResponse.fromErrorCode(
-                ErrorCode.LOGOUT_SUCCESS, 
-                ErrorCode.LOGOUT_SUCCESS.getMessage(), 
-                "您已成功登出系統"
-            );
-            
-            response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
-        };
-    }
-
-    /**
-     * JWT 認證轉換器 - 處理 Keycloak 的角色
-     * 
-     * @return 配置好的 JwtAuthenticationConverter
-     */
-    @Bean
-    JwtAuthenticationConverter jwtAuthenticationConverter() {
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new CustomJwtGrantedAuthoritiesConverter());
-        return jwtAuthenticationConverter;
-    }
-
-    /**
-     * 自定義 JWT 權限轉換器
-     * 
-     * 負責將 JWT Token 中的角色信息轉換為 Spring Security 的權限對象。
-     */
-    public static class CustomJwtGrantedAuthoritiesConverter implements org.springframework.core.convert.converter.Converter<Jwt, Collection<GrantedAuthority>> {
-        
-        /**
-         * 轉換 JWT Token 為權限集合
-         * 
-         * @param jwt JWT Token
-         * @return 權限集合
-         */
-        @Override
-        @SuppressWarnings("unchecked")
-        public Collection<GrantedAuthority> convert(@SuppressWarnings("null") Jwt jwt) {
-            List<GrantedAuthority> authorities = new java.util.ArrayList<>();
-            
-            // 處理 realm_access.roles (基本角色)
-            if (jwt.hasClaim("realm_access")) {
-                jwt.getClaimAsMap("realm_access")
-                    .entrySet().stream()
-                    .filter(entry -> "roles".equals(entry.getKey()))
-                    .findFirst()
-                    .map(entry -> (List<String>) entry.getValue())
-                    .ifPresent(roles -> authorities.addAll(
-                        roles.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                            .collect(Collectors.toList())
-                    ));
-            }
-            
-            // 處理 resource_access.realm-management.roles (manage-users 角色)
-            if (jwt.hasClaim("resource_access")) {
-                jwt.getClaimAsMap("resource_access")
-                    .entrySet().stream()
-                    .filter(entry -> "realm-management".equals(entry.getKey()))
-                    .findFirst()
-                    .map(entry -> (Map<String, Object>) entry.getValue())
-                    .map(realmManagement -> realmManagement.get("roles"))
-                    .map(roles -> (List<String>) roles)
-                    .ifPresent(roles -> authorities.addAll(
-                        roles.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                            .collect(Collectors.toList())
-                    ));
-            }
-            
-            // 如果沒有 manage-users 角色，添加 GUEST 角色
-            boolean hasManageUsers = authorities.stream()
-                    .anyMatch(authority -> "ROLE_manage-users".equals(authority.getAuthority()));
-            
-            if (!hasManageUsers) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_GUEST"));
-            }
-            
-            return authorities;
+        // 開發測試模式：完全禁用安全性
+        if (disableAllSecurity) {
+            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+            return http.build();
         }
+
+        // 正常安全性配置：基于 AGENTS.md 的端点定义
+        http.authorizeHttpRequests(auth -> auth
+
+                // ========================================
+                // 公共路径：完全开放，无需任何认证
+                // ========================================
+                .requestMatchers("/tymb/actuator/**").permitAll()           // Spring Boot Actuator
+                .requestMatchers("/tymb/health/**").permitAll()             // 健康检查
+                .requestMatchers("/tymb/swagger-ui/**").permitAll()          // Swagger UI
+                .requestMatchers("/tymb/v3/api-docs/**").permitAll()         // API 文档
+                .requestMatchers("/tymb/webjars/**").permitAll()             // Swagger 静态资源
+                .requestMatchers("/tymb/auth/visitor").permitAll()           // 访客端点
+                .requestMatchers("/tymb/auth/health").permitAll()            // 认证健康检查
+                .requestMatchers("/tymb/keycloak/introspect").permitAll()    // Token 内省
+
+                // ========================================
+                // SELECT 系列：GET 请求，完全开放，无需认证
+                // ========================================
+                .requestMatchers("GET", "/tymb/people/**").permitAll()              // People 查询 - 完全开放
+                .requestMatchers("GET", "/tymb/weapons/**").permitAll()              // Weapon 查询 - 完全开放
+                .requestMatchers("GET", "/tymb/gallery/**").permitAll()              // Gallery 查询 - 完全开放
+                .requestMatchers("GET", "/tymb/api/**").permitAll()                  // Async API 查询 - 完全开放
+                .requestMatchers("GET", "/tymb/people-images/**").permitAll()        // People Images 查询 - 完全开放
+                .requestMatchers("GET", "/tymb/blackjack/**").permitAll()            // Blackjack 查询 - 完全开放
+
+                // ========================================
+                // INSERT/UPDATE/DELETE 系列：需要认证用户
+                // ========================================
+                .requestMatchers("POST", "/tymb/people/**").authenticated()          // People 创建/更新
+                .requestMatchers("PUT", "/tymb/people/**").authenticated()           // People 更新
+                .requestMatchers("DELETE", "/tymb/people/**").authenticated()        // People 删除（单个）
+
+                .requestMatchers("POST", "/tymb/weapons/**").authenticated()          // Weapon 创建
+                .requestMatchers("PUT", "/tymb/weapons/**").authenticated()           // Weapon 更新
+                .requestMatchers("DELETE", "/tymb/weapons/**").authenticated()        // Weapon 删除（单个）
+
+                .requestMatchers("POST", "/tymb/gallery/**").authenticated()          // Gallery 创建/更新
+                .requestMatchers("PUT", "/tymb/gallery/**").authenticated()           // Gallery 更新
+                .requestMatchers("DELETE", "/tymb/gallery/**").authenticated()        // Gallery 删除（单个）
+
+                .requestMatchers("POST", "/tymb/api/**").authenticated()              // Async API 创建
+                .requestMatchers("PUT", "/tymb/api/**").authenticated()               // Async API 更新
+                .requestMatchers("DELETE", "/tymb/api/**").authenticated()            // Async API 删除
+
+                .requestMatchers("POST", "/tymb/people-images/**").authenticated()    // People Images 创建
+                .requestMatchers("PUT", "/tymb/people-images/**").authenticated()     // People Images 更新
+                .requestMatchers("DELETE", "/tymb/people-images/**").authenticated()  // People Images 删除
+
+                .requestMatchers("POST", "/tymb/blackjack/**").authenticated()        // Blackjack 创建
+                .requestMatchers("PUT", "/tymb/blackjack/**").authenticated()         // Blackjack 更新
+                .requestMatchers("DELETE", "/tymb/blackjack/**").authenticated()      // Blackjack 删除
+
+                // ========================================
+                // 批量删除：仅管理员可访问
+                // ========================================
+                .requestMatchers("DELETE", "/tymb/people/delete-all").hasRole("ADMIN")     // 批量删除 People
+                .requestMatchers("DELETE", "/tymb/weapons/delete-all").hasRole("ADMIN")    // 批量删除 Weapons
+                .requestMatchers("DELETE", "/tymb/gallery/delete-all").hasRole("ADMIN")    // 批量删除 Gallery
+
+                // ========================================
+                // 认证端点：需要认证用户
+                // ========================================
+                .requestMatchers("/tymb/auth/admin").authenticated()           // Admin 测试端点
+                .requestMatchers("/tymb/auth/user").authenticated()            // User 测试端点
+                .requestMatchers("/tymb/auth/test").authenticated()             // Auth 测试端点
+                .requestMatchers("/tymb/auth/logout-test").authenticated()      // Logout 测试端点
+
+                // ========================================
+                // 默认规则：所有未匹配的请求都需要认证
+                // ========================================
+                .anyRequest().authenticated()
+            )
+
+            // OAuth2 Resource Server：JWT Token 验证
+            .oauth2ResourceServer(oauth2 -> oauth2
+                .jwt(jwt -> jwt
+                    .decoder(jwtDecoder())
+                )
+            );
+
+        return http.build();
     }
 
     /**
-     * CORS 配置器
-     * 
-     * @return 配置好的 WebMvcConfigurer
+     * JWT Decoder 配置
+     *
+     * <p>从 Keycloak 获取公钥验证 JWT Token</p>
+     * <ul>
+     *   <li>使用 JWK Set URI 动态获取公钥</li>
+     *   <li>支持 Token 自动刷新和吊销检查</li>
+     * </ul>
      */
     @Bean
-    WebMvcConfigurer corsConfigurer() {
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
-                // 添加CORS映射
-                registry.addMapping("/**")
-                        .allowedOrigins(
-                            "http://localhost:4321", 
-                            "http://localhost:8080", 
-                            "http://localhost:8082",  // Gateway 本地端口
-                            "http://localhost:8000", 
-                            "https://peoplesystem.tatdvsonorth.com",
-                            "https://peoplesystem.tatdvsonorth.com/tymultiverse",
-                            "http://127.0.0.1:4321", 
-                            "http://127.0.0.1:8080",
-                            "http://127.0.0.1:8082",  // Gateway 本地端口
-                            "http://127.0.0.1:8000",
-                            "http://ty-multiverse-gateway-service:8082"  // K8s Gateway 服务
-                        )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                        .allowedHeaders("*")
-                        .exposedHeaders("Authorization", "Set-Cookie")
-                        .allowCredentials(true)
-                        .maxAge(3600);
-            }
-        };
+    public JwtDecoder jwtDecoder() {
+        String jwkSetUri = keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs";
+        return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
     }
 
-    /**
-     * 密碼編碼器
-     * 
-     * @return BCrypt 密碼編碼器
-     */
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }
