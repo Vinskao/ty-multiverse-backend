@@ -11,6 +11,7 @@ import tw.com.tymbackend.module.gallery.domain.dto.DeleteByIdRequestDTO;
 import tw.com.tymbackend.module.gallery.domain.dto.GalleryUpdateRequestDTO;
 import tw.com.tymbackend.module.gallery.domain.vo.Gallery;
 import tw.com.tymbackend.module.gallery.service.GalleryService;
+import tw.com.ty.common.response.BackendApiResponse;
 
 @RestController
 @RequestMapping("/gallery")
@@ -20,12 +21,13 @@ public class GalleryController {
     private GalleryService galleryService;
 
     @PostMapping("/getAll")
-    public ResponseEntity<List<Gallery>> getAllImages() {
+    public ResponseEntity<BackendApiResponse<List<Gallery>>> getAllImages() {
         try {
             List<Gallery> galleries = galleryService.getAllImages();
-            return ResponseEntity.ok(galleries);
+            return ResponseEntity.ok(BackendApiResponse.success("获取所有图片成功", galleries));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("获取图片失败", e.getMessage()));
         }
     }
 

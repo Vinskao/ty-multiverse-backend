@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.module.people.domain.vo.PeopleImage;
 import tw.com.tymbackend.module.people.service.PeopleImageService;
+import tw.com.ty.common.response.BackendApiResponse;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,14 +22,14 @@ public class PeopleImageController {
     /**
      * Get all people images
      * 需要 manage-users 角色才能訪問
-     * 
+     *
      * @return list of all people images
      */
     @PreAuthorize("hasRole('manage-users')")
     @GetMapping
-    public ResponseEntity<List<PeopleImage>> getAllPeopleImages() {
+    public ResponseEntity<BackendApiResponse<List<PeopleImage>>> getAllPeopleImages() {
         List<PeopleImage> peopleImages = peopleImageService.getAllPeopleImages();
-        return ResponseEntity.ok(peopleImages);
+        return ResponseEntity.ok(BackendApiResponse.success("获取所有人物图片成功", peopleImages));
     }
     
     /**

@@ -3,7 +3,9 @@ package tw.com.tymbackend.module.deckofcards.controller;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
-import tw.com.ty.common.exception.ErrorCode;
+import tw.com.ty.common.response.BackendApiResponse;
+import tw.com.ty.common.response.ErrorCode;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -18,12 +20,12 @@ public class BlackjackController {
 
     /**
      * Get the status of the Blackjack game
-     * 
+     *
      * @return the status of the game
      */
     @GetMapping("/status")
-    public ResponseEntity<String> getStatus() {
-        return ResponseEntity.ok("Blackjack game is running");
+    public ResponseEntity<BackendApiResponse<String>> getStatus() {
+        return ResponseEntity.ok(BackendApiResponse.success("Blackjack game is running", "running"));
     }
 
     /**

@@ -25,8 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
+import tw.com.ty.common.response.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
-import tw.com.ty.common.exception.ErrorCode;
 
 /**
  * Keycloak 控制器

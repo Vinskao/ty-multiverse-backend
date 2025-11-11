@@ -13,6 +13,7 @@ import tw.com.tymbackend.module.people.domain.dto.PeopleNameRequestDTO;
 import tw.com.tymbackend.module.people.domain.vo.People;
 import tw.com.tymbackend.module.people.service.PeopleService;
 import tw.com.tymbackend.core.service.AsyncMessageService;
+import tw.com.ty.common.response.BackendApiResponse;
 
 import java.util.List;
 import java.util.Optional;
@@ -102,78 +103,112 @@ public class PeopleController {
         // 如果 RabbitMQ 啟用，使用異步處理
         if (asyncMessageService != null) {
             String requestId = asyncMessageService.sendPeopleGetAllRequest();
-            Map<String, Object> response = new HashMap<>();
-            response.put("requestId", requestId);
-            response.put("status", "processing");
-            response.put("message", "角色列表獲取請求已提交，請稍後查詢結果");
-            return ResponseEntity.accepted().body(response);
+            Map<String, Object> data = new HashMap<>();
+            data.put("requestId", requestId);
+            data.put("status", "processing");
+            data.put("message", "角色列表獲取請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted()
+                .body(BackendApiResponse.accepted(requestId, "角色列表獲取请求已提交"));
         }
-        
+
         // 本地環境，同步處理
         try {
             // 使用優化的批量查詢方法，但保持相同的API介面
             List<People> people = peopleService.getAllPeopleOptimized();
-            return new ResponseEntity<>(people, HttpStatus.OK);
+            return ResponseEntity.ok(BackendApiResponse.success("获取所有角色成功", people));
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("获取角色列表失败", e.getMessage()));
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("意外错误", e.getMessage()));
         }
     }
 
     // 搜尋 name (接收 name 傳出 JSON)
     @PostMapping("/get-by-name")
     public ResponseEntity<?> getPeopleByName(@RequestBody PeopleNameRequestDTO request) {
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            String requestId = asyncMessageService.sendPeopleGetByNameRequest(request.getName());
+            Map<String, Object> data = new HashMap<>();
+            data.put("requestId", requestId);
+            data.put("status", "processing");
+            data.put("message", "角色查詢請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted()
+                .body(BackendApiResponse.accepted(requestId, "角色查詢請求已提交"));
+        }
+
+        // 本地環境，同步處理
         try {
             Optional<People> people = peopleService.getPeopleByName(request.getName());
             if (people.isPresent()) {
-                return new ResponseEntity<>(people.get(), HttpStatus.OK);
+                return ResponseEntity.ok(BackendApiResponse.success("獲取角色成功", people.get()));
             } else {
-                return new ResponseEntity<>("Person not found", HttpStatus.NOT_FOUND);
+                return ResponseEntity.status(404)
+                    .body(BackendApiResponse.error("角色不存在", "NOT_FOUND"));
             }
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("獲取角色失敗", e.getMessage()));
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("意外錯誤", e.getMessage()));
         }
     }
 
     // 刪除所有
     @PostMapping("/delete-all")
     public ResponseEntity<?> deleteAllPeople() {
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            String requestId = asyncMessageService.sendPeopleDeleteAllRequest();
+            Map<String, Object> data = new HashMap<>();
+            data.put("requestId", requestId);
+            data.put("status", "processing");
+            data.put("message", "角色刪除請求已提交，請稍後查詢結果");
+            return ResponseEntity.accepted()
+                .body(BackendApiResponse.accepted(requestId, "角色刪除請求已提交"));
+        }
+
+        // 本地環境，同步處理
         try {
             peopleService.deleteAllPeople();
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            return ResponseEntity.noContent().build();
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("刪除角色失敗", e.getMessage()));
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("意外錯誤", e.getMessage()));
         }
     }
 
     // 取得所有人的名字
     @GetMapping("/names")
-    public ResponseEntity<?> getAllPeopleNames() {
+    public ResponseEntity<BackendApiResponse<List<String>>> getAllPeopleNames() {
         try {
             // 添加認證診斷日誌
-            org.springframework.security.core.Authentication auth = 
+            org.springframework.security.core.Authentication auth =
                 org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
-            
+
             logger.info("=== 認證診斷 ===");
             logger.info("認證對象: {}", auth);
             logger.info("是否已認證: {}", auth.isAuthenticated());
             logger.info("用戶名: {}", auth.getName());
             logger.info("權限: {}", auth.getAuthorities());
             logger.info("主要對象類型: {}", auth.getPrincipal().getClass().getSimpleName());
-            
+
             List<String> names = peopleService.getAllPeopleNames();
-            return new ResponseEntity<>(names, HttpStatus.OK);
+            return ResponseEntity.ok(BackendApiResponse.success("获取所有角色名称成功", names));
         } catch (RuntimeException e) {
             logger.error("Runtime exception during getAllPeopleNames", e);
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("获取角色名称失败", e.getMessage()));
         } catch (Exception e) {
             logger.error("Unexpected error during getAllPeopleNames", e);
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.internalError("意外错误", e.getMessage()));
         }
     }
 }

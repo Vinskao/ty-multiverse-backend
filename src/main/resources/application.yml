@@ -1,5 +1,12 @@
 project:
   env: '@PROJECT_ENV@'
+
+# Security Configuration
+security:
+  # 開發測試用：完全禁用安全性檢查（僅限本地開發）
+  # WARNING: 生產環境必須設為 false
+  disable-all: ${SECURITY_DISABLE_ALL:false}
+
 spring:
   threads:
     virtual:
@@ -149,6 +156,14 @@ spring:
       # 新增：連線池監控配置
       allow-pool-suspension: false        # 不允許暫停連線池
       initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
+
+  # AsyncMessageService 啟用配置
+  rabbitmq:
+    enabled: true  # 臨時設置為 true 進行測試
+
+# 強制啟用 AsyncMessageService
+async-message-service:
+  enabled: true
 
 # 定時任務配置
 scheduling:
@@ -330,10 +345,4 @@ keycloak:
       securityCollections:
         - patterns:
             - /*
-
-# gRPC Configuration
-grpc:
-  enabled: ${GRPC_ENABLED:false}  # 默认禁用，通过环境变量启用
-  port: ${GRPC_PORT:50051}
-
 
