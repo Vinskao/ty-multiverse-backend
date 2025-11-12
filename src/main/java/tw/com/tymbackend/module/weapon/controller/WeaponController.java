@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.module.weapon.service.WeaponService;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 import tw.com.ty.common.response.BackendApiResponse;
+import tw.com.ty.common.response.ErrorCode;
+import tw.com.ty.common.response.MessageKey;
 import tw.com.tymbackend.core.service.AsyncMessageService;
 
 import java.util.List;
@@ -43,19 +45,19 @@ public class WeaponController {
             Map<String, Object> data = new HashMap<>();
             data.put("requestId", requestId);
             data.put("status", "processing");
-            data.put("message", "武器列表獲取請求已提交，請稍後查詢結果");
+            data.put("message", MessageKey.ASYNC_WEAPON_LIST_SUBMITTED.getMessage());
             return ResponseEntity.accepted()
-                .body(BackendApiResponse.accepted(requestId, "武器列表獲取請求已提交"));
+                .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_WEAPON_LIST_SUBMITTED));
         }
 
         // 本地環境，同步處理
         logger.info("使用同步處理");
         try {
             List<Weapon> weapons = weaponService.getAllWeapons();
-            return ResponseEntity.ok(BackendApiResponse.success("獲取所有武器成功", weapons));
+            return ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_GET_ALL_SUCCESS, weapons));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("獲取武器列表失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_LIST_FAILED, e.getMessage()));
         }
     }
 
@@ -70,20 +72,20 @@ public class WeaponController {
             Map<String, Object> data = new HashMap<>();
             data.put("requestId", requestId);
             data.put("status", "processing");
-            data.put("message", "武器查詢請求已提交，請稍後查詢結果");
+            data.put("message", MessageKey.ASYNC_WEAPON_QUERY_SUBMITTED.getMessage());
             return ResponseEntity.accepted()
-                .body(BackendApiResponse.accepted(requestId, "武器查詢請求已提交"));
+                .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_WEAPON_QUERY_SUBMITTED));
         }
 
         // 本地環境，同步處理
         try {
             return weaponService.getWeaponById(name)
-                    .map(weapon -> ResponseEntity.ok(BackendApiResponse.success("獲取武器成功", weapon)))
+                    .map(weapon -> ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_GET_SUCCESS, weapon)))
                     .orElse(ResponseEntity.status(404)
-                        .body(BackendApiResponse.error("武器不存在", "NOT_FOUND")));
+                        .body(BackendApiResponse.error(ErrorCode.WEAPON_NOT_FOUND)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("獲取武器失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_GET_FAILED, e.getMessage()));
         }
     }
 
@@ -106,10 +108,10 @@ public class WeaponController {
         // 本地環境，同步處理
         try {
             List<Weapon> weapons = weaponService.getWeaponsByOwner(owner);
-            return ResponseEntity.ok(BackendApiResponse.success("獲取武器成功", weapons));
+            return ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_GET_SUCCESS, weapons));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("獲取武器失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_GET_FAILED, e.getMessage()));
         }
     }
 
@@ -132,10 +134,10 @@ public class WeaponController {
         // 本地環境，同步處理
         try {
             Weapon savedWeapon = weaponService.saveWeaponSmart(weapon);
-            return ResponseEntity.ok(BackendApiResponse.success("保存武器成功", savedWeapon));
+            return ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_SAVE_SUCCESS, savedWeapon));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("保存武器失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_SAVE_FAILED, e.getMessage()));
         }
     }
 
@@ -161,7 +163,7 @@ public class WeaponController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("刪除武器失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_DELETE_FAILED, e.getMessage()));
         }
     }
 
@@ -187,7 +189,7 @@ public class WeaponController {
             return ResponseEntity.noContent().build();
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("刪除全部武器失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_DELETE_ALL_FAILED, e.getMessage()));
         }
     }
 
@@ -210,10 +212,10 @@ public class WeaponController {
         // 本地環境，同步處理
         try {
             boolean exists = weaponService.weaponExists(name);
-            return ResponseEntity.ok(BackendApiResponse.success("檢查武器存在成功", Map.of("exists", exists)));
+            return ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_CHECK_SUCCESS, Map.of("exists", exists)));
         } catch (Exception e) {
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.internalError("檢查武器存在失敗", e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_CHECK_FAILED, e.getMessage()));
         }
     }
 
