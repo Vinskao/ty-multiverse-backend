@@ -157,10 +157,6 @@ spring:
       allow-pool-suspension: false        # 不允許暫停連線池
       initialization-fail-timeout: 1      # 初始化失敗超時 (1秒)
 
-  # AsyncMessageService 啟用配置
-  rabbitmq:
-    enabled: true  # 臨時設置為 true 進行測試
-
 # 強制啟用 AsyncMessageService
 async-message-service:
   enabled: true
