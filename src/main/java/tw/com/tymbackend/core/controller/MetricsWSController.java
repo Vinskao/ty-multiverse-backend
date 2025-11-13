@@ -80,32 +80,15 @@ public class MetricsWSController {
      *
      * @param meterRegistry 度量註冊表，用於度量數據的收集
      * @param applicationContext 應用程序上下文，用於獲取 Spring beans
-     * @param backendUrl 後端 URL，用於構建度量 URL
+     * @param metricsBaseUrl 度量基礎 URL，用於度量數據收集
      */
     public MetricsWSController(
-            MeterRegistry meterRegistry, 
+            MeterRegistry meterRegistry,
             ApplicationContext applicationContext,
-            @Value("${app.url.address:http://localhost:8080/tymb}") String backendUrl) {
+            @Value("${METRICS_BASE_URL:http://localhost:8080/tymb/actuator/metrics}") String metricsBaseUrl) {
         this.applicationContext = applicationContext;
-        logger.info("初始化 MetricsWSController，後端 URL: {}", backendUrl);
-        
-        // 確保 backendUrl 是有效的
-        if (backendUrl == null || backendUrl.trim().isEmpty() || backendUrl.contains("@")) {
-            logger.warn("後端 URL 配置無效，使用預設值: {}", backendUrl);
-            backendUrl = "http://localhost:8080/tymb";
-        }
-        
-        // 確保 URL 以 /tymb 結尾
-        if (!backendUrl.endsWith("/tymb")) {
-            if (backendUrl.endsWith("/")) {
-                backendUrl = backendUrl + "tymb";
-            } else {
-                backendUrl = backendUrl + "/tymb";
-            }
-        }
-        
-        this.actuatorMetricsUrl = backendUrl + "/actuator/metrics";
-        logger.info("Actuator 度量 URL 初始化為: {} (backendUrl: {})", actuatorMetricsUrl, backendUrl);
+        this.actuatorMetricsUrl = metricsBaseUrl;
+        logger.info("Actuator 度量 URL 初始化為: {}", actuatorMetricsUrl);
     }
 
     /**

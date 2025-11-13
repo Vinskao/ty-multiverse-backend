@@ -36,50 +36,89 @@ public class PeopleController {
     // 插入 1 個 (接收 JSON)
     @PostMapping("/insert")
     public ResponseEntity<?> insertPeople(@RequestBody People people) {
+        // 驗證輸入
+        if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
+            return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
+        }
+
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            try {
+                String requestId = asyncMessageService.sendPeopleInsertRequest(people);
+                Map<String, Object> data = new HashMap<>();
+                data.put("requestId", requestId);
+                data.put("status", "processing");
+                data.put("message", MessageKey.ASYNC_PEOPLE_INSERT_SUBMITTED.getMessage());
+                return ResponseEntity.accepted()
+                    .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_PEOPLE_INSERT_SUBMITTED));
+            } catch (Exception e) {
+                logger.error("Failed to send async insert request", e);
+                // 如果異步發送失敗，回退到同步處理
+            }
+        }
+
+        // 本地環境或異步失敗時，使用同步處理
         try {
             People savedPeople = peopleService.insertPerson(people);
-            return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+            return new ResponseEntity<>(BackendApiResponse.success(MessageKey.PEOPLE_INSERT_SUCCESS, savedPeople), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            logger.error("Invalid input while inserting person", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_INVALID_INPUT), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Runtime exception during insert person", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_INSERT_FAILED, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Unexpected error during insert person", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     // 更新 1 個 (接收 JSON)
     @PostMapping("/update")
     public ResponseEntity<?> updatePeople(@RequestBody People people) {
-        try {
-            // 驗證輸入
-            if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
-                return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
+        // 驗證輸入
+        if (people == null || people.getName() == null || people.getName().trim().isEmpty()) {
+            return new ResponseEntity<>("Invalid input: name is required", HttpStatus.BAD_REQUEST);
+        }
+
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            try {
+                String requestId = asyncMessageService.sendPeopleUpdateRequest(people);
+                Map<String, Object> data = new HashMap<>();
+                data.put("requestId", requestId);
+                data.put("status", "processing");
+                data.put("message", MessageKey.ASYNC_PEOPLE_UPDATE_SUBMITTED.getMessage());
+                return ResponseEntity.accepted()
+                    .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_PEOPLE_UPDATE_SUBMITTED));
+            } catch (Exception e) {
+                logger.error("Failed to send async update request", e);
+                // 如果異步發送失敗，回退到同步處理
             }
-            
-            // 嘗試更新
+        }
+
+        // 本地環境或異步失敗時，使用同步處理
+        try {
             People updatedPeople = peopleService.updatePerson(people);
-            return new ResponseEntity<>(updatedPeople, HttpStatus.OK);
+            return new ResponseEntity<>(BackendApiResponse.success(MessageKey.PEOPLE_UPDATE_SUCCESS, updatedPeople), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             logger.error("Invalid input while updating person", e);
-            return new ResponseEntity<>("Person not found: " + e.getMessage(), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_NOT_FOUND), HttpStatus.NOT_FOUND);
         } catch (org.hibernate.StaleObjectStateException e) {
-            // 樂觀鎖定衝突，返回衝突狀態
             logger.error("Concurrent update detected", e);
-            return new ResponseEntity<>("Concurrent update detected: " + e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.CONCURRENT_UPDATE_DETECTED), HttpStatus.CONFLICT);
         } catch (ObjectOptimisticLockingFailureException e) {
-            // 樂觀鎖定衝突，返回衝突狀態
             logger.error("Optimistic locking failure detected", e);
-            return new ResponseEntity<>("Character data has been modified by another user, please reload and try again", HttpStatus.CONFLICT);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.OPTIMISTIC_LOCKING_FAILURE), HttpStatus.CONFLICT);
         } catch (org.springframework.dao.DataIntegrityViolationException e) {
-            // 數據完整性違規，返回錯誤請求狀態
-            return new ResponseEntity<>("Data integrity violation: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            logger.error("Data integrity violation", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.DATA_INTEGRITY_VIOLATION), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
             logger.error("Runtime exception during update", e);
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
             logger.error("Unexpected error during update", e);
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -187,29 +226,26 @@ public class PeopleController {
 
     // 取得所有人的名字
     @GetMapping("/names")
-    public ResponseEntity<BackendApiResponse<List<String>>> getAllPeopleNames() {
-        try {
-            // 添加認證診斷日誌
-            org.springframework.security.core.Authentication auth =
-                org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<?> getAllPeopleNames() {
+        logger.info("=== 強制使用異步處理模式 ===");
 
-            logger.info("=== 認證診斷 ===");
-            logger.info("認證對象: {}", auth);
-            logger.info("是否已認證: {}", auth.isAuthenticated());
-            logger.info("用戶名: {}", auth.getName());
-            logger.info("權限: {}", auth.getAuthorities());
-            logger.info("主要對象類型: {}", auth.getPrincipal().getClass().getSimpleName());
-
-            List<String> names = peopleService.getAllPeopleNames();
-            return ResponseEntity.ok(BackendApiResponse.success(MessageKey.PEOPLE_GET_NAMES_SUCCESS, names));
-        } catch (RuntimeException e) {
-            logger.error("Runtime exception during getAllPeopleNames", e);
+        // 強制使用異步處理，通過 Consumer 處理
+        if (asyncMessageService != null) {
+            logger.info("使用異步處理模式");
+            try {
+                String requestId = asyncMessageService.sendPeopleGetNamesRequest();
+                logger.info("異步請求已發送，requestId: {}", requestId);
+                return ResponseEntity.accepted()
+                    .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_PEOPLE_LIST_SUBMITTED));
+            } catch (Exception e) {
+                logger.error("Failed to send async get names request", e);
+                return ResponseEntity.status(500)
+                    .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, "異步處理失敗: " + e.getMessage()));
+            }
+        } else {
+            logger.error("AsyncMessageService 為 null，無法進行異步處理");
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.error(ErrorCode.PEOPLE_NAMES_FAILED, e.getMessage()));
-        } catch (Exception e) {
-            logger.error("Unexpected error during getAllPeopleNames", e);
-            return ResponseEntity.status(500)
-                .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+                .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, "異步服務不可用，請檢查 RabbitMQ 配置"));
         }
     }
 }

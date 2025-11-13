@@ -48,22 +48,28 @@ public class AsyncResultListener {
 
         try {
             // 解析來自消費者的結果消息
+            logger.info("開始解析 JSON 消息...");
             AsyncResultMessage resultMessage = objectMapper.readValue(messageJson, AsyncResultMessage.class);
             logger.info("解析成功! requestId={}, status={}, source={}",
                 resultMessage.getRequestId(), resultMessage.getStatus(), resultMessage.getSource());
 
             // 根據狀態處理結果
-            switch (resultMessage.getStatus()) {
+            String status = resultMessage.getStatus();
+            logger.info("檢查消息狀態: status={}", status);
+
+            switch (status) {
                 case "completed":
                     logger.info("處理完成狀態消息...");
                     handleCompletedResult(resultMessage);
+                    logger.info("✅ 成功處理完成狀態消息: requestId={}", resultMessage.getRequestId());
                     break;
                 case "failed":
                     logger.info("處理失敗狀態消息...");
                     handleFailedResult(resultMessage);
+                    logger.info("✅ 成功處理失敗狀態消息: requestId={}", resultMessage.getRequestId());
                     break;
                 default:
-                    logger.warn("未知的結果狀態: {}", resultMessage.getStatus());
+                    logger.warn("未知的結果狀態: {}", status);
             }
 
             logger.info("=== AsyncResultListener 處理完成 ===");
@@ -71,7 +77,11 @@ public class AsyncResultListener {
         } catch (Exception e) {
             logger.error("=== AsyncResultListener 處理失敗 ===");
             logger.error("消息內容: {}", messageJson);
-            logger.error("錯誤詳情: ", e);
+            logger.error("錯誤類型: {}", e.getClass().getName());
+            logger.error("錯誤訊息: {}", e.getMessage());
+            logger.error("完整錯誤詳情: ", e);
+            // 重新拋出異常以確保它被正確處理
+            throw new RuntimeException("AsyncResultListener 處理失敗", e);
         }
     }
     
