@@ -1,5 +1,6 @@
 package tw.com.tymbackend.core.message;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.Instant;
@@ -35,10 +36,11 @@ public class AsyncResultMessage {
     @JsonProperty("source")
     private String source; // "consumer"
 
-    // 默認構造函數
+    // 默認構造函數 - 用於 JSON 反序列化
     public AsyncResultMessage() {
-        this.timestamp = Instant.now().toString();
-        this.source = "consumer";
+        // 不設置默認值，讓 Jackson 使用 JSON 中的值
+        // this.timestamp = Instant.now().toString();
+        // this.source = "consumer";
     }
 
     // 全參數構造函數

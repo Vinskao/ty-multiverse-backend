@@ -28,7 +28,7 @@ public class AsyncMessageService {
     
     private static final Logger logger = LoggerFactory.getLogger(AsyncMessageService.class);
 
-    @Autowired
+    @Autowired(required = false)
     private RabbitTemplate rabbitTemplate;
 
     @PostConstruct
@@ -110,6 +110,78 @@ public class AsyncMessageService {
      *
      * @return 請求ID
      */
+    /**
+     * 發送獲取角色名稱列表請求到 RabbitMQ
+     *
+     * @return 請求ID
+     */
+    public String sendPeopleGetNamesRequest() {
+        if (rabbitTemplate == null) {
+            throw new IllegalStateException("RabbitTemplate is not available. Please check RabbitMQ configuration.");
+        }
+
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/names",
+            "GET",
+            null
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_GET_NAMES_QUEUE, message);
+
+        logger.info("發送獲取角色名稱列表請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送新增角色請求到 RabbitMQ
+     *
+     * @param people 要新增的角色數據
+     * @return 請求ID
+     */
+    public String sendPeopleInsertRequest(Object people) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/insert",
+            "POST",
+            people
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_INSERT_QUEUE, message);
+
+        logger.info("發送新增角色請求到 RabbitMQ: requestId={}, people={}", requestId, people);
+
+        return requestId;
+    }
+
+    /**
+     * 發送角色更新請求到 RabbitMQ
+     *
+     * @param people 要更新的角色數據
+     * @return 請求ID
+     */
+    public String sendPeopleUpdateRequest(Object people) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/update",
+            "POST",
+            people
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_UPDATE_QUEUE, message);
+
+        logger.info("發送角色更新請求到 RabbitMQ: requestId={}, people={}", requestId, people);
+
+        return requestId;
+    }
+
     public String sendPeopleDeleteAllRequest() {
         String requestId = UUID.randomUUID().toString();
 
@@ -347,6 +419,8 @@ public class AsyncMessageService {
                 return "people.get.all";
             case RabbitMQConfig.PEOPLE_GET_BY_NAME_QUEUE:
                 return "people.get.by.name";
+            case RabbitMQConfig.PEOPLE_GET_NAMES_QUEUE:
+                return "people.get.names";
             case RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE:
                 return "people.delete.all";
             case RabbitMQConfig.WEAPON_GET_ALL_QUEUE:

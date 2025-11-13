@@ -1,5 +1,6 @@
 package tw.com.tymbackend.core.config.websocket;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -26,6 +27,9 @@ import java.util.stream.Collectors;
 @EnableWebSocketMessageBroker
 @EnableWebSocket
 public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocketConfigurer {
+
+    @Value("${METRICS_BASE_URL:http://localhost:8080/tymb/actuator/metrics}")
+    private static String metricsBaseUrl;
 
     // 線上 Session 管理
     private static final Map<String, Session> ONLINE_SESSION = new ConcurrentHashMap<>();
@@ -200,7 +204,7 @@ public class WebSocketUtil implements WebSocketMessageBrokerConfigurer, WebSocke
          * 獲取 metrics 數據
          */
         private String getMetricsData() throws Exception {
-            String baseUrl = "http://localhost:8080/tymb/actuator/metrics";
+            String baseUrl = metricsBaseUrl;
             
             // 定義要獲取的 metrics
             String[] metrics = {

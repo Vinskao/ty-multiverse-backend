@@ -42,6 +42,9 @@ public class RabbitMQConfig {
     public static final String DAMAGE_CALCULATION_QUEUE = "damage-calculation";
     public static final String PEOPLE_GET_ALL_QUEUE = "people-get-all";
     public static final String PEOPLE_GET_BY_NAME_QUEUE = "people-get-by-name";
+    public static final String PEOPLE_GET_NAMES_QUEUE = "people-get-names";
+    public static final String PEOPLE_INSERT_QUEUE = "people-insert";
+    public static final String PEOPLE_UPDATE_QUEUE = "people-update";
     public static final String PEOPLE_DELETE_ALL_QUEUE = "people-delete-all";
     public static final String WEAPON_GET_ALL_QUEUE = "weapon-get-all";
     public static final String WEAPON_GET_BY_NAME_QUEUE = "weapon-get-by-name";
@@ -93,6 +96,36 @@ public class RabbitMQConfig {
     @Bean
     public Queue peopleGetByNameQueue() {
         return QueueBuilder.durable(PEOPLE_GET_BY_NAME_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建角色獲取名稱隊列
+     */
+    @Bean
+    public Queue peopleGetNamesQueue() {
+        return QueueBuilder.durable(PEOPLE_GET_NAMES_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建角色新增隊列
+     */
+    @Bean
+    public Queue peopleInsertQueue() {
+        return QueueBuilder.durable(PEOPLE_INSERT_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建角色更新隊列
+     */
+    @Bean
+    public Queue peopleUpdateQueue() {
+        return QueueBuilder.durable(PEOPLE_UPDATE_QUEUE)
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
