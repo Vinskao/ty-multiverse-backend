@@ -182,6 +182,7 @@ scheduling:
       lock-timeout: 5 # 分鐘
     # 度量數據導出 - 每3分鐘執行一次（減少頻率避免Redis連接問題）
     metrics-export:
+      enabled: false # 關閉度量數據導出功能以減少日誌輸出
       fixed-rate: 180000 # 毫秒 (3分鐘)
       lock-timeout: 25 # 秒
 

@@ -53,15 +53,8 @@ mvn clean compile  # 自動使用新版本的 common
 mvn clean generate-sources compile
 mvn spring-boot:run
 
-# 或使用 Maven Wrapper
-./mvnw clean generate-sources compile
-./mvnw spring-boot:run
-
 # 方法 2：一次性執行（包含編譯和運行）
 mvn clean generate-sources compile spring-boot:run
-
-# 或使用 Maven Wrapper
-./mvnw clean generate-sources compile spring-boot:run
 ```
 
 **📋 指令說明：**

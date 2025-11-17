@@ -69,9 +69,12 @@ public class MetricsWSController {
     private DistributedLockUtil distributedLockUtil;
     
     // 從配置文件讀取度量數據導出配置
+    @Value("${scheduling.tasks.metrics-export.enabled:true}")
+    private boolean metricsExportEnabled;
+
     @Value("${scheduling.tasks.metrics-export.fixed-rate}")
     private long metricsExportFixedRate;
-    
+
     @Value("${scheduling.tasks.metrics-export.lock-timeout}")
     private int metricsExportLockTimeout;
 
@@ -93,20 +96,28 @@ public class MetricsWSController {
 
     /**
      * 定期導出選定的度量數據
-     * 
-     * 此方法每 30 秒執行一次，從 Actuator 獲取指定的度量數據，
+     *
+     * 此方法從 Actuator 獲取指定的度量數據，
      * 並將其轉換為 JSON 格式後通過 WebSocket 廣播。
      * 使用分布式鎖防止多個實例同時執行。
+     *
+     * 可以通過配置 `scheduling.tasks.metrics-export.enabled=false` 來關閉此功能。
      */
     @Scheduled(fixedRateString = "${scheduling.tasks.metrics-export.fixed-rate}")
     public void exportSelectedMetrics() {
+        // 檢查是否啟用了度量數據導出功能
+        if (!metricsExportEnabled) {
+            logger.debug("度量數據導出功能已通過配置關閉");
+            return;
+        }
+
         String lockKey = "metrics:export:lock";
         Duration lockTimeout = Duration.ofSeconds(metricsExportLockTimeout);
-        
+
         try {
             distributedLockUtil.executeWithLock(lockKey, lockTimeout, () -> {
                 performMetricsExport();
-                
+
                 // 同時廣播到原生 WebSocket 端點
                 try {
                     tw.com.tymbackend.core.config.websocket.WebSocketUtil.MetricsWebSocketHandler.broadcastMetrics();
@@ -114,7 +125,7 @@ public class MetricsWSController {
                 } catch (Exception e) {
                     logger.warn("廣播到原生 WebSocket 失敗", e);
                 }
-                
+
                 return null;
             });
         } catch (Exception e) {
