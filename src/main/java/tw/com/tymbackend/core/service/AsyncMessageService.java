@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import tw.com.tymbackend.core.config.RabbitMQConfig;
 import tw.com.tymbackend.core.message.AsyncMessageDTO;
@@ -412,6 +411,7 @@ public class AsyncMessageService {
      * @return 路由鍵
      */
     private String getRoutingKey(String queueName) {
+        logger.debug("getRoutingKey called with queueName: '{}'", queueName);
         switch (queueName) {
             case RabbitMQConfig.DAMAGE_CALCULATION_QUEUE:
                 return "people.damage.calculation";
@@ -421,6 +421,10 @@ public class AsyncMessageService {
                 return "people.get.by.name";
             case RabbitMQConfig.PEOPLE_GET_NAMES_QUEUE:
                 return "people.get.names";
+            case RabbitMQConfig.PEOPLE_INSERT_QUEUE:
+                return "people.insert";
+            case RabbitMQConfig.PEOPLE_UPDATE_QUEUE:
+                return "people.update";
             case RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE:
                 return "people.delete.all";
             case RabbitMQConfig.WEAPON_GET_ALL_QUEUE:

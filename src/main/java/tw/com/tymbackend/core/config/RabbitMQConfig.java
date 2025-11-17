@@ -241,6 +241,36 @@ public class RabbitMQConfig {
     }
 
     /**
+     * 綁定角色插入隊列到交換機
+     */
+    @Bean
+    public Binding peopleInsertBinding(Queue peopleInsertQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleInsertQueue)
+                .to(tymbExchange)
+                .with("people.insert");
+    }
+
+    /**
+     * 綁定角色更新隊列到交換機
+     */
+    @Bean
+    public Binding peopleUpdateBinding(Queue peopleUpdateQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleUpdateQueue)
+                .to(tymbExchange)
+                .with("people.update");
+    }
+
+    /**
+     * 綁定角色獲取名字隊列到交換機
+     */
+    @Bean
+    public Binding peopleGetNamesBinding(Queue peopleGetNamesQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleGetNamesQueue)
+                .to(tymbExchange)
+                .with("people.get.names");
+    }
+
+    /**
      * 綁定角色刪除全部隊列到交換機
      */
     @Bean
