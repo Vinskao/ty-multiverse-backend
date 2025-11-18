@@ -9,6 +9,7 @@ import tw.com.tymbackend.core.config.RabbitMQConfig;
 import tw.com.tymbackend.core.message.AsyncMessageDTO;
 import jakarta.annotation.PostConstruct;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -177,6 +178,30 @@ public class AsyncMessageService {
         sendMessage(RabbitMQConfig.PEOPLE_UPDATE_QUEUE, message);
 
         logger.info("發送角色更新請求到 RabbitMQ: requestId={}, people={}", requestId, people);
+
+        return requestId;
+    }
+
+    /**
+     * 發送批量新增角色請求到 RabbitMQ
+     *
+     * @param peopleList 要新增的角色列表
+     * @return 請求ID
+     */
+    public String sendPeopleInsertMultipleRequest(Object peopleList) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+            requestId,
+            "/tymb/people/insert-multiple",
+            "POST",
+            peopleList
+        );
+
+        sendMessage(RabbitMQConfig.PEOPLE_INSERT_MULTIPLE_QUEUE, message);
+
+        logger.info("發送批量新增角色請求到 RabbitMQ: requestId={}, count={}", requestId, 
+            peopleList instanceof List ? ((List<?>) peopleList).size() : "unknown");
 
         return requestId;
     }
@@ -423,6 +448,8 @@ public class AsyncMessageService {
                 return "people.get.names";
             case RabbitMQConfig.PEOPLE_INSERT_QUEUE:
                 return "people.insert";
+            case RabbitMQConfig.PEOPLE_INSERT_MULTIPLE_QUEUE:
+                return "people.insert.multiple";
             case RabbitMQConfig.PEOPLE_UPDATE_QUEUE:
                 return "people.update";
             case RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE:
