@@ -26,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 
 import jakarta.servlet.http.HttpServletResponse;
 import tw.com.ty.common.response.ErrorCode;
+import tw.com.ty.common.response.MessageKey;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -218,7 +219,7 @@ public class KeycloakController {
 			restTemplate.exchange(logoutUrl, HttpMethod.POST, entity, String.class);
 
 			// 若成功則回傳 200 OK 與訊息
-			return ResponseEntity.ok(ErrorCode.LOGOUT_SUCCESS.getMessage());
+			return ResponseEntity.ok(MessageKey.LOGOUT_SUCCESS.getMessage());
 		} catch (Exception e) {
 			// 若發生錯誤，記錄錯誤訊息並回傳 500 錯誤碼與錯誤訊息
 			log.error("登出失敗", e);

@@ -125,15 +125,38 @@ public class PeopleController {
     // 插入多個 (接收 JSON)
     @PostMapping("/insert-multiple")
     public ResponseEntity<?> insertMultiplePeople(@RequestBody List<People> peopleList) {
+        // 驗證輸入
+        if (peopleList == null || peopleList.isEmpty()) {
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_INVALID_INPUT, "角色列表不能為空"), HttpStatus.BAD_REQUEST);
+        }
+
+        // 如果 RabbitMQ 啟用，使用異步處理
+        if (asyncMessageService != null) {
+            try {
+                String requestId = asyncMessageService.sendPeopleInsertMultipleRequest(peopleList);
+                logger.info("批量新增角色請求已提交到 RabbitMQ: requestId={}, count={}", requestId, peopleList.size());
+                return ResponseEntity.accepted()
+                    .body(BackendApiResponse.accepted(requestId, MessageKey.ASYNC_PEOPLE_INSERT_SUBMITTED));
+            } catch (Exception e) {
+                logger.error("Failed to send async insert-multiple request", e);
+                // 如果異步發送失敗，回退到同步處理
+            }
+        }
+
+        // 本地環境或異步失敗時，使用同步處理
         try {
             List<People> savedPeople = peopleService.saveAllPeople(peopleList);
-            return new ResponseEntity<>(savedPeople, HttpStatus.CREATED);
+            logger.info("同步批量新增角色成功: count={}", savedPeople.size());
+            return new ResponseEntity<>(BackendApiResponse.success(MessageKey.PEOPLE_INSERT_SUCCESS, savedPeople), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>("Invalid input: " + e.getMessage(), HttpStatus.BAD_REQUEST);
+            logger.error("Invalid input while inserting multiple people", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_INVALID_INPUT, e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>("Internal server error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Runtime exception during insert multiple people", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.PEOPLE_INSERT_FAILED, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         } catch (Exception e) {
-            return new ResponseEntity<>("Unexpected error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("Unexpected error during insert multiple people", e);
+            return new ResponseEntity<>(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

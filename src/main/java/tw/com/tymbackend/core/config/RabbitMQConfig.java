@@ -44,6 +44,7 @@ public class RabbitMQConfig {
     public static final String PEOPLE_GET_BY_NAME_QUEUE = "people-get-by-name";
     public static final String PEOPLE_GET_NAMES_QUEUE = "people-get-names";
     public static final String PEOPLE_INSERT_QUEUE = "people-insert";
+    public static final String PEOPLE_INSERT_MULTIPLE_QUEUE = "people-insert-multiple";
     public static final String PEOPLE_UPDATE_QUEUE = "people-update";
     public static final String PEOPLE_DELETE_ALL_QUEUE = "people-delete-all";
     public static final String WEAPON_GET_ALL_QUEUE = "weapon-get-all";
@@ -126,6 +127,16 @@ public class RabbitMQConfig {
     @Bean
     public Queue peopleUpdateQueue() {
         return QueueBuilder.durable(PEOPLE_UPDATE_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
+
+    /**
+     * 創建角色批量新增隊列
+     */
+    @Bean
+    public Queue peopleInsertMultipleQueue() {
+        return QueueBuilder.durable(PEOPLE_INSERT_MULTIPLE_QUEUE)
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
@@ -258,6 +269,16 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(peopleUpdateQueue)
                 .to(tymbExchange)
                 .with("people.update");
+    }
+
+    /**
+     * 綁定角色批量新增隊列到交換機
+     */
+    @Bean
+    public Binding peopleInsertMultipleBinding(Queue peopleInsertMultipleQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleInsertMultipleQueue)
+                .to(tymbExchange)
+                .with("people.insert.multiple");
     }
 
     /**
