@@ -1,5 +1,13 @@
 # TY Multiverse Backend - Agent Guide
 
+## 📁 文档组织规定
+
+**重要**：所有非 `AGENTS.md` 和 `README.md` 的 Markdown 文档都必须放在项目的 `/docs` 目录下。
+
+- ✅ **允许在根目录**：`AGENTS.md`、`README.md`
+- ✅ **必须放在 `/docs`**：所有其他 `.md` 文件（如 `SECURITY_TOGGLE.md`、`SECURITY_CONFIG.md` 等）
+- 📂 **文档目录结构**：`/docs/` 目录下可以创建子目录来组织相关文档
+
 ## Project Overview
 
 TY Multiverse Backend is a comprehensive Spring Boot application that serves as the core backend service for the TY Multiverse system. It provides REST API endpoints, gRPC services, and manages data persistence for people, weapons, galleries, and other domain entities.

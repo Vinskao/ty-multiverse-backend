@@ -115,7 +115,12 @@ pipeline {
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
                             string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
                             string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
-                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET')
+                            string(credentialsId: 'KEYCLOAK_CREDENTIALS_SECRET', variable: 'KEYCLOAK_CREDENTIALS_SECRET'),
+                            string(credentialsId: 'RABBITMQ_HOST', variable: 'RABBITMQ_HOST'),
+                            string(credentialsId: 'RABBITMQ_PORT', variable: 'RABBITMQ_PORT'),
+                            string(credentialsId: 'RABBITMQ_USERNAME', variable: 'RABBITMQ_USERNAME'),
+                            string(credentialsId: 'RABBITMQ_PASSWORD', variable: 'RABBITMQ_PASSWORD'),
+                            string(credentialsId: 'RABBITMQ_VIRTUAL_HOST', variable: 'RABBITMQ_VIRTUAL_HOST')
                         ]) {
                             sh '''
                                 cat > src/main/resources/env/platform.properties <<EOL
@@ -151,11 +156,11 @@ pipeline {
                                 SPRING_PEOPLE_DATASOURCE_ENABLED=false
                                 # RabbitMQ 配置 - Production 環境啟用
                                 RABBITMQ_ENABLED=true
-                                RABBITMQ_HOST=rabbitmq-service
-                                RABBITMQ_PORT=5672
-                                RABBITMQ_USERNAME=admin
-                                RABBITMQ_PASSWORD=admin123
-                                RABBITMQ_VIRTUAL_HOST=/
+                                RABBITMQ_HOST=${RABBITMQ_HOST}
+                                RABBITMQ_PORT=${RABBITMQ_PORT}
+                                RABBITMQ_USERNAME=${RABBITMQ_USERNAME}
+                                RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD}
+                                RABBITMQ_VIRTUAL_HOST=${RABBITMQ_VIRTUAL_HOST}
                                 EOL
                             '''
                         }
@@ -167,7 +172,31 @@ pipeline {
         stage('Build') {
             steps {
                 container('maven') {
-                    sh 'MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true clean package -P platform -DskipTests'
+                    script {
+                        withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
+                            sh '''
+                                # 創建 Maven settings.xml 以配置 GitHub Packages 認證
+                                mkdir -p ~/.m2
+                                cat > ~/.m2/settings.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <servers>
+    <server>
+      <id>github</id>
+      <username>Vinskao</username>
+      <password>${GITHUB_TOKEN}</password>
+    </server>
+  </servers>
+</settings>
+EOF
+                                # 執行 Maven 構建
+                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true clean package -P platform -DskipTests
+                            '''
+                        }
+                    }
                 }
             }
         }
@@ -175,7 +204,31 @@ pipeline {
         stage('Test') {
             steps {
                 container('maven') {
-                    sh 'MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true test -P platform'
+                    script {
+                        withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
+                            sh '''
+                                # 創建 Maven settings.xml 以配置 GitHub Packages 認證
+                                mkdir -p ~/.m2
+                                cat > ~/.m2/settings.xml <<EOF
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                              http://maven.apache.org/xsd/settings-1.0.0.xsd">
+  <servers>
+    <server>
+      <id>github</id>
+      <username>Vinskao</username>
+      <password>${GITHUB_TOKEN}</password>
+    </server>
+  </servers>
+</settings>
+EOF
+                                # 執行 Maven 測試
+                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true test -P platform
+                            '''
+                        }
+                    }
                 }
             }
         }

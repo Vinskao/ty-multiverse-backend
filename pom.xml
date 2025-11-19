@@ -274,8 +274,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- gRPC Dependencies -->
-
     </dependencies>
 
     <!-- GitHub Packages 發布配置 -->
@@ -297,7 +295,6 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- gRPC BOM - 統一管理所有 gRPC 相關版本 -->
         </dependencies>
     </dependencyManagement>
     
