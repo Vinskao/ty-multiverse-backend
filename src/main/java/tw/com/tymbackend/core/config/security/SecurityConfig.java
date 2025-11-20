@@ -7,9 +7,21 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import tw.com.ty.common.security.config.BaseSecurityConfig;
 
@@ -155,6 +167,7 @@ public class SecurityConfig {
             .oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt
                     .decoder(jwtDecoder())
+                    .jwtAuthenticationConverter(jwtAuthenticationConverter())
                 )
             );
 
@@ -174,6 +187,96 @@ public class SecurityConfig {
     public JwtDecoder jwtDecoder() {
         String jwkSetUri = keycloakAuthServerUrl + "/realms/" + keycloakRealm + "/protocol/openid-connect/certs";
         return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+    }
+
+    /**
+     * JWT Authentication Converter 配置
+     *
+     * <p>从 Keycloak JWT Token 中提取角色信息</p>
+     * <ul>
+     *   <li>从 realm_access.roles 中提取角色</li>
+     *   <li>自动添加 ROLE_ 前缀以匹配 Spring Security 的角色格式</li>
+     *   <li>支持 @PreAuthorize("hasRole('manage-users')") 等注解</li>
+     * </ul>
+     *
+     * <p>Keycloak JWT Token 格式示例：</p>
+     * <pre>
+     * {
+     *   "realm_access": {
+     *     "roles": ["manage-users", "user"]
+     *   }
+     * }
+     * </pre>
+     *
+     * <p>转换后的 Spring Security Authorities：</p>
+     * <pre>
+     * [ROLE_manage-users, ROLE_user]
+     * </pre>
+     */
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+        // 创建自定义的 Converter，从 Keycloak JWT token 中提取角色
+        Converter<Jwt, Collection<GrantedAuthority>> keycloakAuthoritiesConverter = jwt -> {
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+            
+            // 从 Keycloak 的 realm_access.roles 中提取角色
+            Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
+            if (realmAccess != null) {
+                @SuppressWarnings("unchecked")
+                List<String> roles = (List<String>) realmAccess.get("roles");
+                if (roles != null) {
+                    Collection<GrantedAuthority> keycloakAuthorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
+                    authorities.addAll(keycloakAuthorities);
+                }
+            }
+            
+            // 也可以从 resource_access 中提取客户端特定角色（可选）
+            Map<String, Object> resourceAccess = jwt.getClaimAsMap("resource_access");
+            if (resourceAccess != null) {
+                // 遍历所有客户端
+                for (Map.Entry<String, Object> entry : resourceAccess.entrySet()) {
+                    Object clientAccess = entry.getValue();
+                    if (clientAccess instanceof Map) {
+                        @SuppressWarnings("unchecked")
+                        Map<String, Object> clientMap = (Map<String, Object>) clientAccess;
+                        @SuppressWarnings("unchecked")
+                        List<String> clientRoles = (List<String>) clientMap.get("roles");
+                        if (clientRoles != null) {
+                            Collection<GrantedAuthority> clientAuthorities = clientRoles.stream()
+                                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                                .collect(Collectors.toList());
+                            authorities.addAll(clientAuthorities);
+                        }
+                    }
+                }
+            }
+            
+            return authorities;
+        };
+        
+        // 使用默认的 JwtGrantedAuthoritiesConverter 提取 scope 权限（如果有）
+        JwtGrantedAuthoritiesConverter defaultConverter = new JwtGrantedAuthoritiesConverter();
+        
+        // 创建组合 Converter，先提取 scope，再添加 Keycloak 角色
+        Converter<Jwt, Collection<GrantedAuthority>> combinedConverter = jwt -> {
+            Collection<GrantedAuthority> authorities = new ArrayList<>();
+            
+            // 先添加默认的 scope 权限
+            authorities.addAll(defaultConverter.convert(jwt));
+            
+            // 再添加 Keycloak 角色
+            authorities.addAll(keycloakAuthoritiesConverter.convert(jwt));
+            
+            return authorities;
+        };
+        
+        JwtAuthenticationConverter jwtAuthenticationConverter = 
+            new JwtAuthenticationConverter();
+        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(combinedConverter);
+        
+        return jwtAuthenticationConverter;
     }
 
 }
