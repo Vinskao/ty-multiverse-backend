@@ -60,7 +60,7 @@ mvn clean generate-sources compile spring-boot:run
 **📋 指令說明：**
 - `clean` - 清空舊的編譯結果
 - `generate-sources` - 生成 protobuf gRPC 類別
-- `compile` - 編譯所有源代碼
+- `compile` - 編譯所有源代
 - `spring-boot:run` - 啟動 Spring Boot 應用
 
 #### 快速啟動（日常開發使用）
