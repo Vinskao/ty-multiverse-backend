@@ -91,71 +91,86 @@ public class SecurityConfig {
         }
 
         // 正常安全性配置：基于 AGENTS.md 的端点定义
+        // 注意：requestMatchers 路徑不應包含 context-path（/tymb）
         http.authorizeHttpRequests(auth -> auth
 
                 // ========================================
                 // 公共路径：完全开放，无需任何认证
                 // ========================================
-                .requestMatchers("/tymb/actuator/**").permitAll()           // Spring Boot Actuator
-                .requestMatchers("/tymb/health/**").permitAll()             // 健康检查
-                .requestMatchers("/tymb/swagger-ui/**").permitAll()          // Swagger UI
-                .requestMatchers("/tymb/v3/api-docs/**").permitAll()         // API 文档
-                .requestMatchers("/tymb/webjars/**").permitAll()             // Swagger 静态资源
-                .requestMatchers("/tymb/auth/visitor").permitAll()           // 访客端点
-                .requestMatchers("/tymb/auth/health").permitAll()            // 认证健康检查
-                .requestMatchers("/tymb/keycloak/introspect").permitAll()    // Token 内省
+                .requestMatchers("/actuator/**").permitAll()           // Spring Boot Actuator
+                .requestMatchers("/health/**").permitAll()             // 健康检查
+                .requestMatchers("/swagger-ui/**").permitAll()          // Swagger UI
+                .requestMatchers("/v3/api-docs/**").permitAll()         // API 文档
+                .requestMatchers("/webjars/**").permitAll()             // Swagger 静态资源
+                .requestMatchers("/auth/visitor").permitAll()           // 访客端点
+                .requestMatchers("/auth/health").permitAll()            // 认证健康检查
+                .requestMatchers("/keycloak/**").permitAll()            // Keycloak 所有端点（包含 introspect）
 
                 // ========================================
                 // SELECT 系列：GET 请求，完全开放，无需认证
                 // ========================================
-                .requestMatchers("GET", "/tymb/people/**").permitAll()              // People 查询 - 完全开放
-                .requestMatchers("GET", "/tymb/weapons/**").permitAll()              // Weapon 查询 - 完全开放
-                .requestMatchers("GET", "/tymb/gallery/**").permitAll()              // Gallery 查询 - 完全开放
-                .requestMatchers("GET", "/tymb/api/**").permitAll()                  // Async API 查询 - 完全开放
-                .requestMatchers("GET", "/tymb/people-images/**").permitAll()        // People Images 查询 - 完全开放
-                .requestMatchers("GET", "/tymb/blackjack/**").permitAll()            // Blackjack 查询 - 完全开放
+                .requestMatchers("GET", "/people/**").permitAll()              // People 查询 - 完全开放
+                .requestMatchers("GET", "/weapons/**").permitAll()              // Weapon 查询 - 完全开放
+                .requestMatchers("GET", "/gallery/**").permitAll()              // Gallery 查询 - 完全开放
+                .requestMatchers("GET", "/api/**").permitAll()                  // Async API 查询 - 完全开放
+                .requestMatchers("GET", "/people-images/**").permitAll()        // People Images 查询 - 完全开放
+                .requestMatchers("GET", "/blackjack/**").permitAll()            // Blackjack 查询 - 完全开放
+                .requestMatchers("GET", "/deckofcards/**").permitAll()          // Deckofcards 查询 - 完全开放
+                .requestMatchers("GET", "/ckeditor/**").permitAll()             // CKEditor 查询 - 完全开放
+
+                // ========================================
+                // 特殊查询端点：POST 请求但用于查询，也完全开放
+                // ========================================
+                .requestMatchers("POST", "/people/get-all").permitAll()         // People get-all 查询 - 完全开放
+                .requestMatchers("POST", "/people/get-by-name").permitAll()      // People get-by-name 查询 - 完全开放
+                .requestMatchers("POST", "/people/names").permitAll()            // People names 查询 - 完全开放
+                .requestMatchers("POST", "/gallery/**").permitAll()              // Gallery POST 查询 - 完全开放
 
                 // ========================================
                 // INSERT/UPDATE/DELETE 系列：需要认证用户
                 // ========================================
-                .requestMatchers("POST", "/tymb/people/**").authenticated()          // People 创建/更新
-                .requestMatchers("PUT", "/tymb/people/**").authenticated()           // People 更新
-                .requestMatchers("DELETE", "/tymb/people/**").authenticated()        // People 删除（单个）
+                // People - 特定修改端点需要认证（查询端点已在上方放行）
+                .requestMatchers("POST", "/people/insert").authenticated()       // People 创建
+                .requestMatchers("POST", "/people/insert-multiple").authenticated() // People 批量创建
+                .requestMatchers("POST", "/people/update").authenticated()       // People 更新
+                .requestMatchers("POST", "/people/delete").authenticated()       // People 删除
+                .requestMatchers("PUT", "/people/**").authenticated()           // People PUT 更新
+                .requestMatchers("DELETE", "/people/**").authenticated()        // People DELETE 删除
 
-                .requestMatchers("POST", "/tymb/weapons/**").authenticated()          // Weapon 创建
-                .requestMatchers("PUT", "/tymb/weapons/**").authenticated()           // Weapon 更新
-                .requestMatchers("DELETE", "/tymb/weapons/**").authenticated()        // Weapon 删除（单个）
+                // Weapons - 修改端点需要认证
+                .requestMatchers("POST", "/weapons/**").authenticated()          // Weapon 创建
+                .requestMatchers("PUT", "/weapons/**").authenticated()           // Weapon 更新
+                .requestMatchers("DELETE", "/weapons/**").authenticated()        // Weapon 删除
 
-                .requestMatchers("POST", "/tymb/gallery/**").authenticated()          // Gallery 创建/更新
-                .requestMatchers("PUT", "/tymb/gallery/**").authenticated()           // Gallery 更新
-                .requestMatchers("DELETE", "/tymb/gallery/**").authenticated()        // Gallery 删除（单个）
+                // API - 修改端点需要认证
+                .requestMatchers("POST", "/api/**").authenticated()              // Async API 创建
+                .requestMatchers("PUT", "/api/**").authenticated()               // Async API 更新
+                .requestMatchers("DELETE", "/api/**").authenticated()            // Async API 删除
 
-                .requestMatchers("POST", "/tymb/api/**").authenticated()              // Async API 创建
-                .requestMatchers("PUT", "/tymb/api/**").authenticated()               // Async API 更新
-                .requestMatchers("DELETE", "/tymb/api/**").authenticated()            // Async API 删除
+                // People Images - 修改端点需要认证
+                .requestMatchers("POST", "/people-images/**").authenticated()    // People Images 创建
+                .requestMatchers("PUT", "/people-images/**").authenticated()     // People Images 更新
+                .requestMatchers("DELETE", "/people-images/**").authenticated()  // People Images 删除
 
-                .requestMatchers("POST", "/tymb/people-images/**").authenticated()    // People Images 创建
-                .requestMatchers("PUT", "/tymb/people-images/**").authenticated()     // People Images 更新
-                .requestMatchers("DELETE", "/tymb/people-images/**").authenticated()  // People Images 删除
-
-                .requestMatchers("POST", "/tymb/blackjack/**").authenticated()        // Blackjack 创建
-                .requestMatchers("PUT", "/tymb/blackjack/**").authenticated()         // Blackjack 更新
-                .requestMatchers("DELETE", "/tymb/blackjack/**").authenticated()      // Blackjack 删除
+                // Blackjack - 修改端点需要认证
+                .requestMatchers("POST", "/blackjack/**").authenticated()        // Blackjack 创建
+                .requestMatchers("PUT", "/blackjack/**").authenticated()         // Blackjack 更新
+                .requestMatchers("DELETE", "/blackjack/**").authenticated()      // Blackjack 删除
 
                 // ========================================
                 // 批量删除：仅管理员可访问
                 // ========================================
-                .requestMatchers("DELETE", "/tymb/people/delete-all").hasRole("ADMIN")     // 批量删除 People
-                .requestMatchers("DELETE", "/tymb/weapons/delete-all").hasRole("ADMIN")    // 批量删除 Weapons
-                .requestMatchers("DELETE", "/tymb/gallery/delete-all").hasRole("ADMIN")    // 批量删除 Gallery
+                .requestMatchers("DELETE", "/people/delete-all").hasRole("ADMIN")     // 批量删除 People
+                .requestMatchers("DELETE", "/weapons/delete-all").hasRole("ADMIN")    // 批量删除 Weapons
+                .requestMatchers("DELETE", "/gallery/delete-all").hasRole("ADMIN")    // 批量删除 Gallery
 
                 // ========================================
                 // 认证端点：需要认证用户
                 // ========================================
-                .requestMatchers("/tymb/auth/admin").authenticated()           // Admin 测试端点
-                .requestMatchers("/tymb/auth/user").authenticated()            // User 测试端点
-                .requestMatchers("/tymb/auth/test").authenticated()             // Auth 测试端点
-                .requestMatchers("/tymb/auth/logout-test").authenticated()      // Logout 测试端点
+                .requestMatchers("/auth/admin").authenticated()           // Admin 测试端点
+                .requestMatchers("/auth/user").authenticated()            // User 测试端点
+                .requestMatchers("/auth/test").authenticated()             // Auth 测试端点
+                .requestMatchers("/auth/logout-test").authenticated()      // Logout 测试端点
 
                 // ========================================
                 // 默认规则：所有未匹配的请求都需要认证
