@@ -31,6 +31,34 @@ TY Multiverse Backend is a comprehensive Spring Boot application that serves as 
 ## Build and Test Commands
 
 ### Prerequisites
+
+⚠️ **重要：依賴版本更新**
+
+**必須確保 `ty-multiverse-common` 依賴版本更新到最新版本！**
+
+在 `pom.xml` 中檢查並更新：
+```xml
+<dependency>
+    <groupId>tw.com.ty</groupId>
+    <artifactId>ty-multiverse-common</artifactId>
+    <version>2.2.2</version>  <!-- 請更新到最新版本 -->
+</dependency>
+```
+
+**為什麼重要？**
+- 舊版本可能缺少新的常數（如 `MessageKey.LOGOUT_SUCCESS`）
+- 會導致編譯錯誤：`cannot find symbol`
+- 新功能和修復只在最新版本中可用
+
+**如何檢查最新版本？**
+```bash
+# 檢查 common 模組的當前版本
+cd ../ty-multiverse-common
+cat pom.xml | grep "<version>"
+
+# 或在 GitHub Packages 查看最新發布版本
+```
+
 ```bash
 # Ensure common module is built first
 cd ../ty-multiverse-common
