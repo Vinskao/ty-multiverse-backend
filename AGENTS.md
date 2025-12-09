@@ -262,14 +262,3 @@ KEYCLOAK_REALM=your-realm
 KEYCLOAK_CLIENT_ID=your-client-id
 KEYCLOAK_CLIENT_SECRET=your-secret
 ```
-
-### RabbitMQ Configuration
-**注意：在 `k8s/deployment.yaml` 中，RabbitMQ 已經寫死了 K8s 內部服務名稱**
-
-- **Host**: `rabbitmq-service` (K8s Service name)
-- **Port**: `5672`
-- **Username**: `admin`
-- **Password**: `admin123`
-- **Virtual Host**: `/`
-
-此配置適用於生產環境，使用 K8s 內部服務發現。RabbitMQ 服務會在 `rabbitmq-system` namespace 中運行，backend 和 consumer 都會連接至同一個 RabbitMQ 實例。
