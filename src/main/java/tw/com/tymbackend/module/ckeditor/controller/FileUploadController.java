@@ -20,6 +20,10 @@ import java.util.concurrent.CompletableFuture;
 import java.util.Map;
 import java.util.HashMap;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+
 /**
  * 檔案上傳控制器
  */ 
@@ -41,22 +45,27 @@ public class FileUploadController {
      * @param session HTTP 會話
      * @return 如果使用者已登入則返回 true，否則返回 false
      */
+
     private boolean isUserLoggedIn(HttpSession session, String action, String module){
-        // 檢查 Session 是否存在
-        if (session == null) {
+        // 使用 Spring Security Context 檢查認證狀態
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        
+        if (authentication == null || 
+            !authentication.isAuthenticated() || 
+            authentication instanceof AnonymousAuthenticationToken) {
             return false;
         }
         
-        // 檢查用戶是否已認證
-        Object userAttribute = session.getAttribute("user_authenticated");
-        if (userAttribute == null) {
-            return false;
+        // 記錄用戶活動 (Optional: 如果需要 session 記錄，可以在這裡做，但 JWT 通常是無狀態的)
+        if (session != null) {
+            try {
+                session.setAttribute("last_activity", System.currentTimeMillis());
+                session.setAttribute("last_action", action);
+                session.setAttribute("last_module", module);
+            } catch (Exception e) {
+                // Ignore session errors in stateless mode
+            }
         }
-        
-        // 記錄用戶活動
-        session.setAttribute("last_activity", System.currentTimeMillis());
-        session.setAttribute("last_action", action);
-        session.setAttribute("last_module", module);
         
         return true;
     }
