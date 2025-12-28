@@ -114,7 +114,6 @@ public class SecurityConfig {
                 .requestMatchers("GET", "/gallery/**").permitAll()              // Gallery 查询 - 完全开放
                 .requestMatchers("GET", "/api/**").permitAll()                  // Async API 查询 - 完全开放
                 .requestMatchers("GET", "/people-images/**").permitAll()        // People Images 查询 - 完全开放
-                .requestMatchers("GET", "/blackjack/**").permitAll()            // Blackjack 查询 - 完全开放
                 .requestMatchers("GET", "/deckofcards/**").permitAll()          // Deckofcards 查询 - 完全开放
                 .requestMatchers("GET", "/ckeditor/**").permitAll()             // CKEditor 查询 - 完全开放
 
@@ -152,10 +151,6 @@ public class SecurityConfig {
                 .requestMatchers("PUT", "/people-images/**").authenticated()     // People Images 更新
                 .requestMatchers("DELETE", "/people-images/**").authenticated()  // People Images 删除
 
-                // Blackjack - 修改端点需要认证
-                .requestMatchers("POST", "/blackjack/**").authenticated()        // Blackjack 创建
-                .requestMatchers("PUT", "/blackjack/**").authenticated()         // Blackjack 更新
-                .requestMatchers("DELETE", "/blackjack/**").authenticated()      // Blackjack 删除
 
                 // ========================================
                 // 批量删除：仅管理员可访问

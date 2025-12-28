@@ -382,32 +382,6 @@ public class AsyncMessageService {
         return requestId;
     }
 
-    /**
-     * 發送 Deckofcards 遊戲請求到 RabbitMQ
-     *
-     * @param action 遊戲動作 (start, hit, stand, status, double, split)
-     * @param payload 額外數據
-     * @return 請求ID
-     */
-    public String sendDeckofcardsRequest(String action, Object payload) {
-        String requestId = UUID.randomUUID().toString();
-
-        String endpoint = "/blackjack/" + action;
-        String method = action.equals("status") ? "GET" : "POST";
-
-        AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            endpoint,
-            method,
-            payload
-        );
-
-        sendMessage(RabbitMQConfig.DECKOFCARDS_QUEUE, message);
-
-        logger.info("發送 Deckofcards {} 請求到 RabbitMQ: requestId={}", action, requestId);
-
-        return requestId;
-    }
     
     /**
      * 發送消息到指定隊列
