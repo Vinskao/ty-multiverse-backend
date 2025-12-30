@@ -58,8 +58,8 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            cpu: "25m"      # 降低 CPU 請求
-            memory: "512Mi"  # 請求 512MB 記憶體
+            cpu: "10m"
+            memory: "256Mi"  # 請求 512MB 記憶體
           limits:
             cpu: "50m"      # 降低 CPU 限制
             memory: "1Gi"  # 限制最多 1GB 記憶體
