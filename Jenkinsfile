@@ -15,11 +15,11 @@ pipeline {
                     tty: true
                     resources:
                       requests:
-                        cpu: "100m"
+                        cpu: "25m"
                         memory: "1024Mi"
                       limits:
-                        cpu: "500m"
-                        memory: "2048Mi"
+                        cpu: "100m"
+                        memory: "1024Mi"
                     volumeMounts:
                     - mountPath: /root/.m2
                       name: maven-repo
@@ -33,11 +33,11 @@ pipeline {
                       privileged: true
                     resources:
                       requests:
+                        cpu: "10m"
+                        memory: "256Mi"
+                      limits:
                         cpu: "50m"
                         memory: "512Mi"
-                      limits:
-                        cpu: "200m"
-                        memory: "1024Mi"
                     env:
                     - name: DOCKER_TLS_CERTDIR
                       value: ""
@@ -55,14 +55,23 @@ pipeline {
                       runAsUser: 0
                     resources:
                       requests:
-                        cpu: "25m"
+                        cpu: "10m"
+                        memory: "128Mi"
+                      limits:
+                        cpu: "50m"
+                        memory: "256Mi"
+                    volumeMounts:
+                    - mountPath: /home/jenkins/agent
+                      name: workspace-volume
+                  - name: jnlp
+                    image: jenkins/inbound-agent:3309.v27b_9314fd1a_4-1
+                    resources:
+                      requests:
+                        cpu: "50m"
                         memory: "256Mi"
                       limits:
                         cpu: "100m"
                         memory: "512Mi"
-                    volumeMounts:
-                    - mountPath: /home/jenkins/agent
-                      name: workspace-volume
                   volumes:
                   - name: maven-repo
                     emptyDir: {}
