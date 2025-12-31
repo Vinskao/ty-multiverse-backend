@@ -73,11 +73,8 @@ mvn dependency:tree | grep ty-multiverse-common
 # Clean build
 ./mvnw clean compile
 
-# Generate protobuf sources and compile
-./mvnw clean generate-sources compile
-
 # Full build with tests
-./mvnw clean generate-sources compile test
+./mvnw clean compile test
 
 # Package (creates JAR)
 ./mvnw package -DskipTests
@@ -144,8 +141,7 @@ public class PeopleController {
 src/main/java/tw/com/tymbackend/
 ├── core/           # Core business logic
 ├── module/         # Feature modules
-├── config/         # Configuration classes
-└── grpc/           # gRPC services
+└── config/         # Configuration classes
 ```
 
 ## Testing Instructions
@@ -240,7 +236,6 @@ java -jar target/ty-multiverse-backend.jar \
 ### Troubleshooting
 - **Common Issues**: Check logs for stack traces and error messages
 - **Database Connections**: Verify PostgreSQL connectivity and credentials
-- **gRPC Services**: Ensure protobuf files are properly generated
 - **Memory Issues**: Monitor JVM heap usage in production
 
 ### Environment Variables
