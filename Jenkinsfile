@@ -163,7 +163,7 @@ pipeline {
                                 REDIS_QUEUE_TYMB=${REDIS_QUEUE_TYMB}
                                 # 明确禁用people-datasource
                                 SPRING_PEOPLE_DATASOURCE_ENABLED=false
-                                # RabbitMQ 配置 - Production 環境啟用
+                                # RabbitMQ 配置 - 使用 Jenkins 憑證變數
                                 RABBITMQ_ENABLED=true
                                 RABBITMQ_HOST=${RABBITMQ_HOST}
                                 RABBITMQ_PORT=${RABBITMQ_PORT}
