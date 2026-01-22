@@ -9,8 +9,6 @@ docker compose up -d
 
 ### 只啟動 RabbitMQ
 ```bash
-docker compose up -d rabbitmq
-```
 
 ### 啟動本地 Consumer
 ```bash
