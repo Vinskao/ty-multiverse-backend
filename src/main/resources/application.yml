@@ -51,11 +51,10 @@ spring:
     cache:
       # 通道和連接緩存優化
       channel:
-        size: 10
+        size: 25
         checkout-timeout: 10000
       connection:
-        size: 5
-        mode: connection
+        mode: channel  # 改為 CHANNEL 模式以支援 RabbitAdmin 自動建立 Queue
     listener:
       simple:
         # 由我們自訂的 listenerContainerFactory 接管執行器與並發，這裡維持保守值

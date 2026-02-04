@@ -1,6 +1,7 @@
 package tw.com.tymbackend.core.config;
 
 import org.springframework.amqp.core.*;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -27,17 +28,18 @@ import jakarta.annotation.PostConstruct;
  */
 @Configuration
 @EnableRabbit
-//@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true") // 臨時註釋掉條件進行測試
+// @ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue =
+// "true") // 臨時註釋掉條件進行測試
 public class RabbitMQConfig {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(RabbitMQConfig.class);
-    
+
     @PostConstruct
     public void init() {
         logger.info("=== RabbitMQConfig 已初始化 ===");
         logger.info("RabbitMQ 配置已啟用");
     }
-    
+
     // 隊列名稱定義
     public static final String DAMAGE_CALCULATION_QUEUE = "damage-calculation";
     public static final String PEOPLE_GET_ALL_QUEUE = "people-get-all";
@@ -56,10 +58,10 @@ public class RabbitMQConfig {
     public static final String WEAPON_EXISTS_QUEUE = "weapon-exists";
     public static final String DECKOFCARDS_QUEUE = "deckofcards";
     public static final String ASYNC_RESULT_QUEUE = "async-result";
-    
+
     // 交換機名稱
     public static final String TYMB_EXCHANGE = "tymb-exchange";
-    
+
     /**
      * 創建 RabbitMQ 交換機
      */
@@ -67,10 +69,22 @@ public class RabbitMQConfig {
     public DirectExchange tymbExchange() {
         return new DirectExchange(TYMB_EXCHANGE);
     }
-    
+
+    /**
+     * 創建 RabbitAdmin - 負責自動建立 Queue、Exchange 和 Binding
+     * 這是解決線上環境 Queue 不存在問題的關鍵
+     */
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory connectionFactory) {
+        RabbitAdmin admin = new RabbitAdmin(connectionFactory);
+        admin.setAutoStartup(true);
+        logger.info("✅ RabbitAdmin 已創建，將自動建立所有 Queue、Exchange 和 Binding");
+        return admin;
+    }
+
     // TTL 設定（5分鐘 = 300000毫秒）
     private static final long MESSAGE_TTL = 300000;
-    
+
     /**
      * 創建傷害計算隊列
      */
@@ -80,7 +94,7 @@ public class RabbitMQConfig {
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
-    
+
     /**
      * 創建角色列表獲取隊列
      */
@@ -220,7 +234,7 @@ public class RabbitMQConfig {
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
-    
+
     /**
      * 綁定傷害計算隊列到交換機
      */
@@ -230,7 +244,7 @@ public class RabbitMQConfig {
                 .to(tymbExchange)
                 .with("damage.calculation");
     }
-    
+
     /**
      * 綁定角色列表隊列到交換機
      */
@@ -390,7 +404,7 @@ public class RabbitMQConfig {
                 .to(tymbExchange)
                 .with("deckofcards");
     }
-    
+
     /**
      * 創建異步結果隊列
      */
@@ -400,7 +414,7 @@ public class RabbitMQConfig {
                 .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
                 .build();
     }
-    
+
     /**
      * 綁定異步結果隊列到交換機
      */
@@ -410,7 +424,7 @@ public class RabbitMQConfig {
                 .to(tymbExchange)
                 .with("async.result");
     }
-    
+
     /**
      * 配置 JSON 消息轉換器
      */
@@ -418,7 +432,7 @@ public class RabbitMQConfig {
     public MessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();
     }
-    
+
     /**
      * 配置 RabbitTemplate
      */
