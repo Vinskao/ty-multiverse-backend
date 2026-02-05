@@ -95,9 +95,9 @@ spring:
     username: '@SPRING_DATASOURCE_USERNAME@'
     password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置（降低以避免吃滿 DB 連線）
+      # 連線池大小配置（降低以避免吃滿 Aiven Cloud 的 max_connections=20）
       minimum-idle: 1
-      maximum-pool-size: 5
+      maximum-pool-size: 3  # 降低到 3 以配合 Aiven 限制
 
       # 連線生命週期配置
       idle-timeout: 600000                # 閒置連線超時 (10分鐘)
@@ -133,7 +133,7 @@ spring:
     hikari:
       # 連線池大小配置（已禁用）
       minimum-idle: 1
-      maximum-pool-size: 5
+      maximum-pool-size: 3  # 降低到 3 以配合 Aiven 限制
       
       # 連線生命週期配置
       idle-timeout: 300000                # 閒置連線超時 (5分鐘)
