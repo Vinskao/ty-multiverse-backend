@@ -23,9 +23,10 @@ import java.util.UUID;
  * @since 2024
  */
 @Service
-//@ConditionalOnProperty(name = "async-message-service.enabled", havingValue = "true") // 完全移除條件，讓它總是創建
+// @ConditionalOnProperty(name = "async-message-service.enabled", havingValue =
+// "true") // 完全移除條件，讓它總是創建
 public class AsyncMessageService {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(AsyncMessageService.class);
 
     @Autowired(required = false)
@@ -36,7 +37,7 @@ public class AsyncMessageService {
         logger.info("=== AsyncMessageService 已初始化 ===");
         logger.info("AsyncMessageService Bean 已創建，RabbitMQ 異步處理已啟用");
     }
-    
+
     /**
      * 發送傷害計算請求到 RabbitMQ
      * 
@@ -45,21 +46,20 @@ public class AsyncMessageService {
      */
     public String sendDamageCalculationRequest(String characterName) {
         String requestId = UUID.randomUUID().toString();
-        
+
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/damageWithWeapon",
-            "GET",
-            characterName
-        );
-        
+                requestId,
+                "/tymb/people/damageWithWeapon",
+                "GET",
+                characterName);
+
         sendMessage(RabbitMQConfig.DAMAGE_CALCULATION_QUEUE, message);
-        
+
         logger.info("發送傷害計算請求到 RabbitMQ: characterName={}, requestId={}", characterName, requestId);
-        
+
         return requestId;
     }
-    
+
     /**
      * 發送角色列表獲取請求到 RabbitMQ
      *
@@ -69,15 +69,36 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/get-all",
-            "POST",
-            null
-        );
+                requestId,
+                "/tymb/people/get-all",
+                "POST",
+                null);
 
         sendMessage(RabbitMQConfig.PEOPLE_GET_ALL_QUEUE, message);
 
         logger.info("發送角色列表獲取請求到 RabbitMQ: requestId={}", requestId);
+
+        return requestId;
+    }
+
+    /**
+     * 發送角色批量傷害計算請求到 RabbitMQ
+     *
+     * @param names 角色名稱列表
+     * @return 請求ID
+     */
+    public String sendPeopleBatchDamageRequest(List<String> names) {
+        String requestId = UUID.randomUUID().toString();
+
+        AsyncMessageDTO message = new AsyncMessageDTO(
+                requestId,
+                "/tymb/people/batchDamageWithWeapon",
+                "POST",
+                names);
+
+        sendMessage(RabbitMQConfig.PEOPLE_BATCH_DAMAGE_QUEUE, message);
+
+        logger.info("發送角色批量傷害計算請求到 RabbitMQ: count={}, requestId={}", names.size(), requestId);
 
         return requestId;
     }
@@ -92,11 +113,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/get-by-name",
-            "POST",
-            name
-        );
+                requestId,
+                "/tymb/people/get-by-name",
+                "POST",
+                name);
 
         sendMessage(RabbitMQConfig.PEOPLE_GET_BY_NAME_QUEUE, message);
 
@@ -123,11 +143,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/names",
-            "GET",
-            null
-        );
+                requestId,
+                "/tymb/people/names",
+                "GET",
+                null);
 
         sendMessage(RabbitMQConfig.PEOPLE_GET_NAMES_QUEUE, message);
 
@@ -146,11 +165,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/insert",
-            "POST",
-            people
-        );
+                requestId,
+                "/tymb/people/insert",
+                "POST",
+                people);
 
         sendMessage(RabbitMQConfig.PEOPLE_INSERT_QUEUE, message);
 
@@ -169,11 +187,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/update",
-            "POST",
-            people
-        );
+                requestId,
+                "/tymb/people/update",
+                "POST",
+                people);
 
         sendMessage(RabbitMQConfig.PEOPLE_UPDATE_QUEUE, message);
 
@@ -192,16 +209,15 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/insert-multiple",
-            "POST",
-            peopleList
-        );
+                requestId,
+                "/tymb/people/insert-multiple",
+                "POST",
+                peopleList);
 
         sendMessage(RabbitMQConfig.PEOPLE_INSERT_MULTIPLE_QUEUE, message);
 
-        logger.info("發送批量新增角色請求到 RabbitMQ: requestId={}, count={}", requestId, 
-            peopleList instanceof List ? ((List<?>) peopleList).size() : "unknown");
+        logger.info("發送批量新增角色請求到 RabbitMQ: requestId={}, count={}", requestId,
+                peopleList instanceof List ? ((List<?>) peopleList).size() : "unknown");
 
         return requestId;
     }
@@ -210,11 +226,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/people/delete-all",
-            "POST",
-            null
-        );
+                requestId,
+                "/tymb/people/delete-all",
+                "POST",
+                null);
 
         sendMessage(RabbitMQConfig.PEOPLE_DELETE_ALL_QUEUE, message);
 
@@ -232,11 +247,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons",
-            "GET",
-            null
-        );
+                requestId,
+                "/tymb/weapons",
+                "GET",
+                null);
 
         sendMessage(RabbitMQConfig.WEAPON_GET_ALL_QUEUE, message);
 
@@ -255,11 +269,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons/" + name,
-            "GET",
-            name
-        );
+                requestId,
+                "/tymb/weapons/" + name,
+                "GET",
+                name);
 
         sendMessage(RabbitMQConfig.WEAPON_GET_BY_NAME_QUEUE, message);
 
@@ -278,11 +291,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons/owner/" + owner,
-            "GET",
-            owner
-        );
+                requestId,
+                "/tymb/weapons/owner/" + owner,
+                "GET",
+                owner);
 
         sendMessage(RabbitMQConfig.WEAPON_GET_BY_OWNER_QUEUE, message);
 
@@ -301,11 +313,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons",
-            "POST",
-            weapon
-        );
+                requestId,
+                "/tymb/weapons",
+                "POST",
+                weapon);
 
         sendMessage(RabbitMQConfig.WEAPON_SAVE_QUEUE, message);
 
@@ -324,11 +335,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons/" + name,
-            "DELETE",
-            name
-        );
+                requestId,
+                "/tymb/weapons/" + name,
+                "DELETE",
+                name);
 
         sendMessage(RabbitMQConfig.WEAPON_DELETE_QUEUE, message);
 
@@ -346,11 +356,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons/delete-all",
-            "DELETE",
-            null
-        );
+                requestId,
+                "/tymb/weapons/delete-all",
+                "DELETE",
+                null);
 
         sendMessage(RabbitMQConfig.WEAPON_DELETE_ALL_QUEUE, message);
 
@@ -369,11 +378,10 @@ public class AsyncMessageService {
         String requestId = UUID.randomUUID().toString();
 
         AsyncMessageDTO message = new AsyncMessageDTO(
-            requestId,
-            "/tymb/weapons/exists/" + name,
-            "GET",
-            name
-        );
+                requestId,
+                "/tymb/weapons/exists/" + name,
+                "GET",
+                name);
 
         sendMessage(RabbitMQConfig.WEAPON_EXISTS_QUEUE, message);
 
@@ -382,27 +390,26 @@ public class AsyncMessageService {
         return requestId;
     }
 
-    
     /**
      * 發送消息到指定隊列
      * 
      * @param queueName 隊列名稱
-     * @param message 消息內容
+     * @param message   消息內容
      */
     private void sendMessage(String queueName, AsyncMessageDTO message) {
         try {
             // 直接發送對象，RabbitTemplate 的 Jackson2JsonMessageConverter 會自動序列化
             rabbitTemplate.convertAndSend(RabbitMQConfig.TYMB_EXCHANGE, getRoutingKey(queueName), message);
-            
-            logger.debug("消息已發送到隊列 {}: requestId={}, endpoint={}", 
-                queueName, message.getRequestId(), message.getEndpoint());
-            
+
+            logger.debug("消息已發送到隊列 {}: requestId={}, endpoint={}",
+                    queueName, message.getRequestId(), message.getEndpoint());
+
         } catch (Exception e) {
             logger.error("發送消息到 RabbitMQ 失敗: {}", e.getMessage(), e);
             throw new RuntimeException("消息發送失敗", e);
         }
     }
-    
+
     /**
      * 根據隊列名稱獲取路由鍵
      *
@@ -442,6 +449,8 @@ public class AsyncMessageService {
                 return "weapon.delete.all";
             case RabbitMQConfig.WEAPON_EXISTS_QUEUE:
                 return "weapon.exists";
+            case RabbitMQConfig.PEOPLE_BATCH_DAMAGE_QUEUE:
+                return "people.batch.damage";
             case RabbitMQConfig.DECKOFCARDS_QUEUE:
                 return "deckofcards";
             default:

@@ -57,10 +57,21 @@ public class RabbitMQConfig {
     public static final String WEAPON_DELETE_ALL_QUEUE = "weapon-delete-all";
     public static final String WEAPON_EXISTS_QUEUE = "weapon-exists";
     public static final String DECKOFCARDS_QUEUE = "deckofcards";
+    public static final String PEOPLE_BATCH_DAMAGE_QUEUE = "people-batch-damage";
     public static final String ASYNC_RESULT_QUEUE = "async-result";
 
     // 交換機名稱
     public static final String TYMB_EXCHANGE = "tymb-exchange";
+
+    /**
+     * 創建角色批量傷害計算隊列
+     */
+    @Bean
+    public Queue peopleBatchDamageQueue() {
+        return QueueBuilder.durable(PEOPLE_BATCH_DAMAGE_QUEUE)
+                .withArgument("x-message-ttl", MESSAGE_TTL) // 5分鐘 TTL
+                .build();
+    }
 
     /**
      * 創建 RabbitMQ 交換機
@@ -423,6 +434,16 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(asyncResultQueue)
                 .to(tymbExchange)
                 .with("async.result");
+    }
+
+    /**
+     * 綁定角色批量傷害隊列到交換機
+     */
+    @Bean
+    public Binding peopleBatchDamageBinding(Queue peopleBatchDamageQueue, DirectExchange tymbExchange) {
+        return BindingBuilder.bind(peopleBatchDamageQueue)
+                .to(tymbExchange)
+                .with("people.batch.damage");
     }
 
     /**
