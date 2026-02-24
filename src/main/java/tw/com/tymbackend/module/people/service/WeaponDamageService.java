@@ -34,7 +34,7 @@ public class WeaponDamageService {
      * @param peopleService 角色服務
      */
     public WeaponDamageService(WeaponService weaponService, PeopleService peopleService,
-                               tw.com.tymbackend.module.people.service.strategy.DamageStrategy damageStrategy) {
+            tw.com.tymbackend.module.people.service.strategy.DamageStrategy damageStrategy) {
         this.weaponService = weaponService;
         this.peopleService = peopleService;
         this.damageStrategy = damageStrategy;
@@ -72,33 +72,42 @@ public class WeaponDamageService {
         }
 
         List<String> names = request.getNames();
-        
+
         // 批量查詢所有角色，避免N+1問題
         List<People> people = peopleService.findByNames(names);
         Map<String, People> peopleMap = people.stream()
                 .collect(Collectors.toMap(People::getName, p -> p));
-        
+
         // 批量查詢所有武器，避免N+1問題
         List<Weapon> allWeapons = weaponService.getWeaponsByOwners(names);
         Map<String, List<Weapon>> weaponsMap = allWeapons.stream()
                 .collect(Collectors.groupingBy(Weapon::getOwner));
-        
+
         Map<String, Integer> damageResults = new HashMap<>();
         List<String> notFoundNames = new ArrayList<>();
-        
+
         for (String name : names) {
             People person = peopleMap.get(name);
             if (person == null) {
                 notFoundNames.add(name);
                 continue;
             }
-            
+
             List<Weapon> weapons = weaponsMap.getOrDefault(name, new ArrayList<>());
             int damage = damageStrategy.calculateDamage(person, weapons);
             damageResults.put(name, damage);
         }
-        
-        return new BatchDamageResponseDTO(damageResults, notFoundNames);
+
+        Map<String, Integer> sortedDamageResults = damageResults.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        java.util.LinkedHashMap::new));
+
+        return new BatchDamageResponseDTO(sortedDamageResults, notFoundNames);
     }
 
     /**
@@ -110,4 +119,4 @@ public class WeaponDamageService {
     private int safeInt(Integer value) {
         return value == null ? 0 : value;
     }
-} 
+}
