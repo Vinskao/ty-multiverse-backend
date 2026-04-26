@@ -1,18 +1,22 @@
-# RabbitMQ 本地環境
+# 本地基礎設施環境 (MQ + Redis)
 
 ## 🚀 快速啟動
 
-### 啟動完整環境（RabbitMQ + Consumer）
+### 啟動完整環境（RabbitMQ + Consumer + Redis）
 ```bash
 docker compose up -d
 ```
 
-### 只啟動 RabbitMQ
+### 啟動特定服務
 ```bash
+# 只啟動 RabbitMQ
+docker compose up -d rabbitmq
 
-### 啟動本地 Consumer
-```bash
-docker compose up -d rabbitmq-consumer-local
+# 只啟動 Redis
+docker compose up -d redis
+
+# 啟動本地 Consumer
+docker compose up -d rabbitmq-consumer
 ```
 
 ## 📊 服務狀態
@@ -27,26 +31,33 @@ docker compose ps
 # RabbitMQ 日誌
 docker compose logs rabbitmq
 
+# Redis 日誌
+docker compose logs redis
+
 # 本地 Consumer 日誌
-docker compose logs rabbitmq-consumer-local
+docker compose logs rabbitmq-consumer
 
 # 所有服務日誌
 docker compose logs -f
 ```
 
-## 🌐 訪問地址
+## 🌐 訪問地址與連接信息
 
 ### RabbitMQ 管理界面
 - **URL**: http://localhost:15672
 - **用戶名**: admin
 - **密碼**: admin123
 
-### 連接信息
+### RabbitMQ (MQ連線)
 - **主機**: localhost
 - **端口**: 5672
 - **用戶名**: admin
 - **密碼**: admin123
 - **虛擬主機**: /
+
+### Redis
+- **主機**: localhost
+- **端口**: 6379
 
 ## 🛑 停止服務
 
@@ -76,16 +87,16 @@ curl http://localhost:8080/tymb/actuator/health
 ## 📋 服務說明
 
 ### rabbitmq
-- **用途**: 消息隊列服務
-- **端口**: 5672 (AMQP), 15672 (管理界面)
+- **Image**: rabbitmq:4.1-management
+- **用途**: 作為 Message Queue 並且帶有 Management UI 介面。
+- **端口**: 5672 (MQ 連線), 15672 (管理介面)
 - **健康檢查**: 自動檢測服務狀態
 
-### rabbitmq-consumer-local
-- **用途**: 本地開發環境 Consumer
-- **Profile**: local
-- **依賴**: 等待 RabbitMQ 健康檢查通過後啟動
-
 ### rabbitmq-consumer
-- **用途**: 生產環境 Consumer
-- **Profile**: k8s
-- **副本數**: 3
+- **Image**: eclipse-temurin:17-jre
+- **用途**: 模擬或執行消費者程式 (consumer-app)，會等待 RabbitMQ 就緒後連線。
+
+### redis
+- **Image**: redis:7
+- **用途**: 作為快取與限流等機制的記憶體資料庫。
+- **端口**: 6379

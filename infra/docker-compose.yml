@@ -13,7 +13,7 @@ services:
       - rabbitmq-data:/var/lib/rabbitmq
     restart: unless-stopped
     networks:
-      - rabbitmq-network
+      - infra-network
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 30s
@@ -41,11 +41,23 @@ services:
       - ./consumer-app:/app
     restart: unless-stopped
     networks:
-      - rabbitmq-network
+      - infra-network
+
+  redis:
+    image: redis:7
+    container_name: dev-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - infra-network
 
 volumes:
   rabbitmq-data:
+  redis-data:
 
 networks:
-  rabbitmq-network:
+  infra-network:
     driver: bridge
