@@ -174,6 +174,8 @@ public class SecurityConfig {
                 // ========================================
                 // 默认规则：所有未匹配的请求都需要认证
                 // ========================================
+                .requestMatchers("GET", "/ai-usage/**").permitAll() // AI usage dashboard summary
+                .requestMatchers("POST", "/ai-usage").permitAll() // Protected by AI usage ingest token
                 .anyRequest().authenticated())
 
                 // OAuth2 Resource Server：JWT Token 验证

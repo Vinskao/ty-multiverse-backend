@@ -5,10 +5,12 @@ import java.time.YearMonth;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,14 +27,25 @@ import tw.com.tymbackend.module.ai_usage.service.AiTokenUsageService;
 public class AiTokenUsageController {
 
     private final AiTokenUsageService service;
+    private final String ingestToken;
 
-    public AiTokenUsageController(AiTokenUsageService service) {
+    public AiTokenUsageController(
+            AiTokenUsageService service,
+            @Value("${ai-usage.ingest-token:}") String ingestToken) {
         this.service = service;
+        this.ingestToken = ingestToken;
     }
 
     @PostMapping
     public ResponseEntity<BackendApiResponse<AiTokenUsage>> create(
+            @RequestHeader(value = "X-AI-Usage-Token", required = false) String usageToken,
+            @RequestHeader(value = "Authorization", required = false) String authorization,
             @RequestBody @Valid AiTokenUsageCreateDTO dto) {
+        if (!isAuthorizedIngest(usageToken, authorization)) {
+            return ResponseEntity.status(401)
+                .body(BackendApiResponse.unauthorized("Unauthorized AI usage ingest"));
+        }
+
         try {
             AiTokenUsage saved = service.createRecord(dto);
             return ResponseEntity.status(201)
@@ -41,6 +54,21 @@ public class AiTokenUsageController {
             return ResponseEntity.status(500)
                 .body(BackendApiResponse.internalError("儲存 token 用量失敗", e.getMessage()));
         }
+    }
+
+    private boolean isAuthorizedIngest(String usageToken, String authorization) {
+        if (ingestToken == null || ingestToken.isBlank()) {
+            return false;
+        }
+
+        if (ingestToken.equals(usageToken)) {
+            return true;
+        }
+
+        String bearerPrefix = "Bearer ";
+        return authorization != null
+            && authorization.startsWith(bearerPrefix)
+            && ingestToken.equals(authorization.substring(bearerPrefix.length()));
     }
 
     @GetMapping("/daily")

@@ -7,6 +7,9 @@ security:
   # WARNING: 生產環境必須設為 false
   disable-all: ${SECURITY_DISABLE_ALL:false}
 
+ai-usage:
+  ingest-token: ${AI_USAGE_INGEST_TOKEN:}
+
 spring:
   threads:
     virtual:

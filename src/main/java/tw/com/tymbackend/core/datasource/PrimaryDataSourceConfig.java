@@ -43,6 +43,7 @@ public class PrimaryDataSourceConfig {
         em.setDataSource(primaryDataSource());
         em.setPackagesToScan(
             "tw.com.tymbackend.module.ckeditor.domain.vo",
+            "tw.com.tymbackend.module.ai_usage.domain.vo",
             "tw.com.tymbackend.module.gallery.domain.vo",
             "tw.com.tymbackend.module.people.domain.vo",
             "tw.com.tymbackend.module.weapon.domain.vo"

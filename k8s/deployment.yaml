@@ -17,6 +17,7 @@ stringData:
   KEYCLOAK_CREDENTIALS_SECRET: "${KEYCLOAK_CREDENTIALS_SECRET}"
   PUBLIC_TYMB_URL: "${PUBLIC_TYMB_URL}"
   PUBLIC_FRONTEND_URL: "${PUBLIC_FRONTEND_URL}"
+  AI_USAGE_INGEST_TOKEN: "${AI_USAGE_INGEST_TOKEN}"
 ---
 
 apiVersion: v1
@@ -141,6 +142,11 @@ spec:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
               key: PUBLIC_FRONTEND_URL
+        - name: AI_USAGE_INGEST_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: ty-multiverse-backend-secrets
+              key: AI_USAGE_INGEST_TOKEN
         - name: PROJECT_ENV
           valueFrom:
             configMapKeyRef:

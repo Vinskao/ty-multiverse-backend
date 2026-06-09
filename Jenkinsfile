@@ -121,6 +121,7 @@ pipeline {
                             string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
                             string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
                             string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
+                            string(credentialsId: 'AI_USAGE_INGEST_TOKEN', variable: 'AI_USAGE_INGEST_TOKEN'),
                             string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
                             string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
                             string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
@@ -153,6 +154,7 @@ pipeline {
                                 logging.level.org.springframework=DEBUG
                                 PUBLIC_TYMB_URL=${PUBLIC_TYMB_URL}
                                 PUBLIC_FRONTEND_URL=${PUBLIC_FRONTEND_URL}
+                                AI_USAGE_INGEST_TOKEN=${AI_USAGE_INGEST_TOKEN}
                                 KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}
                                 PUBLIC_REALM=${PUBLIC_REALM}
                                 PUBLIC_CLIENT_ID=${PUBLIC_CLIENT_ID}
@@ -351,6 +353,7 @@ EOF
                         string(credentialsId: 'REDIS_QUEUE_TYMB', variable: 'REDIS_QUEUE_TYMB'),
                         string(credentialsId: 'PUBLIC_TYMB_URL', variable: 'PUBLIC_TYMB_URL'),
                         string(credentialsId: 'PUBLIC_FRONTEND_URL', variable: 'PUBLIC_FRONTEND_URL'),
+                        string(credentialsId: 'AI_USAGE_INGEST_TOKEN', variable: 'AI_USAGE_INGEST_TOKEN'),
                         string(credentialsId: 'KEYCLOAK_AUTH_SERVER_URL', variable: 'KEYCLOAK_AUTH_SERVER_URL'),
                         string(credentialsId: 'PUBLIC_REALM', variable: 'PUBLIC_REALM'),
                         string(credentialsId: 'PUBLIC_CLIENT_ID', variable: 'PUBLIC_CLIENT_ID'),
