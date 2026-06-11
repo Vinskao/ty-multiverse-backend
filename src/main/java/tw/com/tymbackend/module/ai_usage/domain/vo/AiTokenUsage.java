@@ -34,6 +34,9 @@ public class AiTokenUsage {
     @Column(name = "user_id", length = 128)
     private String userId;
 
+    @Column(name = "source_device", length = 128)
+    private String sourceDevice;
+
     @Column(name = "ai_provider", nullable = false, length = 32)
     private String aiProvider;
 

@@ -18,6 +18,8 @@ granularity = 'daily_aggregate'，DB 有 unique index 防止重複寫入。
 import argparse
 import json
 import os
+import platform
+import shutil
 import subprocess
 import sys
 from datetime import datetime, timezone
@@ -45,6 +47,7 @@ load_local_env()
 TYMB_URL = os.getenv("TYMB_URL", "http://localhost:8080/tymb")
 INGEST_TOKEN = os.getenv("AI_USAGE_INGEST_TOKEN", "")
 AI_USAGE_ENDPOINT = f"{TYMB_URL}/ai-usage"
+SOURCE_DEVICE = os.getenv("AI_USAGE_SOURCE_DEVICE") or platform.node() or "unknown"
 
 # model 名稱前綴 → aiProvider
 def infer_provider(model_name: str) -> str:
@@ -91,8 +94,11 @@ def post_usage(payload: dict, dry_run: bool) -> int:
 def run_ccusage() -> list:
     """執行 ccusage daily --json，回傳 daily 陣列。"""
     try:
+        ccusage_bin = shutil.which("ccusage") or shutil.which("ccusage.cmd")
+        if not ccusage_bin:
+            raise FileNotFoundError()
         result = subprocess.run(
-            ["ccusage", "daily", "--json"],
+            [ccusage_bin, "daily", "--json"],
             capture_output=True, text=True, timeout=30
         )
         if result.returncode != 0:
@@ -131,6 +137,7 @@ def sync(since: Optional[datetime], dry_run: bool):
 
             total += 1
             payload = {
+                "sourceDevice": SOURCE_DEVICE,
                 "aiProvider": infer_provider(model_name),
                 "modelName": model_name,
                 "inputTokens": breakdown.get("inputTokens", 0),

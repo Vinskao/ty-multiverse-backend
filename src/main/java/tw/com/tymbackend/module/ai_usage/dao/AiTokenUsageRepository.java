@@ -15,10 +15,11 @@ import tw.com.tymbackend.module.ai_usage.domain.vo.AiTokenUsage;
 @Repository
 public interface AiTokenUsageRepository extends JpaRepository<AiTokenUsage, Long> {
 
-    Optional<AiTokenUsage> findFirstByAiProviderAndModelNameAndGranularityAndCalledAtGreaterThanEqualAndCalledAtLessThan(
+    Optional<AiTokenUsage> findFirstByAiProviderAndModelNameAndGranularityAndSourceDeviceAndCalledAtGreaterThanEqualAndCalledAtLessThan(
         String aiProvider,
         String modelName,
         String granularity,
+        String sourceDevice,
         OffsetDateTime from,
         OffsetDateTime to
     );

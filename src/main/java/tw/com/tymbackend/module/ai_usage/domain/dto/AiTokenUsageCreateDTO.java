@@ -15,6 +15,7 @@ public class AiTokenUsageCreateDTO {
 
     private String sessionId;
     private String userId;
+    private String sourceDevice;
 
     @NotBlank
     private String aiProvider;

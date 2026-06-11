@@ -41,10 +41,7 @@ public class LocalCcusageStartupSync {
 
         logger.info("Starting local ccusage sync");
         try {
-            Process process = new ProcessBuilder("python3", script.toString())
-                .directory(projectDir.toFile())
-                .redirectErrorStream(true)
-                .start();
+            Process process = startPythonProcess(projectDir, script);
 
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(process.getInputStream()))) {
@@ -60,6 +57,20 @@ public class LocalCcusageStartupSync {
         } catch (Exception e) {
             logger.warn("Local ccusage sync failed: {}", e.getMessage());
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private Process startPythonProcess(Path projectDir, Path script) throws java.io.IOException {
+        try {
+            return new ProcessBuilder("python3", script.toString())
+                .directory(projectDir.toFile())
+                .redirectErrorStream(true)
+                .start();
+        } catch (java.io.IOException e) {
+            return new ProcessBuilder("python", script.toString())
+                .directory(projectDir.toFile())
+                .redirectErrorStream(true)
+                .start();
         }
     }
 }

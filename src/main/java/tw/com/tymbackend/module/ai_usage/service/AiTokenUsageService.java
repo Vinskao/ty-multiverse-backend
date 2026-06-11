@@ -49,6 +49,7 @@ public class AiTokenUsageService {
         AiTokenUsage entity = findExistingDailyAggregate(dto, granularity, calledAt);
         entity.setSessionId(dto.getSessionId());
         entity.setUserId(dto.getUserId());
+        entity.setSourceDevice(normalizeSourceDevice(dto.getSourceDevice()));
         entity.setAiProvider(dto.getAiProvider());
         entity.setModelName(dto.getModelName());
         entity.setInputTokens(dto.getInputTokens() != null ? dto.getInputTokens() : 0);
@@ -66,6 +67,10 @@ public class AiTokenUsageService {
         return repository.save(entity);
     }
 
+    private String normalizeSourceDevice(String sourceDevice) {
+        return sourceDevice == null || sourceDevice.isBlank() ? "unknown" : sourceDevice.trim();
+    }
+
     private AiTokenUsage findExistingDailyAggregate(
             AiTokenUsageCreateDTO dto,
             String granularity,
@@ -76,10 +81,11 @@ public class AiTokenUsageService {
 
         OffsetDateTime dayStart = calledAt.toLocalDate().atStartOfDay().atOffset(ZoneOffset.UTC);
         return repository
-            .findFirstByAiProviderAndModelNameAndGranularityAndCalledAtGreaterThanEqualAndCalledAtLessThan(
+            .findFirstByAiProviderAndModelNameAndGranularityAndSourceDeviceAndCalledAtGreaterThanEqualAndCalledAtLessThan(
                 dto.getAiProvider(),
                 dto.getModelName(),
                 granularity,
+                normalizeSourceDevice(dto.getSourceDevice()),
                 dayStart,
                 dayStart.plusDays(1)
             )
@@ -108,25 +114,21 @@ public class AiTokenUsageService {
         LocalDate thisMonthStart = today.withDayOfMonth(1);
         LocalDate lastMonthStart = thisMonthStart.minusMonths(1);
         LocalDate thisYearStart = today.withDayOfYear(1);
-        LocalDate lastYearStart = thisYearStart.minusYears(1);
-        LocalDate lastYearMatchedEnd = lastYearStart.plusDays(
-            ChronoUnit.DAYS.between(thisYearStart, tomorrow)
-        );
 
         long thisMonth = sumTokens(thisMonthStart, tomorrow, zone);
         long lastMonth = sumTokens(lastMonthStart, thisMonthStart, zone);
         long thisYear = sumTokens(thisYearStart, tomorrow, zone);
-        long previousMonthMatched = sumTokens(
-            lastMonthStart,
-            lastMonthStart.plusDays(Math.min(today.getDayOfMonth(), lastMonthStart.lengthOfMonth())),
-            zone
-        );
-        long previousYearMatched = sumTokens(lastYearStart, lastYearMatchedEnd, zone);
+        long trailing7Days = trailingTokens(tomorrow, 7, zone);
+        long previous7Days = previousTrailingTokens(tomorrow, 7, zone);
+        long trailing30Days = trailingTokens(tomorrow, 30, zone);
+        long previous30Days = previousTrailingTokens(tomorrow, 30, zone);
+        long trailing365Days = trailingTokens(tomorrow, 365, zone);
+        long previous365Days = previousTrailingTokens(tomorrow, 365, zone);
 
         OffsetDateTime firstCalledAt = repository.findFirstCalledAt();
         if (firstCalledAt == null) {
             return new AiTokenUsageOverviewDTO(
-                0L, 0L, 0L, 0L, 0L, 0L, 0L, null, null, null, zone.getId()
+                0L, 0L, 0L, 0L, 0L, 0L, 0L, null, null, null, null, zone.getId()
             );
         }
 
@@ -147,11 +149,21 @@ public class AiTokenUsageService {
             Math.round((double) observableTotal / observedDays),
             Math.round((double) observableTotal / observedMonths),
             Math.round((double) observableTotal / observedYears),
-            growthPercent(thisMonth, previousMonthMatched),
-            growthPercent(thisYear, previousYearMatched),
+            growthPercent(trailing7Days, previous7Days),
+            growthPercent(trailing30Days, previous30Days),
+            growthPercent(trailing365Days, previous365Days),
             dataSince,
             zone.getId()
         );
+    }
+
+    private long trailingTokens(LocalDate endExclusive, int days, ZoneId zone) {
+        return sumTokens(endExclusive.minusDays(days), endExclusive, zone);
+    }
+
+    private long previousTrailingTokens(LocalDate endExclusive, int days, ZoneId zone) {
+        LocalDate previousEnd = endExclusive.minusDays(days);
+        return sumTokens(previousEnd.minusDays(days), previousEnd, zone);
     }
 
     private long sumTokens(LocalDate from, LocalDate toExclusive, ZoneId zone) {

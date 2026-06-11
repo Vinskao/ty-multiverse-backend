@@ -18,6 +18,7 @@ public class AiTokenUsageOverviewDTO {
     private Long dailyAverage;
     private Long monthlyAverage;
     private Long yearlyAverage;
+    private Double wowPercent;
     private Double momPercent;
     private Double yoyPercent;
     private LocalDate dataSince;
