@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import tw.com.ty.common.response.BackendApiResponse;
 import tw.com.tymbackend.module.ai_usage.domain.dto.AiTokenUsageCreateDTO;
+import tw.com.tymbackend.module.ai_usage.domain.dto.AiTokenUsageOverviewDTO;
 import tw.com.tymbackend.module.ai_usage.domain.dto.AiTokenUsageSummaryDTO;
 import tw.com.tymbackend.module.ai_usage.domain.vo.AiTokenUsage;
 import tw.com.tymbackend.module.ai_usage.service.AiTokenUsageService;
@@ -50,6 +52,9 @@ public class AiTokenUsageController {
             AiTokenUsage saved = service.createRecord(dto);
             return ResponseEntity.status(201)
                 .body(BackendApiResponse.created(saved));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(409)
+                .body(BackendApiResponse.error(409, "AI usage record already exists"));
         } catch (Exception e) {
             return ResponseEntity.status(500)
                 .body(BackendApiResponse.internalError("儲存 token 用量失敗", e.getMessage()));
@@ -95,5 +100,12 @@ public class AiTokenUsageController {
         List<AiTokenUsageSummaryDTO> thisMonth = service.getMonthlySummary(YearMonth.now(), YearMonth.now());
         Map<String, Object> result = Map.of("today", today, "thisMonth", thisMonth);
         return ResponseEntity.ok(BackendApiResponse.success("統計摘要", result));
+    }
+
+    @GetMapping("/overview")
+    public ResponseEntity<BackendApiResponse<AiTokenUsageOverviewDTO>> overview(
+            @RequestParam(defaultValue = "Asia/Taipei") String timezone) {
+        return ResponseEntity.ok(
+            BackendApiResponse.success("用量總覽", service.getOverview(timezone)));
     }
 }

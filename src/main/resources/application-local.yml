@@ -1,6 +1,10 @@
 project:
   env: '@project.env@'
 
+ai-usage:
+  local-startup-sync:
+    enabled: true
+
 app:
   url:
     address: 'http://localhost:8080'

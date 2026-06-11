@@ -2,6 +2,7 @@ package tw.com.tymbackend.module.ai_usage.dao;
 
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,6 +14,31 @@ import tw.com.tymbackend.module.ai_usage.domain.vo.AiTokenUsage;
 
 @Repository
 public interface AiTokenUsageRepository extends JpaRepository<AiTokenUsage, Long> {
+
+    Optional<AiTokenUsage> findFirstByAiProviderAndModelNameAndGranularityAndCalledAtGreaterThanEqualAndCalledAtLessThan(
+        String aiProvider,
+        String modelName,
+        String granularity,
+        OffsetDateTime from,
+        OffsetDateTime to
+    );
+
+    @Query("""
+        SELECT COALESCE(SUM(
+            CAST(u.inputTokens AS long) + CAST(u.outputTokens AS long)
+            + CAST(COALESCE(u.cacheCreationInputTokens, 0) AS long)
+            + CAST(COALESCE(u.cacheReadInputTokens, 0) AS long)
+        ), 0)
+        FROM AiTokenUsage u
+        WHERE u.calledAt >= :from AND u.calledAt < :to
+        """)
+    Long sumTotalTokens(
+        @Param("from") OffsetDateTime from,
+        @Param("to") OffsetDateTime to
+    );
+
+    @Query("SELECT MIN(u.calledAt) FROM AiTokenUsage u")
+    OffsetDateTime findFirstCalledAt();
 
     @Query("""
         SELECT new tw.com.tymbackend.module.ai_usage.domain.dto.AiTokenUsageSummaryDTO(

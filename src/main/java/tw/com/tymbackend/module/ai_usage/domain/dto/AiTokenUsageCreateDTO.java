@@ -34,4 +34,6 @@ public class AiTokenUsageCreateDTO {
     private String requestId;
     private String endpoint;
     private String status;
+    private String granularity;
+    private String calledAt;
 }

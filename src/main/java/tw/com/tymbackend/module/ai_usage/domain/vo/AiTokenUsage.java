@@ -70,6 +70,9 @@ public class AiTokenUsage {
     @Column(name = "status", nullable = false, length = 16)
     private String status = "success";
 
+    @Column(name = "granularity", nullable = false, length = 16)
+    private String granularity = "per_call";
+
     @Version
     @Column(name = "version")
     private Long version;
