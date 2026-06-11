@@ -48,6 +48,8 @@ public interface AiTokenUsageRepository extends JpaRepository<AiTokenUsage, Long
             u.modelName,
             SUM(CAST(u.inputTokens AS long)),
             SUM(CAST(u.outputTokens AS long)),
+            SUM(CAST(COALESCE(u.cacheCreationInputTokens, 0) AS long)),
+            SUM(CAST(COALESCE(u.cacheReadInputTokens, 0) AS long)),
             SUM(CAST(u.inputTokens AS long) + CAST(u.outputTokens AS long)
                 + CAST(COALESCE(u.cacheCreationInputTokens, 0) AS long)
                 + CAST(COALESCE(u.cacheReadInputTokens, 0) AS long)),
@@ -71,6 +73,8 @@ public interface AiTokenUsageRepository extends JpaRepository<AiTokenUsage, Long
             u.modelName,
             SUM(CAST(u.inputTokens AS long)),
             SUM(CAST(u.outputTokens AS long)),
+            SUM(CAST(COALESCE(u.cacheCreationInputTokens, 0) AS long)),
+            SUM(CAST(COALESCE(u.cacheReadInputTokens, 0) AS long)),
             SUM(CAST(u.inputTokens AS long) + CAST(u.outputTokens AS long)
                 + CAST(COALESCE(u.cacheCreationInputTokens, 0) AS long)
                 + CAST(COALESCE(u.cacheReadInputTokens, 0) AS long)),

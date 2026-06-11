@@ -16,6 +16,8 @@ public class AiTokenUsageSummaryDTO {
     private String modelName;
     private Long totalInputTokens;
     private Long totalOutputTokens;
+    private Long totalCacheCreationInputTokens;
+    private Long totalCacheReadInputTokens;
     private Long totalTokens;
     private BigDecimal totalEstimatedCostUsd;
     private Long callCount;
