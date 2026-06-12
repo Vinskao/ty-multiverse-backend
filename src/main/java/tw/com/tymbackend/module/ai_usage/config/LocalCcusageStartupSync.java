@@ -33,7 +33,7 @@ public class LocalCcusageStartupSync {
 
     private void runSync() {
         Path projectDir = Path.of(System.getProperty("user.dir"));
-        Path script = projectDir.resolve("scripts/sync_ccusage_to_db.py");
+        Path script = projectDir.resolve("scripts/sync_ccusage_direct_db.py");
         if (!Files.isRegularFile(script)) {
             logger.warn("Skipping ccusage startup sync: script not found at {}", script);
             return;
@@ -61,6 +61,14 @@ public class LocalCcusageStartupSync {
     }
 
     private Process startPythonProcess(Path projectDir, Path script) throws java.io.IOException {
+        Path venvPython = projectDir.resolve(".venv-ccusage-sync/bin/python");
+        if (Files.isExecutable(venvPython)) {
+            return new ProcessBuilder(venvPython.toString(), script.toString())
+                .directory(projectDir.toFile())
+                .redirectErrorStream(true)
+                .start();
+        }
+
         try {
             return new ProcessBuilder("python3", script.toString())
                 .directory(projectDir.toFile())
