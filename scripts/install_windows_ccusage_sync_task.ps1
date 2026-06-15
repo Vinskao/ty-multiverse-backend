@@ -3,7 +3,7 @@ param(
     [string]$ProjectDir = (Resolve-Path "$PSScriptRoot\..").Path,
     [string]$TymbUrl = "http://localhost:8080/tymb",
     [string]$SourceDevice = $env:COMPUTERNAME,
-    [int]$IntervalMinutes = 30
+    [int]$IntervalMinutes = 180
 )
 
 $ErrorActionPreference = "Stop"
