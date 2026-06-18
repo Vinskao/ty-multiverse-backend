@@ -10,6 +10,12 @@ security:
 ai-usage:
   ingest-token: ${AI_USAGE_INGEST_TOKEN:}
 
+# 內部寫入 Token：同步腳本以 X-Internal-Token 標頭呼叫 people/weapons/gallery 等
+# 「寫入／刪除」端點時使用（與 Keycloak JWT 二擇一）。未設定時，這些端點僅接受 JWT。
+# 生產環境務必以強隨機值設定 INTERNAL_WRITE_TOKEN。
+internal:
+  write-token: ${INTERNAL_WRITE_TOKEN:}
+
 # OCI Object Storage — source for research-zone company-product mapping JSON.
 # enabled=false (default) reads the bundled classpath fallback (local dev needs no OCI creds).
 # In the OKE cluster set OCI_OS_ENABLED=true; auth uses Instance Principal (no stored keys).

@@ -257,3 +257,68 @@ KEYCLOAK_REALM=your-realm
 KEYCLOAK_CLIENT_ID=your-client-id
 KEYCLOAK_CLIENT_SECRET=your-secret
 ```
+
+---
+
+## 本地啟動
+
+```bash
+# 先確保 common 模組已安裝
+cd ../ty-multiverse-common
+mvn clean install
+
+# 完整建置並啟動（推薦全新環境）
+cd ../ty-multiverse-backend
+mvn clean generate-sources compile
+mvn spring-boot:run
+
+# 一次性指令
+mvn clean generate-sources compile spring-boot:run
+
+# 日常快速啟動
+mvn spring-boot:run
+# 或
+./mvnw spring-boot:run
+```
+
+服務端點：
+- HTTP API: `http://localhost:8080/tymb`
+- Swagger UI: `http://localhost:8080/tymb/swagger-ui/index.html`
+- JavaDoc: `http://localhost:8080/tymb/javadoc/index.html`
+
+## Docker 建置
+
+```bash
+docker build -t papakao/ty-multiverse-backend:latest .
+
+# Multi-platform（ARM64）
+docker buildx build --platform linux/arm64 -t papakao/ty-multiverse-backend:latest --push .
+```
+
+## 中間件配置
+
+```properties
+app.middleware.concurrency.max-requests=100
+app.middleware.rate-limit.enabled=true
+app.middleware.rate-limit.requests-per-minute=60
+spring.security.enabled=true
+jwt.secret=your-secret-key
+```
+
+## Keycloak TOTP 救援（admin 鎖死時）
+
+```bash
+ssh oke-node
+kubectl exec keycloak-559994d657-m8t7q -- \
+  /opt/keycloak/bin/kcadm.sh config credentials \
+    --server http://localhost:8080/sso \
+    --realm master \
+    --user admin \
+    --password admin
+# 移除 OTP credential 或清 requiredActions
+
+# 強制既有用戶設定 TOTP
+kubectl exec keycloak-559994d657-m8t7q -- \
+  /opt/keycloak/bin/kcadm.sh update users/<USER_ID> -r PeopleSystem \
+    -s 'requiredActions=["CONFIGURE_TOTP"]'
+```

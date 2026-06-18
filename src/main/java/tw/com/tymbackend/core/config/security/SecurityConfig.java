@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,12 @@ public class SecurityConfig {
     @Value("${security.disable-all:false}")
     private boolean disableAllSecurity;
 
+    @Value("${project.env:}")
+    private String projectEnv;
+
+    @Value("${internal.write-token:}")
+    private String internalWriteToken;
+
     /**
      * 全局 Security Filter Chain 配置
      *
@@ -90,10 +97,28 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         // 開發測試模式：完全禁用安全性
+        // #3 防呆：disable-all 只允許在本地/開發環境生效，避免生產環境誤設環境變數造成全面開放
         if (disableAllSecurity) {
-            http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
-            return http.build();
+            boolean isLocalEnv = projectEnv == null
+                    || projectEnv.isBlank()
+                    || projectEnv.toLowerCase().startsWith("local")
+                    || projectEnv.toLowerCase().startsWith("dev");
+            if (isLocalEnv) {
+                org.slf4j.LoggerFactory.getLogger(SecurityConfig.class)
+                        .warn("⚠️ SECURITY_DISABLE_ALL=true：已完全禁用安全性（僅限本地/開發環境 env={}）", projectEnv);
+                http.authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+                return http.build();
+            }
+            // 生產類環境：拒絕生效，強制套用正常安全性設定
+            org.slf4j.LoggerFactory.getLogger(SecurityConfig.class)
+                    .error("🚨 偵測到 SECURITY_DISABLE_ALL=true 但 project.env={} 非本地環境，已忽略此設定並維持正常安全性。",
+                            projectEnv);
         }
+
+        // #1 內部寫入 Token（混合驗證）：變更類端點帶有效 X-Internal-Token 時注入機器身分，
+        // 否則由下方 authenticated()/hasRole() 規則搭配 JWT 驗證。堵住未驗證的寫入／刪除。
+        http.addFilterBefore(new InternalWriteTokenFilter(internalWriteToken),
+                UsernamePasswordAuthenticationFilter.class);
 
         // 正常安全性配置：基于 AGENTS.md 的端点定义
         // 注意：requestMatchers 路徑不應包含 context-path（/tymb）
@@ -129,40 +154,49 @@ public class SecurityConfig {
                 .requestMatchers("POST", "/people/get-all").permitAll() // People get-all 查询 - 完全开放
                 .requestMatchers("POST", "/people/get-by-name").permitAll() // People get-by-name 查询 - 完全开放
                 .requestMatchers("POST", "/people/names").permitAll() // People names 查询 - 完全开放
-                .requestMatchers("POST", "/gallery/**").permitAll() // Gallery POST 查询 - 完全开放
+                .requestMatchers("POST", "/people/batchDamageWithWeapon").permitAll() // 傷害計算 (POST 查询)
+                // 注意：Gallery 僅 getAll 是 POST 查询，其餘 POST（save/update/delete）為變更類，
+                // 不可用 /gallery/** 通配放行，否則會繞過下方寫入規則
+                .requestMatchers("POST", "/gallery/getAll").permitAll() // Gallery getAll 查询 - 完全开放
+                .requestMatchers("POST", "/gallery/getById").permitAll() // Gallery getById 查询 - 完全开放
 
                 // ========================================
-                // INSERT/UPDATE/DELETE 系列：需要认证用户
+                // INSERT/UPDATE/DELETE 系列：需 JWT 或 內部 Token（混合驗證）
+                // InternalWriteTokenFilter 會在帶有效 X-Internal-Token 時注入身分，
+                // 否則由 oauth2ResourceServer 驗證瀏覽器帶來的 Keycloak JWT。
                 // ========================================
-                // People - 特定修改端点需要认证（查询端点已在上方放行）
-                .requestMatchers("POST", "/people/insert").permitAll() // People 创建
-                .requestMatchers("POST", "/people/insert-multiple").permitAll() // People 批量创建
-                .requestMatchers("POST", "/people/update").permitAll() // People 更新
-                .requestMatchers("POST", "/people/delete").permitAll() // People 删除
-                .requestMatchers("PUT", "/people/**").permitAll() // People PUT 更新
-                .requestMatchers("DELETE", "/people/**").permitAll() // People DELETE 删除
+                // People - 修改端点（查询端点已在上方放行）
+                .requestMatchers("POST", "/people/insert").authenticated() // People 创建
+                .requestMatchers("POST", "/people/insert-multiple").authenticated() // People 批量创建
+                .requestMatchers("POST", "/people/update").authenticated() // People 更新
+                .requestMatchers("POST", "/people/delete").authenticated() // People 删除
+                .requestMatchers("PUT", "/people/**").authenticated() // People PUT 更新
+                .requestMatchers("DELETE", "/people/**").authenticated() // People DELETE 删除
 
-                // Weapons - 修改端点需要认证
-                .requestMatchers("POST", "/weapons/**").permitAll() // Weapon 创建
-                .requestMatchers("PUT", "/weapons/**").permitAll() // Weapon 更新
-                .requestMatchers("DELETE", "/weapons/**").permitAll() // Weapon 删除
+                // Weapons - 修改端点
+                .requestMatchers("POST", "/weapons/**").authenticated() // Weapon 创建
+                .requestMatchers("PUT", "/weapons/**").authenticated() // Weapon 更新
+                .requestMatchers("DELETE", "/weapons/**").authenticated() // Weapon 删除
 
-                // API - 修改端点需要认证
-                .requestMatchers("POST", "/api/**").permitAll() // Async API 创建
-                .requestMatchers("PUT", "/api/**").permitAll() // Async API 更新
-                .requestMatchers("DELETE", "/api/**").permitAll() // Async API 删除
+                // API - 修改端点
+                .requestMatchers("POST", "/api/**").authenticated() // Async API 创建
+                .requestMatchers("PUT", "/api/**").authenticated() // Async API 更新
+                .requestMatchers("DELETE", "/api/**").authenticated() // Async API 删除
 
-                // People Images - 修改端点需要认证
-                .requestMatchers("POST", "/people-images/**").permitAll() // People Images 创建
-                .requestMatchers("PUT", "/people-images/**").permitAll() // People Images 更新
-                .requestMatchers("DELETE", "/people-images/**").permitAll() // People Images 删除
+                // People Images - 修改端点
+                .requestMatchers("POST", "/people-images/**").authenticated() // People Images 创建
+                .requestMatchers("PUT", "/people-images/**").authenticated() // People Images 更新
+                .requestMatchers("DELETE", "/people-images/**").authenticated() // People Images 删除
 
                 // ========================================
-                // 批量刪除：公開以利於同步腳本
+                // 批量刪除（破壞性）：需 manage-users 角色或內部 Token
                 // ========================================
-                .requestMatchers("POST", "/people/delete-all").permitAll() // 批量刪除 People (POST)
-                .requestMatchers("DELETE", "/weapons/delete-all").permitAll() // 批量刪除 Weapons (DELETE)
-                .requestMatchers("DELETE", "/gallery/delete-all").permitAll() // 批量刪除 Gallery (DELETE)
+                .requestMatchers("POST", "/people/delete-all").hasRole("manage-users") // 批量刪除 People
+                .requestMatchers("DELETE", "/weapons/delete-all").hasRole("manage-users") // 批量刪除 Weapons
+                .requestMatchers("DELETE", "/gallery/delete-all").hasRole("manage-users") // 批量刪除 Gallery
+                .requestMatchers("POST", "/gallery/save").authenticated() // Gallery 儲存
+                .requestMatchers("POST", "/gallery/update").authenticated() // Gallery 更新
+                .requestMatchers("POST", "/gallery/delete").authenticated() // Gallery 删除
 
                 // ========================================
                 // 认证端点：需要认证用户
