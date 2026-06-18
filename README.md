@@ -599,6 +599,93 @@ classDiagram
     SecurityConfig --> KeycloakController
 ```
 
+#### 6.1. Google Authenticator (TOTP) 2FA Setup
+
+**目的：** 强制所有用户（包括 admin 和 API 调用者）在登入时使用 Google Authenticator 进行二次验证。
+
+**当前状态（已部署到 K8s）：**
+
+Keycloak 26.1.4 已在 `peoplesystem.tatdvsonorth.com/sso` 启用 TOTP 2FA：
+- **Realm**: `master`（admin 登入 dashboard） + `PeopleSystem`（API 客户端登入）
+- **OTP 政策**: TOTP / SHA1 / 6 位验证码 / 30 秒循环
+- **Required Action**: `CONFIGURE_TOTP` → `enabled=true`, `defaultAction=true`
+- **浏览器流程**: `Browser - Conditional OTP`（OTP Form 已挂上）
+
+**已强制 TOTP 的用户：**
+- master realm: `admin`, `wavo`
+- PeopleSystem realm: `chiaki`, `sorane`
+
+**新增用户自动强制：** 由于设了 `defaultAction=true`，所有新建用户下次登入会被要求设定 Authenticator。
+
+**登入流程：**
+
+```
+用户在浏览器或 REST API 登入
+  ↓
+输入用户名/密码 (1FA)
+  ↓
+Keycloak 检查 requiredActions
+  ↓
+若用户未设定 Authenticator → 显示 QR code，用 Google Authenticator 扫描
+  ↓
+若已设定 → 要求输入 6 位验证码
+  ↓
+验证码正确 → 登入成功，获得 JWT token
+```
+
+**用户端操作（首次注册 Authenticator）：**
+
+1. **安装 Authenticator App**（选一个）：
+   - Google Authenticator
+   - Microsoft Authenticator
+   - FreeOTP
+   - 任何支持 TOTP 标准的 app
+
+2. **登入时注册**：
+   - 访问 `https://peoplesystem.tatdvsonorth.com/sso/realms/PeopleSystem/account/`
+   - 或 admin dashboard `https://peoplesystem.tatdvsonorth.com/sso/admin/`
+   - 输入用户名/密码
+   - 系统显示 QR code
+   - 用 Authenticator app 扫描 QR code
+   - 输入 app 显示的 6 位码确认
+   - 完成！下次登入就要验证码
+
+**安全考量：**
+
+- **恢复码**：首次设定时务必保存 recovery code（防止丢失手机时无法登入）
+- **Admin 备援**：admin 帐号只有一个，建议另外申请一个备用 admin 帐号，或保存 kcadm recovery 步骤
+- **Admin CLI 救援**（若锁死）：
+  ```bash
+  ssh oke-node
+  kubectl exec keycloak-559994d657-m8t7q -- \
+    /opt/keycloak/bin/kcadm.sh config credentials \
+      --server http://localhost:8080/sso \
+      --realm master \
+      --user admin \
+      --password admin
+  # 可以重置用户的 OTP credential 或 requiredActions
+  ```
+
+**扩大范围（若需强制其他既有用户）：**
+
+```bash
+# 获取所有用户 ID
+ssh oke-node
+kubectl exec keycloak-559994d657-m8t7q -- \
+  /opt/keycloak/bin/kcadm.sh get users -r PeopleSystem --fields id,username
+
+# 对任一用户添加 CONFIGURE_TOTP
+kubectl exec keycloak-559994d657-m8t7q -- \
+  /opt/keycloak/bin/kcadm.sh update users/<USER_ID> -r PeopleSystem \
+    -s 'requiredActions=["CONFIGURE_TOTP"]'
+```
+
+**Email/SMS OTP（未部署）：**
+
+原生 Keycloak 不支持 Email/SMS OTP 作为 2FA。如需支持，需部署自定义 SPI 插件（工程量大）。详见项目记录。
+
+---
+
 #### 7. Error Handling Architecture
 ```mermaid
 classDiagram
