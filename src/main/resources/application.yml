@@ -10,6 +10,18 @@ security:
 ai-usage:
   ingest-token: ${AI_USAGE_INGEST_TOKEN:}
 
+# OCI Object Storage — source for research-zone company-product mapping JSON.
+# enabled=false (default) reads the bundled classpath fallback (local dev needs no OCI creds).
+# In the OKE cluster set OCI_OS_ENABLED=true; auth uses Instance Principal (no stored keys).
+oci:
+  object-storage:
+    enabled: ${OCI_OS_ENABLED:false}
+    region: ${OCI_OS_REGION:ap-singapore-2}
+    namespace: ${OCI_OS_NAMESPACE:axbptfyngj39}
+    bucket: ${OCI_OS_BUCKET:peoplesystem-object-storage-20260618}
+    object-name: ${OCI_OS_OBJECT:company-product-mapping.json}
+    auth: ${OCI_OS_AUTH:instance_principal}
+
 spring:
   threads:
     virtual:

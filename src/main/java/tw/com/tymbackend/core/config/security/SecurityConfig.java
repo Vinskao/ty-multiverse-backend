@@ -110,6 +110,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/visitor").permitAll() // 访客端点
                 .requestMatchers("/auth/health").permitAll() // 认证健康检查
                 .requestMatchers("/keycloak/**").permitAll() // Keycloak 所有端点（包含 introspect）
+                .requestMatchers("GET", "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
 
                 // ========================================
                 // SELECT 系列：GET 请求，完全开放，无需认证

@@ -1,15 +1,19 @@
 package tw.com.tymbackend.core.config.cache;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.cache.RedisCacheManagerBuilderCustomizer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+
+import java.time.Duration;
 
 /**
  * Redis配置類 - 僅用於分布式鎖和工具類
@@ -65,5 +69,15 @@ public class RedisConfig {
         
         template.afterPropertiesSet();
         return template;
+    }
+
+    /**
+     * Per-cache TTL: the research-zone company-product mapping changes rarely, so cache it for 1 hour.
+     */
+    @Bean
+    public RedisCacheManagerBuilderCustomizer cacheTtlCustomizer() {
+        return builder -> builder.withCacheConfiguration(
+                "company-product-mapping",
+                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1)));
     }
 } 

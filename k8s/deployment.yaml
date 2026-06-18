@@ -30,6 +30,13 @@ data:
   LOGGING_LEVEL: "INFO"
   LOGGING_LEVEL_SPRINGFRAMEWORK: "INFO"
   PROJECT_ENV: "platform"
+  # OCI Object Storage (research-zone company-product mapping). Instance Principal auth — no secrets.
+  OCI_OS_ENABLED: "true"
+  OCI_OS_REGION: "ap-singapore-2"
+  OCI_OS_NAMESPACE: "axbptfyngj39"
+  OCI_OS_BUCKET: "peoplesystem-object-storage-20260618"
+  OCI_OS_OBJECT: "company-product-mapping.json"
+  OCI_OS_AUTH: "instance_principal"
 
 ---
 
@@ -152,6 +159,36 @@ spec:
             configMapKeyRef:
               name: ty-multiverse-backend-config
               key: PROJECT_ENV
+        - name: OCI_OS_ENABLED
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_ENABLED
+        - name: OCI_OS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_REGION
+        - name: OCI_OS_NAMESPACE
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_NAMESPACE
+        - name: OCI_OS_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_BUCKET
+        - name: OCI_OS_OBJECT
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_OBJECT
+        - name: OCI_OS_AUTH
+          valueFrom:
+            configMapKeyRef:
+              name: ty-multiverse-backend-config
+              key: OCI_OS_AUTH
         - name: REDIS_HOST
           valueFrom:
             secretKeyRef:
