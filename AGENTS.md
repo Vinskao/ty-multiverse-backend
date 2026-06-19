@@ -28,6 +28,44 @@ TY Multiverse Backend is a comprehensive Spring Boot application that serves as 
 - **Async Processing**: Background job processing
 - **Monitoring**: Health checks and metrics
 
+## Security Hardening (2026-06-19)
+
+### #1 Data API Authentication (Mixed JWT + Internal Token)
+
+**問題**：people/weapons/gallery 等 API 的寫入/刪除端點原為 `permitAll()`，任何未經驗證的外部請求可 insert/update/delete-all。
+
+**修正**：
+1. 新增 [InternalWriteTokenFilter.java](src/main/java/tw/com/tymbackend/core/config/security/InternalWriteTokenFilter.java)
+   - 檢查變更類端點（POST insert/update/delete, PUT, DELETE）是否帶有效 `X-Internal-Token` header（常數時間比較，防 timing 攻擊）
+   - 驗證通過 → 注入 `ROLE_manage-users` 機器身分 → 由 Spring Security 的 `authenticated()` / `hasRole()` 放行
+   - 無效或無 token → 由 oauth2ResourceServer 驗 Keycloak JWT；兩者皆無 → 401
+
+2. [SecurityConfig.java](src/main/java/tw/com/tymbackend/core/config/security/SecurityConfig.java) 改動：
+   - 寫入端點：`permitAll()` → `authenticated()` （需 JWT 或內部 Token）
+   - `delete-all` 端點：`permitAll()` → `hasRole('manage-users')` （防低權限濫用）
+   - Gallery POST 通配 → 明確列舉（避免偶發 permit）
+   - addFilterBefore InternalWriteTokenFilter
+
+3. [application.yml](src/main/resources/application.yml)：新增 `internal.write-token` env 配置
+   - 環境變數 `INTERNAL_WRITE_TOKEN`（未設時無內部 token，寫入仍需 JWT，安全）
+   - 目前無 headless 腳本依賴，可不設
+
+**部署注意**：
+- 後端編譯通過（已驗）；build & test 前確保 `ty-multiverse-common` 版本最新（見上方 Prerequisites）
+- Gateway proxy 已轉發瀏覽器 JWT，無需改動；瀏覽器寫入走 `/tymg` 帶 JWT 照常運作
+- 部署後驗證：`curl -X POST https://...../tymb/people/delete-all` 預期 401/403（無 JWT 無 token）
+
+### #3 SECURITY_DISABLE_ALL Environment Protection
+
+**問題**：環境變數 `SECURITY_DISABLE_ALL=true` 會關閉全部安全檢查，意外在生產環境啟用則全面開放。
+
+**修正** ([SecurityConfig.java](src/main/java/tw/com/tymbackend/core/config/security/SecurityConfig.java))：
+- 讀取 `project.env` 欄位（pom.xml profiles 定義：local/dev vs platform）
+- 若 `disableAllSecurity=true` 且 `project.env != local/dev` → 忽略此設定、印 ERROR log
+- 生產環境自動維持正常安全性
+
+---
+
 ## Build and Test Commands
 
 ### Prerequisites
