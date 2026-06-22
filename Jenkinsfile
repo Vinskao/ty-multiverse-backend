@@ -92,6 +92,7 @@ pipeline {
         SERVER_PORT = "8080"
         LOGGING_LEVEL = "INFO"
         LOGGING_LEVEL_SPRINGFRAMEWORK = "INFO"
+        GITHUB_PACKAGES_USERNAME = "Vinskao"
     }
     stages {
         stage('Clone and Setup') {
@@ -187,6 +188,10 @@ pipeline {
                         withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
                             sh '''
                                 # 創建 Maven settings.xml 以配置 GitHub Packages 認證
+                                if [ -z "${GITHUB_TOKEN:-}" ]; then
+                                    echo "Error: Jenkins credential GITHUB_TOKEN is empty. It must be a GitHub PAT with read:packages access to Vinskao/ty-multiverse-common."
+                                    exit 1
+                                fi
                                 mkdir -p ~/.m2
                                 cat > ~/.m2/settings.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -197,14 +202,14 @@ pipeline {
   <servers>
     <server>
       <id>github</id>
-      <username>Vinskao</username>
+      <username>${GITHUB_PACKAGES_USERNAME}</username>
       <password>${GITHUB_TOKEN}</password>
     </server>
   </servers>
 </settings>
 EOF
                                 # 執行 Maven 構建
-                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true clean package -P platform -DskipTests
+                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn --settings ~/.m2/settings.xml -T 1C -Dmaven.javadoc.skip=true clean package -P platform -DskipTests
                             '''
                         }
                     }
@@ -219,6 +224,10 @@ EOF
                         withCredentials([string(credentialsId: 'GITHUB_TOKEN', variable: 'GITHUB_TOKEN')]) {
                             sh '''
                                 # 創建 Maven settings.xml 以配置 GitHub Packages 認證
+                                if [ -z "${GITHUB_TOKEN:-}" ]; then
+                                    echo "Error: Jenkins credential GITHUB_TOKEN is empty. It must be a GitHub PAT with read:packages access to Vinskao/ty-multiverse-common."
+                                    exit 1
+                                fi
                                 mkdir -p ~/.m2
                                 cat > ~/.m2/settings.xml <<EOF
 <?xml version="1.0" encoding="UTF-8"?>
@@ -229,14 +238,14 @@ EOF
   <servers>
     <server>
       <id>github</id>
-      <username>Vinskao</username>
+      <username>${GITHUB_PACKAGES_USERNAME}</username>
       <password>${GITHUB_TOKEN}</password>
     </server>
   </servers>
 </settings>
 EOF
                                 # 執行 Maven 測試
-                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn -T 1C -Dmaven.javadoc.skip=true test -P platform
+                                MAVEN_OPTS="-Xmx1024m -XX:+UseG1GC" mvn --settings ~/.m2/settings.xml -T 1C -Dmaven.javadoc.skip=true test -P platform
                             '''
                         }
                     }
