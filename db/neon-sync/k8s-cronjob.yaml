@@ -1,0 +1,376 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: people-weapon-neon-sync
+  namespace: default
+data:
+  SOURCE_HOST: "postgres"
+  SOURCE_PORT: "5432"
+  SOURCE_DB: "peoplesystem"
+  SOURCE_USER: "postgres"
+  TARGET_PORT: "5432"
+  TARGET_DB: "peoplesystem"
+  sync.sh: |
+    #!/bin/sh
+    set -eu
+
+    export PGPASSWORD="$SOURCE_PASSWORD"
+    WORK_DIR=$(mktemp -d)
+    SOURCE_DUMP="$WORK_DIR/people-weapon.sql"
+    TARGET_DSN="host=$TARGET_HOST port=$TARGET_PORT dbname=$TARGET_DB user=$TARGET_USER sslmode=require"
+    HASH_SQL="select 'people',md5(coalesce(string_agg(md5(row_to_json(t)::text),'' order by convert_to(name,'UTF8')),'')) from people t union all select 'weapon',md5(coalesce(string_agg(md5(row_to_json(t)::text),'' order by convert_to(weapon,'UTF8')),'')) from weapon t order by 1;"
+
+    cleanup() {
+      rm -rf "$WORK_DIR"
+    }
+    trap cleanup EXIT
+
+    echo "Checking source and Neon target..."
+    SOURCE_COUNTS=$(psql \
+      -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d "$SOURCE_DB" \
+      -v ON_ERROR_STOP=1 -At -F '|' \
+      -c "select 'people',count(*) from people union all select 'weapon',count(*) from weapon order by 1;")
+
+    export PGPASSWORD="$TARGET_PASSWORD"
+    psql "$TARGET_DSN" -v ON_ERROR_STOP=1 -At \
+      -c "select extversion from pg_extension where extname='vector';
+          select to_regclass('public.people'),to_regclass('public.weapon');" >/dev/null
+
+    echo "Saving the previous Neon copy in schema sync_backup..."
+    psql "$TARGET_DSN" -v ON_ERROR_STOP=1 >/dev/null <<'SQL'
+    CREATE SCHEMA IF NOT EXISTS sync_backup;
+    DROP TABLE IF EXISTS sync_backup.people_previous;
+    DROP TABLE IF EXISTS sync_backup.weapon_previous;
+    CREATE TABLE sync_backup.people_previous AS TABLE public.people;
+    CREATE TABLE sync_backup.weapon_previous AS TABLE public.weapon;
+    SQL
+
+    echo "Dumping people/weapon from in-cluster PostgreSQL..."
+    export PGPASSWORD="$SOURCE_PASSWORD"
+    pg_dump \
+      -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d "$SOURCE_DB" \
+      --format=plain \
+      --data-only \
+      --table=public.people \
+      --table=public.weapon \
+      --no-owner \
+      --no-privileges \
+      > "$SOURCE_DUMP"
+    test -s "$SOURCE_DUMP"
+
+    echo "Replacing Neon tables in one transaction..."
+    export PGPASSWORD="$TARGET_PASSWORD"
+    {
+      echo 'BEGIN;'
+      echo "SELECT pg_advisory_xact_lock(hashtext('people-weapon-neon-sync'));"
+      echo 'TRUNCATE TABLE public.people, public.weapon;'
+      cat "$SOURCE_DUMP"
+      echo 'COMMIT;'
+    } | psql "$TARGET_DSN" -v ON_ERROR_STOP=1 >/dev/null
+
+    export PGPASSWORD="$SOURCE_PASSWORD"
+    SOURCE_HASHES=$(psql \
+      -h "$SOURCE_HOST" -p "$SOURCE_PORT" -U "$SOURCE_USER" -d "$SOURCE_DB" \
+      -v ON_ERROR_STOP=1 -At -F '|' -c "$HASH_SQL")
+
+    export PGPASSWORD="$TARGET_PASSWORD"
+    TARGET_COUNTS=$(psql "$TARGET_DSN" -v ON_ERROR_STOP=1 -At -F '|' \
+      -c "select 'people',count(*) from people union all select 'weapon',count(*) from weapon order by 1;")
+    TARGET_HASHES=$(psql "$TARGET_DSN" -v ON_ERROR_STOP=1 -At -F '|' -c "$HASH_SQL")
+
+    if [ "$SOURCE_COUNTS" != "$TARGET_COUNTS" ] || [ "$SOURCE_HASHES" != "$TARGET_HASHES" ]; then
+      echo "Verification failed after Neon sync." >&2
+      echo "Source counts: $SOURCE_COUNTS" >&2
+      echo "Target counts: $TARGET_COUNTS" >&2
+      exit 1
+    fi
+
+    echo "Neon sync verified."
+    echo "$TARGET_COUNTS"
+    echo "$TARGET_HASHES"
+    echo "Previous Neon copy retained in schema sync_backup."
+  listener.py: |
+    import os
+    import time
+
+    import psycopg
+
+    SOURCE = {
+        "host": os.environ["SOURCE_HOST"],
+        "port": os.environ["SOURCE_PORT"],
+        "dbname": os.environ["SOURCE_DB"],
+        "user": os.environ["SOURCE_USER"],
+        "password": os.environ["SOURCE_PASSWORD"],
+    }
+    TARGET = {
+        "host": os.environ["TARGET_HOST"],
+        "port": os.environ["TARGET_PORT"],
+        "dbname": os.environ["TARGET_DB"],
+        "user": os.environ["TARGET_USER"],
+        "password": os.environ["TARGET_PASSWORD"],
+        "sslmode": "require",
+    }
+    TABLES = ("people", "weapon")
+    HASH_SQL = """
+      select 'people',md5(coalesce(string_agg(md5(row_to_json(t)::text),'' order by convert_to(name,'UTF8')),''))
+      from people t
+      union all
+      select 'weapon',md5(coalesce(string_agg(md5(row_to_json(t)::text),'' order by convert_to(weapon,'UTF8')),''))
+      from weapon t
+      order by 1
+    """
+
+    def install_trigger(source):
+        sql = open("/config/install-trigger.sql", encoding="utf-8").read()
+        sql = sql.replace("\\set ON_ERROR_STOP on", "")
+        source.execute(sql)
+
+    def copy_table(source, target, table):
+        with source.cursor().copy(f"COPY public.{table} TO STDOUT") as source_copy:
+            with target.cursor().copy(f"COPY sync_{table} FROM STDIN") as target_copy:
+                for chunk in source_copy:
+                    target_copy.write(chunk)
+
+    def sync_once(requested_at):
+        print(f"Sync requested at {requested_at}; debouncing 5 seconds.", flush=True)
+        time.sleep(5)
+
+        with psycopg.connect(**SOURCE) as source, psycopg.connect(**TARGET) as target:
+            latest = source.execute(
+                "select requested_at from neon_sync_outbox where id=1"
+            ).fetchone()
+            if not latest:
+                return
+            requested_at = latest[0]
+
+            target.execute("create schema if not exists sync_backup")
+            target.execute("drop table if exists sync_backup.people_previous")
+            target.execute("drop table if exists sync_backup.weapon_previous")
+            target.execute(
+                "create table sync_backup.people_previous as table public.people"
+            )
+            target.execute(
+                "create table sync_backup.weapon_previous as table public.weapon"
+            )
+            target.commit()
+
+            target.execute(
+                "create temp table sync_people "
+                "(like public.people including defaults) on commit drop"
+            )
+            target.execute(
+                "create temp table sync_weapon "
+                "(like public.weapon including defaults) on commit drop"
+            )
+            for table in TABLES:
+                copy_table(source, target, table)
+
+            target.execute(
+                "select pg_advisory_xact_lock(hashtext('people-weapon-neon-sync'))"
+            )
+            target.execute("truncate table public.people, public.weapon")
+            target.execute("insert into public.people select * from sync_people")
+            target.execute("insert into public.weapon select * from sync_weapon")
+            target.commit()
+
+            source_hashes = source.execute(HASH_SQL).fetchall()
+            target_hashes = target.execute(HASH_SQL).fetchall()
+            if source_hashes != target_hashes:
+                raise RuntimeError(
+                    f"hash verification failed: source={source_hashes}, "
+                    f"target={target_hashes}"
+                )
+
+            source.execute(
+                "delete from neon_sync_outbox where id=1 and requested_at=%s",
+                (requested_at,),
+            )
+            source.commit()
+            print(f"Neon sync verified: {source_hashes}", flush=True)
+
+    def run():
+        while True:
+            try:
+                with psycopg.connect(**SOURCE, autocommit=True) as listener:
+                    install_trigger(listener)
+                    listener.execute("listen people_weapon_changed")
+                    pending = listener.execute(
+                        "select requested_at from neon_sync_outbox where id=1"
+                    ).fetchone()
+                    if pending:
+                        sync_once(pending[0])
+                    print("Listening for people/weapon changes.", flush=True)
+                    for notification in listener.notifies():
+                        sync_once(notification.payload)
+            except Exception as error:
+                print(f"Listener error: {error}; retrying in 15 seconds.", flush=True)
+                time.sleep(15)
+
+    run()
+  install-trigger.sql: |
+    \set ON_ERROR_STOP on
+
+    CREATE TABLE IF NOT EXISTS neon_sync_outbox (
+      id smallint PRIMARY KEY CHECK (id = 1),
+      requested_at timestamptz NOT NULL,
+      changed_table text NOT NULL
+    );
+
+    CREATE OR REPLACE FUNCTION request_people_weapon_neon_sync()
+    RETURNS trigger
+    LANGUAGE plpgsql
+    AS $$
+    BEGIN
+      INSERT INTO neon_sync_outbox (id, requested_at, changed_table)
+      VALUES (1, clock_timestamp(), TG_TABLE_NAME)
+      ON CONFLICT (id) DO UPDATE
+        SET requested_at = EXCLUDED.requested_at,
+            changed_table = EXCLUDED.changed_table;
+      PERFORM pg_notify('people_weapon_changed', clock_timestamp()::text);
+      RETURN NULL;
+    END
+    $$;
+
+    DROP TRIGGER IF EXISTS people_request_neon_sync ON people;
+    CREATE TRIGGER people_request_neon_sync
+      AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE ON people
+      FOR EACH STATEMENT
+      EXECUTE FUNCTION request_people_weapon_neon_sync();
+
+    DROP TRIGGER IF EXISTS weapon_request_neon_sync ON weapon;
+    CREATE TRIGGER weapon_request_neon_sync
+      AFTER INSERT OR UPDATE OR DELETE OR TRUNCATE ON weapon
+      FOR EACH STATEMENT
+      EXECUTE FUNCTION request_people_weapon_neon_sync();
+
+    INSERT INTO neon_sync_outbox (id, requested_at, changed_table)
+    VALUES (1, clock_timestamp(), 'initial')
+    ON CONFLICT (id) DO NOTHING;
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: people-weapon-neon-sync
+  namespace: default
+spec:
+  schedule: "17 */6 * * *"
+  timeZone: "Asia/Taipei"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 1800
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: sync
+              image: pgvector/pgvector:pg17
+              command: ["/bin/sh", "/config/sync.sh"]
+              envFrom:
+                - configMapRef:
+                    name: people-weapon-neon-sync
+              env:
+                - name: SOURCE_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres
+                      key: postgres-password
+                - name: TARGET_HOST
+                  valueFrom:
+                    secretKeyRef:
+                      name: neon-sync-credentials
+                      key: host
+                - name: TARGET_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: neon-sync-credentials
+                      key: username
+                - name: TARGET_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: neon-sync-credentials
+                      key: password
+              volumeMounts:
+                - name: config
+                  mountPath: /config
+                  readOnly: true
+          volumes:
+            - name: config
+              configMap:
+                name: people-weapon-neon-sync
+                defaultMode: 0555
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: people-weapon-neon-sync
+  namespace: default
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: people-weapon-neon-sync
+  template:
+    metadata:
+      labels:
+        app: people-weapon-neon-sync
+    spec:
+      initContainers:
+        - name: install-psycopg
+          image: python:3.12-slim
+          command:
+            - /bin/sh
+            - -c
+            - pip install --no-cache-dir --target /deps "psycopg[binary]==3.2.9"
+          volumeMounts:
+            - name: python-deps
+              mountPath: /deps
+      containers:
+        - name: sync
+          image: python:3.12-slim
+          command: ["python", "/config/listener.py"]
+          envFrom:
+            - configMapRef:
+                name: people-weapon-neon-sync
+          env:
+            - name: PYTHONPATH
+              value: /deps
+            - name: SOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres
+                  key: postgres-password
+            - name: TARGET_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: neon-sync-credentials
+                  key: host
+            - name: TARGET_USER
+              valueFrom:
+                secretKeyRef:
+                  name: neon-sync-credentials
+                  key: username
+            - name: TARGET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: neon-sync-credentials
+                  key: password
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true
+            - name: python-deps
+              mountPath: /deps
+      restartPolicy: Always
+      volumes:
+        - name: config
+          configMap:
+            name: people-weapon-neon-sync
+            defaultMode: 0555
+        - name: python-deps
+          emptyDir: {}

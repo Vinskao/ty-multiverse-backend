@@ -228,3 +228,9 @@ entities is not a complete recovery.
   backup is recoverable.
 - Rotate any credential that is accidentally printed or committed.
 
+## Neon mirror
+
+The in-cluster database is authoritative. A one-way bridge for mirroring only
+`people` and `weapon` to Neon is documented in
+[`neon-sync/README.md`](neon-sync/README.md). Do not configure Neon-to-K8s
+replication at the same time; bidirectional writes can overwrite newer data.
