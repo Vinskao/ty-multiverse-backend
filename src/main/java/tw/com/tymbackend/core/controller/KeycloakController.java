@@ -2,6 +2,7 @@ package tw.com.tymbackend.core.controller;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -296,8 +297,13 @@ public class KeycloakController {
 				}
 				
 				if (refreshResult.get("access_token") != null) {
-					// 回傳新的 access token 及相關資訊
-					return ResponseEntity.ok(refreshResult);
+					// 回傳新的 access token 及相關資訊。
+					// Keycloak token 端點的回應沒有 "active" 欄位，但前端 verifyToken 以 data.active
+					// 判斷是否有效，缺這個欄位會讓「refresh 成功」被誤判為失敗而觸發整頁重登。
+					// 補上 active=true，讓前端契約一致。
+					Map<String, Object> refreshedBody = new HashMap<>(refreshResult);
+					refreshedBody.put("active", true);
+					return ResponseEntity.ok(refreshedBody);
 				}
 			}
 			
