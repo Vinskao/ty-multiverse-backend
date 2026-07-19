@@ -76,8 +76,12 @@ public class RedisConfig {
      */
     @Bean
     public RedisCacheManagerBuilderCustomizer cacheTtlCustomizer() {
-        return builder -> builder.withCacheConfiguration(
-                "company-product-mapping",
-                RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1)));
+        return builder -> builder
+                .withCacheConfiguration(
+                        "company-product-mapping",
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofHours(1)))
+                .withCacheConfiguration(
+                        "damage-calculations",
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofMinutes(5)));
     }
-} 
+}
