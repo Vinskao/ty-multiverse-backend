@@ -9,6 +9,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.cache.annotation.CacheEvict;
 
 import tw.com.tymbackend.module.weapon.dao.WeaponRepository;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
@@ -66,6 +67,7 @@ public class WeaponService {
      * Save or update a weapon
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public Weapon saveWeapon(Weapon weapon) {
         return weaponRepository.save(weapon);
     }
@@ -76,6 +78,7 @@ public class WeaponService {
      * Embedding field is not handled - managed by external AI services
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public Weapon saveWeaponSmart(Weapon weapon) {
         // 檢查是否為更新操作（武器已存在）
         if (weapon.getName() != null) {
@@ -94,6 +97,7 @@ public class WeaponService {
      * Smart update weapon - only update non-null and non-empty fields
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public Weapon updateWeaponSmart(Weapon existing, Weapon updateData) {
         // 只更新非空且非空字串的欄位
         if (isValidString(updateData.getOwner())) {
@@ -139,6 +143,7 @@ public class WeaponService {
      * Delete a weapon by name (ID)
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public void deleteWeapon(String name) {
         weaponRepository.deleteById(name);
     }
@@ -147,6 +152,7 @@ public class WeaponService {
      * Delete all weapons
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public void deleteAllWeapons() {
         weaponRepository.deleteAll();
     }
@@ -162,6 +168,7 @@ public class WeaponService {
      * Update weapon attributes
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public Weapon updateWeaponAttributes(String name, Weapon newWeapon) {
         return weaponRepository.findById(name)
@@ -177,6 +184,7 @@ public class WeaponService {
      * Update weapon base damage
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public Weapon updateWeaponBaseDamage(String name, Integer baseDamage) {
         return weaponRepository.findById(name)
@@ -191,6 +199,7 @@ public class WeaponService {
      * Update weapon bonus damage
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public Weapon updateWeaponBonusDamage(String name, Integer bonusDamage) {
         return weaponRepository.findById(name)
@@ -205,6 +214,7 @@ public class WeaponService {
      * Update weapon bonus attributes
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public Weapon updateWeaponBonusAttributes(String name, List<String> bonusAttributes) {
         return weaponRepository.findById(name)
@@ -219,6 +229,7 @@ public class WeaponService {
      * Update weapon state attributes
      */
     @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public Weapon updateWeaponStateAttributes(String name, List<String> stateAttributes) {
         return weaponRepository.findById(name)
@@ -269,4 +280,4 @@ public class WeaponService {
     public Page<Weapon> findAll(Pageable pageable) {
         return weaponRepository.findAll(pageable);
     }
-} 
+}

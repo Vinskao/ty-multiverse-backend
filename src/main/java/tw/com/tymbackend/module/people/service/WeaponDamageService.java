@@ -1,6 +1,5 @@
 package tw.com.tymbackend.module.people.service;
 
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import tw.com.tymbackend.module.people.domain.vo.People;
@@ -49,7 +48,6 @@ public class WeaponDamageService {
      * @return 計算出的傷害值，錯誤時返回 -1
      */
     @SuppressWarnings("null")
-    @Cacheable(value = "damage-calculations", key = "#name")
     public int calculateDamageWithWeapon(String name) {
         People person = peopleService.getPeopleByName(name).orElse(null);
         if (person == null) {

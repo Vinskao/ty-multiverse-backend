@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
+import org.springframework.cache.annotation.CacheEvict;
 
 import tw.com.tymbackend.module.people.dao.PeopleRepository;
 import tw.com.tymbackend.module.people.domain.vo.People;
@@ -102,6 +103,7 @@ public class PeopleService {
      * @return 保存後的角色
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public People save(People person) {
         return peopleRepository.save(person);
     }
@@ -113,6 +115,7 @@ public class PeopleService {
      * @return 新增後的角色
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public People insertPerson(People person) {
         return save(person);
     }
@@ -124,6 +127,7 @@ public class PeopleService {
      * @return 保存後的角色列表
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public List<People> saveAll(List<People> peopleList) {
         return peopleRepository.saveAll(peopleList);
     }
@@ -135,6 +139,7 @@ public class PeopleService {
      * @return 保存後的角色列表
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public List<People> saveAllPeople(List<People> peopleList) {
         return saveAll(peopleList);
     }
@@ -143,6 +148,7 @@ public class PeopleService {
      * 刪除所有角色
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public void deleteAll() {
         peopleRepository.deleteAll();
     }
@@ -151,6 +157,7 @@ public class PeopleService {
      * 刪除所有角色
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public void deleteAllPeople() {
         deleteAll();
     }
@@ -163,6 +170,7 @@ public class PeopleService {
      * @return 更新後的角色，如果不存在則返回 null
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public People update(String name, People person) {
         // 先查詢現有實體
@@ -200,6 +208,7 @@ public class PeopleService {
      * @return 更新後的角色
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     public People updatePerson(People person) {
         if (person.getName() != null) {
             // 先查詢現有實體，避免版本衝突
@@ -289,6 +298,7 @@ public class PeopleService {
      * @return 更新後的角色，如果不存在則返回 null
      */
     @Transactional(readOnly = false)
+    @CacheEvict(value = "damage-calculations", allEntries = true)
     @SuppressWarnings("null")
     public People updateAttributes(String name, People person) {
         // 先查詢現有實體
