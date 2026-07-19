@@ -71,6 +71,18 @@ public class WeaponService {
     public Weapon saveWeapon(Weapon weapon) {
         return weaponRepository.save(weapon);
     }
+
+    /**
+     * Save or update multiple weapons in one transaction.
+     */
+    @Transactional
+    @CacheEvict(value = "damage-calculations", allEntries = true)
+    public List<Weapon> saveAllWeapons(List<Weapon> weapons) {
+        if (weapons == null || weapons.isEmpty()) {
+            throw new IllegalArgumentException("Weapon list must not be empty");
+        }
+        return weaponRepository.saveAll(weapons);
+    }
     
     /**
      * Save or update a weapon with smart field update

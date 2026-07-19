@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.module.weapon.service.WeaponService;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
@@ -137,6 +138,31 @@ public class WeaponController {
             return ResponseEntity.ok(BackendApiResponse.success(MessageKey.WEAPON_SAVE_SUCCESS, savedWeapon));
         } catch (Exception e) {
             return ResponseEntity.status(500)
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_SAVE_FAILED, e.getMessage()));
+        }
+    }
+
+    /**
+     * Create or replace multiple weapons in one request.
+     */
+    @PostMapping("/insert-multiple")
+    public ResponseEntity<?> insertMultipleWeapons(@RequestBody List<Weapon> weapons) {
+        if (weapons == null || weapons.isEmpty()) {
+            return ResponseEntity.badRequest()
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_SAVE_FAILED, "Weapon list must not be empty"));
+        }
+
+        try {
+            List<Weapon> savedWeapons = weaponService.saveAllWeapons(weapons);
+            logger.info("Batch weapon upload completed: count={}", savedWeapons.size());
+            return ResponseEntity.status(HttpStatus.CREATED)
+                .body(BackendApiResponse.success(MessageKey.WEAPON_SAVE_SUCCESS, savedWeapons));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(BackendApiResponse.error(ErrorCode.WEAPON_SAVE_FAILED, e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Batch weapon upload failed", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(BackendApiResponse.error(ErrorCode.WEAPON_SAVE_FAILED, e.getMessage()));
         }
     }
@@ -289,4 +315,4 @@ public class WeaponController {
     public ResponseEntity<List<Weapon>> findByAttribute(@PathVariable String attribute) {
         return ResponseEntity.ok(weaponService.findByAttribute(attribute));
     }
-} 
+}
