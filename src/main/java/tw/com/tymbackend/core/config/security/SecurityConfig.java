@@ -137,6 +137,9 @@ public class SecurityConfig {
                 .requestMatchers("/keycloak/**").permitAll() // Keycloak 所有端点（包含 introspect）
                 .requestMatchers("GET", "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
 
+                // Learn 題庫、作答與個人表現一律需要有效 JWT
+                .requestMatchers("/learn/**").authenticated()
+
                 // ========================================
                 // SELECT 系列：GET 请求，完全开放，无需认证
                 // ========================================

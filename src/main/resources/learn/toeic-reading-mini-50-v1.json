@@ -1,0 +1,1358 @@
+{
+  "id": "toeic-reading-mini-50-v1",
+  "title": "TOEIC Reading Mini Mock Test",
+  "description": "50 題 · Part 5 (20) + Part 6 (20) + Part 7 (10)。建議一次計時到底，中途不要對答案。",
+  "recommendedMinutes": 45,
+  "questions": [
+    {
+      "position": 1,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "By the time the external auditors ______ their preliminary review, the finance team had already circulated the revised figures.",
+      "options": [
+        {
+          "key": "A",
+          "text": "complete"
+        },
+        {
+          "key": "B",
+          "text": "completed"
+        },
+        {
+          "key": "C",
+          "text": "had completed"
+        },
+        {
+          "key": "D",
+          "text": "will complete"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) completed — By the time + 過去簡單式，主句用過去完成式（had already circulated）。陷阱：(C) had completed 想誘你把兩個動作都放過去完成，但 by 子句本身是基準時間點，用過去簡單式。"
+    },
+    {
+      "position": 2,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "All visitor access cards ______ to the security desk before employees leave the building for the day.",
+      "options": [
+        {
+          "key": "A",
+          "text": "must return"
+        },
+        {
+          "key": "B",
+          "text": "must be returned"
+        },
+        {
+          "key": "C",
+          "text": "must have returned"
+        },
+        {
+          "key": "D",
+          "text": "must be returning"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) must be returned — cards 是被歸還，需被動 must be + p.p.。(A) 主動語意錯（卡片不會自己歸還）。"
+    },
+    {
+      "position": 3,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "______ the persistent supply delays, the manufacturing team managed to fulfill every order placed in the third quarter.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Although"
+        },
+        {
+          "key": "B",
+          "text": "Despite"
+        },
+        {
+          "key": "C",
+          "text": "Even"
+        },
+        {
+          "key": "D",
+          "text": "However"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) Despite — 後面接名詞片語 the persistent supply delays，需介系詞 Despite。陷阱：(A) Although 要接子句、(D) However 要接子句且需標點，(C) Even 單獨不成立。"
+    },
+    {
+      "position": 4,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The regional manager asked that each branch ______ its quarterly inventory count no later than the 25th.",
+      "options": [
+        {
+          "key": "A",
+          "text": "submits"
+        },
+        {
+          "key": "B",
+          "text": "submitted"
+        },
+        {
+          "key": "C",
+          "text": "submit"
+        },
+        {
+          "key": "D",
+          "text": "will submit"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) submit — ask that + S + (should) 原形，屬要求性動詞的假設語氣，動詞用原形。陷阱：(A) submits 誤用第三人稱單數。"
+    },
+    {
+      "position": 5,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The proposal was rejected not because of its cost ______ because of the tight timeline it required.",
+      "options": [
+        {
+          "key": "A",
+          "text": "and"
+        },
+        {
+          "key": "B",
+          "text": "or"
+        },
+        {
+          "key": "C",
+          "text": "but"
+        },
+        {
+          "key": "D",
+          "text": "so"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) but — 固定句型 not because of A but because of B（不是因為 A，而是因為 B）。"
+    },
+    {
+      "position": 6,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "Ms. Alvarez, ______ presentation impressed the entire board, has been promoted to director of operations.",
+      "options": [
+        {
+          "key": "A",
+          "text": "who"
+        },
+        {
+          "key": "B",
+          "text": "whom"
+        },
+        {
+          "key": "C",
+          "text": "whose"
+        },
+        {
+          "key": "D",
+          "text": "which"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) whose — 後接名詞 presentation，表所有格關係代名詞。陷阱：(A) who 之後應接動詞、(B) whom 為受格。"
+    },
+    {
+      "position": 7,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "Employees are reminded to ______ their personal belongings on the labeled shelves, not on the floor of the storage room.",
+      "options": [
+        {
+          "key": "A",
+          "text": "lie"
+        },
+        {
+          "key": "B",
+          "text": "lay"
+        },
+        {
+          "key": "C",
+          "text": "lain"
+        },
+        {
+          "key": "D",
+          "text": "lying"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) lay — 及物動詞「放置」（lay–laid–laid），後有受詞 belongings。陷阱：(A) lie 是不及物「躺／位於」，不接受詞。"
+    },
+    {
+      "position": 8,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The two firms agreed to divide the licensing revenue equally ______ themselves for the duration of the contract.",
+      "options": [
+        {
+          "key": "A",
+          "text": "among"
+        },
+        {
+          "key": "B",
+          "text": "between"
+        },
+        {
+          "key": "C",
+          "text": "within"
+        },
+        {
+          "key": "D",
+          "text": "throughout"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) between — 雖是分配，但明確是 the two firms 兩方之間，用 between。陷阱：(A) among 用於三者以上；此題故意用「divide...equally」誘你選 among，但主體是「兩家公司」。"
+    },
+    {
+      "position": 9,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "Far ______ applicants applied for the internship this cycle than the department had anticipated.",
+      "options": [
+        {
+          "key": "A",
+          "text": "less"
+        },
+        {
+          "key": "B",
+          "text": "least"
+        },
+        {
+          "key": "C",
+          "text": "fewer"
+        },
+        {
+          "key": "D",
+          "text": "little"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) fewer — applicants 為可數複數，用 fewer；且 Far fewer... than 為比較句。陷阱：(A) less 用於不可數。"
+    },
+    {
+      "position": 10,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The maintenance crew will not begin the electrical upgrade ______ the building has been fully evacuated.",
+      "options": [
+        {
+          "key": "A",
+          "text": "unless"
+        },
+        {
+          "key": "B",
+          "text": "until"
+        },
+        {
+          "key": "C",
+          "text": "since"
+        },
+        {
+          "key": "D",
+          "text": "while"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) until — 「直到大樓完全淨空前不會開始」，時間點語意用 until。陷阱：(A) unless（除非）語意反了；(C) since、(D) while 皆不合。"
+    },
+    {
+      "position": 11,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The updated software runs noticeably ______ than the previous version, even on older machines.",
+      "options": [
+        {
+          "key": "A",
+          "text": "smooth"
+        },
+        {
+          "key": "B",
+          "text": "smoothly"
+        },
+        {
+          "key": "C",
+          "text": "more smoothly"
+        },
+        {
+          "key": "D",
+          "text": "most smoothly"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) more smoothly — 修飾動詞 runs 需副詞，且句尾 than 需比較級 → more smoothly。陷阱：(A) smooth 為形容詞、(B) 少了比較級。"
+    },
+    {
+      "position": 12,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "To ______ that no attendee is turned away, the organizers have asked all participants to register at least one week in advance.",
+      "options": [
+        {
+          "key": "A",
+          "text": "assure"
+        },
+        {
+          "key": "B",
+          "text": "insure"
+        },
+        {
+          "key": "C",
+          "text": "ensure"
+        },
+        {
+          "key": "D",
+          "text": "secure"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) ensure — 「確保沒有人被拒於門外」用 ensure（確保某事發生）。陷阱：(A) assure 需接「人」（assure someone）、(B) insure 為投保。"
+    },
+    {
+      "position": 13,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The keynote speaker, ______ the audience had been eagerly awaiting, arrived twenty minutes behind schedule.",
+      "options": [
+        {
+          "key": "A",
+          "text": "who"
+        },
+        {
+          "key": "B",
+          "text": "whom"
+        },
+        {
+          "key": "C",
+          "text": "whose"
+        },
+        {
+          "key": "D",
+          "text": "that"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) whom — 關係子句 the audience had been awaiting ___，缺的是 await 的受詞 → 受格 whom。陷阱：(A) who 為主格。"
+    },
+    {
+      "position": 14,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "______ the two proposals meets the committee's budget requirements, so the search for vendors will continue.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Either of"
+        },
+        {
+          "key": "B",
+          "text": "Neither of"
+        },
+        {
+          "key": "C",
+          "text": "None"
+        },
+        {
+          "key": "D",
+          "text": "Both of"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) Neither of — 後句 so the search...will continue（所以繼續找廠商），暗示兩案都不符合 → Neither of。且動詞為單數 meets 也符合 Neither of。陷阱：(A) Either of 語意矛盾。"
+    },
+    {
+      "position": 15,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The consulting fee is ______ to change without notice, depending on the scope of the engagement.",
+      "options": [
+        {
+          "key": "A",
+          "text": "subject"
+        },
+        {
+          "key": "B",
+          "text": "subjected"
+        },
+        {
+          "key": "C",
+          "text": "subjecting"
+        },
+        {
+          "key": "D",
+          "text": "subjection"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "(A) subject — 固定搭配 be subject to change（可能變動）。此處 subject 為形容詞。陷阱：(B) subjected 為被動動詞語意不同。"
+    },
+    {
+      "position": 16,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "Sales figures rose sharply in the spring; ______, they declined just as quickly once the promotion ended.",
+      "options": [
+        {
+          "key": "A",
+          "text": "therefore"
+        },
+        {
+          "key": "B",
+          "text": "however"
+        },
+        {
+          "key": "C",
+          "text": "moreover"
+        },
+        {
+          "key": "D",
+          "text": "otherwise"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) however — 前後語意轉折（先大漲、後快跌）。陷阱：(A) therefore（因此）、(C) moreover（而且）皆非轉折。"
+    },
+    {
+      "position": 17,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The committee will announce the winning design ______ all the entries have been reviewed by the panel.",
+      "options": [
+        {
+          "key": "A",
+          "text": "as soon as"
+        },
+        {
+          "key": "B",
+          "text": "so that"
+        },
+        {
+          "key": "C",
+          "text": "in case"
+        },
+        {
+          "key": "D",
+          "text": "even if"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "(A) as soon as — 「所有作品審查完就公布」，時間語意。陷阱：(B) so that（目的）、(C) in case（以防）語意不合。"
+    },
+    {
+      "position": 18,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "Had the shipment been insured, the company ______ the full value of the damaged goods.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will recover"
+        },
+        {
+          "key": "B",
+          "text": "would recover"
+        },
+        {
+          "key": "C",
+          "text": "would have recovered"
+        },
+        {
+          "key": "D",
+          "text": "had recovered"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) would have recovered — Had + S + p.p. 是與過去事實相反的假設語氣倒裝，主句需 would have + p.p.。"
+    },
+    {
+      "position": 19,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "The instructions clearly state that the equipment should be handled with ______ care during transport.",
+      "options": [
+        {
+          "key": "A",
+          "text": "considerate"
+        },
+        {
+          "key": "B",
+          "text": "considerable"
+        },
+        {
+          "key": "C",
+          "text": "considering"
+        },
+        {
+          "key": "D",
+          "text": "consideration"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) considerable — 修飾名詞 care，需形容詞且語意為「相當大的」→ considerable。陷阱：(A) considerate（體貼的）意義不符、(D) consideration 為名詞。"
+    },
+    {
+      "position": 20,
+      "section": "Part 5",
+      "passageKey": null,
+      "passageText": null,
+      "prompt": "______ receiving the customer's complaint, the support team issued a full refund within the hour.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Since"
+        },
+        {
+          "key": "B",
+          "text": "Upon"
+        },
+        {
+          "key": "C",
+          "text": "While"
+        },
+        {
+          "key": "D",
+          "text": "During"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) Upon — Upon + V-ing＝「一……就……」，等同 On receiving。陷阱：(A) Since、(C) While、(D) During 皆不能直接引導此結構語意。"
+    },
+    {
+      "position": 21,
+      "section": "Part 6",
+      "passageKey": "p21",
+      "passageText": "To: All Marketing Staff From: Deborah Kwan, Marketing Director Subject: Updated Expense Reporting\n\nEffective the first of next month, all travel-related expenses must be submitted through the new online portal rather than the paper forms we have used until now. The paper system, ______ (21) has served us for over a decade, can no longer keep pace with our reporting volume.\n\nPlease note that receipts must be uploaded within five business days of any trip. Claims submitted after this window ______ (22) delayed reimbursement, as they will require additional manager approval.\n\n______ (23) We understand that adjusting to any new system takes time. For that reason, the finance team will hold two walkthrough sessions next week, and attendance is strongly ______ (24) for anyone who travels regularly.\n\nThank you for your cooperation.",
+      "prompt": "Select the best answer for blank (21).",
+      "options": [
+        {
+          "key": "A",
+          "text": "which"
+        },
+        {
+          "key": "B",
+          "text": "what"
+        },
+        {
+          "key": "C",
+          "text": "whose"
+        },
+        {
+          "key": "D",
+          "text": "it"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "(A) which — 非限定關係子句修飾 The paper system，先行詞為物 → which。陷阱：(D) it 會造成兩個主詞的破碎句。"
+    },
+    {
+      "position": 22,
+      "section": "Part 6",
+      "passageKey": "p21",
+      "passageText": "To: All Marketing Staff From: Deborah Kwan, Marketing Director Subject: Updated Expense Reporting\n\nEffective the first of next month, all travel-related expenses must be submitted through the new online portal rather than the paper forms we have used until now. The paper system, ______ (21) has served us for over a decade, can no longer keep pace with our reporting volume.\n\nPlease note that receipts must be uploaded within five business days of any trip. Claims submitted after this window ______ (22) delayed reimbursement, as they will require additional manager approval.\n\n______ (23) We understand that adjusting to any new system takes time. For that reason, the finance team will hold two walkthrough sessions next week, and attendance is strongly ______ (24) for anyone who travels regularly.\n\nThank you for your cooperation.",
+      "prompt": "Select the best answer for blank (22).",
+      "options": [
+        {
+          "key": "A",
+          "text": "result in"
+        },
+        {
+          "key": "B",
+          "text": "will result in"
+        },
+        {
+          "key": "C",
+          "text": "resulting in"
+        },
+        {
+          "key": "D",
+          "text": "have resulted in"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) will result in — 主句描述未來後果（逾期將導致延遲），需未來式。陷阱：(D) have resulted in 時態錯。"
+    },
+    {
+      "position": 23,
+      "section": "Part 6",
+      "passageKey": "p21",
+      "passageText": "To: All Marketing Staff From: Deborah Kwan, Marketing Director Subject: Updated Expense Reporting\n\nEffective the first of next month, all travel-related expenses must be submitted through the new online portal rather than the paper forms we have used until now. The paper system, ______ (21) has served us for over a decade, can no longer keep pace with our reporting volume.\n\nPlease note that receipts must be uploaded within five business days of any trip. Claims submitted after this window ______ (22) delayed reimbursement, as they will require additional manager approval.\n\n______ (23) We understand that adjusting to any new system takes time. For that reason, the finance team will hold two walkthrough sessions next week, and attendance is strongly ______ (24) for anyone who travels regularly.\n\nThank you for your cooperation.",
+      "prompt": "Select the best answer for blank (23).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The paper forms will still be accepted indefinitely."
+        },
+        {
+          "key": "B",
+          "text": "We appreciate that this change may feel abrupt."
+        },
+        {
+          "key": "C",
+          "text": "Reimbursements are processed twice a year."
+        },
+        {
+          "key": "D",
+          "text": "Please forward this message to our clients."
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 下一句 For that reason, the finance team will hold... walkthrough sessions（因此舉辦說明會），前面須是「理解此改變可能突然」才承接得上。(A) 與全文（要改用線上系統）矛盾。"
+    },
+    {
+      "position": 24,
+      "section": "Part 6",
+      "passageKey": "p21",
+      "passageText": "To: All Marketing Staff From: Deborah Kwan, Marketing Director Subject: Updated Expense Reporting\n\nEffective the first of next month, all travel-related expenses must be submitted through the new online portal rather than the paper forms we have used until now. The paper system, ______ (21) has served us for over a decade, can no longer keep pace with our reporting volume.\n\nPlease note that receipts must be uploaded within five business days of any trip. Claims submitted after this window ______ (22) delayed reimbursement, as they will require additional manager approval.\n\n______ (23) We understand that adjusting to any new system takes time. For that reason, the finance team will hold two walkthrough sessions next week, and attendance is strongly ______ (24) for anyone who travels regularly.\n\nThank you for your cooperation.",
+      "prompt": "Select the best answer for blank (24).",
+      "options": [
+        {
+          "key": "A",
+          "text": "encourage"
+        },
+        {
+          "key": "B",
+          "text": "encouraged"
+        },
+        {
+          "key": "C",
+          "text": "encouraging"
+        },
+        {
+          "key": "D",
+          "text": "encouragement"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) encouraged — attendance is strongly ___，被動語態需 p.p. → encouraged。陷阱：(C) encouraging 主動、(D) encouragement 為名詞。"
+    },
+    {
+      "position": 25,
+      "section": "Part 6",
+      "passageKey": "p25",
+      "passageText": "NOTICE TO ALL TENANTS — Parking Garage Resurfacing\n\nThe lower-level parking garage will undergo resurfacing ______ (25) June 3 and June 7. During this period, the lower level will be completely inaccessible to vehicles.\n\nTenants who normally park below ground may use the overflow lot on Maple Street at no additional charge. ______ (26) Spaces there are limited, so we recommend arriving earlier than usual.\n\nWe ______ (27) apologize for any inconvenience this work may cause. The resurfacing is necessary to repair damage that has worsened ______ (28) the winter and to ensure the safety of all who use the facility.",
+      "prompt": "Select the best answer for blank (25).",
+      "options": [
+        {
+          "key": "A",
+          "text": "from"
+        },
+        {
+          "key": "B",
+          "text": "since"
+        },
+        {
+          "key": "C",
+          "text": "between"
+        },
+        {
+          "key": "D",
+          "text": "during"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) between — between June 3 and June 7，between...and 固定搭配。陷阱：(A) from 需搭配 to。"
+    },
+    {
+      "position": 26,
+      "section": "Part 6",
+      "passageKey": "p25",
+      "passageText": "NOTICE TO ALL TENANTS — Parking Garage Resurfacing\n\nThe lower-level parking garage will undergo resurfacing ______ (25) June 3 and June 7. During this period, the lower level will be completely inaccessible to vehicles.\n\nTenants who normally park below ground may use the overflow lot on Maple Street at no additional charge. ______ (26) Spaces there are limited, so we recommend arriving earlier than usual.\n\nWe ______ (27) apologize for any inconvenience this work may cause. The resurfacing is necessary to repair damage that has worsened ______ (28) the winter and to ensure the safety of all who use the facility.",
+      "prompt": "Select the best answer for blank (26).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The garage will remain closed permanently."
+        },
+        {
+          "key": "B",
+          "text": "Additional spaces have been reserved for your convenience."
+        },
+        {
+          "key": "C",
+          "text": "A shuttle service will run every fifteen minutes."
+        },
+        {
+          "key": "D",
+          "text": "Please display your tenant permit while parked there."
+        }
+      ],
+      "correctOption": "D",
+      "explanation": "(D) — 前句提到可停 Maple Street 停車場，後句 Spaces there are limited（那裡車位有限），中間插入須與「在該處停車」連貫 → 請出示租戶許可證。(C) 提到接駁車與上下文無關。"
+    },
+    {
+      "position": 27,
+      "section": "Part 6",
+      "passageKey": "p25",
+      "passageText": "NOTICE TO ALL TENANTS — Parking Garage Resurfacing\n\nThe lower-level parking garage will undergo resurfacing ______ (25) June 3 and June 7. During this period, the lower level will be completely inaccessible to vehicles.\n\nTenants who normally park below ground may use the overflow lot on Maple Street at no additional charge. ______ (26) Spaces there are limited, so we recommend arriving earlier than usual.\n\nWe ______ (27) apologize for any inconvenience this work may cause. The resurfacing is necessary to repair damage that has worsened ______ (28) the winter and to ensure the safety of all who use the facility.",
+      "prompt": "Select the best answer for blank (27).",
+      "options": [
+        {
+          "key": "A",
+          "text": "sincere"
+        },
+        {
+          "key": "B",
+          "text": "sincerity"
+        },
+        {
+          "key": "C",
+          "text": "sincerely"
+        },
+        {
+          "key": "D",
+          "text": "more sincere"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) sincerely — 修飾動詞 apologize 需副詞。陷阱：(A) sincere 為形容詞。"
+    },
+    {
+      "position": 28,
+      "section": "Part 6",
+      "passageKey": "p25",
+      "passageText": "NOTICE TO ALL TENANTS — Parking Garage Resurfacing\n\nThe lower-level parking garage will undergo resurfacing ______ (25) June 3 and June 7. During this period, the lower level will be completely inaccessible to vehicles.\n\nTenants who normally park below ground may use the overflow lot on Maple Street at no additional charge. ______ (26) Spaces there are limited, so we recommend arriving earlier than usual.\n\nWe ______ (27) apologize for any inconvenience this work may cause. The resurfacing is necessary to repair damage that has worsened ______ (28) the winter and to ensure the safety of all who use the facility.",
+      "prompt": "Select the best answer for blank (28).",
+      "options": [
+        {
+          "key": "A",
+          "text": "during"
+        },
+        {
+          "key": "B",
+          "text": "while"
+        },
+        {
+          "key": "C",
+          "text": "among"
+        },
+        {
+          "key": "D",
+          "text": "throughout"
+        }
+      ],
+      "correctOption": "D",
+      "explanation": "(D) throughout — 「整個冬天期間持續惡化」，throughout the winter 表全程。陷阱：(B) while 需接子句、(A) during 也可但與 worsened（持續性）語意上 throughout 更貼切「整段期間惡化」。"
+    },
+    {
+      "position": 29,
+      "section": "Part 6",
+      "passageKey": "p29",
+      "passageText": "Brightpath Language Studio — Speak with Confidence\n\nWhether you are preparing for a job interview abroad or simply want to communicate more naturally, Brightpath offers courses ______ (29) to learners at every level.\n\nOur small-group classes are capped at six students, which ______ (30) that each learner receives personal attention. Unlike larger programs, we adjust the pace to match the group rather than rushing through a fixed syllabus.\n\n______ (31) Sign up before the end of the month and receive your first assessment session free of charge.\n\nClasses fill quickly, so we encourage you to reserve your place ______ (32) online or by phone today.",
+      "prompt": "Select the best answer for blank (29).",
+      "options": [
+        {
+          "key": "A",
+          "text": "tailor"
+        },
+        {
+          "key": "B",
+          "text": "tailored"
+        },
+        {
+          "key": "C",
+          "text": "tailoring"
+        },
+        {
+          "key": "D",
+          "text": "tailors"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) tailored — courses ___ to learners，過去分詞作後位修飾（被量身打造的課程）。陷阱：(A) tailor 為動詞原形。"
+    },
+    {
+      "position": 30,
+      "section": "Part 6",
+      "passageKey": "p29",
+      "passageText": "Brightpath Language Studio — Speak with Confidence\n\nWhether you are preparing for a job interview abroad or simply want to communicate more naturally, Brightpath offers courses ______ (29) to learners at every level.\n\nOur small-group classes are capped at six students, which ______ (30) that each learner receives personal attention. Unlike larger programs, we adjust the pace to match the group rather than rushing through a fixed syllabus.\n\n______ (31) Sign up before the end of the month and receive your first assessment session free of charge.\n\nClasses fill quickly, so we encourage you to reserve your place ______ (32) online or by phone today.",
+      "prompt": "Select the best answer for blank (30).",
+      "options": [
+        {
+          "key": "A",
+          "text": "ensures"
+        },
+        {
+          "key": "B",
+          "text": "assures"
+        },
+        {
+          "key": "C",
+          "text": "insures"
+        },
+        {
+          "key": "D",
+          "text": "secures"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "(A) ensures — 「確保每位學員得到關注」，ensure that 子句。陷阱：(B) assures 需接人。"
+    },
+    {
+      "position": 31,
+      "section": "Part 6",
+      "passageKey": "p29",
+      "passageText": "Brightpath Language Studio — Speak with Confidence\n\nWhether you are preparing for a job interview abroad or simply want to communicate more naturally, Brightpath offers courses ______ (29) to learners at every level.\n\nOur small-group classes are capped at six students, which ______ (30) that each learner receives personal attention. Unlike larger programs, we adjust the pace to match the group rather than rushing through a fixed syllabus.\n\n______ (31) Sign up before the end of the month and receive your first assessment session free of charge.\n\nClasses fill quickly, so we encourage you to reserve your place ______ (32) online or by phone today.",
+      "prompt": "Select the best answer for blank (31).",
+      "options": [
+        {
+          "key": "A",
+          "text": "Refunds are not available after the first week."
+        },
+        {
+          "key": "B",
+          "text": "Our instructors are all certified and experienced."
+        },
+        {
+          "key": "C",
+          "text": "There is no better time to begin than now."
+        },
+        {
+          "key": "D",
+          "text": "The studio will be closed for renovation this month."
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) — 下一句 Sign up before the end of the month...（月底前報名有優惠），前面須是催促報名的過渡句 → 「沒有比現在更好的開始時機」。(A)(D) 為負面資訊，不符廣告語氣。"
+    },
+    {
+      "position": 32,
+      "section": "Part 6",
+      "passageKey": "p29",
+      "passageText": "Brightpath Language Studio — Speak with Confidence\n\nWhether you are preparing for a job interview abroad or simply want to communicate more naturally, Brightpath offers courses ______ (29) to learners at every level.\n\nOur small-group classes are capped at six students, which ______ (30) that each learner receives personal attention. Unlike larger programs, we adjust the pace to match the group rather than rushing through a fixed syllabus.\n\n______ (31) Sign up before the end of the month and receive your first assessment session free of charge.\n\nClasses fill quickly, so we encourage you to reserve your place ______ (32) online or by phone today.",
+      "prompt": "Select the best answer for blank (32).",
+      "options": [
+        {
+          "key": "A",
+          "text": "both"
+        },
+        {
+          "key": "B",
+          "text": "either"
+        },
+        {
+          "key": "C",
+          "text": "neither"
+        },
+        {
+          "key": "D",
+          "text": "whether"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) either — either...or（線上或電話），固定搭配。陷阱：(A) both 需搭配 and。"
+    },
+    {
+      "position": 33,
+      "section": "Part 6",
+      "passageKey": "p33",
+      "passageText": "MEMO To: Department Heads From: Facilities Management Re: Temporary Relocation of the Copy Center\n\nAs part of the ongoing renovation, the fourth-floor copy center ______ (33) to the second floor beginning next Monday. The move is expected to take a single day.\n\nWe ask that any large print jobs ______ (34) at least 48 hours in advance during the transition, since staffing on the second floor will initially be reduced.\n\n______ (35) Once the renovation is complete, the copy center will return to its original location with upgraded equipment.\n\nWe are confident that the new machines will handle high-volume jobs far more ______ (36) than the current ones.",
+      "prompt": "Select the best answer for blank (33).",
+      "options": [
+        {
+          "key": "A",
+          "text": "relocated"
+        },
+        {
+          "key": "B",
+          "text": "will be relocated"
+        },
+        {
+          "key": "C",
+          "text": "has relocated"
+        },
+        {
+          "key": "D",
+          "text": "relocating"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) will be relocated — 影印中心是「被搬遷」且時間為 beginning next Monday（未來），需未來被動。"
+    },
+    {
+      "position": 34,
+      "section": "Part 6",
+      "passageKey": "p33",
+      "passageText": "MEMO To: Department Heads From: Facilities Management Re: Temporary Relocation of the Copy Center\n\nAs part of the ongoing renovation, the fourth-floor copy center ______ (33) to the second floor beginning next Monday. The move is expected to take a single day.\n\nWe ask that any large print jobs ______ (34) at least 48 hours in advance during the transition, since staffing on the second floor will initially be reduced.\n\n______ (35) Once the renovation is complete, the copy center will return to its original location with upgraded equipment.\n\nWe are confident that the new machines will handle high-volume jobs far more ______ (36) than the current ones.",
+      "prompt": "Select the best answer for blank (34).",
+      "options": [
+        {
+          "key": "A",
+          "text": "submit"
+        },
+        {
+          "key": "B",
+          "text": "are submitted"
+        },
+        {
+          "key": "C",
+          "text": "be submitted"
+        },
+        {
+          "key": "D",
+          "text": "submitting"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) be submitted — We ask that + S + (should) be p.p.，要求性假設語氣＋被動（列印工作被提交）。陷阱：(B) are submitted 直說語氣不合 ask that 結構。"
+    },
+    {
+      "position": 35,
+      "section": "Part 6",
+      "passageKey": "p33",
+      "passageText": "MEMO To: Department Heads From: Facilities Management Re: Temporary Relocation of the Copy Center\n\nAs part of the ongoing renovation, the fourth-floor copy center ______ (33) to the second floor beginning next Monday. The move is expected to take a single day.\n\nWe ask that any large print jobs ______ (34) at least 48 hours in advance during the transition, since staffing on the second floor will initially be reduced.\n\n______ (35) Once the renovation is complete, the copy center will return to its original location with upgraded equipment.\n\nWe are confident that the new machines will handle high-volume jobs far more ______ (36) than the current ones.",
+      "prompt": "Select the best answer for blank (35).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The copy center will be permanently discontinued."
+        },
+        {
+          "key": "B",
+          "text": "We appreciate your patience during this brief disruption."
+        },
+        {
+          "key": "C",
+          "text": "Please direct all client inquiries to the front desk."
+        },
+        {
+          "key": "D",
+          "text": "The renovation has been indefinitely postponed."
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 前後皆為安撫語氣（造成短暫不便），插入句須感謝耐心。(A)(D) 與「翻新後會回原址」矛盾。"
+    },
+    {
+      "position": 36,
+      "section": "Part 6",
+      "passageKey": "p33",
+      "passageText": "MEMO To: Department Heads From: Facilities Management Re: Temporary Relocation of the Copy Center\n\nAs part of the ongoing renovation, the fourth-floor copy center ______ (33) to the second floor beginning next Monday. The move is expected to take a single day.\n\nWe ask that any large print jobs ______ (34) at least 48 hours in advance during the transition, since staffing on the second floor will initially be reduced.\n\n______ (35) Once the renovation is complete, the copy center will return to its original location with upgraded equipment.\n\nWe are confident that the new machines will handle high-volume jobs far more ______ (36) than the current ones.",
+      "prompt": "Select the best answer for blank (36).",
+      "options": [
+        {
+          "key": "A",
+          "text": "efficient"
+        },
+        {
+          "key": "B",
+          "text": "efficiency"
+        },
+        {
+          "key": "C",
+          "text": "efficiently"
+        },
+        {
+          "key": "D",
+          "text": "more efficient"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) efficiently — 修飾動詞 handle 需副詞，且有 far more（程度副詞＋比較）→ efficiently。陷阱：(D) more efficient 為形容詞。"
+    },
+    {
+      "position": 37,
+      "section": "Part 6",
+      "passageKey": "p37",
+      "passageText": "Annual Community Volunteer Fair\n\nThe Riverside Community Center is pleased to announce its ninth annual Volunteer Fair, ______ (37) will take place on Saturday, September 14, from 10 a.m. to 3 p.m.\n\nLocal organizations will set up booths to introduce their programs and recruit new volunteers. ______ (38) Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule.\n\nAdmission is free, and light refreshments ______ (39) throughout the day. We especially encourage first-time volunteers to attend, ______ (40) many organizations offer training for those with no prior experience.",
+      "prompt": "Select the best answer for blank (37).",
+      "options": [
+        {
+          "key": "A",
+          "text": "it"
+        },
+        {
+          "key": "B",
+          "text": "which"
+        },
+        {
+          "key": "C",
+          "text": "where"
+        },
+        {
+          "key": "D",
+          "text": "what"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) which — 非限定關代修飾 Volunteer Fair（物）。陷阱：(C) where 之後需完整子句無缺，但此處缺主詞 → 用 which。"
+    },
+    {
+      "position": 38,
+      "section": "Part 6",
+      "passageKey": "p37",
+      "passageText": "Annual Community Volunteer Fair\n\nThe Riverside Community Center is pleased to announce its ninth annual Volunteer Fair, ______ (37) will take place on Saturday, September 14, from 10 a.m. to 3 p.m.\n\nLocal organizations will set up booths to introduce their programs and recruit new volunteers. ______ (38) Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule.\n\nAdmission is free, and light refreshments ______ (39) throughout the day. We especially encourage first-time volunteers to attend, ______ (40) many organizations offer training for those with no prior experience.",
+      "prompt": "Select the best answer for blank (38).",
+      "options": [
+        {
+          "key": "A",
+          "text": "Registration for next year's fair is now closed."
+        },
+        {
+          "key": "B",
+          "text": "The center is seeking donations of office equipment."
+        },
+        {
+          "key": "C",
+          "text": "Opportunities are available for people of all backgrounds."
+        },
+        {
+          "key": "D",
+          "text": "Booth rental fees are due by the end of August."
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) — 下句 Whether you can spare a few hours... there is a role that fits（不論你能付出多少時間都有適合的角色），插入句須是「歡迎各種背景的人」。(A)(B)(D) 與招募志工主題不符。"
+    },
+    {
+      "position": 39,
+      "section": "Part 6",
+      "passageKey": "p37",
+      "passageText": "Annual Community Volunteer Fair\n\nThe Riverside Community Center is pleased to announce its ninth annual Volunteer Fair, ______ (37) will take place on Saturday, September 14, from 10 a.m. to 3 p.m.\n\nLocal organizations will set up booths to introduce their programs and recruit new volunteers. ______ (38) Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule.\n\nAdmission is free, and light refreshments ______ (39) throughout the day. We especially encourage first-time volunteers to attend, ______ (40) many organizations offer training for those with no prior experience.",
+      "prompt": "Select the best answer for blank (39).",
+      "options": [
+        {
+          "key": "A",
+          "text": "will provide"
+        },
+        {
+          "key": "B",
+          "text": "will be provided"
+        },
+        {
+          "key": "C",
+          "text": "providing"
+        },
+        {
+          "key": "D",
+          "text": "has provided"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) will be provided — refreshments 是「被提供」，未來被動。陷阱：(A) will provide 主動語意錯。"
+    },
+    {
+      "position": 40,
+      "section": "Part 6",
+      "passageKey": "p37",
+      "passageText": "Annual Community Volunteer Fair\n\nThe Riverside Community Center is pleased to announce its ninth annual Volunteer Fair, ______ (37) will take place on Saturday, September 14, from 10 a.m. to 3 p.m.\n\nLocal organizations will set up booths to introduce their programs and recruit new volunteers. ______ (38) Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule.\n\nAdmission is free, and light refreshments ______ (39) throughout the day. We especially encourage first-time volunteers to attend, ______ (40) many organizations offer training for those with no prior experience.",
+      "prompt": "Select the best answer for blank (40).",
+      "options": [
+        {
+          "key": "A",
+          "text": "so"
+        },
+        {
+          "key": "B",
+          "text": "but"
+        },
+        {
+          "key": "C",
+          "text": "as"
+        },
+        {
+          "key": "D",
+          "text": "or"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) as — 引導原因子句「因為許多組織提供訓練」。陷阱：(B) but 為轉折、(D) or 為選擇，語意皆不合。"
+    },
+    {
+      "position": 41,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "What is the main purpose of Ms. Nadkarni's email?",
+      "options": [
+        {
+          "key": "A",
+          "text": "To cancel a previously confirmed booking"
+        },
+        {
+          "key": "B",
+          "text": "To raise concerns about a venue and request a solution"
+        },
+        {
+          "key": "C",
+          "text": "To request a refund for a faulty projector"
+        },
+        {
+          "key": "D",
+          "text": "To confirm the final catering numbers for an event"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 主旨題。整封信在反映場地兩個問題（投影機故障、人數超出）並請對方提供解方。(D) catering 只是附帶時間依據，非主旨。"
+    },
+    {
+      "position": 42,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "According to the email, why is the malfunctioning projector a particular problem?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The venue charges extra for audiovisual equipment."
+        },
+        {
+          "key": "B",
+          "text": "The breakout rooms have no projectors of their own."
+        },
+        {
+          "key": "C",
+          "text": "The opening keynote relies on a video presentation."
+        },
+        {
+          "key": "D",
+          "text": "The delegates were promised a live broadcast."
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) — 細節題。信中明言 Our opening keynote depends heavily on a video presentation，故投影機特別關鍵。"
+    },
+    {
+      "position": 43,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "By what date did Ms. Nadkarni request a reply?",
+      "options": [
+        {
+          "key": "A",
+          "text": "October 2"
+        },
+        {
+          "key": "B",
+          "text": "October 4"
+        },
+        {
+          "key": "C",
+          "text": "October 6"
+        },
+        {
+          "key": "D",
+          "text": "November 8"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) October 6 — 細節題。信末 I would appreciate a response by October 6。陷阱：(D) Nov 8 是活動日、(A) Oct 2 是寄信日。"
+    },
+    {
+      "position": 44,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "What can be inferred about the Grand Hall's seating capacity?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It is larger than the Riverside Pavilion's."
+        },
+        {
+          "key": "B",
+          "text": "It is insufficient for the summit's current registration."
+        },
+        {
+          "key": "C",
+          "text": "It was recently increased to 285 seats."
+        },
+        {
+          "key": "D",
+          "text": "It matches the number of breakout rooms."
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 推論題。網站列 Grand Hall 可坐 250，但報名已達 285，故現有容量不足。陷阱：(A) 與 Pavilion（350）比較，Grand Hall 較小，敘述相反。"
+    },
+    {
+      "position": 45,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "According to the notice, what will happen to the Grand Hall in late October?",
+      "options": [
+        {
+          "key": "A",
+          "text": "It will be closed permanently."
+        },
+        {
+          "key": "B",
+          "text": "Its audiovisual equipment will be replaced."
+        },
+        {
+          "key": "C",
+          "text": "It will be merged with the Riverside Pavilion."
+        },
+        {
+          "key": "D",
+          "text": "Its seating capacity will be reduced."
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 細節題。公告：10/20–10/31 進行影音升級、所有投影與音響設備汰換。"
+    },
+    {
+      "position": 46,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "Why does Mr. Bellamy consider the projector issue already solved?",
+      "options": [
+        {
+          "key": "A",
+          "text": "A technician repaired it the previous week."
+        },
+        {
+          "key": "B",
+          "text": "The keynote will no longer use video."
+        },
+        {
+          "key": "C",
+          "text": "The entire AV system is being replaced before the event."
+        },
+        {
+          "key": "D",
+          "text": "The event has been moved to a different room."
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) — 整合題（信＋公告＋備忘）。Bellamy 認為投影機問題會自行解決，因整套 AV 系統本月稍晚全面更新，活動當天已是新設備。"
+    },
+    {
+      "position": 47,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "What does Mr. Bellamy decide to do for Harlow Associates?",
+      "options": [
+        {
+          "key": "A",
+          "text": "Offer a discount on catering"
+        },
+        {
+          "key": "B",
+          "text": "Waive the fee for transferring to a larger space"
+        },
+        {
+          "key": "C",
+          "text": "Provide an additional breakout room at no charge"
+        },
+        {
+          "key": "D",
+          "text": "Postpone the event until the following month"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "(B) — 細節題。備忘：we'll waive the transfer fee（免除轉場費），讓對方轉到 Riverside Pavilion。"
+    },
+    {
+      "position": 48,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "What is indicated about the breakout rooms in both the notice and the memo?",
+      "options": [
+        {
+          "key": "A",
+          "text": "They will be relocated to the second floor."
+        },
+        {
+          "key": "B",
+          "text": "They are being upgraded along with the Grand Hall."
+        },
+        {
+          "key": "C",
+          "text": "They remain unchanged from the original booking."
+        },
+        {
+          "key": "D",
+          "text": "They are no longer available for November."
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) — 雙文本整合題。公告：breakout rooms unaffected and remain available as booked；備忘：their breakout rooms stay exactly as they are。兩者都說明維持原訂不變。"
+    },
+    {
+      "position": 49,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "The word \"ample\" in the memo is closest in meaning to",
+      "options": [
+        {
+          "key": "A",
+          "text": "limited"
+        },
+        {
+          "key": "B",
+          "text": "temporary"
+        },
+        {
+          "key": "C",
+          "text": "sufficient"
+        },
+        {
+          "key": "D",
+          "text": "expensive"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "(C) sufficient — 字彙題。seats 350, which gives them ample room＝充足的空間，ample≈sufficient。"
+    },
+    {
+      "position": 50,
+      "section": "Part 7",
+      "passageKey": "p41",
+      "passageText": "Email\n\nTo: Marcus Bellamy m.bellamy@northgate-events.com From: Priya Nadkarni p.nadkarni@harlow-associates.com Date: October 2 Subject: Autumn Leadership Summit — Venue Concerns\n\nDear Mr. Bellamy,\n\nI am writing regarding our booking for the Autumn Leadership Summit, scheduled to take place at the Northgate Conference Centre on November 8. As you know, Harlow Associates reserved the Grand Hall and two adjoining breakout rooms back in June, with an expected attendance of 240 delegates.\n\nTwo issues have come to my attention. First, when I visited the venue last week, I noticed that the Grand Hall's main projector was not functioning. Our opening keynote depends heavily on a video presentation, so this must be resolved well before the event. Second, our registrations have now climbed to 285 — considerably higher than our original estimate. I am concerned that the Grand Hall, which your website lists as accommodating 250 seated guests, may no longer be adequate.\n\nCould you advise whether a larger space is available for that date? If not, we may need to discuss alternative seating arrangements or, as a last resort, cap our registration. I would appreciate a response by October 6, as we must confirm our catering numbers shortly thereafter.\n\nBest regards, Priya Nadkarni Events Coordinator, Harlow Associates\n\nNotice (posted at the Northgate Conference Centre, October 4)\n\nNORTHGATE CONFERENCE CENTRE — Facility Update\n\nPlease be aware of the following changes affecting bookings in November:\n\nThe Grand Hall will undergo scheduled audiovisual upgrades from October 20 to October 31. All projection and sound equipment will be replaced with new units. Events booked from November 1 onward will benefit from the upgraded systems at no extra cost.\nThe Riverside Pavilion, our largest space (seated capacity 350), has recently become available for November following a cancellation. Clients wishing to transfer an existing booking to the Pavilion should contact their account manager. A transfer fee may apply.\nThe two breakout rooms adjoining the Grand Hall are unaffected and remain available as booked.\n\nFor questions, please contact the events office.\n\nInternal Memo\n\nTo: Events Team From: Marcus Bellamy Date: October 5 Re: Harlow Associates booking\n\nTeam,\n\nFollowing up on the Harlow Associates summit (Nov 8). I've reviewed their coordinator's concerns and here's how we'll proceed:\n\nThe projector issue resolves itself — the Grand Hall's entire AV system is being replaced later this month, so by their event date everything will be new. I'll reassure her on that point directly.\n\nThe capacity problem is the real one. At 285 registrations, the Grand Hall won't do. The Riverside Pavilion is now open for November and seats 350, which gives them ample room. I'm going to recommend they transfer. Given that the original shortfall wasn't their fault and they're a repeat client, I've decided we'll waive the transfer fee in this case. Please prepare the paperwork so I can offer this when I reply to her tomorrow.\n\nOne more thing: their breakout rooms stay exactly as they are — those aren't affected by any of this.\n\nThanks, Marcus",
+      "prompt": "Which concern raised by Ms. Nadkarni does Mr. Bellamy NOT directly address in his memo?",
+      "options": [
+        {
+          "key": "A",
+          "text": "The malfunctioning projector"
+        },
+        {
+          "key": "B",
+          "text": "The higher-than-expected attendance"
+        },
+        {
+          "key": "C",
+          "text": "The status of the breakout rooms"
+        },
+        {
+          "key": "D",
+          "text": "The final catering numbers"
+        }
+      ],
+      "correctOption": "D",
+      "explanation": "(D) — NOT / 整合題。Nadkarni 提出：投影機（Bellamy 有回應）、超額人數（有回應）、breakout rooms 狀態（有回應）。catering numbers 只是她自己的時程理由，Bellamy 備忘中未直接處理 → 答案 D。\n\n評分與能力估算框架\n\n請填入實際作答結果後，我會依此產出與 A、B 相同格式的完整分析。\n\n需回報的資料："
+    }
+  ]
+}
