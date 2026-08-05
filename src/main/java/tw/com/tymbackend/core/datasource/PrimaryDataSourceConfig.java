@@ -45,6 +45,7 @@ public class PrimaryDataSourceConfig {
             "tw.com.tymbackend.module.ckeditor.domain.vo",
             "tw.com.tymbackend.module.ai_usage.domain.vo",
             "tw.com.tymbackend.module.gallery.domain.vo",
+            "tw.com.tymbackend.module.learn.domain.vo",
             "tw.com.tymbackend.module.people.domain.vo",
             "tw.com.tymbackend.module.weapon.domain.vo"
         );

@@ -79,6 +79,27 @@ spec:
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
+        startupProbe:
+          httpGet:
+            path: /tymb/actuator/health
+            port: 8080
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 40
+        readinessProbe:
+          httpGet:
+            path: /tymb/actuator/health
+            port: 8080
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        livenessProbe:
+          httpGet:
+            path: /tymb/actuator/health
+            port: 8080
+          periodSeconds: 15
+          timeoutSeconds: 5
+          failureThreshold: 3
         resources:
           requests:
             cpu: "100m"
@@ -244,7 +265,7 @@ spec:
           value: "/"
         # JVM 記憶體配置
         - name: JAVA_OPTS
-          value: "-Xms512m -Xmx1g -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
+          value: "-Xms256m -Xmx640m -XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:+UseStringDeduplication"
         # Session 配置
         - name: APP_SESSION_ENABLED
           value: "false"  # 暫時禁用 Session 支持
