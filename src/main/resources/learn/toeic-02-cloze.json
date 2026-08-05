@@ -10,7 +10,7 @@
     {
       "position": 1,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "非限定關係代名詞",
       "passageKey": "p6-l1-expense",
@@ -44,7 +44,7 @@
     {
       "position": 2,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "依上下文判斷時態",
       "passageKey": "p6-l1-expense",
@@ -77,7 +77,7 @@
     {
       "position": 3,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "插入句與上下文銜接",
       "passageKey": "p6-l1-expense",
@@ -110,7 +110,7 @@
     {
       "position": 4,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "被動語態中的過去分詞",
       "passageKey": "p6-l1-expense",
@@ -143,7 +143,7 @@
     {
       "position": 5,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "between…and 固定搭配",
       "passageKey": "p6-l1-garage",
@@ -177,7 +177,7 @@
     {
       "position": 6,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "插入句與上下文銜接",
       "passageKey": "p6-l1-garage",
@@ -210,7 +210,7 @@
     {
       "position": 7,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "副詞修飾動詞",
       "passageKey": "p6-l1-garage",
@@ -243,7 +243,7 @@
     {
       "position": 8,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "表期間的介系詞",
       "passageKey": "p6-l1-garage",
@@ -276,7 +276,7 @@
     {
       "position": 9,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "過去分詞作後位修飾",
       "passageKey": "p6-l1-brightpath",
@@ -310,7 +310,7 @@
     {
       "position": 10,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "ensure / assure / insure 易混字",
       "passageKey": "p6-l1-brightpath",
@@ -343,7 +343,7 @@
     {
       "position": 11,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "插入句與廣告文體語氣",
       "passageKey": "p6-l1-brightpath",
@@ -376,7 +376,7 @@
     {
       "position": 12,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "either…or 相關連接詞",
       "passageKey": "p6-l1-brightpath",
@@ -409,7 +409,7 @@
     {
       "position": 13,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "未來被動語態",
       "passageKey": "p6-l1-copycenter",
@@ -443,7 +443,7 @@
     {
       "position": 14,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "要求性動詞 + that 子句的假設語氣被動",
       "passageKey": "p6-l1-copycenter",
@@ -476,7 +476,7 @@
     {
       "position": 15,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "插入句與段落語氣",
       "passageKey": "p6-l1-copycenter",
@@ -509,7 +509,7 @@
     {
       "position": 16,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "副詞比較級",
       "passageKey": "p6-l1-copycenter",
@@ -542,7 +542,7 @@
     {
       "position": 17,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "非限定關係代名詞與關係副詞的選擇",
       "passageKey": "p6-l1-volunteer",
@@ -576,7 +576,7 @@
     {
       "position": 18,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "插入句與主題一致",
       "passageKey": "p6-l1-volunteer",
@@ -609,7 +609,7 @@
     {
       "position": 19,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "未來被動語態",
       "passageKey": "p6-l1-volunteer",
@@ -642,7 +642,7 @@
     {
       "position": 20,
       "section": "短文填空",
-      "difficulty": 1,
+      "difficulty": "1",
       "derivedFrom": null,
       "focusPoint": "表原因的連接詞",
       "passageKey": "p6-l1-volunteer",
@@ -675,7 +675,7 @@
     {
       "position": 21,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 5,
       "focusPoint": "表期限的介系詞",
       "passageKey": "p6-l2-certification",
@@ -709,7 +709,7 @@
     {
       "position": 22,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 3,
       "focusPoint": "插入句與因果銜接",
       "passageKey": "p6-l2-certification",
@@ -742,7 +742,7 @@
     {
       "position": 23,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 17,
       "focusPoint": "時間連接詞引導子句",
       "passageKey": "p6-l2-certification",
@@ -775,7 +775,7 @@
     {
       "position": 24,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 13,
       "focusPoint": "被動語態與 by 施動者",
       "passageKey": "p6-l2-certification",
@@ -808,7 +808,7 @@
     {
       "position": 25,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 19,
       "focusPoint": "未來被動語態",
       "passageKey": "p6-l2-grenfell",
@@ -842,7 +842,7 @@
     {
       "position": 26,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 6,
       "focusPoint": "插入句與段落資訊補全",
       "passageKey": "p6-l2-grenfell",
@@ -875,7 +875,7 @@
     {
       "position": 27,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 20,
       "focusPoint": "連接副詞的語意方向",
       "passageKey": "p6-l2-grenfell",
@@ -908,7 +908,7 @@
     {
       "position": 28,
       "section": "短文填空",
-      "difficulty": 2,
+      "difficulty": "2",
       "derivedFrom": 9,
       "focusPoint": "過去分詞作後位修飾",
       "passageKey": "p6-l2-grenfell",
@@ -937,6 +937,1774 @@
       ],
       "correctOption": "B",
       "explanation": "名詞後面接空格再接介系詞片語，這個位置通常是分詞後位修飾。判斷主被動的方法不變：編號被標示 → 過去分詞 shown。"
+    },
+    {
+      "position": 29,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "supplier-portal",
+      "passageText": "Supplier portal update\n\nThe purchasing team will launch its updated supplier portal on Monday. Vendors can use the portal to ___ (29) invoices and delivery notices. To avoid interruptions, each vendor should confirm that its contact details are ___ (30) by Friday. A short online demonstration will be held at 3 P.M., and attendance is ___ (31) for new account administrators. Questions received before the session will be ___ (32) during the demonstration.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "submit",
+          "rationale": "正確。動詞原形"
+        },
+        {
+          "key": "B",
+          "text": "submitting",
+          "rationale": "不正確。此處不符合動詞原形"
+        },
+        {
+          "key": "C",
+          "text": "submitted",
+          "rationale": "不正確。此處不符合動詞原形"
+        },
+        {
+          "key": "D",
+          "text": "submission",
+          "rationale": "不正確。此處不符合動詞原形"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查動詞原形",
+      "focusPoint": "動詞原形"
+    },
+    {
+      "position": 30,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "supplier-portal",
+      "passageText": "Supplier portal update\n\nThe purchasing team will launch its updated supplier portal on Monday. Vendors can use the portal to ___ (29) invoices and delivery notices. To avoid interruptions, each vendor should confirm that its contact details are ___ (30) by Friday. A short online demonstration will be held at 3 P.M., and attendance is ___ (31) for new account administrators. Questions received before the session will be ___ (32) during the demonstration.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "accurate",
+          "rationale": "正確。形容詞修飾 contact details"
+        },
+        {
+          "key": "B",
+          "text": "accuracy",
+          "rationale": "不正確。此處不符合形容詞修飾 contact details"
+        },
+        {
+          "key": "C",
+          "text": "accurately",
+          "rationale": "不正確。此處不符合形容詞修飾 contact details"
+        },
+        {
+          "key": "D",
+          "text": "accurateness",
+          "rationale": "不正確。此處不符合形容詞修飾 contact details"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查形容詞修飾 contact details",
+      "focusPoint": "形容詞修飾 contact details"
+    },
+    {
+      "position": 31,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "supplier-portal",
+      "passageText": "Supplier portal update\n\nThe purchasing team will launch its updated supplier portal on Monday. Vendors can use the portal to ___ (29) invoices and delivery notices. To avoid interruptions, each vendor should confirm that its contact details are ___ (30) by Friday. A short online demonstration will be held at 3 P.M., and attendance is ___ (31) for new account administrators. Questions received before the session will be ___ (32) during the demonstration.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "required",
+          "rationale": "正確。be 動詞後的過去分詞形容詞"
+        },
+        {
+          "key": "B",
+          "text": "require",
+          "rationale": "不正確。此處不符合be 動詞後的過去分詞形容詞"
+        },
+        {
+          "key": "C",
+          "text": "requiring",
+          "rationale": "不正確。此處不符合be 動詞後的過去分詞形容詞"
+        },
+        {
+          "key": "D",
+          "text": "requirement",
+          "rationale": "不正確。此處不符合be 動詞後的過去分詞形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查be 動詞後的過去分詞形容詞",
+      "focusPoint": "be 動詞後的過去分詞形容詞"
+    },
+    {
+      "position": 32,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "supplier-portal",
+      "passageText": "Supplier portal update\n\nThe purchasing team will launch its updated supplier portal on Monday. Vendors can use the portal to ___ (29) invoices and delivery notices. To avoid interruptions, each vendor should confirm that its contact details are ___ (30) by Friday. A short online demonstration will be held at 3 P.M., and attendance is ___ (31) for new account administrators. Questions received before the session will be ___ (32) during the demonstration.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "addressed",
+          "rationale": "正確。被動語態"
+        },
+        {
+          "key": "B",
+          "text": "address",
+          "rationale": "不正確。此處不符合被動語態"
+        },
+        {
+          "key": "C",
+          "text": "addressing",
+          "rationale": "不正確。此處不符合被動語態"
+        },
+        {
+          "key": "D",
+          "text": "addresses",
+          "rationale": "不正確。此處不符合被動語態"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查被動語態",
+      "focusPoint": "被動語態"
+    },
+    {
+      "position": 33,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "staff-survey",
+      "passageText": "Staff survey\n\nEmployees are invited to complete the annual workplace survey. The results will help managers identify areas ___ (33) may need improvement. Responses are anonymous and will be reviewed ___ (34) by the human resources team. Please submit the survey no later ___ (35) May 12. Employees who complete it will be entered into a drawing for a gift card, ___ (36) participation is voluntary.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "that",
+          "rationale": "正確。關係代名詞"
+        },
+        {
+          "key": "B",
+          "text": "where",
+          "rationale": "不正確。此處不符合關係代名詞"
+        },
+        {
+          "key": "C",
+          "text": "who",
+          "rationale": "不正確。此處不符合關係代名詞"
+        },
+        {
+          "key": "D",
+          "text": "what",
+          "rationale": "不正確。此處不符合關係代名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查關係代名詞",
+      "focusPoint": "關係代名詞"
+    },
+    {
+      "position": 34,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "staff-survey",
+      "passageText": "Staff survey\n\nEmployees are invited to complete the annual workplace survey. The results will help managers identify areas ___ (33) may need improvement. Responses are anonymous and will be reviewed ___ (34) by the human resources team. Please submit the survey no later ___ (35) May 12. Employees who complete it will be entered into a drawing for a gift card, ___ (36) participation is voluntary.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "confidentially",
+          "rationale": "正確。副詞修飾 reviewed"
+        },
+        {
+          "key": "B",
+          "text": "confidential",
+          "rationale": "不正確。此處不符合副詞修飾 reviewed"
+        },
+        {
+          "key": "C",
+          "text": "confidence",
+          "rationale": "不正確。此處不符合副詞修飾 reviewed"
+        },
+        {
+          "key": "D",
+          "text": "confide",
+          "rationale": "不正確。此處不符合副詞修飾 reviewed"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 reviewed",
+      "focusPoint": "副詞修飾 reviewed"
+    },
+    {
+      "position": 35,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "staff-survey",
+      "passageText": "Staff survey\n\nEmployees are invited to complete the annual workplace survey. The results will help managers identify areas ___ (33) may need improvement. Responses are anonymous and will be reviewed ___ (34) by the human resources team. Please submit the survey no later ___ (35) May 12. Employees who complete it will be entered into a drawing for a gift card, ___ (36) participation is voluntary.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "than",
+          "rationale": "正確。no later than 固定用法"
+        },
+        {
+          "key": "B",
+          "text": "then",
+          "rationale": "不正確。此處不符合no later than 固定用法"
+        },
+        {
+          "key": "C",
+          "text": "that",
+          "rationale": "不正確。此處不符合no later than 固定用法"
+        },
+        {
+          "key": "D",
+          "text": "as",
+          "rationale": "不正確。此處不符合no later than 固定用法"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查no later than 固定用法",
+      "focusPoint": "no later than 固定用法"
+    },
+    {
+      "position": 36,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "staff-survey",
+      "passageText": "Staff survey\n\nEmployees are invited to complete the annual workplace survey. The results will help managers identify areas ___ (33) may need improvement. Responses are anonymous and will be reviewed ___ (34) by the human resources team. Please submit the survey no later ___ (35) May 12. Employees who complete it will be entered into a drawing for a gift card, ___ (36) participation is voluntary.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "although",
+          "rationale": "正確。讓步連接詞"
+        },
+        {
+          "key": "B",
+          "text": "because",
+          "rationale": "不正確。此處不符合讓步連接詞"
+        },
+        {
+          "key": "C",
+          "text": "unless",
+          "rationale": "不正確。此處不符合讓步連接詞"
+        },
+        {
+          "key": "D",
+          "text": "therefore",
+          "rationale": "不正確。此處不符合讓步連接詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查讓步連接詞",
+      "focusPoint": "讓步連接詞"
+    },
+    {
+      "position": 37,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "lease-renewal",
+      "passageText": "Lease renewal notice\n\nYour office lease will expire at the end of September. If you wish to renew, please return the enclosed form ___ (37) August 1. The proposed rate reflects recent improvements to the building, ___ (38) the lobby and elevator system. Tenants choosing a two-year term will receive one month of free parking. Our leasing representative is available to ___ (39) any concerns you may have. We appreciate your continued ___ (40).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "by",
+          "rationale": "正確。截止日期搭配 by"
+        },
+        {
+          "key": "B",
+          "text": "until",
+          "rationale": "不正確。此處不符合截止日期搭配 by"
+        },
+        {
+          "key": "C",
+          "text": "during",
+          "rationale": "不正確。此處不符合截止日期搭配 by"
+        },
+        {
+          "key": "D",
+          "text": "since",
+          "rationale": "不正確。此處不符合截止日期搭配 by"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查截止日期搭配 by",
+      "focusPoint": "截止日期搭配 by"
+    },
+    {
+      "position": 38,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "lease-renewal",
+      "passageText": "Lease renewal notice\n\nYour office lease will expire at the end of September. If you wish to renew, please return the enclosed form ___ (37) August 1. The proposed rate reflects recent improvements to the building, ___ (38) the lobby and elevator system. Tenants choosing a two-year term will receive one month of free parking. Our leasing representative is available to ___ (39) any concerns you may have. We appreciate your continued ___ (40).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "including",
+          "rationale": "正確。現在分詞補充說明"
+        },
+        {
+          "key": "B",
+          "text": "included",
+          "rationale": "不正確。此處不符合現在分詞補充說明"
+        },
+        {
+          "key": "C",
+          "text": "includes",
+          "rationale": "不正確。此處不符合現在分詞補充說明"
+        },
+        {
+          "key": "D",
+          "text": "include",
+          "rationale": "不正確。此處不符合現在分詞補充說明"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查現在分詞補充說明",
+      "focusPoint": "現在分詞補充說明"
+    },
+    {
+      "position": 39,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "lease-renewal",
+      "passageText": "Lease renewal notice\n\nYour office lease will expire at the end of September. If you wish to renew, please return the enclosed form ___ (37) August 1. The proposed rate reflects recent improvements to the building, ___ (38) the lobby and elevator system. Tenants choosing a two-year term will receive one month of free parking. Our leasing representative is available to ___ (39) any concerns you may have. We appreciate your continued ___ (40).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "discuss",
+          "rationale": "正確。to 後接動詞原形"
+        },
+        {
+          "key": "B",
+          "text": "discussion",
+          "rationale": "不正確。此處不符合to 後接動詞原形"
+        },
+        {
+          "key": "C",
+          "text": "discussed",
+          "rationale": "不正確。此處不符合to 後接動詞原形"
+        },
+        {
+          "key": "D",
+          "text": "discussing",
+          "rationale": "不正確。此處不符合to 後接動詞原形"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查to 後接動詞原形",
+      "focusPoint": "to 後接動詞原形"
+    },
+    {
+      "position": 40,
+      "section": "短文填空",
+      "difficulty": "2",
+      "derivedFrom": "original",
+      "passageKey": "lease-renewal",
+      "passageText": "Lease renewal notice\n\nYour office lease will expire at the end of September. If you wish to renew, please return the enclosed form ___ (37) August 1. The proposed rate reflects recent improvements to the building, ___ (38) the lobby and elevator system. Tenants choosing a two-year term will receive one month of free parking. Our leasing representative is available to ___ (39) any concerns you may have. We appreciate your continued ___ (40).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "tenancy",
+          "rationale": "正確。名詞作受詞"
+        },
+        {
+          "key": "B",
+          "text": "tenant",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        },
+        {
+          "key": "C",
+          "text": "tenanted",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        },
+        {
+          "key": "D",
+          "text": "tenacious",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查名詞作受詞",
+      "focusPoint": "名詞作受詞"
+    },
+    {
+      "position": 41,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "webinar-invitation",
+      "passageText": "Webinar invitation\n\nJoin us for a webinar on improving customer retention. The presenter will explain how small changes can ___ (41) client satisfaction. Participants will receive a workbook ___ (42) includes practical planning exercises. Registration is free, but space is limited; therefore, reserve a place as soon as ___ (43). A recording will be sent to everyone who registers, ___ (44) they cannot attend live.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "increase",
+          "rationale": "正確。情態動詞後的動詞原形"
+        },
+        {
+          "key": "B",
+          "text": "increased",
+          "rationale": "不正確。此處不符合情態動詞後的動詞原形"
+        },
+        {
+          "key": "C",
+          "text": "increasing",
+          "rationale": "不正確。此處不符合情態動詞後的動詞原形"
+        },
+        {
+          "key": "D",
+          "text": "increaseable",
+          "rationale": "不正確。此處不符合情態動詞後的動詞原形"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查情態動詞後的動詞原形",
+      "focusPoint": "情態動詞後的動詞原形"
+    },
+    {
+      "position": 42,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "webinar-invitation",
+      "passageText": "Webinar invitation\n\nJoin us for a webinar on improving customer retention. The presenter will explain how small changes can ___ (41) client satisfaction. Participants will receive a workbook ___ (42) includes practical planning exercises. Registration is free, but space is limited; therefore, reserve a place as soon as ___ (43). A recording will be sent to everyone who registers, ___ (44) they cannot attend live.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "that",
+          "rationale": "正確。關係代名詞作主詞"
+        },
+        {
+          "key": "B",
+          "text": "whose",
+          "rationale": "不正確。此處不符合關係代名詞作主詞"
+        },
+        {
+          "key": "C",
+          "text": "where",
+          "rationale": "不正確。此處不符合關係代名詞作主詞"
+        },
+        {
+          "key": "D",
+          "text": "whom",
+          "rationale": "不正確。此處不符合關係代名詞作主詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查關係代名詞作主詞",
+      "focusPoint": "關係代名詞作主詞"
+    },
+    {
+      "position": 43,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "webinar-invitation",
+      "passageText": "Webinar invitation\n\nJoin us for a webinar on improving customer retention. The presenter will explain how small changes can ___ (41) client satisfaction. Participants will receive a workbook ___ (42) includes practical planning exercises. Registration is free, but space is limited; therefore, reserve a place as soon as ___ (43). A recording will be sent to everyone who registers, ___ (44) they cannot attend live.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "possible",
+          "rationale": "正確。as soon as possible 固定用法"
+        },
+        {
+          "key": "B",
+          "text": "possibly",
+          "rationale": "不正確。此處不符合as soon as possible 固定用法"
+        },
+        {
+          "key": "C",
+          "text": "possibility",
+          "rationale": "不正確。此處不符合as soon as possible 固定用法"
+        },
+        {
+          "key": "D",
+          "text": "possess",
+          "rationale": "不正確。此處不符合as soon as possible 固定用法"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查as soon as possible 固定用法",
+      "focusPoint": "as soon as possible 固定用法"
+    },
+    {
+      "position": 44,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "webinar-invitation",
+      "passageText": "Webinar invitation\n\nJoin us for a webinar on improving customer retention. The presenter will explain how small changes can ___ (41) client satisfaction. Participants will receive a workbook ___ (42) includes practical planning exercises. Registration is free, but space is limited; therefore, reserve a place as soon as ___ (43). A recording will be sent to everyone who registers, ___ (44) they cannot attend live.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "even if",
+          "rationale": "正確。讓步條件連接詞"
+        },
+        {
+          "key": "B",
+          "text": "because",
+          "rationale": "不正確。此處不符合讓步條件連接詞"
+        },
+        {
+          "key": "C",
+          "text": "so that",
+          "rationale": "不正確。此處不符合讓步條件連接詞"
+        },
+        {
+          "key": "D",
+          "text": "after",
+          "rationale": "不正確。此處不符合讓步條件連接詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查讓步條件連接詞",
+      "focusPoint": "讓步條件連接詞"
+    },
+    {
+      "position": 45,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "shipment-delay",
+      "passageText": "Shipment delay\n\nWe regret to inform you that your order has been delayed because of severe weather. The shipment is now expected to arrive ___ (45) Thursday afternoon. Our warehouse team is working ___ (46) to process all affected orders. Customers whose orders are delayed for more than five days will receive a shipping credit. We apologize for any ___ (47) this delay may cause and thank you for your ___ (48).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "on",
+          "rationale": "正確。日期前介系詞 on"
+        },
+        {
+          "key": "B",
+          "text": "at",
+          "rationale": "不正確。此處不符合日期前介系詞 on"
+        },
+        {
+          "key": "C",
+          "text": "in",
+          "rationale": "不正確。此處不符合日期前介系詞 on"
+        },
+        {
+          "key": "D",
+          "text": "by",
+          "rationale": "不正確。此處不符合日期前介系詞 on"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查日期前介系詞 on",
+      "focusPoint": "日期前介系詞 on"
+    },
+    {
+      "position": 46,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "shipment-delay",
+      "passageText": "Shipment delay\n\nWe regret to inform you that your order has been delayed because of severe weather. The shipment is now expected to arrive ___ (45) Thursday afternoon. Our warehouse team is working ___ (46) to process all affected orders. Customers whose orders are delayed for more than five days will receive a shipping credit. We apologize for any ___ (47) this delay may cause and thank you for your ___ (48).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "quickly",
+          "rationale": "正確。副詞修飾 working"
+        },
+        {
+          "key": "B",
+          "text": "quick",
+          "rationale": "不正確。此處不符合副詞修飾 working"
+        },
+        {
+          "key": "C",
+          "text": "quicken",
+          "rationale": "不正確。此處不符合副詞修飾 working"
+        },
+        {
+          "key": "D",
+          "text": "quickness",
+          "rationale": "不正確。此處不符合副詞修飾 working"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 working",
+      "focusPoint": "副詞修飾 working"
+    },
+    {
+      "position": 47,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "shipment-delay",
+      "passageText": "Shipment delay\n\nWe regret to inform you that your order has been delayed because of severe weather. The shipment is now expected to arrive ___ (45) Thursday afternoon. Our warehouse team is working ___ (46) to process all affected orders. Customers whose orders are delayed for more than five days will receive a shipping credit. We apologize for any ___ (47) this delay may cause and thank you for your ___ (48).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "inconvenience",
+          "rationale": "正確。any 後接名詞"
+        },
+        {
+          "key": "B",
+          "text": "inconvenient",
+          "rationale": "不正確。此處不符合any 後接名詞"
+        },
+        {
+          "key": "C",
+          "text": "convenient",
+          "rationale": "不正確。此處不符合any 後接名詞"
+        },
+        {
+          "key": "D",
+          "text": "convenience",
+          "rationale": "不正確。此處不符合any 後接名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查any 後接名詞",
+      "focusPoint": "any 後接名詞"
+    },
+    {
+      "position": 48,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "shipment-delay",
+      "passageText": "Shipment delay\n\nWe regret to inform you that your order has been delayed because of severe weather. The shipment is now expected to arrive ___ (45) Thursday afternoon. Our warehouse team is working ___ (46) to process all affected orders. Customers whose orders are delayed for more than five days will receive a shipping credit. We apologize for any ___ (47) this delay may cause and thank you for your ___ (48).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "patience",
+          "rationale": "正確。thank you for 後接名詞"
+        },
+        {
+          "key": "B",
+          "text": "patient",
+          "rationale": "不正確。此處不符合thank you for 後接名詞"
+        },
+        {
+          "key": "C",
+          "text": "patiently",
+          "rationale": "不正確。此處不符合thank you for 後接名詞"
+        },
+        {
+          "key": "D",
+          "text": "patent",
+          "rationale": "不正確。此處不符合thank you for 後接名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查thank you for 後接名詞",
+      "focusPoint": "thank you for 後接名詞"
+    },
+    {
+      "position": 49,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "copy-center",
+      "passageText": "Copy center schedule\n\nThe copy center will close early on Friday for equipment maintenance. Requests submitted before noon will be completed the same day; all other requests will be ready ___ (49) Monday morning. Employees with urgent printing needs should contact the center manager ___ (50) advance. The new high-volume printer is expected to be fully operational after the maintenance ___ (51). We appreciate your cooperation while these improvements are being ___ (52).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "by",
+          "rationale": "正確。完成時間搭配 by"
+        },
+        {
+          "key": "B",
+          "text": "since",
+          "rationale": "不正確。此處不符合完成時間搭配 by"
+        },
+        {
+          "key": "C",
+          "text": "during",
+          "rationale": "不正確。此處不符合完成時間搭配 by"
+        },
+        {
+          "key": "D",
+          "text": "from",
+          "rationale": "不正確。此處不符合完成時間搭配 by"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查完成時間搭配 by",
+      "focusPoint": "完成時間搭配 by"
+    },
+    {
+      "position": 50,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "copy-center",
+      "passageText": "Copy center schedule\n\nThe copy center will close early on Friday for equipment maintenance. Requests submitted before noon will be completed the same day; all other requests will be ready ___ (49) Monday morning. Employees with urgent printing needs should contact the center manager ___ (50) advance. The new high-volume printer is expected to be fully operational after the maintenance ___ (51). We appreciate your cooperation while these improvements are being ___ (52).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "in",
+          "rationale": "正確。in advance 固定片語"
+        },
+        {
+          "key": "B",
+          "text": "at",
+          "rationale": "不正確。此處不符合in advance 固定片語"
+        },
+        {
+          "key": "C",
+          "text": "on",
+          "rationale": "不正確。此處不符合in advance 固定片語"
+        },
+        {
+          "key": "D",
+          "text": "for",
+          "rationale": "不正確。此處不符合in advance 固定片語"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查in advance 固定片語",
+      "focusPoint": "in advance 固定片語"
+    },
+    {
+      "position": 51,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "copy-center",
+      "passageText": "Copy center schedule\n\nThe copy center will close early on Friday for equipment maintenance. Requests submitted before noon will be completed the same day; all other requests will be ready ___ (49) Monday morning. Employees with urgent printing needs should contact the center manager ___ (50) advance. The new high-volume printer is expected to be fully operational after the maintenance ___ (51). We appreciate your cooperation while these improvements are being ___ (52).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "work",
+          "rationale": "正確。maintenance work 名詞搭配"
+        },
+        {
+          "key": "B",
+          "text": "working",
+          "rationale": "不正確。此處不符合maintenance work 名詞搭配"
+        },
+        {
+          "key": "C",
+          "text": "worker",
+          "rationale": "不正確。此處不符合maintenance work 名詞搭配"
+        },
+        {
+          "key": "D",
+          "text": "worked",
+          "rationale": "不正確。此處不符合maintenance work 名詞搭配"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查maintenance work 名詞搭配",
+      "focusPoint": "maintenance work 名詞搭配"
+    },
+    {
+      "position": 52,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "copy-center",
+      "passageText": "Copy center schedule\n\nThe copy center will close early on Friday for equipment maintenance. Requests submitted before noon will be completed the same day; all other requests will be ready ___ (49) Monday morning. Employees with urgent printing needs should contact the center manager ___ (50) advance. The new high-volume printer is expected to be fully operational after the maintenance ___ (51). We appreciate your cooperation while these improvements are being ___ (52).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "made",
+          "rationale": "正確。被動進行式"
+        },
+        {
+          "key": "B",
+          "text": "make",
+          "rationale": "不正確。此處不符合被動進行式"
+        },
+        {
+          "key": "C",
+          "text": "making",
+          "rationale": "不正確。此處不符合被動進行式"
+        },
+        {
+          "key": "D",
+          "text": "maker",
+          "rationale": "不正確。此處不符合被動進行式"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查被動進行式",
+      "focusPoint": "被動進行式"
+    },
+    {
+      "position": 53,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "client-newsletter",
+      "passageText": "Client newsletter\n\nThis month’s newsletter features three companies that have expanded into new markets. Each company developed a plan ___ (53) its local customers’ needs. The article also offers advice from consultants who have worked ___ (54) in international sales. Subscribers may download a planning checklist from our website. Please share the newsletter with colleagues who would find the information ___ (55). Your feedback helps us make future issues even more ___ (56).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "around",
+          "rationale": "正確。around 表示針對、圍繞"
+        },
+        {
+          "key": "B",
+          "text": "between",
+          "rationale": "不正確。此處不符合around 表示針對、圍繞"
+        },
+        {
+          "key": "C",
+          "text": "over",
+          "rationale": "不正確。此處不符合around 表示針對、圍繞"
+        },
+        {
+          "key": "D",
+          "text": "inside",
+          "rationale": "不正確。此處不符合around 表示針對、圍繞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查around 表示針對、圍繞",
+      "focusPoint": "around 表示針對、圍繞"
+    },
+    {
+      "position": 54,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "client-newsletter",
+      "passageText": "Client newsletter\n\nThis month’s newsletter features three companies that have expanded into new markets. Each company developed a plan ___ (53) its local customers’ needs. The article also offers advice from consultants who have worked ___ (54) in international sales. Subscribers may download a planning checklist from our website. Please share the newsletter with colleagues who would find the information ___ (55). Your feedback helps us make future issues even more ___ (56).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "extensively",
+          "rationale": "正確。副詞修飾 worked"
+        },
+        {
+          "key": "B",
+          "text": "extensive",
+          "rationale": "不正確。此處不符合副詞修飾 worked"
+        },
+        {
+          "key": "C",
+          "text": "extent",
+          "rationale": "不正確。此處不符合副詞修飾 worked"
+        },
+        {
+          "key": "D",
+          "text": "extend",
+          "rationale": "不正確。此處不符合副詞修飾 worked"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 worked",
+      "focusPoint": "副詞修飾 worked"
+    },
+    {
+      "position": 55,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "client-newsletter",
+      "passageText": "Client newsletter\n\nThis month’s newsletter features three companies that have expanded into new markets. Each company developed a plan ___ (53) its local customers’ needs. The article also offers advice from consultants who have worked ___ (54) in international sales. Subscribers may download a planning checklist from our website. Please share the newsletter with colleagues who would find the information ___ (55). Your feedback helps us make future issues even more ___ (56).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "useful",
+          "rationale": "正確。find + 受詞 + 形容詞"
+        },
+        {
+          "key": "B",
+          "text": "use",
+          "rationale": "不正確。此處不符合find + 受詞 + 形容詞"
+        },
+        {
+          "key": "C",
+          "text": "usefully",
+          "rationale": "不正確。此處不符合find + 受詞 + 形容詞"
+        },
+        {
+          "key": "D",
+          "text": "usage",
+          "rationale": "不正確。此處不符合find + 受詞 + 形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查find + 受詞 + 形容詞",
+      "focusPoint": "find + 受詞 + 形容詞"
+    },
+    {
+      "position": 56,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "client-newsletter",
+      "passageText": "Client newsletter\n\nThis month’s newsletter features three companies that have expanded into new markets. Each company developed a plan ___ (53) its local customers’ needs. The article also offers advice from consultants who have worked ___ (54) in international sales. Subscribers may download a planning checklist from our website. Please share the newsletter with colleagues who would find the information ___ (55). Your feedback helps us make future issues even more ___ (56).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "valuable",
+          "rationale": "正確。make + 受詞 + 形容詞"
+        },
+        {
+          "key": "B",
+          "text": "value",
+          "rationale": "不正確。此處不符合make + 受詞 + 形容詞"
+        },
+        {
+          "key": "C",
+          "text": "valuation",
+          "rationale": "不正確。此處不符合make + 受詞 + 形容詞"
+        },
+        {
+          "key": "D",
+          "text": "valuably",
+          "rationale": "不正確。此處不符合make + 受詞 + 形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查make + 受詞 + 形容詞",
+      "focusPoint": "make + 受詞 + 形容詞"
+    },
+    {
+      "position": 57,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "safety-training",
+      "passageText": "Safety training reminder\n\nAll laboratory employees must complete the annual safety training by June 30. The online course takes approximately 45 minutes and can be paused if necessary. Employees who have not finished the course will receive a reminder ___ (57). Completion records are automatically sent to department supervisors. Please report technical problems ___ (58) the IT help desk. The training is designed to ensure that everyone can respond ___ (59) in an emergency. Thank you for making workplace safety a ___ (60).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "weekly",
+          "rationale": "正確。副詞表示頻率"
+        },
+        {
+          "key": "B",
+          "text": "week",
+          "rationale": "不正確。此處不符合副詞表示頻率"
+        },
+        {
+          "key": "C",
+          "text": "weeks",
+          "rationale": "不正確。此處不符合副詞表示頻率"
+        },
+        {
+          "key": "D",
+          "text": "weekend",
+          "rationale": "不正確。此處不符合副詞表示頻率"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞表示頻率",
+      "focusPoint": "副詞表示頻率"
+    },
+    {
+      "position": 58,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "safety-training",
+      "passageText": "Safety training reminder\n\nAll laboratory employees must complete the annual safety training by June 30. The online course takes approximately 45 minutes and can be paused if necessary. Employees who have not finished the course will receive a reminder ___ (57). Completion records are automatically sent to department supervisors. Please report technical problems ___ (58) the IT help desk. The training is designed to ensure that everyone can respond ___ (59) in an emergency. Thank you for making workplace safety a ___ (60).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "to",
+          "rationale": "正確。report something to someone"
+        },
+        {
+          "key": "B",
+          "text": "at",
+          "rationale": "不正確。此處不符合report something to someone"
+        },
+        {
+          "key": "C",
+          "text": "for",
+          "rationale": "不正確。此處不符合report something to someone"
+        },
+        {
+          "key": "D",
+          "text": "with",
+          "rationale": "不正確。此處不符合report something to someone"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查report something to someone",
+      "focusPoint": "report something to someone"
+    },
+    {
+      "position": 59,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "safety-training",
+      "passageText": "Safety training reminder\n\nAll laboratory employees must complete the annual safety training by June 30. The online course takes approximately 45 minutes and can be paused if necessary. Employees who have not finished the course will receive a reminder ___ (57). Completion records are automatically sent to department supervisors. Please report technical problems ___ (58) the IT help desk. The training is designed to ensure that everyone can respond ___ (59) in an emergency. Thank you for making workplace safety a ___ (60).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "appropriately",
+          "rationale": "正確。副詞修飾 respond"
+        },
+        {
+          "key": "B",
+          "text": "appropriate",
+          "rationale": "不正確。此處不符合副詞修飾 respond"
+        },
+        {
+          "key": "C",
+          "text": "appropriation",
+          "rationale": "不正確。此處不符合副詞修飾 respond"
+        },
+        {
+          "key": "D",
+          "text": "appropriateness",
+          "rationale": "不正確。此處不符合副詞修飾 respond"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 respond",
+      "focusPoint": "副詞修飾 respond"
+    },
+    {
+      "position": 60,
+      "section": "短文填空",
+      "difficulty": "3",
+      "derivedFrom": "original",
+      "passageKey": "safety-training",
+      "passageText": "Safety training reminder\n\nAll laboratory employees must complete the annual safety training by June 30. The online course takes approximately 45 minutes and can be paused if necessary. Employees who have not finished the course will receive a reminder ___ (57). Completion records are automatically sent to department supervisors. Please report technical problems ___ (58) the IT help desk. The training is designed to ensure that everyone can respond ___ (59) in an emergency. Thank you for making workplace safety a ___ (60).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "priority",
+          "rationale": "正確。make ... a priority 搭配"
+        },
+        {
+          "key": "B",
+          "text": "prior",
+          "rationale": "不正確。此處不符合make ... a priority 搭配"
+        },
+        {
+          "key": "C",
+          "text": "prioritize",
+          "rationale": "不正確。此處不符合make ... a priority 搭配"
+        },
+        {
+          "key": "D",
+          "text": "primarily",
+          "rationale": "不正確。此處不符合make ... a priority 搭配"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查make ... a priority 搭配",
+      "focusPoint": "make ... a priority 搭配"
+    },
+    {
+      "position": 61,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "procurement-review",
+      "passageText": "Procurement review\n\nThe procurement committee will review all supplier proposals next week. Bidders should ensure that pricing information is ___ (61) listed in the final document. Proposals received after the deadline cannot be considered, ___ (62) the committee will acknowledge their receipt. The committee may ask selected bidders to provide additional details. Final decisions will be announced ___ (63) all evaluations are complete. Suppliers are encouraged to keep copies of every document ___ (64) during the process.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "clearly",
+          "rationale": "正確。副詞修飾 listed"
+        },
+        {
+          "key": "B",
+          "text": "clear",
+          "rationale": "不正確。此處不符合副詞修飾 listed"
+        },
+        {
+          "key": "C",
+          "text": "clarity",
+          "rationale": "不正確。此處不符合副詞修飾 listed"
+        },
+        {
+          "key": "D",
+          "text": "clearest",
+          "rationale": "不正確。此處不符合副詞修飾 listed"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 listed",
+      "focusPoint": "副詞修飾 listed"
+    },
+    {
+      "position": 62,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "procurement-review",
+      "passageText": "Procurement review\n\nThe procurement committee will review all supplier proposals next week. Bidders should ensure that pricing information is ___ (61) listed in the final document. Proposals received after the deadline cannot be considered, ___ (62) the committee will acknowledge their receipt. The committee may ask selected bidders to provide additional details. Final decisions will be announced ___ (63) all evaluations are complete. Suppliers are encouraged to keep copies of every document ___ (64) during the process.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "but",
+          "rationale": "正確。轉折連接詞"
+        },
+        {
+          "key": "B",
+          "text": "so",
+          "rationale": "不正確。此處不符合轉折連接詞"
+        },
+        {
+          "key": "C",
+          "text": "because",
+          "rationale": "不正確。此處不符合轉折連接詞"
+        },
+        {
+          "key": "D",
+          "text": "unless",
+          "rationale": "不正確。此處不符合轉折連接詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查轉折連接詞",
+      "focusPoint": "轉折連接詞"
+    },
+    {
+      "position": 63,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "procurement-review",
+      "passageText": "Procurement review\n\nThe procurement committee will review all supplier proposals next week. Bidders should ensure that pricing information is ___ (61) listed in the final document. Proposals received after the deadline cannot be considered, ___ (62) the committee will acknowledge their receipt. The committee may ask selected bidders to provide additional details. Final decisions will be announced ___ (63) all evaluations are complete. Suppliers are encouraged to keep copies of every document ___ (64) during the process.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "once",
+          "rationale": "正確。once 引導時間子句"
+        },
+        {
+          "key": "B",
+          "text": "while",
+          "rationale": "不正確。此處不符合once 引導時間子句"
+        },
+        {
+          "key": "C",
+          "text": "until",
+          "rationale": "不正確。此處不符合once 引導時間子句"
+        },
+        {
+          "key": "D",
+          "text": "despite",
+          "rationale": "不正確。此處不符合once 引導時間子句"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查once 引導時間子句",
+      "focusPoint": "once 引導時間子句"
+    },
+    {
+      "position": 64,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "procurement-review",
+      "passageText": "Procurement review\n\nThe procurement committee will review all supplier proposals next week. Bidders should ensure that pricing information is ___ (61) listed in the final document. Proposals received after the deadline cannot be considered, ___ (62) the committee will acknowledge their receipt. The committee may ask selected bidders to provide additional details. Final decisions will be announced ___ (63) all evaluations are complete. Suppliers are encouraged to keep copies of every document ___ (64) during the process.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "submitted",
+          "rationale": "正確。過去分詞修飾 documents"
+        },
+        {
+          "key": "B",
+          "text": "submitting",
+          "rationale": "不正確。此處不符合過去分詞修飾 documents"
+        },
+        {
+          "key": "C",
+          "text": "submit",
+          "rationale": "不正確。此處不符合過去分詞修飾 documents"
+        },
+        {
+          "key": "D",
+          "text": "submission",
+          "rationale": "不正確。此處不符合過去分詞修飾 documents"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查過去分詞修飾 documents",
+      "focusPoint": "過去分詞修飾 documents"
+    },
+    {
+      "position": 65,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "service-hours",
+      "passageText": "Service hours change\n\nBeginning next month, the customer service desk will open at 8 A.M. instead of 9 A.M. This change was made in response to a ___ (65) number of early-morning calls. The desk will continue to close at 6 P.M. on weekdays. Customers can also find answers to common questions ___ (66) our online help center. Please note that telephone support is not available on public holidays. We expect the earlier opening time to be especially ___ (67) to clients in other time zones. Thank you for choosing our services; we look forward to ___ (68) you.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "growing",
+          "rationale": "正確。現在分詞作形容詞"
+        },
+        {
+          "key": "B",
+          "text": "grow",
+          "rationale": "不正確。此處不符合現在分詞作形容詞"
+        },
+        {
+          "key": "C",
+          "text": "grown",
+          "rationale": "不正確。此處不符合現在分詞作形容詞"
+        },
+        {
+          "key": "D",
+          "text": "growth",
+          "rationale": "不正確。此處不符合現在分詞作形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查現在分詞作形容詞",
+      "focusPoint": "現在分詞作形容詞"
+    },
+    {
+      "position": 66,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "service-hours",
+      "passageText": "Service hours change\n\nBeginning next month, the customer service desk will open at 8 A.M. instead of 9 A.M. This change was made in response to a ___ (65) number of early-morning calls. The desk will continue to close at 6 P.M. on weekdays. Customers can also find answers to common questions ___ (66) our online help center. Please note that telephone support is not available on public holidays. We expect the earlier opening time to be especially ___ (67) to clients in other time zones. Thank you for choosing our services; we look forward to ___ (68) you.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "through",
+          "rationale": "正確。through 表示經由"
+        },
+        {
+          "key": "B",
+          "text": "between",
+          "rationale": "不正確。此處不符合through 表示經由"
+        },
+        {
+          "key": "C",
+          "text": "against",
+          "rationale": "不正確。此處不符合through 表示經由"
+        },
+        {
+          "key": "D",
+          "text": "without",
+          "rationale": "不正確。此處不符合through 表示經由"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查through 表示經由",
+      "focusPoint": "through 表示經由"
+    },
+    {
+      "position": 67,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "service-hours",
+      "passageText": "Service hours change\n\nBeginning next month, the customer service desk will open at 8 A.M. instead of 9 A.M. This change was made in response to a ___ (65) number of early-morning calls. The desk will continue to close at 6 P.M. on weekdays. Customers can also find answers to common questions ___ (66) our online help center. Please note that telephone support is not available on public holidays. We expect the earlier opening time to be especially ___ (67) to clients in other time zones. Thank you for choosing our services; we look forward to ___ (68) you.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "helpful",
+          "rationale": "正確。be especially + 形容詞"
+        },
+        {
+          "key": "B",
+          "text": "help",
+          "rationale": "不正確。此處不符合be especially + 形容詞"
+        },
+        {
+          "key": "C",
+          "text": "helpfully",
+          "rationale": "不正確。此處不符合be especially + 形容詞"
+        },
+        {
+          "key": "D",
+          "text": "helper",
+          "rationale": "不正確。此處不符合be especially + 形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查be especially + 形容詞",
+      "focusPoint": "be especially + 形容詞"
+    },
+    {
+      "position": 68,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "service-hours",
+      "passageText": "Service hours change\n\nBeginning next month, the customer service desk will open at 8 A.M. instead of 9 A.M. This change was made in response to a ___ (65) number of early-morning calls. The desk will continue to close at 6 P.M. on weekdays. Customers can also find answers to common questions ___ (66) our online help center. Please note that telephone support is not available on public holidays. We expect the earlier opening time to be especially ___ (67) to clients in other time zones. Thank you for choosing our services; we look forward to ___ (68) you.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "assisting",
+          "rationale": "正確。look forward to 後接動名詞"
+        },
+        {
+          "key": "B",
+          "text": "assist",
+          "rationale": "不正確。此處不符合look forward to 後接動名詞"
+        },
+        {
+          "key": "C",
+          "text": "assisted",
+          "rationale": "不正確。此處不符合look forward to 後接動名詞"
+        },
+        {
+          "key": "D",
+          "text": "assistance",
+          "rationale": "不正確。此處不符合look forward to 後接動名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查look forward to 後接動名詞",
+      "focusPoint": "look forward to 後接動名詞"
+    },
+    {
+      "position": 69,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "conference-room",
+      "passageText": "Conference room booking\n\nConference rooms may be reserved up to three months in advance. When making a reservation, include the expected number of attendees and any equipment ___ (69). Requests for video-conferencing support should be submitted at least two business days ___ (70) the meeting. If a room is no longer needed, please cancel the reservation promptly so it becomes ___ (71) to other teams. Repeated failures to cancel unused reservations may result in temporary ___ (72) of booking privileges.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "needed",
+          "rationale": "正確。過去分詞作後位修飾"
+        },
+        {
+          "key": "B",
+          "text": "need",
+          "rationale": "不正確。此處不符合過去分詞作後位修飾"
+        },
+        {
+          "key": "C",
+          "text": "needing",
+          "rationale": "不正確。此處不符合過去分詞作後位修飾"
+        },
+        {
+          "key": "D",
+          "text": "need",
+          "rationale": "不正確。此處不符合過去分詞作後位修飾"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查過去分詞作後位修飾",
+      "focusPoint": "過去分詞作後位修飾"
+    },
+    {
+      "position": 70,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "conference-room",
+      "passageText": "Conference room booking\n\nConference rooms may be reserved up to three months in advance. When making a reservation, include the expected number of attendees and any equipment ___ (69). Requests for video-conferencing support should be submitted at least two business days ___ (70) the meeting. If a room is no longer needed, please cancel the reservation promptly so it becomes ___ (71) to other teams. Repeated failures to cancel unused reservations may result in temporary ___ (72) of booking privileges.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "before",
+          "rationale": "正確。提前時間搭配 before"
+        },
+        {
+          "key": "B",
+          "text": "since",
+          "rationale": "不正確。此處不符合提前時間搭配 before"
+        },
+        {
+          "key": "C",
+          "text": "during",
+          "rationale": "不正確。此處不符合提前時間搭配 before"
+        },
+        {
+          "key": "D",
+          "text": "after",
+          "rationale": "不正確。此處不符合提前時間搭配 before"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查提前時間搭配 before",
+      "focusPoint": "提前時間搭配 before"
+    },
+    {
+      "position": 71,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "conference-room",
+      "passageText": "Conference room booking\n\nConference rooms may be reserved up to three months in advance. When making a reservation, include the expected number of attendees and any equipment ___ (69). Requests for video-conferencing support should be submitted at least two business days ___ (70) the meeting. If a room is no longer needed, please cancel the reservation promptly so it becomes ___ (71) to other teams. Repeated failures to cancel unused reservations may result in temporary ___ (72) of booking privileges.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "available",
+          "rationale": "正確。becomes + 形容詞"
+        },
+        {
+          "key": "B",
+          "text": "availability",
+          "rationale": "不正確。此處不符合becomes + 形容詞"
+        },
+        {
+          "key": "C",
+          "text": "availably",
+          "rationale": "不正確。此處不符合becomes + 形容詞"
+        },
+        {
+          "key": "D",
+          "text": "avail",
+          "rationale": "不正確。此處不符合becomes + 形容詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查becomes + 形容詞",
+      "focusPoint": "becomes + 形容詞"
+    },
+    {
+      "position": 72,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "conference-room",
+      "passageText": "Conference room booking\n\nConference rooms may be reserved up to three months in advance. When making a reservation, include the expected number of attendees and any equipment ___ (69). Requests for video-conferencing support should be submitted at least two business days ___ (70) the meeting. If a room is no longer needed, please cancel the reservation promptly so it becomes ___ (71) to other teams. Repeated failures to cancel unused reservations may result in temporary ___ (72) of booking privileges.",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "suspension",
+          "rationale": "正確。名詞作受詞"
+        },
+        {
+          "key": "B",
+          "text": "suspend",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        },
+        {
+          "key": "C",
+          "text": "suspended",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        },
+        {
+          "key": "D",
+          "text": "suspending",
+          "rationale": "不正確。此處不符合名詞作受詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查名詞作受詞",
+      "focusPoint": "名詞作受詞"
+    },
+    {
+      "position": 73,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "equipment-policy",
+      "passageText": "Equipment policy\n\nCompany laptops are provided for business use and should be handled with care. Users are responsible for reporting loss or damage ___ (73). Software may be installed only with approval from the technology department. Employees who travel frequently should back up important files ___ (74). The company is not responsible for personal data stored on its devices. Please read the full policy before ___ (75) the equipment agreement. Your signature confirms that you understand these ___ (76).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "immediately",
+          "rationale": "正確。副詞修飾 reporting"
+        },
+        {
+          "key": "B",
+          "text": "immediate",
+          "rationale": "不正確。此處不符合副詞修飾 reporting"
+        },
+        {
+          "key": "C",
+          "text": "immediacy",
+          "rationale": "不正確。此處不符合副詞修飾 reporting"
+        },
+        {
+          "key": "D",
+          "text": "immediate",
+          "rationale": "不正確。此處不符合副詞修飾 reporting"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 reporting",
+      "focusPoint": "副詞修飾 reporting"
+    },
+    {
+      "position": 74,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "equipment-policy",
+      "passageText": "Equipment policy\n\nCompany laptops are provided for business use and should be handled with care. Users are responsible for reporting loss or damage ___ (73). Software may be installed only with approval from the technology department. Employees who travel frequently should back up important files ___ (74). The company is not responsible for personal data stored on its devices. Please read the full policy before ___ (75) the equipment agreement. Your signature confirms that you understand these ___ (76).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "regularly",
+          "rationale": "正確。副詞修飾 back up"
+        },
+        {
+          "key": "B",
+          "text": "regular",
+          "rationale": "不正確。此處不符合副詞修飾 back up"
+        },
+        {
+          "key": "C",
+          "text": "regulation",
+          "rationale": "不正確。此處不符合副詞修飾 back up"
+        },
+        {
+          "key": "D",
+          "text": "regularity",
+          "rationale": "不正確。此處不符合副詞修飾 back up"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 back up",
+      "focusPoint": "副詞修飾 back up"
+    },
+    {
+      "position": 75,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "equipment-policy",
+      "passageText": "Equipment policy\n\nCompany laptops are provided for business use and should be handled with care. Users are responsible for reporting loss or damage ___ (73). Software may be installed only with approval from the technology department. Employees who travel frequently should back up important files ___ (74). The company is not responsible for personal data stored on its devices. Please read the full policy before ___ (75) the equipment agreement. Your signature confirms that you understand these ___ (76).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "signing",
+          "rationale": "正確。介系詞 before 後接動名詞"
+        },
+        {
+          "key": "B",
+          "text": "sign",
+          "rationale": "不正確。此處不符合介系詞 before 後接動名詞"
+        },
+        {
+          "key": "C",
+          "text": "signed",
+          "rationale": "不正確。此處不符合介系詞 before 後接動名詞"
+        },
+        {
+          "key": "D",
+          "text": "signature",
+          "rationale": "不正確。此處不符合介系詞 before 後接動名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查介系詞 before 後接動名詞",
+      "focusPoint": "介系詞 before 後接動名詞"
+    },
+    {
+      "position": 76,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "equipment-policy",
+      "passageText": "Equipment policy\n\nCompany laptops are provided for business use and should be handled with care. Users are responsible for reporting loss or damage ___ (73). Software may be installed only with approval from the technology department. Employees who travel frequently should back up important files ___ (74). The company is not responsible for personal data stored on its devices. Please read the full policy before ___ (75) the equipment agreement. Your signature confirms that you understand these ___ (76).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "requirements",
+          "rationale": "正確。these 後接複數名詞"
+        },
+        {
+          "key": "B",
+          "text": "require",
+          "rationale": "不正確。此處不符合these 後接複數名詞"
+        },
+        {
+          "key": "C",
+          "text": "required",
+          "rationale": "不正確。此處不符合these 後接複數名詞"
+        },
+        {
+          "key": "D",
+          "text": "requiring",
+          "rationale": "不正確。此處不符合these 後接複數名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查these 後接複數名詞",
+      "focusPoint": "these 後接複數名詞"
+    },
+    {
+      "position": 77,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "language-course",
+      "passageText": "Language course announcement\n\nThe training department is offering a business writing course this autumn. The course is intended for employees who communicate with clients in English ___ (77). Lessons will focus on writing concise e-mails and reports. Participants will practice editing sample documents and will receive individual feedback. To register, complete the online form ___ (78) September 5. Because enrollment is limited, applicants will be accepted in the order ___ (79) their forms are received. Employees who complete all sessions will receive a certificate of ___ (80).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "regularly",
+          "rationale": "正確。副詞修飾 communicate"
+        },
+        {
+          "key": "B",
+          "text": "regular",
+          "rationale": "不正確。此處不符合副詞修飾 communicate"
+        },
+        {
+          "key": "C",
+          "text": "regulate",
+          "rationale": "不正確。此處不符合副詞修飾 communicate"
+        },
+        {
+          "key": "D",
+          "text": "regularity",
+          "rationale": "不正確。此處不符合副詞修飾 communicate"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查副詞修飾 communicate",
+      "focusPoint": "副詞修飾 communicate"
+    },
+    {
+      "position": 78,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "language-course",
+      "passageText": "Language course announcement\n\nThe training department is offering a business writing course this autumn. The course is intended for employees who communicate with clients in English ___ (77). Lessons will focus on writing concise e-mails and reports. Participants will practice editing sample documents and will receive individual feedback. To register, complete the online form ___ (78) September 5. Because enrollment is limited, applicants will be accepted in the order ___ (79) their forms are received. Employees who complete all sessions will receive a certificate of ___ (80).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "by",
+          "rationale": "正確。截止時間用 by"
+        },
+        {
+          "key": "B",
+          "text": "at",
+          "rationale": "不正確。此處不符合截止時間用 by"
+        },
+        {
+          "key": "C",
+          "text": "in",
+          "rationale": "不正確。此處不符合截止時間用 by"
+        },
+        {
+          "key": "D",
+          "text": "since",
+          "rationale": "不正確。此處不符合截止時間用 by"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查截止時間用 by",
+      "focusPoint": "截止時間用 by"
+    },
+    {
+      "position": 79,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "language-course",
+      "passageText": "Language course announcement\n\nThe training department is offering a business writing course this autumn. The course is intended for employees who communicate with clients in English ___ (77). Lessons will focus on writing concise e-mails and reports. Participants will practice editing sample documents and will receive individual feedback. To register, complete the online form ___ (78) September 5. Because enrollment is limited, applicants will be accepted in the order ___ (79) their forms are received. Employees who complete all sessions will receive a certificate of ___ (80).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "in which",
+          "rationale": "正確。the order in which 關係子句"
+        },
+        {
+          "key": "B",
+          "text": "which",
+          "rationale": "不正確。此處不符合the order in which 關係子句"
+        },
+        {
+          "key": "C",
+          "text": "where",
+          "rationale": "不正確。此處不符合the order in which 關係子句"
+        },
+        {
+          "key": "D",
+          "text": "what",
+          "rationale": "不正確。此處不符合the order in which 關係子句"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查the order in which 關係子句",
+      "focusPoint": "the order in which 關係子句"
+    },
+    {
+      "position": 80,
+      "section": "短文填空",
+      "difficulty": "4",
+      "derivedFrom": "original",
+      "passageKey": "language-course",
+      "passageText": "Language course announcement\n\nThe training department is offering a business writing course this autumn. The course is intended for employees who communicate with clients in English ___ (77). Lessons will focus on writing concise e-mails and reports. Participants will practice editing sample documents and will receive individual feedback. To register, complete the online form ___ (78) September 5. Because enrollment is limited, applicants will be accepted in the order ___ (79) their forms are received. Employees who complete all sessions will receive a certificate of ___ (80).",
+      "prompt": "選出最適合填入空格的選項。",
+      "options": [
+        {
+          "key": "A",
+          "text": "completion",
+          "rationale": "正確。of 後接名詞"
+        },
+        {
+          "key": "B",
+          "text": "complete",
+          "rationale": "不正確。此處不符合of 後接名詞"
+        },
+        {
+          "key": "C",
+          "text": "completing",
+          "rationale": "不正確。此處不符合of 後接名詞"
+        },
+        {
+          "key": "D",
+          "text": "completed",
+          "rationale": "不正確。此處不符合of 後接名詞"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "本題考查of 後接名詞",
+      "focusPoint": "of 後接名詞"
     }
   ]
 }
