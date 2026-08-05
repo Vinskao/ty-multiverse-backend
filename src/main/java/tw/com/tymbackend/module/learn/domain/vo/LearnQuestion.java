@@ -34,6 +34,18 @@ public class LearnQuestion {
     @Column(nullable = false, length = 40)
     private String section;
 
+    /** 1 = the original item, 2..4 = progressively harder variants derived from it. */
+    @Column(nullable = false)
+    private Integer difficulty = 1;
+
+    /** Position of the level-1 item this question was deepened from, null for level-1 items. */
+    @Column(name = "derived_from")
+    private Integer derivedFrom;
+
+    /** Grammar/reading point being tested, shown on the scorecard. */
+    @Column(name = "focus_point", length = 120)
+    private String focusPoint;
+
     @Column(name = "passage_key", length = 80)
     private String passageKey;
 

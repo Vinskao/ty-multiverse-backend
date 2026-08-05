@@ -1,0 +1,2731 @@
+{
+  "id": "toeic-01-grammar",
+  "title": "01｜單句文法填空",
+  "description": "20 個核心文法考點 × 4 個難度階梯。每題四個選項都附「為何對／為何錯」的逐項解析，送出後才會看到。",
+  "partCode": "01",
+  "sortOrder": 10,
+  "recommendedMinutes": 40,
+  "published": true,
+  "questions": [
+    {
+      "position": 1,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "by the time 的時態搭配",
+      "prompt": "By the time the external auditors ______ their preliminary review, the finance team had already circulated the revised figures.",
+      "options": [
+        {
+          "key": "A",
+          "text": "complete",
+          "rationale": "錯。complete 是現在簡單式，但主句 had already circulated 已把時間定在過去，前後時間軸不一致。"
+        },
+        {
+          "key": "B",
+          "text": "completed",
+          "rationale": "對。by the time 子句提供「基準時間點」，用過去簡單式；比它更早發生的主句動作才用過去完成式 had circulated。這正是本句的時間關係。"
+        },
+        {
+          "key": "C",
+          "text": "had completed",
+          "rationale": "錯。這是最誘人的陷阱：兩個動作不會都用過去完成式。過去完成式的存在是為了標示「比某個過去時間點更早」，而那個基準點必須由過去簡單式提供。"
+        },
+        {
+          "key": "D",
+          "text": "will complete",
+          "rationale": "錯。未來式無法與 had already circulated 這個過去完成式共存。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "by the time + 過去簡單式，主句用過去完成式。記住口訣：過去完成式一定要有一個「過去的基準點」陪它，而那個基準點就是過去簡單式。"
+    },
+    {
+      "position": 2,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "情態助動詞的被動語態",
+      "prompt": "All visitor access cards ______ to the security desk before employees leave the building for the day.",
+      "options": [
+        {
+          "key": "A",
+          "text": "must return",
+          "rationale": "錯。主動語態代表「卡片自己歸還」，語意不成立。主詞 cards 是動作的承受者。"
+        },
+        {
+          "key": "B",
+          "text": "must be returned",
+          "rationale": "對。主詞 cards 被歸還，需要被動；情態助動詞後的被動固定為 must + be + p.p.。"
+        },
+        {
+          "key": "C",
+          "text": "must have returned",
+          "rationale": "錯。must have + p.p. 表示「對過去的推測」（一定已經…），且仍是主動，時間與語態都不對。"
+        },
+        {
+          "key": "D",
+          "text": "must be returning",
+          "rationale": "錯。be + V-ing 是進行式且為主動，卡片不會「正在歸還」。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "判斷語態的方法是問「主詞是做動作還是承受動作」。access cards 不會自己走回櫃台，所以必須被動：must be returned。"
+    },
+    {
+      "position": 3,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "despite 為介系詞、although 為連接詞",
+      "prompt": "______ the persistent supply delays, the manufacturing team managed to fulfill every order placed in the third quarter.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Although",
+          "rationale": "錯。Although 是從屬連接詞，後面必須接「主詞＋動詞」的子句，但這裡只有名詞片語 the persistent supply delays。"
+        },
+        {
+          "key": "B",
+          "text": "Despite",
+          "rationale": "對。Despite 是介系詞，後面接名詞片語，語意上表讓步（儘管），與主句的 managed to fulfill 形成對比。"
+        },
+        {
+          "key": "C",
+          "text": "Even",
+          "rationale": "錯。Even 是副詞，不能單獨引導讓步結構；要成立必須寫成 Even though（連接詞）並接子句。"
+        },
+        {
+          "key": "D",
+          "text": "However",
+          "rationale": "錯。However 是連接副詞，通常放在兩個獨立句之間並用分號或句號隔開，不能直接帶名詞片語。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "看空格後面接什麼就能秒殺：接名詞片語用 Despite / In spite of；接子句用 Although / Even though。"
+    },
+    {
+      "position": 4,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "要求性動詞後 that 子句的假設語氣",
+      "prompt": "The regional manager asked that each branch ______ its quarterly inventory count no later than the 25th.",
+      "options": [
+        {
+          "key": "A",
+          "text": "submits",
+          "rationale": "錯。這是最常見的誤選：看到單數主詞 each branch 就加 -s，但假設語氣的動詞不隨主詞變化。"
+        },
+        {
+          "key": "B",
+          "text": "submitted",
+          "rationale": "錯。過去式在此無效；假設語氣要用原形，與主句時態無關。"
+        },
+        {
+          "key": "C",
+          "text": "submit",
+          "rationale": "對。ask / request / require / insist / recommend / suggest 等要求建議類動詞後的 that 子句，動詞用原形（should 被省略）。"
+        },
+        {
+          "key": "D",
+          "text": "will submit",
+          "rationale": "錯。此結構不使用未來式，即使語意指向未來也一樣。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "要求、建議、命令類動詞 + that 子句 → 動詞用原形。這裡的原形是 (should) submit 省略 should 的結果，所以不受主詞單複數影響。"
+    },
+    {
+      "position": 5,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "not A but B 的對稱結構",
+      "prompt": "The proposal was rejected not because of its cost ______ because of the tight timeline it required.",
+      "options": [
+        {
+          "key": "A",
+          "text": "and",
+          "rationale": "錯。and 表並列，會變成「兩個原因都成立」，但 not 已經否定了第一個原因，語意矛盾。"
+        },
+        {
+          "key": "B",
+          "text": "or",
+          "rationale": "錯。or 表擇一，無法承接 not…的對比修正語氣。"
+        },
+        {
+          "key": "C",
+          "text": "but",
+          "rationale": "對。not A but B 是固定的對比句型：不是因為 A，而是因為 B。前後 because of 平行對稱正是提示。"
+        },
+        {
+          "key": "D",
+          "text": "so",
+          "rationale": "錯。so 表結果，但後半句是原因不是結果。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "看到 not… 又看到前後結構完全平行（because of + 名詞），就要想到 not A but B。"
+    },
+    {
+      "position": 6,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "whose 所有格關係代名詞",
+      "prompt": "Ms. Alvarez, ______ presentation impressed the entire board, has been promoted to director of operations.",
+      "options": [
+        {
+          "key": "A",
+          "text": "who",
+          "rationale": "錯。who 是主格，後面要直接接動詞；這裡後面是名詞 presentation。"
+        },
+        {
+          "key": "B",
+          "text": "whom",
+          "rationale": "錯。whom 是受格，用在關係子句缺受詞時；這個子句主詞受詞都齊全。"
+        },
+        {
+          "key": "C",
+          "text": "whose",
+          "rationale": "對。空格後緊接名詞 presentation，需要所有格關代：Ms. Alvarez 的簡報打動了董事會。"
+        },
+        {
+          "key": "D",
+          "text": "which",
+          "rationale": "錯。先行詞 Ms. Alvarez 是人，不能用 which；且 which 也無法直接帶名詞。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "關代選擇看空格「後面」缺什麼：後接動詞用 who／which，後面缺受詞用 whom，後接名詞用 whose。"
+    },
+    {
+      "position": 7,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "lay 與 lie 的及物與不及物",
+      "prompt": "Employees are reminded to ______ their personal belongings on the labeled shelves, not on the floor of the storage room.",
+      "options": [
+        {
+          "key": "A",
+          "text": "lie",
+          "rationale": "錯。lie（lie–lay–lain）是不及物動詞「躺、位於」，後面不能接受詞，但這裡有受詞 their personal belongings。"
+        },
+        {
+          "key": "B",
+          "text": "lay",
+          "rationale": "對。lay（lay–laid–laid）是及物動詞「放置」，後接受詞；to 之後也需要原形。"
+        },
+        {
+          "key": "C",
+          "text": "lain",
+          "rationale": "錯。lain 是 lie 的過去分詞，既是不及物又不能接在 to 後面。"
+        },
+        {
+          "key": "D",
+          "text": "lying",
+          "rationale": "錯。to 之後要接原形動詞，且 lying 來自不及物的 lie。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "區分口訣：有受詞用 lay（放東西），沒受詞用 lie（人躺著）。lay 的過去式 laid 又常和 lie 的過去式 lay 混淆，要特別留意。"
+    },
+    {
+      "position": 8,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "between 與 among 的對象數量",
+      "prompt": "The two firms agreed to divide the licensing revenue equally ______ themselves for the duration of the contract.",
+      "options": [
+        {
+          "key": "A",
+          "text": "among",
+          "rationale": "錯。among 用於三方以上。題目用 divide…equally 誘導你聯想「多方分配」，但主詞明寫 the two firms。"
+        },
+        {
+          "key": "B",
+          "text": "between",
+          "rationale": "對。明確是兩方之間，用 between。between 強調個別的雙方關係，即使動詞是 divide 也一樣。"
+        },
+        {
+          "key": "C",
+          "text": "within",
+          "rationale": "錯。within 表「在…範圍之內」，無法表達雙方彼此分配。"
+        },
+        {
+          "key": "D",
+          "text": "throughout",
+          "rationale": "錯。throughout 表「遍及」時間或空間，與分配對象無關。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "決定 between／among 的是「對象有幾方」，不是動詞。先回頭找主詞，這題主詞就寫著 two。"
+    },
+    {
+      "position": 9,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "fewer 與 less 的可數不可數",
+      "prompt": "Far ______ applicants applied for the internship this cycle than the department had anticipated.",
+      "options": [
+        {
+          "key": "A",
+          "text": "less",
+          "rationale": "錯。less 修飾不可數名詞（less time, less money）；applicants 是可數複數。"
+        },
+        {
+          "key": "B",
+          "text": "least",
+          "rationale": "錯。least 是最高級，但句尾的 than 明確要求比較級。"
+        },
+        {
+          "key": "C",
+          "text": "fewer",
+          "rationale": "對。applicants 可數複數用 fewer，且 fewer 本身就是比較級，呼應句尾的 than；Far 是強調比較級的副詞。"
+        },
+        {
+          "key": "D",
+          "text": "little",
+          "rationale": "錯。little 是原級且用於不可數，兩個條件都不符合。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "兩個檢查點要同時通過：名詞可數與否（fewer／less），以及句中有沒有 than 要求比較級。Far／even／much 是比較級專用的強調副詞。"
+    },
+    {
+      "position": 10,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "until 與 unless 的語意差異",
+      "prompt": "The maintenance crew will not begin the electrical upgrade ______ the building has been fully evacuated.",
+      "options": [
+        {
+          "key": "A",
+          "text": "unless",
+          "rationale": "錯。unless 是「除非」，語意會變成條件而非時間。雖然中文翻起來相近，但 not…until 強調的是「時間點之前都不」。"
+        },
+        {
+          "key": "B",
+          "text": "until",
+          "rationale": "對。not…until 表示「直到…才」：淨空完成之前都不會動工。這是時間先後關係。"
+        },
+        {
+          "key": "C",
+          "text": "since",
+          "rationale": "錯。since 表「自從」或「既然」，與「尚未開始」的語意衝突。"
+        },
+        {
+          "key": "D",
+          "text": "while",
+          "rationale": "錯。while 表「當…的同時」，但兩個動作在此並非同時發生。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "not…until 是高頻搭配。判斷方式：句子強調的是「等到某事完成的那一刻」就用 until；強調「唯一的例外條件」才用 unless。"
+    },
+    {
+      "position": 11,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "副詞比較級",
+      "prompt": "The updated software runs noticeably ______ than the previous version, even on older machines.",
+      "options": [
+        {
+          "key": "A",
+          "text": "smooth",
+          "rationale": "錯。smooth 是形容詞，不能修飾動詞 runs；且沒有比較級形式。"
+        },
+        {
+          "key": "B",
+          "text": "smoothly",
+          "rationale": "錯。詞性對了（副詞修飾 runs），但句尾有 than，必須用比較級。"
+        },
+        {
+          "key": "C",
+          "text": "more smoothly",
+          "rationale": "對。同時滿足兩個條件：副詞修飾動詞 runs，以及 than 要求的比較級形式。"
+        },
+        {
+          "key": "D",
+          "text": "most smoothly",
+          "rationale": "錯。最高級不能與 than 連用。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "這種題要連過兩關：先判詞性（修飾動詞→副詞），再判級數（有 than→比較級）。只過一關的選項就是陷阱。"
+    },
+    {
+      "position": 12,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "ensure / assure / insure 易混字",
+      "prompt": "To ______ that no attendee is turned away, the organizers have asked all participants to register at least one week in advance.",
+      "options": [
+        {
+          "key": "A",
+          "text": "assure",
+          "rationale": "錯。assure 是「向某人保證」，必須接人當受詞（assure the guests that…）。這裡直接接 that 子句而無人稱受詞。"
+        },
+        {
+          "key": "B",
+          "text": "insure",
+          "rationale": "錯。insure 是「投保」，與保險有關，語意完全不符。"
+        },
+        {
+          "key": "C",
+          "text": "ensure",
+          "rationale": "對。ensure 是「確保某事發生」，可直接接 that 子句，正好搭配「確保沒有人被拒於門外」。"
+        },
+        {
+          "key": "D",
+          "text": "secure",
+          "rationale": "錯。secure 是「取得、確保安全」，接名詞受詞（secure a contract），不接 that 子句表達此語意。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "記法：assure 要有「人」，insure 要有「保單」，ensure 接「事情」。看空格後面接什麼就能分辨。"
+    },
+    {
+      "position": 13,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "whom 受格關係代名詞",
+      "prompt": "The keynote speaker, ______ the audience had been eagerly awaiting, arrived twenty minutes behind schedule.",
+      "options": [
+        {
+          "key": "A",
+          "text": "who",
+          "rationale": "錯。who 是主格；但這個關係子句已有主詞 the audience，缺的是 awaiting 的受詞。"
+        },
+        {
+          "key": "B",
+          "text": "whom",
+          "rationale": "對。await 是及物動詞，子句中它的受詞不見了，所以要用受格 whom，先行詞是人。"
+        },
+        {
+          "key": "C",
+          "text": "whose",
+          "rationale": "錯。whose 後面必須接名詞，但這裡後接的是主詞＋動詞。"
+        },
+        {
+          "key": "D",
+          "text": "that",
+          "rationale": "錯。that 不能用於逗號隔開的非限定關係子句。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "把關係子句還原成獨立句：the audience had been awaiting ___。缺受詞就用受格 whom。另外要記得非限定子句不能用 that。"
+    },
+    {
+      "position": 14,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "neither of / either of 的語意與動詞單複數",
+      "prompt": "______ the two proposals meets the committee's budget requirements, so the search for vendors will continue.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Either of",
+          "rationale": "錯。Either of 表示「兩者其中之一符合」，但後半句說要繼續找廠商，語意矛盾。"
+        },
+        {
+          "key": "B",
+          "text": "Neither of",
+          "rationale": "對。兩案皆不符合，才會繼續尋找廠商；且 Neither of 視為單數，正好搭配動詞 meets。"
+        },
+        {
+          "key": "C",
+          "text": "None",
+          "rationale": "錯。None 用於三者以上，且此處應為 None of；對象只有兩個提案。"
+        },
+        {
+          "key": "D",
+          "text": "Both of",
+          "rationale": "錯。Both of 是複數，動詞須用 meet；語意上也與後半句衝突。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題要用後半句的邏輯反推前半句。動詞 meets 的單數形也是關鍵線索，直接排除 Both of。"
+    },
+    {
+      "position": 15,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "be subject to 固定搭配",
+      "prompt": "The consulting fee is ______ to change without notice, depending on the scope of the engagement.",
+      "options": [
+        {
+          "key": "A",
+          "text": "subject",
+          "rationale": "對。be subject to change 是固定搭配，意思是「可能變動」。此處 subject 作形容詞用。"
+        },
+        {
+          "key": "B",
+          "text": "subjected",
+          "rationale": "錯。be subjected to 意思是「被迫承受（不好的事）」，如 be subjected to criticism，語意與「費用可能調整」不同。"
+        },
+        {
+          "key": "C",
+          "text": "subjecting",
+          "rationale": "錯。主動進行式語態錯誤，費用不會主動去 subject 什麼。"
+        },
+        {
+          "key": "D",
+          "text": "subjection",
+          "rationale": "錯。subjection 是名詞（服從、征服），放在 be 動詞後語意不通。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "be subject to 與 be subjected to 只差一個 -ed，語意卻不同：前者「可能會…」，後者「被迫遭受…」。商務文件中前者極常見。"
+    },
+    {
+      "position": 16,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "轉折類連接副詞",
+      "prompt": "Sales figures rose sharply in the spring; ______, they declined just as quickly once the promotion ended.",
+      "options": [
+        {
+          "key": "A",
+          "text": "therefore",
+          "rationale": "錯。therefore 表因果，但「大漲」不會導致「大跌」，兩句是對比而非因果。"
+        },
+        {
+          "key": "B",
+          "text": "however",
+          "rationale": "對。前句上漲、後句下跌，屬語意轉折；分號 + however + 逗號 也是標準用法。"
+        },
+        {
+          "key": "C",
+          "text": "moreover",
+          "rationale": "錯。moreover 表補充遞進，要求前後同方向，但這裡方向相反。"
+        },
+        {
+          "key": "D",
+          "text": "otherwise",
+          "rationale": "錯。otherwise 表「否則」，需要一個假設條件，本句沒有。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "連接副詞題一律先判斷前後句的「方向」：同向用 moreover／in addition，反向用 however，因果用 therefore。"
+    },
+    {
+      "position": 17,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "時間連接詞 as soon as",
+      "prompt": "The committee will announce the winning design ______ all the entries have been reviewed by the panel.",
+      "options": [
+        {
+          "key": "A",
+          "text": "as soon as",
+          "rationale": "對。表示「一…就…」的時間關係：所有作品審查完就立刻公布，符合語意。"
+        },
+        {
+          "key": "B",
+          "text": "so that",
+          "rationale": "錯。so that 表目的，但「審查完成」是時間前提而非公布的目的。"
+        },
+        {
+          "key": "C",
+          "text": "in case",
+          "rationale": "錯。in case 表「以防萬一」，語意不合。"
+        },
+        {
+          "key": "D",
+          "text": "even if",
+          "rationale": "錯。even if 表讓步，會變成「即使審查完也要公布」，不合邏輯。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "注意時間副詞子句中用現在完成式 have been reviewed 代替未來完成式，這也是 as soon as 的典型特徵。"
+    },
+    {
+      "position": 18,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "與過去事實相反的假設語氣倒裝",
+      "prompt": "Had the shipment been insured, the company ______ the full value of the damaged goods.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will recover",
+          "rationale": "錯。未來式無法用於與過去事實相反的假設。"
+        },
+        {
+          "key": "B",
+          "text": "would recover",
+          "rationale": "錯。would + 原形用於「與現在事實相反」；本句 Had + p.p. 指向過去。"
+        },
+        {
+          "key": "C",
+          "text": "would have recovered",
+          "rationale": "對。Had + S + p.p. 是 If the shipment had been insured 的倒裝，屬與過去事實相反，主句必須用 would have + p.p.。"
+        },
+        {
+          "key": "D",
+          "text": "had recovered",
+          "rationale": "錯。主句不能用過去完成式；過去完成式屬於 if 子句那一邊。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "看到句首 Had + 主詞 + p.p.（沒有 if）就要立刻反應：這是假設語氣倒裝，主句配 would/could/might have + p.p.。"
+    },
+    {
+      "position": 19,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "considerable 與 considerate 字形易混",
+      "prompt": "The instructions clearly state that the equipment should be handled with ______ care during transport.",
+      "options": [
+        {
+          "key": "A",
+          "text": "considerate",
+          "rationale": "錯。considerate 是「體貼的、為他人著想的」，用來形容人；設備搬運不需要「體貼的小心」。"
+        },
+        {
+          "key": "B",
+          "text": "considerable",
+          "rationale": "對。considerable 是「相當大量的」，修飾名詞 care，表示「相當謹慎地」。"
+        },
+        {
+          "key": "C",
+          "text": "considering",
+          "rationale": "錯。considering 當介系詞是「考慮到…」，放在 with 和名詞之間不成立。"
+        },
+        {
+          "key": "D",
+          "text": "consideration",
+          "rationale": "錯。consideration 是名詞，兩個名詞直接相連不成立（with consideration care）。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "-able 結尾的 considerable 談「數量大」，-ate 結尾的 considerate 談「人的體貼」。多益極愛考這種同字根不同義的組合。"
+    },
+    {
+      "position": 20,
+      "section": "單句填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "Upon + V-ing 表「一…就…」",
+      "prompt": "______ receiving the customer's complaint, the support team issued a full refund within the hour.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Since",
+          "rationale": "錯。Since 接動名詞不合語法；表「自從」時要接時間點或子句。"
+        },
+        {
+          "key": "B",
+          "text": "Upon",
+          "rationale": "對。Upon / On + V-ing 表示「一…就…」，強調兩件事緊接發生，呼應 within the hour。"
+        },
+        {
+          "key": "C",
+          "text": "While",
+          "rationale": "錯。While + V-ing 表「在…期間同時」，但退款是在收到客訴之後才發生。"
+        },
+        {
+          "key": "D",
+          "text": "During",
+          "rationale": "錯。During 是介系詞，後面接名詞（during the meeting），不接動名詞結構表此語意。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "Upon + V-ing 幾乎等同 As soon as 子句。句尾的 within the hour 是「立即性」的關鍵提示。"
+    },
+    {
+      "position": 21,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 1,
+      "focusPoint": "by the time 的時態搭配",
+      "prompt": "By the time the revised zoning ordinance ______ into effect next spring, the developer will have secured all three of the permits currently under review.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will come",
+          "rationale": "錯。時間副詞子句中不用未來式，即使語意指向未來也要用現在式代替。"
+        },
+        {
+          "key": "B",
+          "text": "comes",
+          "rationale": "對。by the time 引導時間副詞子句，未來語意用現在簡單式；主句用未來完成式 will have secured 表示「在那之前就已完成」。"
+        },
+        {
+          "key": "C",
+          "text": "came",
+          "rationale": "錯。過去式與 next spring、will have secured 的未來時間軸衝突。"
+        },
+        {
+          "key": "D",
+          "text": "had come",
+          "rationale": "錯。過去完成式指向過去，與整句的未來時間框架完全不符。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "同一個 by the time 考點換成未來版本：基準點在未來時，子句用現在簡單式，主句用未來完成式。掌握「子句降一級時態」的原則，過去版與未來版就都能處理。"
+    },
+    {
+      "position": 22,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 2,
+      "focusPoint": "情態助動詞的被動語態",
+      "prompt": "Any discrepancy discovered during the stocktake ______ to the shift supervisor before the warehouse closes.",
+      "options": [
+        {
+          "key": "A",
+          "text": "should report",
+          "rationale": "錯。主動語態代表「差異自己回報」，主詞 discrepancy 是被回報的對象。"
+        },
+        {
+          "key": "B",
+          "text": "should be reported",
+          "rationale": "對。主詞 Any discrepancy 承受動作，需被動；should + be + p.p.。注意主詞被 discovered during the stocktake 這段分詞片語拉長，別誤把 stocktake 當主詞。"
+        },
+        {
+          "key": "C",
+          "text": "should have reported",
+          "rationale": "錯。這是「早該回報卻沒做」的過去責備語氣，且仍為主動，與 before the warehouse closes 的未來語意衝突。"
+        },
+        {
+          "key": "D",
+          "text": "should be reporting",
+          "rationale": "錯。進行式主動，語態不對。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "難度提升的地方在於主詞和動詞被分詞片語隔開。做法是先把修飾片語括起來：Any discrepancy (discovered during the stocktake) ______，主詞立刻清楚。"
+    },
+    {
+      "position": 23,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 3,
+      "focusPoint": "despite 為介系詞、although 為連接詞",
+      "prompt": "______ the board had approved the budget in principle, the finance office withheld the funds pending a second audit.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Despite",
+          "rationale": "錯。Despite 是介系詞只能接名詞片語，但後面是完整子句 the board had approved…。"
+        },
+        {
+          "key": "B",
+          "text": "Although",
+          "rationale": "對。後面是完整的主詞＋動詞子句，需要從屬連接詞；語意為讓步（雖然董事會原則上批准了）。"
+        },
+        {
+          "key": "C",
+          "text": "In spite of",
+          "rationale": "錯。與 Despite 同樣是介系詞片語，不能帶子句。"
+        },
+        {
+          "key": "D",
+          "text": "Nevertheless",
+          "rationale": "錯。Nevertheless 是連接副詞，不能把兩個子句連成一句，需用分號或分成兩句。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題把第 3 題的方向反過來考：後面接子句時，Despite 就變成陷阱。務必養成「先看空格後面是名詞還是子句」的習慣，而不是背中文意思。"
+    },
+    {
+      "position": 24,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 4,
+      "focusPoint": "要求性動詞後 that 子句的假設語氣",
+      "prompt": "The compliance officer insisted that every contractor ______ a background check before being granted site access.",
+      "options": [
+        {
+          "key": "A",
+          "text": "undergoes",
+          "rationale": "錯。every contractor 雖是單數，但假設語氣的動詞不加 -s。"
+        },
+        {
+          "key": "B",
+          "text": "undergo",
+          "rationale": "對。insist 屬要求類動詞，that 子句用原形（should undergo 省略 should）。"
+        },
+        {
+          "key": "C",
+          "text": "underwent",
+          "rationale": "錯。過去式在假設語氣的 that 子句中不成立。"
+        },
+        {
+          "key": "D",
+          "text": "is undergoing",
+          "rationale": "錯。進行式同樣不適用於此結構。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "insist 有兩種用法要分清：表「堅持要求」時 that 子句用原形；表「堅稱某事實」時則用一般時態（He insisted that he was innocent）。本句是要求，故用原形。"
+    },
+    {
+      "position": 25,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 5,
+      "focusPoint": "not A but B 的對稱結構",
+      "prompt": "The committee is concerned not with how quickly the prototype can be built ______ with whether it can be manufactured at scale.",
+      "options": [
+        {
+          "key": "A",
+          "text": "but rather",
+          "rationale": "對。not A but rather B 是 not A but B 的加強版，前後 with + 名詞子句完全平行。"
+        },
+        {
+          "key": "B",
+          "text": "and also",
+          "rationale": "錯。and also 表並列增加，但 not 已否定前項，語意衝突。"
+        },
+        {
+          "key": "C",
+          "text": "as well as",
+          "rationale": "錯。as well as 表「以及」，同樣無法承接否定後的對比修正。"
+        },
+        {
+          "key": "D",
+          "text": "instead",
+          "rationale": "錯。instead 是副詞，不能直接連接兩個介系詞片語，需寫成 …; instead, it is concerned with…。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "難度提升在於對稱的兩端變成 with + 名詞子句。判斷平行結構時，把 not 和空格後的成分對齊看：not with…／but rather with…，形式一致就是答案。"
+    },
+    {
+      "position": 26,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 6,
+      "focusPoint": "whose 所有格關係代名詞",
+      "prompt": "The subcontractor ______ safety record the inspectors questioned has since been removed from the approved vendor list.",
+      "options": [
+        {
+          "key": "A",
+          "text": "who",
+          "rationale": "錯。who 是主格，後面必須接動詞；這裡後接名詞 safety record。"
+        },
+        {
+          "key": "B",
+          "text": "whom",
+          "rationale": "錯。受格 whom 後面接主詞＋動詞，不能直接帶名詞。"
+        },
+        {
+          "key": "C",
+          "text": "whose",
+          "rationale": "對。空格後接名詞 safety record，且該紀錄屬於 the subcontractor，需所有格關代。注意 whose 也可用於公司、組織等非人先行詞。"
+        },
+        {
+          "key": "D",
+          "text": "of which",
+          "rationale": "錯。of which 表所有格時語序須為 the safety record of which，不能放在名詞前面。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "本題比第 6 題難的地方：關係子句是 the inspectors questioned（主詞＋動詞在後），容易讓人誤判成缺受詞。但決定關代的關鍵永遠是空格「緊接」的那個詞——這裡是名詞，所以是 whose。"
+    },
+    {
+      "position": 27,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 7,
+      "focusPoint": "lay 與 lie 的及物與不及物",
+      "prompt": "The blueprints ______ untouched on the drafting table for three weeks before anyone noticed the error.",
+      "options": [
+        {
+          "key": "A",
+          "text": "laid",
+          "rationale": "錯。laid 是及物 lay 的過去式，必須帶受詞；本句空格後是形容詞 untouched，沒有受詞。"
+        },
+        {
+          "key": "B",
+          "text": "lay",
+          "rationale": "對。這裡是不及物 lie（躺、擱著）的過去式 lay，後接主詞補語 untouched，語意是「藍圖就這麼擱著」。"
+        },
+        {
+          "key": "C",
+          "text": "lied",
+          "rationale": "錯。lied 是「說謊」的過去式，語意完全不同。"
+        },
+        {
+          "key": "D",
+          "text": "were lain",
+          "rationale": "錯。lie 是不及物動詞，沒有被動語態。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題正好考在最容易混的交叉點：lie 的過去式剛好長得像 lay 的原形。判斷方法不變——看有沒有受詞。沒有受詞就是 lie 家族，過去式是 lay。"
+    },
+    {
+      "position": 28,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 8,
+      "focusPoint": "between 與 among 的對象數量",
+      "prompt": "The grant will be distributed ______ the eleven research teams according to the number of publications each produced.",
+      "options": [
+        {
+          "key": "A",
+          "text": "between",
+          "rationale": "錯。between 用於兩方；這裡有十一個團隊。"
+        },
+        {
+          "key": "B",
+          "text": "among",
+          "rationale": "對。分配對象為 eleven research teams（三方以上），用 among。"
+        },
+        {
+          "key": "C",
+          "text": "along",
+          "rationale": "錯。along 表「沿著」，與分配無關。"
+        },
+        {
+          "key": "D",
+          "text": "amid",
+          "rationale": "錯。amid 表「在…之中、在…氛圍下」（amid growing concerns），不用於分配對象。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 8 題形成對照組：同樣的分配動詞，決定介系詞的仍是對象數量。這題也順帶區分 among 與形近的 amid——amid 接的是抽象情境，不是可數的多方。"
+    },
+    {
+      "position": 29,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 9,
+      "focusPoint": "fewer 與 less 的可數不可數",
+      "prompt": "The new routing algorithm requires significantly ______ fuel per delivery, even though drivers make slightly more stops.",
+      "options": [
+        {
+          "key": "A",
+          "text": "fewer",
+          "rationale": "錯。fuel 是不可數名詞，不能用 fewer。"
+        },
+        {
+          "key": "B",
+          "text": "less",
+          "rationale": "對。fuel 不可數，用 less；significantly 是強調比較級的副詞，語意為「明顯較少的燃料」。"
+        },
+        {
+          "key": "D",
+          "text": "the least",
+          "rationale": "錯。最高級需要三者以上的比較範圍，且與句中的對比語氣不符。"
+        },
+        {
+          "key": "C",
+          "text": "lesser",
+          "rationale": "錯。lesser 意為「較次要的」（a lesser concern），不用來表數量多寡。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 9 題互為對照：applicants 可數用 fewer，fuel 不可數用 less。句尾用 even though 對比而非 than，因此不需要靠 than 判斷，得靠名詞屬性判斷。"
+    },
+    {
+      "position": 30,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 10,
+      "focusPoint": "until 與 unless 的語意差異",
+      "prompt": "The warranty remains valid ______ the device is opened by an unauthorized technician.",
+      "options": [
+        {
+          "key": "A",
+          "text": "until",
+          "rationale": "錯。until 表「直到某時間點」，會暗示裝置一定會被拆開，只是時間問題；但本句要表達的是條件。"
+        },
+        {
+          "key": "B",
+          "text": "unless",
+          "rationale": "對。unless 表「除非」，指出唯一會讓保固失效的例外條件：除非被未授權技師拆開。"
+        },
+        {
+          "key": "C",
+          "text": "provided",
+          "rationale": "錯。provided (that) 表「只要…就」，是肯定條件，會變成「只要被拆開保固就有效」，語意相反。"
+        },
+        {
+          "key": "D",
+          "text": "whereas",
+          "rationale": "錯。whereas 表兩者對比（然而），不引導條件。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 10 題正好相反：那題強調時間先後用 until，這題強調唯一例外用 unless。判準是「主句是持續狀態＋一個破例條件」還是「某動作等到某時刻才發生」。"
+    },
+    {
+      "position": 31,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 11,
+      "focusPoint": "副詞比較級",
+      "prompt": "Applications submitted through the portal are processed far ______ than those sent by post.",
+      "options": [
+        {
+          "key": "A",
+          "text": "efficient",
+          "rationale": "錯。形容詞不能修飾動詞片語 are processed。"
+        },
+        {
+          "key": "B",
+          "text": "efficiently",
+          "rationale": "錯。詞性正確但缺比較級，無法搭配 than。"
+        },
+        {
+          "key": "C",
+          "text": "more efficiently",
+          "rationale": "對。修飾被動動詞 are processed 需副詞，句尾 than 需比較級，兩個條件同時滿足。"
+        },
+        {
+          "key": "D",
+          "text": "as efficiently",
+          "rationale": "錯。as…as 結構要求後面用 as 而非 than，且句中只有一個 as。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "與第 11 題同一考點，但這裡多了被動語態與 far 的強調用法，也加入 as…as 的干擾。記住：than 只能配比較級，as 才配原級。"
+    },
+    {
+      "position": 32,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 12,
+      "focusPoint": "ensure / assure / insure 易混字",
+      "prompt": "The account manager called personally to ______ the client that the delay would not affect the launch date.",
+      "options": [
+        {
+          "key": "A",
+          "text": "assure",
+          "rationale": "對。assure + 人 + that 子句，意為「向某人保證」。空格後緊接人稱受詞 the client，正是 assure 的招牌結構。"
+        },
+        {
+          "key": "B",
+          "text": "ensure",
+          "rationale": "錯。ensure 接的是「事情」（ensure that…），不接人當受詞。"
+        },
+        {
+          "key": "C",
+          "text": "insure",
+          "rationale": "錯。insure 是投保，語意不符。"
+        },
+        {
+          "key": "D",
+          "text": "reassert",
+          "rationale": "錯。reassert 是「再次主張」，不搭配「人 + that 子句」的安撫語氣。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 12 題互為鏡像：那題空格後是 that 子句選 ensure，這題空格後是人選 assure。同一組易混字，用「後面接什麼」就能穩定分辨。"
+    },
+    {
+      "position": 33,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 13,
+      "focusPoint": "介系詞 + 關係代名詞",
+      "prompt": "The vendor ______ we outsourced the packaging has just filed for bankruptcy.",
+      "options": [
+        {
+          "key": "A",
+          "text": "to who",
+          "rationale": "錯。介系詞後必須接受格，不能用主格 who。"
+        },
+        {
+          "key": "B",
+          "text": "to whom",
+          "rationale": "對。outsource something to somebody，介系詞 to 被提前到關代之前，介系詞後用受格 whom。"
+        },
+        {
+          "key": "C",
+          "text": "whom",
+          "rationale": "錯。少了介系詞 to，句子會缺少 outsource 所需的對象。"
+        },
+        {
+          "key": "D",
+          "text": "which",
+          "rationale": "錯。先行詞 The vendor 指公司但在此語境視為交易對象的人；且同樣缺少介系詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "從第 13 題的 whom 進階到「介系詞 + whom」。還原句子最有效：we outsourced the packaging to the vendor，把 to 連同關代一起搬到句首就成了 to whom。"
+    },
+    {
+      "position": 34,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 14,
+      "focusPoint": "neither / either 的動詞一致",
+      "prompt": "Neither the project lead nor the two analysts ______ available for the Friday briefing.",
+      "options": [
+        {
+          "key": "A",
+          "text": "is",
+          "rationale": "錯。neither…nor 的動詞與「最靠近的主詞」一致，最近的是複數 the two analysts。"
+        },
+        {
+          "key": "B",
+          "text": "are",
+          "rationale": "對。就近原則（proximity rule）：動詞跟隨 nor 後面的 the two analysts，用複數 are。"
+        },
+        {
+          "key": "C",
+          "text": "has been",
+          "rationale": "錯。單數形式不符就近原則，且完成式與 available 的狀態描述不搭。"
+        },
+        {
+          "key": "D",
+          "text": "being",
+          "rationale": "錯。being 不能單獨作主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 14 題考的是 Neither of + 單數動詞，這題考的是 neither A nor B 的就近原則。兩者常被混為一談：Neither of the two 恆為單數，但 neither…nor… 看最近的主詞。"
+    },
+    {
+      "position": 35,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 15,
+      "focusPoint": "be subject to 與 be subjected to",
+      "prompt": "Employees who repeatedly bypass the approval workflow may be ______ to disciplinary action.",
+      "options": [
+        {
+          "key": "A",
+          "text": "subject",
+          "rationale": "錯。be subject to 表「可能會有、受制於」的中性狀態；此處強調的是「被施加」處分，且主詞是被處分的人。"
+        },
+        {
+          "key": "B",
+          "text": "subjected",
+          "rationale": "對。be subjected to 表示「被迫承受（不利的處置）」，正好搭配 disciplinary action。"
+        },
+        {
+          "key": "C",
+          "text": "subjective",
+          "rationale": "錯。subjective 是「主觀的」，語意無關。"
+        },
+        {
+          "key": "D",
+          "text": "subjecting",
+          "rationale": "錯。主動進行式語態錯誤，員工是被處分的一方。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 15 題直接對照：fee is subject to change（費用可能調整，中性）；employees may be subjected to disciplinary action（員工被施以處分，被動且負面）。差一個 -ed，語意就從「可能變動」變成「被迫承受」。"
+    },
+    {
+      "position": 36,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 16,
+      "focusPoint": "連接副詞的語意方向",
+      "prompt": "The pilot program exceeded every target set for it; ______, the company has decided to roll it out nationwide.",
+      "options": [
+        {
+          "key": "A",
+          "text": "however",
+          "rationale": "錯。前後語意同向（表現好→全面推行），沒有轉折。"
+        },
+        {
+          "key": "B",
+          "text": "accordingly",
+          "rationale": "對。前句是原因、後句是採取的行動，accordingly 表「因此、據此」，方向與邏輯都吻合。"
+        },
+        {
+          "key": "C",
+          "text": "nonetheless",
+          "rationale": "錯。nonetheless 等同 however，屬轉折語氣。"
+        },
+        {
+          "key": "D",
+          "text": "conversely",
+          "rationale": "錯。conversely 表「相反地」，用於呈現對立情況。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 16 題考轉折，這題考因果。整組連接副詞可分三類記：轉折（however / nonetheless / conversely）、因果（therefore / accordingly / consequently）、遞進（moreover / furthermore）。先判方向再選詞。"
+    },
+    {
+      "position": 37,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 17,
+      "focusPoint": "時間副詞子句中不用未來式",
+      "prompt": "Once the migration ______ complete, the legacy servers will be decommissioned over the following weekend.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will be",
+          "rationale": "錯。Once 引導時間副詞子句，子句中不用未來式。"
+        },
+        {
+          "key": "B",
+          "text": "is",
+          "rationale": "對。時間副詞子句用現在簡單式代替未來式，主句才用 will be decommissioned。"
+        },
+        {
+          "key": "C",
+          "text": "was",
+          "rationale": "錯。過去式與主句的未來時間軸不符。"
+        },
+        {
+          "key": "D",
+          "text": "would be",
+          "rationale": "錯。would be 屬假設或過去未來語氣，本句是確定的未來計畫。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "延續第 17 題的 as soon as，這題換成 once。凡是 when／once／as soon as／until／before／after 引導的時間子句，未來語意一律用現在式表達。"
+    },
+    {
+      "position": 38,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 18,
+      "focusPoint": "were to 與 should 的假設語氣倒裝",
+      "prompt": "______ the supplier fail to meet the revised deadline, the contract permits us to withhold the final payment.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Should",
+          "rationale": "對。Should + S + 原形 是 If the supplier should fail 的倒裝，表示「萬一…」的未來低可能性假設，主句可用現在式或 will。"
+        },
+        {
+          "key": "B",
+          "text": "Had",
+          "rationale": "錯。Had + S + p.p. 用於與過去事實相反，但空格後是原形 fail 而非 p.p.，且主句 permits 是現在式。"
+        },
+        {
+          "key": "C",
+          "text": "Were",
+          "rationale": "錯。Were + S 的倒裝後面要接 to + 原形（Were the supplier to fail），單獨接 fail 不成立。"
+        },
+        {
+          "key": "D",
+          "text": "Would",
+          "rationale": "錯。would 不用於倒裝的條件子句開頭，它屬於主句。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "假設語氣倒裝有三種開頭，各配不同動詞形式：Had + p.p.（與過去相反）、Were + S + to V（未來假設）、Should + S + 原形（萬一）。看空格後的動詞形式就能鎖定答案。"
+    },
+    {
+      "position": 39,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 19,
+      "focusPoint": "同字根不同義的形容詞",
+      "prompt": "The audit found the department's expense reports to be largely ______, with only two receipts missing from the entire quarter.",
+      "options": [
+        {
+          "key": "A",
+          "text": "comprehensive",
+          "rationale": "對。comprehensive 是「完整周全的」，與 only two receipts missing 的語意一致。"
+        },
+        {
+          "key": "B",
+          "text": "comprehensible",
+          "rationale": "錯。comprehensible 是「可理解的」，談的是清晰度而非完整度。"
+        },
+        {
+          "key": "C",
+          "text": "comprehended",
+          "rationale": "錯。過去分詞表「被理解」，語意與收據齊全無關。"
+        },
+        {
+          "key": "D",
+          "text": "comprehending",
+          "rationale": "錯。現在分詞表主動理解，報表不會去理解什麼。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 19 題同屬「同字根、不同字尾」的辨析。-ive 的 comprehensive 談範圍完整，-ible 的 comprehensible 談是否看得懂。解這類題要靠句中的具體證據，本句的證據就是 only two receipts missing。"
+    },
+    {
+      "position": 40,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 20,
+      "focusPoint": "介系詞後接動名詞",
+      "prompt": "The committee postponed the vote ______ reviewing the independent consultant's findings in full.",
+      "options": [
+        {
+          "key": "A",
+          "text": "until after",
+          "rationale": "錯。until after 之後應接名詞或時間點；雖可接動名詞，但 until after reviewing 語意冗贅且不自然。"
+        },
+        {
+          "key": "B",
+          "text": "pending",
+          "rationale": "對。pending 作介系詞表「在…之前、等待…期間」，後接動名詞或名詞，正式商務用語，語意為「等到完整審閱顧問報告之後再表決」。"
+        },
+        {
+          "key": "C",
+          "text": "prior",
+          "rationale": "錯。prior 必須寫成 prior to 才是介系詞；單獨的 prior 是形容詞。"
+        },
+        {
+          "key": "D",
+          "text": "before to",
+          "rationale": "錯。before 本身就是介系詞或連接詞，不與 to 連用。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "延續第 20 題 Upon + V-ing 的概念：介系詞後一律接動名詞。這題加考商務常見的 pending，以及 prior 必須加 to 才能當介系詞的細節。"
+    },
+    {
+      "position": 41,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 1,
+      "focusPoint": "by the time 的時態搭配",
+      "prompt": "By the time the arbitration panel issues its ruling, the two companies ______ for more than three years, making any settlement largely symbolic.",
+      "options": [
+        {
+          "key": "A",
+          "text": "will litigate",
+          "rationale": "錯。單純未來式只表示「將會提告」，無法表達「到那個時間點為止已持續三年」的累積時間。"
+        },
+        {
+          "key": "B",
+          "text": "will have been litigating",
+          "rationale": "對。未來完成進行式：以未來的 issues its ruling 為基準點，強調到那時為止動作已持續 more than three years。for + 一段時間是持續性的關鍵線索。"
+        },
+        {
+          "key": "C",
+          "text": "have litigated",
+          "rationale": "錯。現在完成式的基準點是「現在」，但本句的基準點是未來的裁決時刻。"
+        },
+        {
+          "key": "D",
+          "text": "had been litigating",
+          "rationale": "錯。過去完成進行式的基準點在過去，與 issues（現在式代未來）衝突。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "同一個 by the time 考點推到第三層：這次不只要判斷時間先後，還要判斷「是否強調持續」。for + 一段時間 → 完成進行式；基準點在未來 → will have been V-ing。"
+    },
+    {
+      "position": 42,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 2,
+      "focusPoint": "完成式的被動語態",
+      "prompt": "The revised safety protocols ______ by every regional office well before the regulator's inspection last month.",
+      "options": [
+        {
+          "key": "A",
+          "text": "had adopted",
+          "rationale": "錯。主動語態表示「規範自己採用了各分處」，主客顛倒。"
+        },
+        {
+          "key": "B",
+          "text": "had been adopted",
+          "rationale": "對。主詞 protocols 被採用需被動，且採用的時間早於 last month 的稽查，需過去完成式：had been + p.p.。"
+        },
+        {
+          "key": "C",
+          "text": "have been adopted",
+          "rationale": "錯。現在完成式的基準點是現在；本句用 last month 明確定錨在過去，需要過去完成式來表達「更早之前」。"
+        },
+        {
+          "key": "D",
+          "text": "were adopting",
+          "rationale": "錯。過去進行式為主動，且無法表達「在稽查之前就已完成」。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題把「被動」和「時態」兩個考點疊在一起。拆成兩步驟：先問主詞是否承受動作（是→被動），再問時間是否早於另一個過去事件（是→過去完成）。合起來就是 had been + p.p.。"
+    },
+    {
+      "position": 43,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 3,
+      "focusPoint": "讓步結構的倒裝",
+      "prompt": "______ the initial results were, the research team refused to publish until the trial had been replicated independently.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Although promising",
+          "rationale": "錯。Although 之後若省略應為 Although promising, the team…，但本句後面接的是 the initial results were，形成 Although promising the initial results were 這種不自然語序。"
+        },
+        {
+          "key": "B",
+          "text": "Promising as",
+          "rationale": "對。形容詞 + as + 主詞 + be 動詞 是讓步倒裝句型（＝Although the initial results were promising）。這裡的 as 意思是「雖然」而非「因為」。"
+        },
+        {
+          "key": "C",
+          "text": "Despite promising",
+          "rationale": "錯。Despite 是介系詞，後面不能接 the initial results were 這樣的子句結構。"
+        },
+        {
+          "key": "D",
+          "text": "As promising",
+          "rationale": "錯。語序錯誤；此句型必須把形容詞放在 as 之前（Promising as…），放在 as 之後會變成表原因或比較。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "從第 3 題的 Despite／Although 進階到書面體的讓步倒裝：Adj + as + S + V＝雖然…。判別關鍵是句首出現「單獨的形容詞」，且句中有 as。"
+    },
+    {
+      "position": 44,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 4,
+      "focusPoint": "假設語氣在名詞子句與形容詞用法後的延伸",
+      "prompt": "It is imperative that the confidentiality clause ______ before any data is shared with the third-party vendor.",
+      "options": [
+        {
+          "key": "A",
+          "text": "is signed",
+          "rationale": "錯。It is imperative/essential/vital that… 之後同樣使用假設語氣原形，不用一般現在式。"
+        },
+        {
+          "key": "B",
+          "text": "be signed",
+          "rationale": "對。imperative、essential、crucial、necessary 等「必要性」形容詞後的 that 子句用原形；主詞被簽署故需被動，原形被動即 be signed。"
+        },
+        {
+          "key": "C",
+          "text": "will be signed",
+          "rationale": "錯。此結構不用未來式。"
+        },
+        {
+          "key": "D",
+          "text": "signs",
+          "rationale": "錯。語態錯誤（條款不會自己簽），且加了 -s 不符假設語氣。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "假設語氣不只出現在 ask/insist 這類動詞後，也出現在 It is + 必要性形容詞 + that 的句型。這題再疊上被動，答案就是原形的被動式 be + p.p.。"
+    },
+    {
+      "position": 45,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 5,
+      "focusPoint": "not only 置於句首的倒裝",
+      "prompt": "Not only ______ the vendor miss the delivery window, but it also failed to notify the warehouse of the delay.",
+      "options": [
+        {
+          "key": "A",
+          "text": "did",
+          "rationale": "對。Not only 置於句首時主句要倒裝，需借助助動詞：did + 主詞 + 原形動詞（did the vendor miss）。後半句 but it also 的時態 failed 顯示是過去。"
+        },
+        {
+          "key": "B",
+          "text": "the vendor did",
+          "rationale": "錯。這樣寫等於沒有倒裝，語序不合 Not only 句首的規則。"
+        },
+        {
+          "key": "C",
+          "text": "has",
+          "rationale": "錯。has 之後應接過去分詞 missed 而非原形 miss，且與後半句的過去式 failed 時態不一致。"
+        },
+        {
+          "key": "D",
+          "text": "does",
+          "rationale": "錯。時態錯誤，後半句用 failed 表示過去。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "從第 5 題的 not A but B 延伸到 not only A but also B，並加考「否定詞置句首必須倒裝」。倒裝的形式是助動詞提前、主要動詞回歸原形。"
+    },
+    {
+      "position": 46,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 6,
+      "focusPoint": "數量詞 + of which / of whom",
+      "prompt": "The firm received 340 applications, ______ were from candidates with no relevant industry experience.",
+      "options": [
+        {
+          "key": "A",
+          "text": "many of them",
+          "rationale": "錯。them 是代名詞不是關代，兩個子句之間沒有連接詞，會形成逗號連接的破碎句。"
+        },
+        {
+          "key": "B",
+          "text": "many of which",
+          "rationale": "對。of which 兼具關代與連接功能，把兩個子句合法連接；先行詞 applications 為物，故用 which。"
+        },
+        {
+          "key": "C",
+          "text": "many of whom",
+          "rationale": "錯。whom 用於人；先行詞是 applications（申請書），不是申請人。"
+        },
+        {
+          "key": "D",
+          "text": "which many",
+          "rationale": "錯。語序錯誤，數量詞必須放在 of which 之前。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題的陷阱是 many of them 讀起來很順，但它不能連接子句。凡是逗號後要接第二個子句又沒有連接詞時，就必須改用關係代名詞形式：many/some/most/none + of which（物）或 of whom（人）。"
+    },
+    {
+      "position": 47,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 7,
+      "focusPoint": "rise / raise 的及物與不及物",
+      "prompt": "Utility costs have ______ steadily since the new tariff took effect, forcing several tenants to renegotiate their leases.",
+      "options": [
+        {
+          "key": "A",
+          "text": "raised",
+          "rationale": "錯。raise 是及物動詞（raise prices），必須帶受詞；本句空格後直接接副詞 steadily，沒有受詞。"
+        },
+        {
+          "key": "B",
+          "text": "risen",
+          "rationale": "對。rise（rise–rose–risen）是不及物動詞「上升」，不接受詞，完成式為 have risen。"
+        },
+        {
+          "key": "C",
+          "text": "rose",
+          "rationale": "錯。rose 是過去式，不能接在 have 之後；完成式需要過去分詞。"
+        },
+        {
+          "key": "D",
+          "text": "been raised",
+          "rationale": "錯。被動語態需要一個施動者語境，且 costs have been raised 會暗示「有人調漲了成本」，與 steadily since… 的自然趨勢語意不符。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 7 題的 lay／lie 同一類邏輯：raise 及物、rise 不及物。這題再加一層時態陷阱——have 之後必須是過去分詞 risen，不是過去式 rose。"
+    },
+    {
+      "position": 48,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 8,
+      "focusPoint": "易混介系詞的語意分工",
+      "prompt": "The dispute over royalties was settled ______ the parties without recourse to litigation.",
+      "options": [
+        {
+          "key": "A",
+          "text": "among",
+          "rationale": "錯。雖然 the parties 未指明數量，但 settle a dispute between the parties 是法律文件的固定搭配，指爭議的雙方當事人。"
+        },
+        {
+          "key": "B",
+          "text": "between",
+          "rationale": "對。合約與法律語境中，the parties 專指締約雙方，慣用 between the parties；且爭議本質上是雙方之間的關係。"
+        },
+        {
+          "key": "C",
+          "text": "amongst",
+          "rationale": "錯。amongst 只是 among 的英式變體，數量與語境問題完全相同。"
+        },
+        {
+          "key": "D",
+          "text": "across",
+          "rationale": "錯。across 表「橫跨」，不用於當事人之間的關係。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 8 題靠句中的 two 判斷，這題沒有數字，得靠語境慣用法：法律文件中的 the parties 預設是締約雙方，故用 between。介系詞題到高階時往往考的是搭配詞習慣而非規則。"
+    },
+    {
+      "position": 49,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 9,
+      "focusPoint": "amount / number 與名詞可數性",
+      "prompt": "The report attributes the shortfall to a declining ______ of repeat customers rather than to weaker overall demand.",
+      "options": [
+        {
+          "key": "A",
+          "text": "amount",
+          "rationale": "錯。amount 搭配不可數名詞（the amount of water）；customers 是可數複數。"
+        },
+        {
+          "key": "B",
+          "text": "number",
+          "rationale": "對。number 搭配可數複數名詞：the number of repeat customers。"
+        },
+        {
+          "key": "C",
+          "text": "quantity",
+          "rationale": "錯。quantity 多用於可量測的貨品或不可數物質，不用來數人。"
+        },
+        {
+          "key": "D",
+          "text": "deal",
+          "rationale": "錯。a great deal of 只接不可數名詞，且 deal 不能單獨與 declining 搭配。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 9 題 fewer／less 同一個底層概念：先判斷名詞可數與否，再選對應的量詞。可數用 number of，不可數用 amount of，這組搭配在多益出現頻率極高。"
+    },
+    {
+      "position": 50,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 10,
+      "focusPoint": "讓步與條件連接詞的細分",
+      "prompt": "The clinic will honor the discounted rate ______ patients present their membership card at the time of booking.",
+      "options": [
+        {
+          "key": "A",
+          "text": "unless",
+          "rationale": "錯。unless 表否定條件，會變成「除非出示會員卡，否則給折扣」，語意顛倒。"
+        },
+        {
+          "key": "B",
+          "text": "provided that",
+          "rationale": "對。provided that 表肯定條件「只要…就」，符合「只要在預約時出示會員卡就享有折扣」的語意。"
+        },
+        {
+          "key": "C",
+          "text": "in that",
+          "rationale": "錯。in that 表「就…而言、因為」，用於說明原因或角度，不引導條件。"
+        },
+        {
+          "key": "D",
+          "text": "so that",
+          "rationale": "錯。so that 表目的，但出示會員卡不是提供折扣的目的。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "把第 10 題的 until／unless 再擴充成整組條件連接詞：肯定條件用 provided that／as long as，否定條件用 unless，目的用 so that，原因用 in that。先判斷邏輯關係再選詞。"
+    },
+    {
+      "position": 51,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 11,
+      "focusPoint": "the + 比較級, the + 比較級",
+      "prompt": "The earlier the defect is detected, ______ it is to correct without halting the entire production line.",
+      "options": [
+        {
+          "key": "A",
+          "text": "the easier",
+          "rationale": "對。The + 比較級…, the + 比較級… 表「越…就越…」。前半已用 The earlier，後半必須對稱地用 the + 比較級。"
+        },
+        {
+          "key": "B",
+          "text": "easier",
+          "rationale": "錯。少了定冠詞 the，破壞句型的對稱結構。"
+        },
+        {
+          "key": "C",
+          "text": "the easiest",
+          "rationale": "錯。此句型兩邊都用比較級，不用最高級。"
+        },
+        {
+          "key": "D",
+          "text": "the more easy",
+          "rationale": "錯。easy 是短音節形容詞，比較級為 easier，不用 more。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "從第 11 題單純的比較級進階到雙重比較句型。辨識訊號很明確：句首出現 The + 比較級，逗號後就必然要有第二個 the + 比較級。"
+    },
+    {
+      "position": 52,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 12,
+      "focusPoint": "易混動詞的搭配結構",
+      "prompt": "The training manual ______ new hires of the importance of double-checking every invoice before submission.",
+      "options": [
+        {
+          "key": "A",
+          "text": "reminds",
+          "rationale": "對。remind somebody of something 是固定搭配；空格後為「人 + of + 事」，只有 remind 吻合。"
+        },
+        {
+          "key": "B",
+          "text": "mentions",
+          "rationale": "錯。mention 直接接事物（mention the deadline），不接「人 + of」結構。"
+        },
+        {
+          "key": "C",
+          "text": "notifies",
+          "rationale": "錯。notify 的搭配是 notify somebody of something 也成立，但語意上手冊是在「提醒」既有觀念，而非「通知」新消息；且 notify 多用於具體事件通知。"
+        },
+        {
+          "key": "D",
+          "text": "announces",
+          "rationale": "錯。announce 不接人當直接受詞，須寫成 announce something to somebody。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 12 題同屬「靠搭配結構分辨易混字」。這裡的判準是空格後的 new hires of…：能接「人 + of + 事」的只有 remind／notify／inform 一類，再用語意在其中挑選。"
+    },
+    {
+      "position": 53,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 13,
+      "focusPoint": "分詞構句的主動與被動",
+      "prompt": "______ in 1987 and expanded twice since, the Halverson plant now supplies nearly half of the region's packaging.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Founding",
+          "rationale": "錯。現在分詞表主動，會變成「工廠創立了某物」，主客顛倒。"
+        },
+        {
+          "key": "B",
+          "text": "Founded",
+          "rationale": "對。過去分詞表被動：工廠是被創立的。後面的 and expanded 也是過去分詞，兩者平行，正是被動的佐證。"
+        },
+        {
+          "key": "C",
+          "text": "Having founded",
+          "rationale": "錯。完成式分詞仍是主動語態，語意錯誤。"
+        },
+        {
+          "key": "D",
+          "text": "To found",
+          "rationale": "錯。不定詞表目的，與句意不符。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "分詞構句的判斷方法與被動語態相同：問「主句主詞是做這個動作還是承受它」。這題還有一個現成線索——and expanded 已經是過去分詞，平行結構要求空格也是過去分詞。"
+    },
+    {
+      "position": 54,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 14,
+      "focusPoint": "主詞與動詞的一致（插入片語干擾）",
+      "prompt": "The stack of unprocessed claims on the supervisor's desk ______ steadily throughout the quarter despite two rounds of hiring.",
+      "options": [
+        {
+          "key": "A",
+          "text": "have grown",
+          "rationale": "錯。被 of unprocessed claims 誤導。真正的主詞是 The stack（單數），介系詞片語中的名詞不能當主詞。"
+        },
+        {
+          "key": "B",
+          "text": "has grown",
+          "rationale": "對。主詞是單數的 The stack，中間的 of unprocessed claims on the supervisor's desk 全是修飾語，動詞須用單數。"
+        },
+        {
+          "key": "C",
+          "text": "were growing",
+          "rationale": "錯。複數形不符主詞，且 throughout the quarter 搭配完成式更自然。"
+        },
+        {
+          "key": "D",
+          "text": "growing",
+          "rationale": "錯。分詞不能單獨作主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 14 題考 Neither of 的單數，這題考更常見的干擾型主動一致。解法是把所有介系詞片語畫掉：The stack (of unprocessed claims) (on the supervisor's desk) ______，主詞立刻現形。"
+    },
+    {
+      "position": 55,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 15,
+      "focusPoint": "be entitled to / be liable for 等固定搭配",
+      "prompt": "Under clause 7, the subcontractor is ______ for any damage caused by improper installation.",
+      "options": [
+        {
+          "key": "A",
+          "text": "liable",
+          "rationale": "對。be liable for something 表「對…負法律責任」，是合約條款的標準用語。"
+        },
+        {
+          "key": "B",
+          "text": "reliable",
+          "rationale": "錯。reliable 是「可靠的」，形容人或設備值得信賴，不接 for 表責任歸屬。"
+        },
+        {
+          "key": "C",
+          "text": "responsive",
+          "rationale": "錯。responsive 是「回應迅速的」，搭配 to 而非 for。"
+        },
+        {
+          "key": "D",
+          "text": "eligible",
+          "rationale": "錯。be eligible for 表「有資格獲得（好處）」，語意與承擔損害責任相反。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "延續第 15 題 be subject to 的思路：這類 be + 形容詞 + 介系詞 的組合要整組記。常考的還有 be eligible for（有資格）、be liable for（負責）、be entitled to（有權）、be exempt from（免除）。"
+    },
+    {
+      "position": 56,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 16,
+      "focusPoint": "連接副詞與連接詞的語法差異",
+      "prompt": "The prototype passed every stress test; ______, the engineering team recommended one further round of field trials.",
+      "options": [
+        {
+          "key": "A",
+          "text": "even though",
+          "rationale": "錯。even though 是從屬連接詞，必須引導子句並與主句合成一句，不能放在分號之後獨立使用。"
+        },
+        {
+          "key": "B",
+          "text": "nevertheless",
+          "rationale": "對。分號 + 連接副詞 + 逗號 是標準結構；語意上前句正面、後句仍要追加測試，屬轉折。"
+        },
+        {
+          "key": "C",
+          "text": "despite",
+          "rationale": "錯。despite 是介系詞，後面要接名詞片語，不能接完整子句。"
+        },
+        {
+          "key": "D",
+          "text": "whereas",
+          "rationale": "錯。whereas 是從屬連接詞，用法與 even though 相同，不能接在分號後。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 16 題只考語意方向，這題再加考語法位置。三類詞的用法要分清：連接副詞（however/nevertheless）接在分號或句號之後；從屬連接詞（although/whereas）引導子句；介系詞（despite）接名詞。"
+    },
+    {
+      "position": 57,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 17,
+      "focusPoint": "no sooner…than 的倒裝",
+      "prompt": "No sooner ______ the recall notice been issued than the call center was overwhelmed with inquiries.",
+      "options": [
+        {
+          "key": "A",
+          "text": "had",
+          "rationale": "對。No sooner 置於句首需倒裝：No sooner had + S + p.p. + than + 過去簡單式，表「一…就…」。"
+        },
+        {
+          "key": "B",
+          "text": "has",
+          "rationale": "錯。後半句 was overwhelmed 是過去式，需搭配過去完成式 had。"
+        },
+        {
+          "key": "C",
+          "text": "was",
+          "rationale": "錯。空格後是 been issued，需要 had 才能構成過去完成式的被動 had been issued。"
+        },
+        {
+          "key": "D",
+          "text": "did",
+          "rationale": "錯。did 之後要接原形動詞，不能接 been。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 17 題的 as soon as 語意相同，但語法層級高得多。整組固定句型要背：No sooner had S p.p. than…／Hardly had S p.p. when…，兩者都是倒裝且搭配 than 或 when 各有專屬。"
+    },
+    {
+      "position": 58,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 18,
+      "focusPoint": "混合假設語氣",
+      "prompt": "If the board had approved the expansion two years ago, the company ______ in a far stronger position today.",
+      "options": [
+        {
+          "key": "A",
+          "text": "would have been",
+          "rationale": "錯。這是純過去假設的主句形式；但句尾的 today 把結果拉到現在，屬混合假設。"
+        },
+        {
+          "key": "B",
+          "text": "would be",
+          "rationale": "對。混合假設語氣：條件在過去（had approved…two years ago），結果在現在（today），主句用 would + 原形。"
+        },
+        {
+          "key": "C",
+          "text": "will be",
+          "rationale": "錯。假設語氣的主句不用 will。"
+        },
+        {
+          "key": "D",
+          "text": "had been",
+          "rationale": "錯。過去完成式屬於 if 子句，不能出現在主句。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 18 題是標準的過去假設，這題是「條件在過去、結果在現在」的混合型。決定主句形式的永遠是「結果發生在什麼時候」，本題的關鍵字就是句尾的 today。"
+    },
+    {
+      "position": 59,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 19,
+      "focusPoint": "-ing 與 -ed 形容詞的主被動",
+      "prompt": "Several board members found the consultant's projections deeply ______, given how little historical data supported them.",
+      "options": [
+        {
+          "key": "A",
+          "text": "troubling",
+          "rationale": "對。-ing 形容詞描述「引發某種感受的來源」；令人不安的是那些預測本身，故用 troubling 修飾 projections。"
+        },
+        {
+          "key": "B",
+          "text": "troubled",
+          "rationale": "錯。-ed 形容詞描述「感到…的人」；預測不會自己感到不安。感到不安的是董事們。"
+        },
+        {
+          "key": "C",
+          "text": "trouble",
+          "rationale": "錯。名詞或動詞原形無法作受詞補語形容預測的性質。"
+        },
+        {
+          "key": "D",
+          "text": "troublesome",
+          "rationale": "錯。troublesome 意為「麻煩的、費事的」，強調造成operational 上的不便，與「因缺乏數據而令人存疑」的語意不合。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 19 題同屬詞形辨析，但這題考的是分詞形容詞的主被動：事物用 -ing（interesting, troubling），人的感受用 -ed（interested, troubled）。這裡被形容的是 projections，是事物。"
+    },
+    {
+      "position": 60,
+      "section": "單句填空",
+      "difficulty": 3,
+      "derivedFrom": 20,
+      "focusPoint": "分詞構句與獨立主格",
+      "prompt": "______ the contract negotiations concluded, the delegation departed for the airport the same evening.",
+      "options": [
+        {
+          "key": "A",
+          "text": "With",
+          "rationale": "對。With + 名詞 + 過去分詞 是獨立主格結構，表「隨著…完成」。談判是被結束的，故用過去分詞 concluded。"
+        },
+        {
+          "key": "B",
+          "text": "Upon",
+          "rationale": "錯。Upon 後面要接動名詞或名詞（Upon concluding the negotiations），不能接「名詞 + 過去分詞」。"
+        },
+        {
+          "key": "C",
+          "text": "During",
+          "rationale": "錯。During 後接名詞，不能帶分詞形成獨立主格。"
+        },
+        {
+          "key": "D",
+          "text": "Having",
+          "rationale": "錯。Having + p.p. 的分詞構句要求主詞與主句一致；此處分詞另有主詞 the negotiations，結構不合。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "第 20 題考 Upon + V-ing，這題進階到 With + 受詞 + 分詞 的獨立主格。判準是「分詞前面另有一個自己的主詞」：有的話用 With 結構，沒有的話才用 Upon V-ing 或 Having p.p.。"
+    },
+    {
+      "position": 61,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 1,
+      "focusPoint": "時態與時間標記的隱含衝突",
+      "prompt": "The ministry maintains that the subsidy program ______ its objectives long before the review committee was even convened.",
+      "options": [
+        {
+          "key": "A",
+          "text": "has met",
+          "rationale": "錯。現在完成式不能與 long before…was convened 這種明確的過去時間框架並用。maintains 是現在式，但它報導的內容仍可指向過去。"
+        },
+        {
+          "key": "B",
+          "text": "had met",
+          "rationale": "對。that 子句描述的事件早於 was convened 這個過去時間點，需過去完成式。主句 maintains 為現在式不影響子句自身的時間邏輯。"
+        },
+        {
+          "key": "C",
+          "text": "met",
+          "rationale": "錯。過去簡單式無法標示「更早於另一個過去事件」，而 long before 正要求這層先後關係。"
+        },
+        {
+          "key": "D",
+          "text": "would have met",
+          "rationale": "錯。這是假設語氣，但句中並無與事實相反的條件。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "高階時態題的陷阱在於主句時態會誤導你。記住：that 子句的時態由「子句自己的時間線索」決定，這裡的線索是 long before…was convened，所以要用過去完成式。"
+    },
+    {
+      "position": 62,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 2,
+      "focusPoint": "使役動詞後的被動形式",
+      "prompt": "The facilities manager had the faulty ventilation units ______ over the holiday weekend to avoid disrupting production.",
+      "options": [
+        {
+          "key": "A",
+          "text": "replace",
+          "rationale": "錯。have + 受詞 + 原形 表示「叫某人去做」，受詞必須是執行者；但通風機組是被更換的對象。"
+        },
+        {
+          "key": "B",
+          "text": "replaced",
+          "rationale": "對。have + 受詞 + 過去分詞 表示「讓某物被處理」。受詞 units 承受動作，故用過去分詞。"
+        },
+        {
+          "key": "C",
+          "text": "replacing",
+          "rationale": "錯。have + 受詞 + V-ing 強調「使某物持續進行某動作」，且仍是主動語態。"
+        },
+        {
+          "key": "D",
+          "text": "to replace",
+          "rationale": "錯。使役動詞 have 之後不接 to 不定詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "被動概念延伸到使役結構。核心判準沒變：受詞是做動作還是承受動作。have someone do（人去做）vs. have something done（物被做），這組對比是高階常考點。"
+    },
+    {
+      "position": 63,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 3,
+      "focusPoint": "讓步語氣中的 whatever / however",
+      "prompt": "______ compelling the counterarguments may seem, the regulation cannot be waived without legislative approval.",
+      "options": [
+        {
+          "key": "A",
+          "text": "However",
+          "rationale": "對。However + 形容詞 + S + V 表「無論多麼…」。空格後緊接形容詞 compelling，正是這個句型的招牌。"
+        },
+        {
+          "key": "B",
+          "text": "Whatever",
+          "rationale": "錯。Whatever 後面接名詞或直接接子句，不接單獨的形容詞。"
+        },
+        {
+          "key": "C",
+          "text": "Whichever",
+          "rationale": "錯。Whichever 用於在有限選項中擇一，後接名詞。"
+        },
+        {
+          "key": "D",
+          "text": "Although",
+          "rationale": "錯。Although 後面要接完整子句（Although the counterarguments seem compelling），不能把形容詞提到主詞之前。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "讓步結構的最後一層：However + Adj/Adv + S + V＝No matter how…。與第 43 題的 Adj + as + S + V 是同義的兩種書面句型，都靠「形容詞的異常位置」辨識。"
+    },
+    {
+      "position": 64,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 4,
+      "focusPoint": "suggest 的兩種語意與時態",
+      "prompt": "The preliminary data suggest that the treatment ______ more effective in younger patients, though the sample remains too small to be conclusive.",
+      "options": [
+        {
+          "key": "A",
+          "text": "be",
+          "rationale": "錯。這是最典型的過度延伸：suggest 表「建議」時 that 子句用原形，但這裡是「顯示、暗示」，屬陳述事實。"
+        },
+        {
+          "key": "B",
+          "text": "is",
+          "rationale": "對。suggest 在此意為「數據顯示」，that 子句陳述事實，用一般時態。線索是主詞 The preliminary data 與後半句的 too small to be conclusive。"
+        },
+        {
+          "key": "C",
+          "text": "should have been",
+          "rationale": "錯。表示「早該如此」的責備語氣，與客觀陳述不符。"
+        },
+        {
+          "key": "D",
+          "text": "would be",
+          "rationale": "錯。加入假設語氣，但句中沒有假設條件。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "假設語氣的高階陷阱：suggest／insist 都有兩種語意。表「建議、堅持要求」時用原形；表「顯示、堅稱」時用一般時態。判斷方法是看主詞——人提出建議，數據則是顯示事實。"
+    },
+    {
+      "position": 65,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 5,
+      "focusPoint": "平行結構中的詞性一致",
+      "prompt": "The training emphasizes accuracy, consistency, and ______ rather than raw processing speed.",
+      "options": [
+        {
+          "key": "A",
+          "text": "being thorough",
+          "rationale": "錯。動名詞片語與前兩個單一名詞 accuracy、consistency 詞性不對稱。"
+        },
+        {
+          "key": "B",
+          "text": "thoroughness",
+          "rationale": "對。前兩項是抽象名詞，第三項必須同為名詞才符合 A, B, and C 的平行結構。"
+        },
+        {
+          "key": "C",
+          "text": "thorough",
+          "rationale": "錯。thorough 是形容詞，無法與名詞並列。"
+        },
+        {
+          "key": "D",
+          "text": "thoroughly",
+          "rationale": "錯。副詞更不能加入名詞的並列串。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "平行結構題的解法極機械：找出並列串中「已經給你的」項目，判斷它們的詞性，空格就填同一詞性。這裡 accuracy 和 consistency 都是 -y／-ness 結尾的抽象名詞，答案自然是 thoroughness。"
+    },
+    {
+      "position": 66,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 6,
+      "focusPoint": "限定與非限定關係子句的語意差別",
+      "prompt": "The company's three overseas plants, ______ were built after 2015, all use the updated emissions system.",
+      "options": [
+        {
+          "key": "A",
+          "text": "which",
+          "rationale": "錯。單獨的 which 之後應直接接動詞，這裡雖接 were built，但少了 all 之類的限定會使 all use 前後主詞重複而語意混亂——真正的問題是本句需要表達「三座全部」。"
+        },
+        {
+          "key": "B",
+          "text": "all of which",
+          "rationale": "對。非限定子句中用 all of which 明確表示三座廠「全部」都建於 2015 之後，與主句的 all use 呼應且結構完整。"
+        },
+        {
+          "key": "C",
+          "text": "that",
+          "rationale": "錯。逗號隔開的非限定關係子句絕對不能用 that。"
+        },
+        {
+          "key": "D",
+          "text": "all of them",
+          "rationale": "錯。them 是代名詞不具連接功能，會造成逗號連接的破碎句。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "關代題的最高階版本結合三個規則：非限定子句不用 that、代名詞不能連接子句、數量詞須用 of which 形式。三個規則各刷掉一個選項，答案就浮現了。"
+    },
+    {
+      "position": 67,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 7,
+      "focusPoint": "易混動詞三態的交叉干擾",
+      "prompt": "The auditor noted that several boxes of archived files ______ in the basement since the office relocation.",
+      "options": [
+        {
+          "key": "A",
+          "text": "have laid",
+          "rationale": "錯。lay 是及物動詞，必須有受詞；且完成式應為 have laid + 受詞。"
+        },
+        {
+          "key": "B",
+          "text": "had lain",
+          "rationale": "對。lie（躺、擱置）的過去分詞是 lain，不及物；since the office relocation 搭配完成式，而 noted 是過去式，故用過去完成 had lain。"
+        },
+        {
+          "key": "C",
+          "text": "had laid",
+          "rationale": "錯。laid 來自及物的 lay，需要受詞，但空格後直接接地點副詞。"
+        },
+        {
+          "key": "D",
+          "text": "have lain",
+          "rationale": "錯。詞形正確但時態不對：主句 noted 為過去式，子句需用過去完成式才能表達「在那之前就一直如此」。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這題把 lay/lie 的辨析推到極限，同時考三態與時態一致。兩步驟解題：先看有無受詞（無 → lie 家族 → lain），再看主句時態（noted 過去 → 子句用 had）。"
+    },
+    {
+      "position": 68,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 8,
+      "focusPoint": "介系詞的抽象語意",
+      "prompt": "The merger talks collapsed ______ mounting pressure from institutional shareholders.",
+      "options": [
+        {
+          "key": "A",
+          "text": "among",
+          "rationale": "錯。among 用於「在多個並列個體之中」，不用於抽象的情勢背景。"
+        },
+        {
+          "key": "B",
+          "text": "amid",
+          "rationale": "對。amid 表「在…的氛圍或情勢之中」，搭配 mounting pressure 這類抽象不可數名詞，是新聞與商務報導的標準用語。"
+        },
+        {
+          "key": "C",
+          "text": "between",
+          "rationale": "錯。between 需要明確的兩方對象。"
+        },
+        {
+          "key": "D",
+          "text": "within",
+          "rationale": "錯。within 表範圍或期限之內，無法表達「在壓力之下」。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "第 28 題已預告過 amid 與 among 的差別，這題正式考它：among 數個體，amid 談情勢。看空格後的名詞是可數複數還是抽象不可數，就能分辨。"
+    },
+    {
+      "position": 69,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 9,
+      "focusPoint": "比較對象的邏輯對稱",
+      "prompt": "The turnaround time at the Osaka facility is considerably shorter than ______ the Lyon facility.",
+      "options": [
+        {
+          "key": "A",
+          "text": "the Lyon facility",
+          "rationale": "錯。會變成拿「時間」跟「工廠」比較，比較對象不對稱。"
+        },
+        {
+          "key": "B",
+          "text": "that at",
+          "rationale": "對。that 代替前面的單數不可數概念 the turnaround time，加上介系詞 at 保持與 at the Osaka facility 對稱：比的是兩地的「時間」。"
+        },
+        {
+          "key": "C",
+          "text": "those at",
+          "rationale": "錯。those 用於複數；turnaround time 在此為單數概念。"
+        },
+        {
+          "key": "D",
+          "text": "it at",
+          "rationale": "錯。it 特指同一個東西，但這裡要指「另一座工廠的另一段時間」，需用 that。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "比較句的高階考點是「比較對象必須對等」。用 that（單數）或 those（複數）代替重複的名詞，是英文避免拿蘋果比橘子的標準手法。"
+    },
+    {
+      "position": 70,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 10,
+      "focusPoint": "lest / for fear that 的假設語氣",
+      "prompt": "The archivist stores the original manuscripts in a climate-controlled vault ______ they deteriorate.",
+      "options": [
+        {
+          "key": "A",
+          "text": "lest",
+          "rationale": "對。lest 表「以免、唯恐」，其後子句用原形動詞（should 省略），故 they deteriorate 而非 they deteriorate**s** 或 will deteriorate。"
+        },
+        {
+          "key": "B",
+          "text": "unless",
+          "rationale": "錯。unless 表「除非」，會變成「除非受損才存放」，語意顛倒。"
+        },
+        {
+          "key": "C",
+          "text": "in case of",
+          "rationale": "錯。in case of 是介系詞片語，後接名詞（in case of fire），不接子句。"
+        },
+        {
+          "key": "D",
+          "text": "so that",
+          "rationale": "錯。so that 表正面目的，但這裡的目的是「避免」損壞，需用否定意涵的連接詞。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "從 until／unless／provided that 一路擴充到最正式的 lest。它有兩個特徵：語意是否定的「以免」，且後接原形動詞的假設語氣。in case 也表預防，但它接子句時用一般時態，且不能寫成 in case of。"
+    },
+    {
+      "position": 71,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 11,
+      "focusPoint": "比較級的強調副詞",
+      "prompt": "The second-generation sensor is ______ more accurate than the model it replaces, but it also costs three times as much.",
+      "options": [
+        {
+          "key": "A",
+          "text": "very",
+          "rationale": "錯。very 只修飾原級形容詞（very accurate），不能修飾比較級。"
+        },
+        {
+          "key": "B",
+          "text": "considerably",
+          "rationale": "對。considerably 與 far／much／significantly／substantially 同屬比較級專用的強調副詞。"
+        },
+        {
+          "key": "C",
+          "text": "so",
+          "rationale": "錯。so 修飾原級，且通常需搭配 that 子句。"
+        },
+        {
+          "key": "D",
+          "text": "too",
+          "rationale": "錯。too 表「過於」且只修飾原級，與 than 的比較結構不相容。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "比較級的最後一塊拼圖：修飾原級用 very／so／too，修飾比較級用 much／far／even／considerably／significantly。看到 than 就知道空格必須是後面那一組。"
+    },
+    {
+      "position": 72,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 12,
+      "focusPoint": "近義動詞的細微語意差別",
+      "prompt": "The new labeling requirements ______ manufacturers to disclose the country of origin for every component.",
+      "options": [
+        {
+          "key": "A",
+          "text": "compel",
+          "rationale": "對。compel + 受詞 + to V 表「以規範或力量迫使…必須」，正好描述法規對製造商的強制力。"
+        },
+        {
+          "key": "B",
+          "text": "persuade",
+          "rationale": "錯。persuade 是靠說服使人自願同意，法規不需要說服。"
+        },
+        {
+          "key": "C",
+          "text": "enforce",
+          "rationale": "錯。enforce 的受詞是「規定本身」（enforce the rules），不接「人 + to V」。"
+        },
+        {
+          "key": "D",
+          "text": "impose",
+          "rationale": "錯。impose 的搭配是 impose something on somebody，不接不定詞。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "高階字彙題常靠「搭配結構」而非中文意思決勝負。這四個字中文都可能翻成「強制」，但只有 compel／require／oblige 能接「人 + to V」，enforce 與 impose 的受詞是規定本身。"
+    },
+    {
+      "position": 73,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 13,
+      "focusPoint": "關係副詞與關係代名詞的選擇",
+      "prompt": "The warehouse ______ the damaged pallets were stored has since been converted into office space.",
+      "options": [
+        {
+          "key": "A",
+          "text": "which",
+          "rationale": "錯。關係子句 the damaged pallets were stored 主詞受詞都完整，不缺名詞成分，故不能用關代。"
+        },
+        {
+          "key": "B",
+          "text": "where",
+          "rationale": "對。子句結構完整，缺的是地點副詞（stored **there**），因此用關係副詞 where，等同 in which。"
+        },
+        {
+          "key": "C",
+          "text": "that",
+          "rationale": "錯。與 which 同樣是關係代名詞，子句並不缺名詞成分。"
+        },
+        {
+          "key": "D",
+          "text": "whose",
+          "rationale": "錯。whose 後面必須接名詞，這裡後接主詞＋動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "關代與關係副詞的分水嶺只有一條：把關係子句抽出來看，缺名詞（主詞或受詞）用關代，句子完整只缺副詞用關係副詞 where／when／why。"
+    },
+    {
+      "position": 74,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 14,
+      "focusPoint": "倒裝句中的主詞辨識",
+      "prompt": "Attached to the revised proposal ______ the three cost estimates the client requested last week.",
+      "options": [
+        {
+          "key": "A",
+          "text": "is",
+          "rationale": "錯。倒裝後真正的主詞在動詞之後，是複數的 the three cost estimates。"
+        },
+        {
+          "key": "B",
+          "text": "are",
+          "rationale": "對。句首的 Attached to the revised proposal 是補語提前造成的倒裝，主詞是後面的 the three cost estimates（複數），故用 are。"
+        },
+        {
+          "key": "C",
+          "text": "being",
+          "rationale": "錯。being 不能單獨作主要動詞。"
+        },
+        {
+          "key": "D",
+          "text": "has been",
+          "rationale": "錯。單數形式不符複數主詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "主動一致的最高階考法：句子倒裝時，動詞前面的那一串不是主詞。遇到句首是介系詞片語或分詞的倒裝句，一律往動詞「後面」找主詞再決定單複數。"
+    },
+    {
+      "position": 75,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 15,
+      "focusPoint": "商務固定搭配 in lieu of / on behalf of",
+      "prompt": "Employees may take compensatory time off ______ overtime pay, provided the request is approved in advance.",
+      "options": [
+        {
+          "key": "A",
+          "text": "in lieu of",
+          "rationale": "對。in lieu of 表「代替」，是人資與合約文件的正式用語：以補休代替加班費。"
+        },
+        {
+          "key": "B",
+          "text": "on behalf of",
+          "rationale": "錯。on behalf of 是「代表某人」，指身分代表而非替代物。"
+        },
+        {
+          "key": "C",
+          "text": "in light of",
+          "rationale": "錯。in light of 是「有鑑於」，用於說明依據或原因。"
+        },
+        {
+          "key": "D",
+          "text": "in accordance with",
+          "rationale": "錯。in accordance with 是「依照（規定）」，後接規章制度而非被替代的事物。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "這組 in + 名詞 + of／with 的商務片語是高分關鍵：in lieu of（代替）、in light of（有鑑於）、in accordance with（依照）、in the event of（萬一）、on behalf of（代表）。中文意思相近但用法完全不同，要整組記。"
+    },
+    {
+      "position": 76,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 16,
+      "focusPoint": "連接副詞的精確語意",
+      "prompt": "The vendor missed two consecutive milestones; ______, the steering committee voted to terminate the agreement.",
+      "options": [
+        {
+          "key": "A",
+          "text": "otherwise",
+          "rationale": "錯。otherwise 表「否則」，需要一個未實現的假設前提。"
+        },
+        {
+          "key": "B",
+          "text": "consequently",
+          "rationale": "對。前句是原因、後句是直接後果，consequently 精確表達因果關係。"
+        },
+        {
+          "key": "C",
+          "text": "meanwhile",
+          "rationale": "錯。meanwhile 表「與此同時」，強調時間並行而非因果。"
+        },
+        {
+          "key": "D",
+          "text": "likewise",
+          "rationale": "錯。likewise 表「同樣地」，用於兩件性質相同的事並列。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "連接副詞在高階題會考更細的分類：因果（therefore/consequently/accordingly）、時間（meanwhile/subsequently）、類比（likewise/similarly）、條件（otherwise）。先問「前後兩句是什麼關係」，再從該類中挑。"
+    },
+    {
+      "position": 77,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 17,
+      "focusPoint": "時間連接詞與時態的交互作用",
+      "prompt": "Hardly ______ the new scheduling system gone live when the support queue doubled in length.",
+      "options": [
+        {
+          "key": "A",
+          "text": "had",
+          "rationale": "對。Hardly 置於句首需倒裝，且固定搭配為 Hardly had + S + p.p. + when + 過去簡單式。"
+        },
+        {
+          "key": "B",
+          "text": "has",
+          "rationale": "錯。後半句 doubled 為過去式，需搭配過去完成式的 had。"
+        },
+        {
+          "key": "C",
+          "text": "did",
+          "rationale": "錯。did 之後接原形動詞，不能接過去分詞 gone。"
+        },
+        {
+          "key": "D",
+          "text": "was",
+          "rationale": "錯。gone live 在此是 have gone live 的完成式用法，不是被動。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "與第 57 題的 No sooner…than 成對出現：Hardly／Scarcely 搭配 when，No sooner 搭配 than。兩者都要倒裝、都用過去完成式。搭配詞用錯是這類題最常見的失分點。"
+    },
+    {
+      "position": 78,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 18,
+      "focusPoint": "if 省略的假設語氣倒裝（未來）",
+      "prompt": "______ the pilot program to prove successful, the board is prepared to fund a nationwide rollout next year.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Were",
+          "rationale": "對。Were + S + to V 是 If the pilot program were to prove successful 的倒裝，用於未來或純假想的情況。"
+        },
+        {
+          "key": "B",
+          "text": "Had",
+          "rationale": "錯。Had + S + p.p. 用於與過去事實相反，但空格後是 to prove 而非過去分詞。"
+        },
+        {
+          "key": "C",
+          "text": "Should",
+          "rationale": "錯。Should + S 之後要接原形動詞（Should the program prove），不接 to + 原形。"
+        },
+        {
+          "key": "D",
+          "text": "Was",
+          "rationale": "錯。假設語氣的 be 動詞固定用 were，不隨主詞變化。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "三種假設倒裝在此完整成套：Had + p.p.（過去相反）、Were + S + to V（未來假想）、Should + S + 原形（萬一）。判斷完全靠空格後的動詞形式，不必看語意。"
+    },
+    {
+      "position": 79,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 19,
+      "focusPoint": "名詞化與詞性辨析",
+      "prompt": "The committee questioned the ______ of relocating the distribution center without first consulting the affected staff.",
+      "options": [
+        {
+          "key": "A",
+          "text": "advisable",
+          "rationale": "錯。形容詞不能接在冠詞 the 之後當受詞。"
+        },
+        {
+          "key": "B",
+          "text": "advisability",
+          "rationale": "對。the ______ of 的結構要求名詞；advisability 意為「是否明智、可取與否」，正是委員會質疑的對象。"
+        },
+        {
+          "key": "C",
+          "text": "advisory",
+          "rationale": "錯。advisory 作名詞時意為「公告、警報」（a weather advisory），語意不符。"
+        },
+        {
+          "key": "D",
+          "text": "advisedly",
+          "rationale": "錯。副詞不能作 the 之後的名詞成分。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "詞性題的萬用解法：看空格前後的框架。the ______ of 中間必然是名詞。難點在於同字根有多個名詞形式（advisability／advisory），這時再用語意篩選。"
+    },
+    {
+      "position": 80,
+      "section": "單句填空",
+      "difficulty": 4,
+      "derivedFrom": 20,
+      "focusPoint": "分詞構句的懸垂修飾",
+      "prompt": "______ the quarterly figures, the analyst noticed an unexplained spike in logistics costs.",
+      "options": [
+        {
+          "key": "A",
+          "text": "Reviewing",
+          "rationale": "對。分詞構句的隱含主詞必須與主句主詞一致：the analyst 是審閱報表的人，用主動的現在分詞。"
+        },
+        {
+          "key": "B",
+          "text": "Reviewed",
+          "rationale": "錯。過去分詞表被動，會暗示 the analyst 被審閱。"
+        },
+        {
+          "key": "C",
+          "text": "To be reviewed",
+          "rationale": "錯。被動不定詞表目的且語態錯誤。"
+        },
+        {
+          "key": "D",
+          "text": "Having been reviewed",
+          "rationale": "錯。完成被動分詞同樣把 the analyst 變成被審閱的對象。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "分詞構句最容易出錯的地方是「懸垂修飾」：分詞的隱含主詞就是主句的主詞。做題時把主句主詞代進分詞前面唸一次——the analyst reviewing the figures 通順，答案就對了。"
+    },
+    {
+      "position": 81,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 12,
+      "focusPoint": "ensure / assure / insure 易混字",
+      "prompt": "All technicians are asked to ______ that the calibration log has been signed before the equipment is returned to the floor.",
+      "options": [
+        {
+          "key": "A",
+          "text": "assure",
+          "rationale": "錯。assure 必須先接人再接 that 子句（assure the client that…）。本句空格後直接是 that，沒有人稱受詞。"
+        },
+        {
+          "key": "B",
+          "text": "ensure",
+          "rationale": "對。ensure 直接接 that 子句，表「確保某件事成立」——確保校正紀錄已簽名。"
+        },
+        {
+          "key": "C",
+          "text": "insure",
+          "rationale": "錯。insure 是「投保」，與保險契約有關，語意不符。"
+        },
+        {
+          "key": "D",
+          "text": "reassure",
+          "rationale": "錯。reassure 是「使某人安心」，同樣需要人稱受詞，且語意是安撫情緒而非確認事實。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "這組字用「空格後面接什麼」就能穩定分辨：接 that 子句用 ensure，接人用 assure／reassure，談保險用 insure。"
+    },
+    {
+      "position": 82,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 20,
+      "focusPoint": "be used to / get used to + 動名詞",
+      "prompt": "Once the clerks get used to ______ the new inventory terminals, order processing should speed up considerably.",
+      "options": [
+        {
+          "key": "A",
+          "text": "operate",
+          "rationale": "錯。原形動詞不能接在 to 之後——這裡的 to 是介系詞，不是不定詞的 to。"
+        },
+        {
+          "key": "B",
+          "text": "operating",
+          "rationale": "對。get used to / be used to 中的 to 是介系詞，後接動名詞，意為「習慣做某事」。"
+        },
+        {
+          "key": "C",
+          "text": "operated",
+          "rationale": "錯。過去分詞表被動，但職員是操作終端機的人，不是被操作的對象。"
+        },
+        {
+          "key": "D",
+          "text": "operation",
+          "rationale": "錯。名詞後面無法直接帶受詞 the new inventory terminals，需寫成 the operation of…。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "最大陷阱是 to 的身分。be used to V-ing（習慣於）的 to 是介系詞；used to V（過去經常）的 to 才是不定詞。判斷方法是把 to 後面換成名詞試試：get used to the terminals 通順，證明它是介系詞。"
+    },
+    {
+      "position": 83,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 1,
+      "focusPoint": "by the time 與未來完成式",
+      "prompt": "______ the replacement parts arrive from Osaka, the assembly line will have been idle for nearly a week.",
+      "options": [
+        {
+          "key": "A",
+          "text": "As soon as",
+          "rationale": "錯。as soon as 強調「一…就立刻…」的瞬間銜接，但主句 will have been idle for nearly a week 說的是累積了一週的狀態，不是瞬間反應。"
+        },
+        {
+          "key": "B",
+          "text": "By the time",
+          "rationale": "對。主句用未來完成式並帶 for + 一段時間，需要一個未來的基準時間點，這正是 by the time 的功能：到零件送達的那一刻為止，產線已停擺近一週。"
+        },
+        {
+          "key": "C",
+          "text": "Until",
+          "rationale": "錯。until 要搭配持續或否定的主句（will not resume until…），無法直接帶未來完成式表達累積時間。"
+        },
+        {
+          "key": "D",
+          "text": "While",
+          "rationale": "錯。while 表兩件事同時進行，但零件送達是一個時間點，不是持續期間。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "看到主句是「will have + p.p. + for 一段時間」，就要回頭找那個未來基準點，而 by the time 正是提供基準點的連接詞。同時注意子句用現在式 arrive 代替未來式。"
+    },
+    {
+      "position": 84,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 19,
+      "focusPoint": "respective 等同字根形容詞辨析",
+      "prompt": "Delegates will be escorted to their ______ seats in the main hall upon presentation of their badges.",
+      "options": [
+        {
+          "key": "A",
+          "text": "respectful",
+          "rationale": "錯。respectful 是「恭敬有禮的」，形容人的態度，座位不會有禮貌。"
+        },
+        {
+          "key": "B",
+          "text": "respected",
+          "rationale": "錯。respected 是「受人敬重的」，同樣用於形容人或機構。"
+        },
+        {
+          "key": "C",
+          "text": "respective",
+          "rationale": "對。respective 意為「各自的」，指每位代表被帶到屬於自己的那個座位。它幾乎只出現在複數名詞前。"
+        },
+        {
+          "key": "D",
+          "text": "respectably",
+          "rationale": "錯。副詞不能修飾名詞 seats。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "同字根四胞胎要一次記清：respective（各自的）、respectful（恭敬的）、respected（受敬重的）、respectable（體面的）。看到「複數人 + their ______ + 複數名詞」的框架，幾乎都是 respective。"
+    },
+    {
+      "position": 85,
+      "section": "單句填空",
+      "difficulty": 2,
+      "derivedFrom": 15,
+      "focusPoint": "in + 名詞 + with 的固定片語",
+      "prompt": "The figures in Appendix C should be read ______ with the footnotes on page 12.",
+      "options": [
+        {
+          "key": "A",
+          "text": "in conjunction",
+          "rationale": "對。in conjunction with 表「與…一併、結合著」，正好描述數字要搭配註腳一起閱讀。"
+        },
+        {
+          "key": "B",
+          "text": "in accordance",
+          "rationale": "錯。in accordance with 是「依照（規定、標準）」，後面接的應是規範而非被一起閱讀的內容。"
+        },
+        {
+          "key": "C",
+          "text": "in advance",
+          "rationale": "錯。in advance 是「事先」，其後搭配 of 而非 with。"
+        },
+        {
+          "key": "D",
+          "text": "in place",
+          "rationale": "錯。in place of 才是「代替」，且介系詞是 of；註腳不是用來取代數字的。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "解這類題有兩個檢查點：介系詞搭配對不對（in advance **of**、in place **of** 都不配 with），以及語意合不合。兩關同時通過的只有 in conjunction with。"
+    }
+  ]
+}

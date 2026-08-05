@@ -1,0 +1,942 @@
+{
+  "id": "toeic-02-cloze",
+  "title": "02｜短文填空",
+  "description": "商務短文 × 每篇 4 個空格，文法空格與插入句並重。短文與它的題目會綁在一起亂序，不會被拆散。",
+  "partCode": "02",
+  "sortOrder": 20,
+  "recommendedMinutes": 45,
+  "published": true,
+  "questions": [
+    {
+      "position": 1,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "非限定關係代名詞",
+      "passageKey": "p6-l1-expense",
+      "passageText": "To: All Marketing Staff\nFrom: Deborah Kwan, Marketing Director\nSubject: Updated Expense Reporting\n\nEffective the first of next month, all travel-related expenses must be submitted through the new online portal rather than the paper forms we have used until now. The paper system, ______ (1) has served us for over a decade, can no longer keep pace with our reporting volume.\n\nPlease note that receipts must be uploaded within five business days of any trip. Claims submitted after this window ______ (2) delayed reimbursement, as they will require additional manager approval.\n\n______ (3) We understand that adjusting to any new system takes time. For that reason, the finance team will hold two walkthrough sessions next week, and attendance is strongly ______ (4) for anyone who travels regularly.\n\nThank you for your cooperation.",
+      "prompt": "Select the best answer for blank (1).",
+      "options": [
+        {
+          "key": "A",
+          "text": "which",
+          "rationale": "對。逗號隔開的非限定關係子句修飾 The paper system（物），且子句缺主詞，故用主格關代 which。"
+        },
+        {
+          "key": "B",
+          "text": "what",
+          "rationale": "錯。what 本身含先行詞（＝the thing that），不能用在已有先行詞的關係子句中。"
+        },
+        {
+          "key": "C",
+          "text": "whose",
+          "rationale": "錯。whose 後面必須接名詞，這裡後接動詞 has served。"
+        },
+        {
+          "key": "D",
+          "text": "it",
+          "rationale": "錯。it 是代名詞不具連接功能，會造成「兩個主詞、沒有連接詞」的破碎句。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "先判斷空格是否需要「連接」功能：兩個子句之間沒有其他連接詞，所以必須用關係代名詞而非代名詞。再看先行詞是物、子句缺主詞，答案就是 which。"
+    },
+    {
+      "position": 2,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "依上下文判斷時態",
+      "passageKey": "p6-l1-expense",
+      "prompt": "Select the best answer for blank (2).",
+      "options": [
+        {
+          "key": "A",
+          "text": "result in",
+          "rationale": "錯。主詞 Claims submitted after this window 是複數，原形動詞在現在式中可以搭配複數主詞，但本段描述的是「未來若逾期將導致的後果」，需要未來式。"
+        },
+        {
+          "key": "B",
+          "text": "will result in",
+          "rationale": "對。同句後半的 as they will require additional manager approval 已用未來式，前後時態必須一致；語意也是對未來後果的預告。"
+        },
+        {
+          "key": "C",
+          "text": "resulting in",
+          "rationale": "錯。分詞不能單獨作主要動詞，句子會缺少述語。"
+        },
+        {
+          "key": "D",
+          "text": "have resulted in",
+          "rationale": "錯。現在完成式指向已發生的事，但新制度尚未生效，語意矛盾。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "Part 6 的時態題一定要往前後句找線索。這裡最強的線索就在同一句的 as they **will** require——同一句內的兩個動詞時態要一致。"
+    },
+    {
+      "position": 3,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "插入句與上下文銜接",
+      "passageKey": "p6-l1-expense",
+      "prompt": "Select the best answer for blank (3).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The paper forms will still be accepted indefinitely.",
+          "rationale": "錯。與全文主旨直接矛盾：首段明說費用必須改用線上系統提交，紙本已不敷使用。"
+        },
+        {
+          "key": "B",
+          "text": "We appreciate that this change may feel abrupt.",
+          "rationale": "對。下一句 We understand that adjusting to any new system takes time 與 For that reason…walkthrough sessions 形成「體諒 → 因此提供說明會」的連貫邏輯，插入句正是這段體諒語氣的開頭。"
+        },
+        {
+          "key": "C",
+          "text": "Reimbursements are processed twice a year.",
+          "rationale": "錯。與前後文談的是提交流程與說明會，報銷頻率是無關資訊，且與 five business days 的時效要求不搭。"
+        },
+        {
+          "key": "D",
+          "text": "Please forward this message to our clients.",
+          "rationale": "錯。這是給內部行銷同仁的內部通知，不會要求轉發給客戶。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "插入句題的解法是「讀後一句」。後一句出現 For that reason，代表插入句必須提供那個 reason，也就是「體諒改變可能來得突然」。"
+    },
+    {
+      "position": 4,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "被動語態中的過去分詞",
+      "passageKey": "p6-l1-expense",
+      "prompt": "Select the best answer for blank (4).",
+      "options": [
+        {
+          "key": "A",
+          "text": "encourage",
+          "rationale": "錯。be 動詞 is 之後不能接原形動詞。"
+        },
+        {
+          "key": "B",
+          "text": "encouraged",
+          "rationale": "對。attendance is strongly encouraged 是被動語態：出席「被鼓勵」。這是通知類文件的固定表達。"
+        },
+        {
+          "key": "C",
+          "text": "encouraging",
+          "rationale": "錯。is encouraging 是主動進行式，會變成「出席正在鼓勵某人」，語意不通。"
+        },
+        {
+          "key": "D",
+          "text": "encouragement",
+          "rationale": "錯。名詞放在 is 之後會變成 attendance is encouragement（出席就是鼓勵），語意不通。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "看到 be 動詞 + 副詞 + 空格，且主詞是承受動作的事物，就是被動語態，填過去分詞。strongly encouraged／highly recommended 都是這類通知的固定搭配。"
+    },
+    {
+      "position": 5,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "between…and 固定搭配",
+      "passageKey": "p6-l1-garage",
+      "passageText": "NOTICE TO ALL TENANTS — Parking Garage Resurfacing\n\nThe lower-level parking garage will undergo resurfacing ______ (5) June 3 and June 7. During this period, the lower level will be completely inaccessible to vehicles.\n\nTenants who normally park below ground may use the overflow lot on Maple Street at no additional charge. ______ (6) Spaces there are limited, so we recommend arriving earlier than usual.\n\nWe ______ (7) apologize for any inconvenience this work may cause. The resurfacing is necessary to repair damage that has worsened ______ (8) the winter and to ensure the safety of all who use the facility.",
+      "prompt": "Select the best answer for blank (5).",
+      "options": [
+        {
+          "key": "A",
+          "text": "from",
+          "rationale": "錯。from 必須搭配 to（from June 3 to June 7），但句中的連接詞是 and。"
+        },
+        {
+          "key": "B",
+          "text": "since",
+          "rationale": "錯。since 只接單一起點時間，不能連接兩個日期。"
+        },
+        {
+          "key": "C",
+          "text": "between",
+          "rationale": "對。between A and B 是固定搭配；句中已有 and，直接鎖定 between。"
+        },
+        {
+          "key": "D",
+          "text": "during",
+          "rationale": "錯。during 後接一段期間的名詞（during the renovation），不接兩個並列日期。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "這題不需要理解文意：看到後面的 and 連接兩個日期，就是 between…and 的固定搭配。留意 from 一定配 to，between 一定配 and。"
+    },
+    {
+      "position": 6,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "插入句與上下文銜接",
+      "passageKey": "p6-l1-garage",
+      "prompt": "Select the best answer for blank (6).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The garage will remain closed permanently.",
+          "rationale": "錯。首段說的是 June 3 到 June 7 的臨時施工，永久關閉與全文矛盾。"
+        },
+        {
+          "key": "B",
+          "text": "Additional spaces have been reserved for your convenience.",
+          "rationale": "錯。下一句明說 Spaces there are limited（車位有限），與「已保留額外車位」直接衝突。"
+        },
+        {
+          "key": "C",
+          "text": "A shuttle service will run every fifteen minutes.",
+          "rationale": "錯。全文未提接駁車，且後句要租戶「提早到」而非「等接駁」，資訊不連貫。"
+        },
+        {
+          "key": "D",
+          "text": "Please display your tenant permit while parked there.",
+          "rationale": "對。前句剛說可改停 Maple Street 的臨時停車場，插入句順勢說明在該處停車的注意事項，再接後句「車位有限請提早」，三句都圍繞同一個停車場。"
+        }
+      ],
+      "correctOption": "D",
+      "explanation": "插入句要同時和前句與後句相容。這題的關鍵是後句 Spaces there are limited，其中的 there 指 Maple Street 停車場——插入句必須維持在同一個話題上，選項 D 正是關於在那裡停車的規定。"
+    },
+    {
+      "position": 7,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "副詞修飾動詞",
+      "passageKey": "p6-l1-garage",
+      "prompt": "Select the best answer for blank (7).",
+      "options": [
+        {
+          "key": "A",
+          "text": "sincere",
+          "rationale": "錯。形容詞不能修飾動詞 apologize。"
+        },
+        {
+          "key": "B",
+          "text": "sincerity",
+          "rationale": "錯。名詞夾在主詞與動詞之間不成立。"
+        },
+        {
+          "key": "C",
+          "text": "sincerely",
+          "rationale": "對。修飾動詞 apologize 需要副詞：We sincerely apologize 是道歉信的標準說法。"
+        },
+        {
+          "key": "D",
+          "text": "more sincere",
+          "rationale": "錯。詞性仍是形容詞，且句中沒有比較對象。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "詞性題最快的做法是看空格的鄰居。空格夾在主詞 We 和動詞 apologize 之間，能站在這個位置修飾動詞的只有副詞。"
+    },
+    {
+      "position": 8,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "表期間的介系詞",
+      "passageKey": "p6-l1-garage",
+      "prompt": "Select the best answer for blank (8).",
+      "options": [
+        {
+          "key": "A",
+          "text": "during",
+          "rationale": "錯。during 語法上可行，但它指「在某期間內的某個時點」；本句 has worsened 是持續惡化的過程，需要強調「整段期間持續」的介系詞。"
+        },
+        {
+          "key": "B",
+          "text": "while",
+          "rationale": "錯。while 是連接詞，後面必須接子句，不能直接接名詞 the winter。"
+        },
+        {
+          "key": "C",
+          "text": "among",
+          "rationale": "錯。among 用於「在多個個體之中」，不表時間。"
+        },
+        {
+          "key": "D",
+          "text": "throughout",
+          "rationale": "對。throughout the winter 表「整個冬天從頭到尾」，與 has worsened 的持續累積語意最貼合。"
+        }
+      ],
+      "correctOption": "D",
+      "explanation": "during 與 throughout 都能接期間名詞，差別在於強調點：during 只說「在那期間發生」，throughout 強調「貫穿整段期間」。搭配持續性動詞 worsen 時選 throughout。"
+    },
+    {
+      "position": 9,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "過去分詞作後位修飾",
+      "passageKey": "p6-l1-brightpath",
+      "passageText": "Brightpath Language Studio — Speak with Confidence\n\nWhether you are preparing for a job interview abroad or simply want to communicate more naturally, Brightpath offers courses ______ (9) to learners at every level.\n\nOur small-group classes are capped at six students, which ______ (10) that each learner receives personal attention. Unlike larger programs, we adjust the pace to match the group rather than rushing through a fixed syllabus.\n\n______ (11) Sign up before the end of the month and receive your first assessment session free of charge.\n\nClasses fill quickly, so we encourage you to reserve your place ______ (12) online or by phone today.",
+      "prompt": "Select the best answer for blank (9).",
+      "options": [
+        {
+          "key": "A",
+          "text": "tailor",
+          "rationale": "錯。句中已有主要動詞 offers，再放一個原形動詞會造成兩個述語。"
+        },
+        {
+          "key": "B",
+          "text": "tailored",
+          "rationale": "對。過去分詞片語後位修飾 courses：課程是「被量身打造」的，還原為 courses that are tailored to learners。"
+        },
+        {
+          "key": "C",
+          "text": "tailoring",
+          "rationale": "錯。現在分詞表主動，會變成「課程去量身打造學員」，主客顛倒。"
+        },
+        {
+          "key": "D",
+          "text": "tailors",
+          "rationale": "錯。同樣造成一句兩個主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "名詞後面的空格若要修飾該名詞，就是分詞後位修飾。判斷主動或被動的方法不變：課程被打造 → 過去分詞 tailored。"
+    },
+    {
+      "position": 10,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "ensure / assure / insure 易混字",
+      "passageKey": "p6-l1-brightpath",
+      "prompt": "Select the best answer for blank (10).",
+      "options": [
+        {
+          "key": "A",
+          "text": "ensures",
+          "rationale": "對。ensure 直接接 that 子句表「確保某事成立」——確保每位學員得到個別關注。"
+        },
+        {
+          "key": "B",
+          "text": "assures",
+          "rationale": "錯。assure 必須先接人（assure parents that…），空格後直接是 that 子句。"
+        },
+        {
+          "key": "C",
+          "text": "insures",
+          "rationale": "錯。insure 指投保，語意不符。"
+        },
+        {
+          "key": "D",
+          "text": "secures",
+          "rationale": "錯。secure 接名詞受詞（secure funding），不接 that 子句表此語意。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "這組易混字在 Part 5 和 Part 6 都是常客。判準只有一個：接 that 子句用 ensure，接人用 assure，談保險用 insure。"
+    },
+    {
+      "position": 11,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "插入句與廣告文體語氣",
+      "passageKey": "p6-l1-brightpath",
+      "prompt": "Select the best answer for blank (11).",
+      "options": [
+        {
+          "key": "A",
+          "text": "Refunds are not available after the first week.",
+          "rationale": "錯。退款限制是負面訊息，與後句「月底前報名送免費評量」的招攬語氣衝突。"
+        },
+        {
+          "key": "B",
+          "text": "Our instructors are all certified and experienced.",
+          "rationale": "錯。內容本身正面，但與後句的「立刻報名」沒有因果或催促關係，銜接不上。"
+        },
+        {
+          "key": "C",
+          "text": "There is no better time to begin than now.",
+          "rationale": "對。後句 Sign up before the end of the month 是催促行動，插入句必須先鋪陳「現在正是最好的時機」，語氣與功能完全吻合。"
+        },
+        {
+          "key": "D",
+          "text": "The studio will be closed for renovation this month.",
+          "rationale": "錯。本月停業與「本月底前報名」直接矛盾。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "廣告文的插入句題除了看邏輯，還要看語氣。負面資訊（A、D）在招生廣告中幾乎可直接刪去，剩下的再用「是否與後句形成鋪陳關係」篩選。"
+    },
+    {
+      "position": 12,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "either…or 相關連接詞",
+      "passageKey": "p6-l1-brightpath",
+      "prompt": "Select the best answer for blank (12).",
+      "options": [
+        {
+          "key": "A",
+          "text": "both",
+          "rationale": "錯。both 必須搭配 and，但句中的連接詞是 or。"
+        },
+        {
+          "key": "B",
+          "text": "either",
+          "rationale": "對。either A or B 是固定的相關連接詞組；句中已有 or，直接鎖定 either。"
+        },
+        {
+          "key": "C",
+          "text": "neither",
+          "rationale": "錯。neither 搭配 nor，且語意變成兩種方式都不能用，與「請立刻預約」矛盾。"
+        },
+        {
+          "key": "D",
+          "text": "whether",
+          "rationale": "錯。whether…or 用於引導名詞子句或表讓步，不用於並列兩種預約方式。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "相關連接詞成對出現，看到其中一半就能填另一半：both…and、either…or、neither…nor、not only…but also。這類題完全不需要理解文意。"
+    },
+    {
+      "position": 13,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "未來被動語態",
+      "passageKey": "p6-l1-copycenter",
+      "passageText": "MEMO\nTo: Department Heads\nFrom: Facilities Management\nRe: Temporary Relocation of the Copy Center\n\nAs part of the ongoing renovation, the fourth-floor copy center ______ (13) to the second floor beginning next Monday. The move is expected to take a single day.\n\nWe ask that any large print jobs ______ (14) at least 48 hours in advance during the transition, since staffing on the second floor will initially be reduced.\n\n______ (15) Once the renovation is complete, the copy center will return to its original location with upgraded equipment.\n\nWe are confident that the new machines will handle high-volume jobs far more ______ (16) than the current ones.",
+      "prompt": "Select the best answer for blank (13).",
+      "options": [
+        {
+          "key": "A",
+          "text": "relocated",
+          "rationale": "錯。單獨的過去式是主動語態，會變成「影印中心自己搬遷」，且時間點是未來。"
+        },
+        {
+          "key": "B",
+          "text": "will be relocated",
+          "rationale": "對。影印中心是被搬遷的對象（被動），且 beginning next Monday 指向未來，故用未來被動 will be + p.p.。"
+        },
+        {
+          "key": "C",
+          "text": "has relocated",
+          "rationale": "錯。現在完成式表示已完成，與 beginning next Monday 的未來時間衝突，且語態為主動。"
+        },
+        {
+          "key": "D",
+          "text": "relocating",
+          "rationale": "錯。分詞不能單獨作主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "兩個判斷同時進行：語態看主詞是否承受動作（是 → 被動），時態看時間副詞（beginning next Monday → 未來）。合起來就是 will be relocated。"
+    },
+    {
+      "position": 14,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "要求性動詞 + that 子句的假設語氣被動",
+      "passageKey": "p6-l1-copycenter",
+      "prompt": "Select the best answer for blank (14).",
+      "options": [
+        {
+          "key": "A",
+          "text": "submit",
+          "rationale": "錯。原形正確但語態錯：列印工作是被提交的對象，不會自己提交。"
+        },
+        {
+          "key": "B",
+          "text": "are submitted",
+          "rationale": "錯。ask that 之後用假設語氣的原形，不用直說語氣的現在式。"
+        },
+        {
+          "key": "C",
+          "text": "be submitted",
+          "rationale": "對。We ask that + S + (should) be + p.p.：假設語氣用原形，加上被動語態就是 be submitted。"
+        },
+        {
+          "key": "D",
+          "text": "submitting",
+          "rationale": "錯。分詞不能作 that 子句的主要動詞。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "這是兩個考點的疊加：ask/request/require + that 子句用原形（should 省略），而主詞承受動作要用被動。原形的被動就是 be + p.p.。"
+    },
+    {
+      "position": 15,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "插入句與段落語氣",
+      "passageKey": "p6-l1-copycenter",
+      "prompt": "Select the best answer for blank (15).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The copy center will be permanently discontinued.",
+          "rationale": "錯。與後句「翻新完成後會遷回原址並換新設備」直接矛盾。"
+        },
+        {
+          "key": "B",
+          "text": "We appreciate your patience during this brief disruption.",
+          "rationale": "對。前文說明搬遷造成的不便與人力縮減，後句給出正面展望，中間插入感謝耐心的句子在語氣與邏輯上都最順。"
+        },
+        {
+          "key": "C",
+          "text": "Please direct all client inquiries to the front desk.",
+          "rationale": "錯。本備忘錄是給各部門主管談影印中心搬遷，客戶詢問的處理是無關資訊。"
+        },
+        {
+          "key": "D",
+          "text": "The renovation has been indefinitely postponed.",
+          "rationale": "錯。與首段 As part of the ongoing renovation（翻新正在進行）及後句 Once the renovation is complete 都矛盾。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "插入句題有一個高效率的第一步：先刪掉與文中已知事實矛盾的選項。這題 A 和 D 都被後句的「翻新完成後遷回」推翻，剩下兩個再比語氣。"
+    },
+    {
+      "position": 16,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "副詞比較級",
+      "passageKey": "p6-l1-copycenter",
+      "prompt": "Select the best answer for blank (16).",
+      "options": [
+        {
+          "key": "A",
+          "text": "efficient",
+          "rationale": "錯。形容詞不能修飾動詞 handle。"
+        },
+        {
+          "key": "B",
+          "text": "efficiency",
+          "rationale": "錯。名詞放在 more 之後且要修飾動詞，語法不成立。"
+        },
+        {
+          "key": "C",
+          "text": "efficiently",
+          "rationale": "對。修飾動詞 handle 需副詞，而句中的 far more 與 than 已構成比較級結構，空格只要填副詞原形即可。"
+        },
+        {
+          "key": "D",
+          "text": "more efficient",
+          "rationale": "錯。詞性是形容詞，且句中已有 more，會變成 far more more efficient 的重複。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "注意 more 已經寫在空格前面了，所以空格本身不需要再變比較級，只要選對詞性。修飾動詞 handle → 副詞 efficiently。"
+    },
+    {
+      "position": 17,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "非限定關係代名詞與關係副詞的選擇",
+      "passageKey": "p6-l1-volunteer",
+      "passageText": "Annual Community Volunteer Fair\n\nThe Riverside Community Center is pleased to announce its ninth annual Volunteer Fair, ______ (17) will take place on Saturday, September 14, from 10 a.m. to 3 p.m.\n\nLocal organizations will set up booths to introduce their programs and recruit new volunteers. ______ (18) Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule.\n\nAdmission is free, and light refreshments ______ (19) throughout the day. We especially encourage first-time volunteers to attend, ______ (20) many organizations offer training for those with no prior experience.",
+      "prompt": "Select the best answer for blank (17).",
+      "options": [
+        {
+          "key": "A",
+          "text": "it",
+          "rationale": "錯。代名詞不具連接功能，逗號後直接接 it will take place 會形成破碎句。"
+        },
+        {
+          "key": "B",
+          "text": "which",
+          "rationale": "對。非限定關係子句修飾 Volunteer Fair（物），且子句缺主詞，用主格關代 which。"
+        },
+        {
+          "key": "C",
+          "text": "where",
+          "rationale": "錯。關係副詞 where 之後要接結構完整的子句，但這裡的 will take place 缺少主詞。"
+        },
+        {
+          "key": "D",
+          "text": "what",
+          "rationale": "錯。what 自帶先行詞，不能用於已有先行詞的關係子句。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "關代與關係副詞的分界線：把關係子句抽出來，缺主詞或受詞就用關代（which/who），結構完整只缺地點副詞才用 where。這裡 will take place 沒有主詞，所以是 which。"
+    },
+    {
+      "position": 18,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "插入句與主題一致",
+      "passageKey": "p6-l1-volunteer",
+      "prompt": "Select the best answer for blank (18).",
+      "options": [
+        {
+          "key": "A",
+          "text": "Registration for next year's fair is now closed.",
+          "rationale": "錯。整篇在宣傳「今年 9 月 14 日」的活動，談明年報名截止毫無關聯。"
+        },
+        {
+          "key": "B",
+          "text": "The center is seeking donations of office equipment.",
+          "rationale": "錯。主題是招募志工，募集辦公設備是另一件事。"
+        },
+        {
+          "key": "C",
+          "text": "Opportunities are available for people of all backgrounds.",
+          "rationale": "對。後句 Whether you can spare a few hours a month or a few days a year, there is a role that fits your schedule 正是在展開「各種人都有適合的機會」這個概念，插入句是它的總述。"
+        },
+        {
+          "key": "D",
+          "text": "Booth rental fees are due by the end of August.",
+          "rationale": "錯。攤位租金是給參展組織的資訊，但這段是對潛在志工說話，對象不一致。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "插入句與後句常是「總述 → 展開」的關係。後句用 Whether…or… 列舉不同投入程度的人都有位置，插入句自然是那個涵蓋性的總述。"
+    },
+    {
+      "position": 19,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "未來被動語態",
+      "passageKey": "p6-l1-volunteer",
+      "prompt": "Select the best answer for blank (19).",
+      "options": [
+        {
+          "key": "A",
+          "text": "will provide",
+          "rationale": "錯。主動語態會變成「茶點提供某物」，主客顛倒。"
+        },
+        {
+          "key": "B",
+          "text": "will be provided",
+          "rationale": "對。refreshments 是被提供的對象（被動），且活動在未來，故用 will be + p.p.。"
+        },
+        {
+          "key": "C",
+          "text": "providing",
+          "rationale": "錯。分詞不能單獨作主要動詞，此處 and 之後需要一個完整的述語。"
+        },
+        {
+          "key": "D",
+          "text": "has provided",
+          "rationale": "錯。時態與語態都不對：活動尚未舉行，且茶點不會主動提供。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "與第 13 題同一個考點的變形。Part 6 極愛考「未來被動」，因為它同時測試時態與語態兩個判斷。"
+    },
+    {
+      "position": 20,
+      "section": "短文填空",
+      "difficulty": 1,
+      "derivedFrom": null,
+      "focusPoint": "表原因的連接詞",
+      "passageKey": "p6-l1-volunteer",
+      "prompt": "Select the best answer for blank (20).",
+      "options": [
+        {
+          "key": "A",
+          "text": "so",
+          "rationale": "錯。so 表結果，但後半句「許多組織提供訓練」是鼓勵新手參加的原因，不是結果。"
+        },
+        {
+          "key": "B",
+          "text": "but",
+          "rationale": "錯。前後語意同向（鼓勵新手 ← 有訓練），沒有轉折關係。"
+        },
+        {
+          "key": "C",
+          "text": "as",
+          "rationale": "對。as 在此表原因（＝because）：因為許多組織會為零經驗者提供訓練，所以特別鼓勵首次參與者出席。"
+        },
+        {
+          "key": "D",
+          "text": "or",
+          "rationale": "錯。or 表選擇，兩個子句之間沒有擇一關係。"
+        }
+      ],
+      "correctOption": "C",
+      "explanation": "連接詞題先問「前後兩句是什麼邏輯關係」。這裡後半句解釋了前半句的理由，屬因果中的「原因在後」，可用 as／since／because。"
+    },
+    {
+      "position": 21,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 5,
+      "focusPoint": "表期限的介系詞",
+      "passageKey": "p6-l2-certification",
+      "passageText": "To: All Branch Supervisors\nFrom: Nadia Oyelaran, Regional Training Manager\nSubject: Certification Renewal Window\n\nEvery branch supervisor whose safety certification expires this year must complete the renewal module ______ (21) 30 November. The module takes roughly ninety minutes and can be paused and resumed at any point.\n\nPlease do not wait until the final week. ______ (22) Supervisors who miss the deadline will have their floor access suspended until the certification is restored, which typically takes three business days to process.\n\nIf you are unsure of your expiry date, the training portal now displays it on the dashboard ______ (23) you log in. Should the date shown appear incorrect, contact my office directly rather than opening a helpdesk ticket, as certification records ______ (24) by the regional office rather than by IT.",
+      "prompt": "Select the best answer for blank (21).",
+      "options": [
+        {
+          "key": "A",
+          "text": "by",
+          "rationale": "對。by + 時間點表「最晚不遲於」，正好用於截止期限：11 月 30 日之前完成即可。"
+        },
+        {
+          "key": "B",
+          "text": "until",
+          "rationale": "錯。until 表「持續到某時刻為止」，搭配的是持續性動詞（wait until, stay until）；complete 是一次性完成的動作，不能用 until。"
+        },
+        {
+          "key": "C",
+          "text": "since",
+          "rationale": "錯。since 指從過去某點到現在，方向與未來期限相反。"
+        },
+        {
+          "key": "D",
+          "text": "within",
+          "rationale": "錯。within 後面要接一段時間長度（within two weeks），不接單一日期。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "by 與 until 是這組最容易混的一對：by 談「完成的最後期限」（一次性動作），until 談「持續到何時」（持續性動作）。看動詞是 complete 就知道選 by。"
+    },
+    {
+      "position": 22,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 3,
+      "focusPoint": "插入句與因果銜接",
+      "passageKey": "p6-l2-certification",
+      "prompt": "Select the best answer for blank (22).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The module has been shortened to thirty minutes this year.",
+          "rationale": "錯。與第一段明寫的 roughly ninety minutes 直接矛盾。"
+        },
+        {
+          "key": "B",
+          "text": "The portal experiences heavy traffic in the final days of the window.",
+          "rationale": "對。前句是勸告（別拖到最後一週），插入句必須說明「為什麼別拖」，而後句接著講逾期的嚴重後果，三句形成「勸告 → 理由 → 後果」的完整推進。"
+        },
+        {
+          "key": "C",
+          "text": "Certification is optional for supervisors hired after June.",
+          "rationale": "錯。第一段說 Every branch supervisor whose certification expires this year must complete，沒有任何豁免對象。"
+        },
+        {
+          "key": "D",
+          "text": "Renewal fees must be paid before the module begins.",
+          "rationale": "錯。全文從頭到尾沒有提到費用，突然出現付費規定與上下文脫節。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "插入句夾在「勸告」與「後果」之間，它的任務就是補上中間的理由。做題時先確認前後兩句的關係，再找能把兩者接起來的那一句。"
+    },
+    {
+      "position": 23,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 17,
+      "focusPoint": "時間連接詞引導子句",
+      "passageKey": "p6-l2-certification",
+      "prompt": "Select the best answer for blank (23).",
+      "options": [
+        {
+          "key": "A",
+          "text": "during",
+          "rationale": "錯。during 是介系詞，後面接名詞；這裡後接的是主詞＋動詞的子句 you log in。"
+        },
+        {
+          "key": "B",
+          "text": "when",
+          "rationale": "對。when 是連接詞可引導時間子句：登入時就會在儀表板上看到到期日。"
+        },
+        {
+          "key": "C",
+          "text": "whereas",
+          "rationale": "錯。whereas 表對比（然而），前後兩句沒有對立關係。"
+        },
+        {
+          "key": "D",
+          "text": "in case",
+          "rationale": "錯。in case 表「以防萬一」，但顯示到期日不是為了預防登入這件事。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "Part 6 的連接詞題先看詞性：空格後有主詞＋動詞就必須是連接詞，直接刷掉介系詞 during。再從剩下的連接詞中依邏輯關係（時間 vs. 對比 vs. 條件）挑選。"
+    },
+    {
+      "position": 24,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 13,
+      "focusPoint": "被動語態與 by 施動者",
+      "passageKey": "p6-l2-certification",
+      "prompt": "Select the best answer for blank (24).",
+      "options": [
+        {
+          "key": "A",
+          "text": "maintain",
+          "rationale": "錯。主動語態會變成「紀錄自己維護區域辦公室」，主客顛倒。"
+        },
+        {
+          "key": "B",
+          "text": "are maintained",
+          "rationale": "對。空格後緊接 by the regional office，這個 by 片語就是被動語態的施動者標記；主詞 records 是被維護的對象。"
+        },
+        {
+          "key": "C",
+          "text": "maintaining",
+          "rationale": "錯。分詞不能單獨作 as 子句的主要動詞。"
+        },
+        {
+          "key": "D",
+          "text": "have maintained",
+          "rationale": "錯。現在完成式仍是主動語態，語態判斷就已出局。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "看到空格後有 by + 執行者，幾乎可以直接判定是被動語態。這是 Part 6 最省時的辨識訊號之一。"
+    },
+    {
+      "position": 25,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 19,
+      "focusPoint": "未來被動語態",
+      "passageKey": "p6-l2-grenfell",
+      "passageText": "Grenfell & Sons — Customer Notice\n\nThank you for your recent order. Because of unusually high demand, some items in our spring catalog are temporarily out of stock. Orders containing these items ______ (25) in two shipments at no extra cost to you.\n\nThe in-stock portion of your order has already left our warehouse and should reach you within three business days. ______ (26)\n\nWe recognize that split deliveries can be inconvenient. ______ (27), we have added a complimentary six-month extension to the warranty on every affected order.\n\nYou can track both shipments using the reference number ______ (28) at the top of this notice.",
+      "prompt": "Select the best answer for blank (25).",
+      "options": [
+        {
+          "key": "A",
+          "text": "will ship",
+          "rationale": "錯。主動語態會變成「訂單自己出貨」；訂單是被出貨的對象。"
+        },
+        {
+          "key": "B",
+          "text": "will be shipped",
+          "rationale": "對。訂單被分兩批寄送（被動），且是尚未發生的安排（未來），故用 will be + p.p.。"
+        },
+        {
+          "key": "C",
+          "text": "have been shipped",
+          "rationale": "錯。現在完成式表已完成，但下一段才說「已出貨的是其中一部分」，全部分兩批寄送仍在進行中。"
+        },
+        {
+          "key": "D",
+          "text": "shipping",
+          "rationale": "錯。分詞不能單獨作主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "通知信中談「接下來會怎麼處理」時，未來被動 will be + p.p. 是最常見的形式。判斷語態時永遠先問主詞是施動者還是受動者。"
+    },
+    {
+      "position": 26,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 6,
+      "focusPoint": "插入句與段落資訊補全",
+      "passageKey": "p6-l2-grenfell",
+      "prompt": "Select the best answer for blank (26).",
+      "options": [
+        {
+          "key": "A",
+          "text": "The remaining items will follow as soon as they arrive at our warehouse.",
+          "rationale": "對。前句只交代了「已出貨的那一批」，段落缺的正是「另一批何時到」。插入句補上這塊，也呼應第一段的 two shipments。"
+        },
+        {
+          "key": "B",
+          "text": "Please return the entire order if any item is unavailable.",
+          "rationale": "錯。與整封信的立場相反：公司的處理方式是分批寄送並補償，不是要客戶退貨。"
+        },
+        {
+          "key": "C",
+          "text": "Our spring catalog will not be reprinted this year.",
+          "rationale": "錯。型錄是否再版與這封出貨通知無關。"
+        },
+        {
+          "key": "D",
+          "text": "Shipping charges will be added to your final invoice.",
+          "rationale": "錯。第一段已明說 at no extra cost to you，不會額外收費。"
+        }
+      ],
+      "correctOption": "A",
+      "explanation": "這題示範插入句的另一種功能：補上段落中缺失的那一半資訊。前句講第一批，全文提到有兩批，缺口顯而易見。選項 D 更是與文中明文（no extra cost）直接衝突，可立刻刪去。"
+    },
+    {
+      "position": 27,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 20,
+      "focusPoint": "連接副詞的語意方向",
+      "passageKey": "p6-l2-grenfell",
+      "prompt": "Select the best answer for blank (27).",
+      "options": [
+        {
+          "key": "A",
+          "text": "Nevertheless",
+          "rationale": "錯。Nevertheless 表轉折，但前句「我們知道分批寄送造成不便」與後句「因此加送保固」是因果，不是對立。"
+        },
+        {
+          "key": "B",
+          "text": "Accordingly",
+          "rationale": "對。前句承認造成不便，後句給出補償措施，是「因此、據此」的因果推進。"
+        },
+        {
+          "key": "C",
+          "text": "Otherwise",
+          "rationale": "錯。Otherwise 表「否則」，需要一個未實現的假設條件。"
+        },
+        {
+          "key": "D",
+          "text": "Likewise",
+          "rationale": "錯。Likewise 表「同樣地」，用於兩件性質相同的事並列。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "連接副詞題的固定流程：先讀前後兩句，用一個中文詞概括它們的關係（因此／然而／而且／否則），再挑對應的英文詞。這裡是「因此」。"
+    },
+    {
+      "position": 28,
+      "section": "短文填空",
+      "difficulty": 2,
+      "derivedFrom": 9,
+      "focusPoint": "過去分詞作後位修飾",
+      "passageKey": "p6-l2-grenfell",
+      "prompt": "Select the best answer for blank (28).",
+      "options": [
+        {
+          "key": "A",
+          "text": "show",
+          "rationale": "錯。句中已有主要動詞 can track，再放一個原形動詞會造成兩個述語。"
+        },
+        {
+          "key": "B",
+          "text": "shown",
+          "rationale": "對。過去分詞後位修飾 the reference number：編號是「被標示」在通知頂端的，還原為 the reference number that is shown at the top。"
+        },
+        {
+          "key": "C",
+          "text": "showing",
+          "rationale": "錯。現在分詞表主動，會變成「編號展示某物」，主客顛倒。"
+        },
+        {
+          "key": "D",
+          "text": "shows",
+          "rationale": "錯。同樣造成一句兩個主要動詞。"
+        }
+      ],
+      "correctOption": "B",
+      "explanation": "名詞後面接空格再接介系詞片語，這個位置通常是分詞後位修飾。判斷主被動的方法不變：編號被標示 → 過去分詞 shown。"
+    }
+  ]
+}

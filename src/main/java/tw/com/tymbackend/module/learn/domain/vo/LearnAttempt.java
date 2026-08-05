@@ -4,6 +4,8 @@ import java.time.OffsetDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,7 +35,7 @@ public class LearnAttempt {
     private String userId;
 
     @Column(nullable = false)
-    private Integer score;
+    private Integer score = 0;
 
     @Column(name = "total_questions", nullable = false)
     private Integer totalQuestions;
@@ -41,11 +43,25 @@ public class LearnAttempt {
     @Column(name = "duration_seconds")
     private Integer durationSeconds;
 
-    @Column(name = "submitted_at", nullable = false)
+    /** IN_PROGRESS until every question is answered and the attempt is submitted. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private Status status = Status.IN_PROGRESS;
+
+    /** Comma-separated question ids, the shuffled order this attempt is being taken in. */
+    @Column(name = "question_order", columnDefinition = "text")
+    private String questionOrder;
+
+    @Column(name = "started_at", nullable = false)
+    private OffsetDateTime startedAt;
+
+    @Column(name = "submitted_at")
     private OffsetDateTime submittedAt;
+
+    public enum Status { IN_PROGRESS, SUBMITTED }
 
     @PrePersist
     void prePersist() {
-        if (submittedAt == null) submittedAt = OffsetDateTime.now();
+        if (startedAt == null) startedAt = OffsetDateTime.now();
     }
 }

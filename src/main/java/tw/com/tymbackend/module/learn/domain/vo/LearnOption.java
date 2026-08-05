@@ -33,4 +33,8 @@ public class LearnOption {
 
     @Column(nullable = false, columnDefinition = "text")
     private String text;
+
+    /** Why this specific option is right or wrong, revealed after the attempt is submitted. */
+    @Column(columnDefinition = "text")
+    private String rationale;
 }

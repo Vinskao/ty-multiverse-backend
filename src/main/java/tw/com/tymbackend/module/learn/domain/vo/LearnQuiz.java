@@ -30,6 +30,14 @@ public class LearnQuiz {
     @Column(name = "recommended_minutes")
     private Integer recommendedMinutes;
 
+    /** Sidebar grouping label, e.g. "Part 5". */
+    @Column(name = "part_code", length = 40)
+    private String partCode;
+
+    /** Ascending sidebar order. */
+    @Column(name = "sort_order", nullable = false)
+    private Integer sortOrder = 0;
+
     @Column(nullable = false)
     private boolean published = true;
 
