@@ -6,12 +6,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,15 +50,38 @@ public class LearnService {
     private final LearnOptionRepository options;
     private final LearnAttemptRepository attempts;
     private final LearnAnswerRepository answers;
+    /** Accounts allowed into mentor mode, lower-cased. Configured by {@code learn.mentors}. */
+    private final Set<String> mentors;
 
     public LearnService(LearnQuizRepository quizzes, LearnQuestionRepository questions,
                         LearnOptionRepository options, LearnAttemptRepository attempts,
-                        LearnAnswerRepository answers) {
+                        LearnAnswerRepository answers,
+                        @Value("${learn.mentors:chiaki}") List<String> mentors) {
         this.quizzes = quizzes;
         this.questions = questions;
         this.options = options;
         this.attempts = attempts;
         this.answers = answers;
+        this.mentors = mentors.stream().map(String::trim).filter(name -> !name.isEmpty())
+            .map(name -> name.toLowerCase(Locale.ROOT)).collect(Collectors.toUnmodifiableSet());
+    }
+
+    public LearnDtos.Profile profile(String userId, String displayName) {
+        return new LearnDtos.Profile(label(userId, displayName), isMentor(userId, displayName));
+    }
+
+    /** Mentors may be configured by username or by token subject; either match opens mentor mode. */
+    public boolean isMentor(String userId, String displayName) {
+        return matchesMentor(displayName) || matchesMentor(userId);
+    }
+
+    private boolean matchesMentor(String name) {
+        return name != null && mentors.contains(name.toLowerCase(Locale.ROOT));
+    }
+
+    /** The subject is a UUID, so fall back to it only when no display name was ever recorded. */
+    private String label(String userId, String displayName) {
+        return displayName == null || displayName.isBlank() ? userId : displayName;
     }
 
     // ---------------------------------------------------------------- sidebar
@@ -99,7 +127,7 @@ public class LearnService {
      * the payload is prompts, option texts and whatever the candidate already picked.
      */
     @Transactional
-    public LearnDtos.Session startOrResume(String quizId, String userId) {
+    public LearnDtos.Session startOrResume(String quizId, String userId, String displayName) {
         LearnQuiz quiz = publishedQuiz(quizId);
         Optional<LearnAttempt> open =
             attempts.findFirstByUserIdAndQuizIdAndStatus(userId, quizId, LearnAttempt.Status.IN_PROGRESS);
@@ -108,6 +136,7 @@ public class LearnService {
         boolean resumed;
         if (open.isPresent()) {
             attempt = open.get();
+            attempt.setDisplayName(label(userId, displayName));
             resumed = true;
         } else {
             List<LearnQuestion> shuffled = shuffle(questions.findByQuizIdOrderByPosition(quizId));
@@ -115,6 +144,7 @@ public class LearnService {
             attempt = new LearnAttempt();
             attempt.setQuiz(quiz);
             attempt.setUserId(userId);
+            attempt.setDisplayName(label(userId, displayName));
             attempt.setTotalQuestions(shuffled.size());
             attempt.setStatus(LearnAttempt.Status.IN_PROGRESS);
             attempt.setQuestionOrder(shuffled.stream().map(q -> String.valueOf(q.getId()))
@@ -215,6 +245,7 @@ public class LearnService {
         Map<Long, LearnAnswer> given = answers.findByAttemptId(attempt.getId()).stream()
             .collect(Collectors.toMap(a -> a.getQuestion().getId(), Function.identity(), (a, b) -> a));
         Map<Long, long[]> lifetime = performance(attempt.getUserId(), quiz.getId());
+        Map<Long, long[]> cohort = cohortPerformance(quiz.getId());
 
         List<LearnDtos.ReviewItem> items = new ArrayList<>();
         for (int index = 0; index < ordered.size(); index++) {
@@ -222,6 +253,7 @@ public class LearnService {
             LearnAnswer answer = given.get(question.getId());
             String selected = answer == null ? null : answer.getSelectedOption();
             long[] counts = lifetime.getOrDefault(question.getId(), new long[2]);
+            long[] crowd = cohort.getOrDefault(question.getId(), new long[2]);
 
             List<LearnDtos.ReviewOption> choices = optionMap.getOrDefault(question.getId(), List.of()).stream()
                 .map(option -> new LearnDtos.ReviewOption(option.getKey(), option.getText(),
@@ -233,11 +265,13 @@ public class LearnService {
                 question.getSection(), question.getDifficulty(), question.getFocusPoint(),
                 question.getPassageKey(), question.getPassageText(), question.getPrompt(), choices,
                 selected, question.getCorrectOption(), answer != null && answer.isCorrect(),
-                question.getExplanation(), counts[0], counts[1]));
+                question.getExplanation(), counts[0], counts[1],
+                crowd[0], crowd[1], accuracy(crowd[0], crowd[0] + crowd[1])));
         }
 
         return new LearnDtos.Review(attempt.getId(), quiz.getId(), quiz.getTitle(), attempt.getScore(),
-            attempt.getTotalQuestions(), attempt.getDurationSeconds(), attempt.getSubmittedAt(), items);
+            attempt.getTotalQuestions(), attempt.getDurationSeconds(), attempt.getSubmittedAt(), items,
+            ranking(quiz.getId(), attempt.getUserId()));
     }
 
     /** Cumulative per-question tally across every completed round, worst questions first. */
@@ -273,7 +307,162 @@ public class LearnService {
             .toList();
     }
 
+    // -------------------------------------------------------------- ranking
+
+    /**
+     * Leaderboard for one topic. Everyone may read it: it exposes per-learner aggregates only, never
+     * another learner's answers, and it is the same data the review page shows under each question.
+     */
+    @Transactional(readOnly = true)
+    public LearnDtos.Ranking ranking(String quizId, String userId) {
+        LearnQuiz quiz = publishedQuiz(quizId);
+        long questionCount = questions.countByQuizId(quizId);
+
+        // Accuracy first, then who has put in more rounds; name only as a stable tie-breaker.
+        Comparator<LearnAttemptRepository.LearnerStats> order =
+            Comparator.<LearnAttemptRepository.LearnerStats>comparingDouble(this::accuracyOf).reversed()
+                .thenComparing(Comparator.<LearnAttemptRepository.LearnerStats>comparingLong(
+                    LearnAttemptRepository.LearnerStats::getRounds).reversed())
+                .thenComparing(LearnAttemptRepository.LearnerStats::getUserId);
+
+        List<LearnAttemptRepository.LearnerStats> stats =
+            attempts.statsByQuiz(quizId, LearnAttempt.Status.SUBMITTED).stream().sorted(order).toList();
+
+        List<LearnDtos.RankingRow> rows = new ArrayList<>();
+        Integer selfRank = null;
+        for (int index = 0; index < stats.size(); index++) {
+            LearnAttemptRepository.LearnerStats row = stats.get(index);
+            boolean self = row.getUserId().equals(userId);
+            if (self) selfRank = index + 1;
+            rows.add(new LearnDtos.RankingRow(index + 1, label(row.getUserId(), row.getDisplayName()),
+                self, row.getRounds(),
+                row.getAverageScore() == null ? 0 : row.getAverageScore(), accuracyOf(row),
+                row.getBestScore(), row.getAverageDurationSeconds(), row.getLastSubmittedAt()));
+        }
+
+        return new LearnDtos.Ranking(quiz.getId(), quiz.getTitle(), questionCount, rows.size(),
+            average(rows.stream().mapToDouble(LearnDtos.RankingRow::averageScore)),
+            average(rows.stream().mapToDouble(LearnDtos.RankingRow::averageAccuracy)),
+            selfRank, rows);
+    }
+
+    // --------------------------------------------------------- mentor mode
+
+    /**
+     * Everything every learner has done, in one payload. Restricted to the configured mentor
+     * accounts — {@link #isMentor(String)} is checked here rather than in the controller so no other
+     * entry point can hand the data out by accident.
+     */
+    @Transactional(readOnly = true)
+    public LearnDtos.MentorOverview mentorOverview(String userId, String displayName) {
+        if (!isMentor(userId, displayName)) throw new AccessDeniedException("只有導師帳號可以看全班作答狀況");
+
+        Map<String, LearnQuiz> quizById = quizzes.findByPublishedTrueOrderBySortOrderAscCreatedAtDesc()
+            .stream().collect(Collectors.toMap(LearnQuiz::getId, Function.identity(), (a, b) -> a,
+                LinkedHashMap::new));
+        Map<String, Long> questionCounts = new HashMap<>();
+        for (String quizId : quizById.keySet()) questionCounts.put(quizId, questions.countByQuizId(quizId));
+
+        // learner -> quiz -> submitted aggregate
+        Map<String, Map<String, LearnAttemptRepository.LearnerStats>> submitted = new TreeMap<>();
+        Map<String, String> names = new HashMap<>();
+        for (LearnAttemptRepository.LearnerStats row :
+                attempts.statsByLearnerAndQuiz(LearnAttempt.Status.SUBMITTED)) {
+            if (!quizById.containsKey(row.getQuizId())) continue;
+            submitted.computeIfAbsent(row.getUserId(), ignored -> new LinkedHashMap<>())
+                .put(row.getQuizId(), row);
+            if (row.getDisplayName() != null) names.putIfAbsent(row.getUserId(), row.getDisplayName());
+        }
+
+        // learner -> quiz -> questions answered so far in the round still open
+        Map<String, Map<String, Integer>> open = new HashMap<>();
+        for (LearnAttempt attempt : attempts.findByStatus(LearnAttempt.Status.IN_PROGRESS)) {
+            if (!quizById.containsKey(attempt.getQuiz().getId())) continue;
+            open.computeIfAbsent(attempt.getUserId(), ignored -> new HashMap<>())
+                .put(attempt.getQuiz().getId(), (int) answers.countByAttemptId(attempt.getId()));
+            submitted.computeIfAbsent(attempt.getUserId(), ignored -> new LinkedHashMap<>());
+            if (attempt.getDisplayName() != null) names.putIfAbsent(attempt.getUserId(), attempt.getDisplayName());
+        }
+
+        List<LearnDtos.MentorLearner> learners = new ArrayList<>();
+        for (Map.Entry<String, Map<String, LearnAttemptRepository.LearnerStats>> entry : submitted.entrySet()) {
+            String learner = entry.getKey();
+            Map<String, Integer> openRounds = open.getOrDefault(learner, Map.of());
+
+            List<LearnDtos.MentorTopicProgress> topics = new ArrayList<>();
+            long totalRounds = 0;
+            long totalCorrect = 0;
+            long totalAnswered = 0;
+            OffsetDateTime lastActive = null;
+            int inProgress = 0;
+            int completed = 0;
+
+            for (LearnQuiz quiz : quizById.values()) {
+                LearnAttemptRepository.LearnerStats row = entry.getValue().get(quiz.getId());
+                Integer answeredNow = openRounds.get(quiz.getId());
+                if (row == null && answeredNow == null) continue;
+
+                long rounds = row == null ? 0 : row.getRounds();
+                totalRounds += rounds;
+                if (row != null) {
+                    totalCorrect += row.getTotalScore() == null ? 0 : row.getTotalScore();
+                    totalAnswered += row.getTotalAnswered() == null ? 0 : row.getTotalAnswered();
+                    if (lastActive == null || (row.getLastSubmittedAt() != null
+                            && row.getLastSubmittedAt().isAfter(lastActive))) {
+                        lastActive = row.getLastSubmittedAt();
+                    }
+                }
+
+                LearnDtos.SessionState state = answeredNow != null ? LearnDtos.SessionState.IN_PROGRESS
+                    : rounds > 0 ? LearnDtos.SessionState.COMPLETED
+                    : LearnDtos.SessionState.NOT_STARTED;
+                if (state == LearnDtos.SessionState.IN_PROGRESS) inProgress++;
+                if (state == LearnDtos.SessionState.COMPLETED) completed++;
+
+                Optional<LearnAttempt> last = attempts.findFirstByUserIdAndQuizIdAndStatusOrderBySubmittedAtDesc(
+                    learner, quiz.getId(), LearnAttempt.Status.SUBMITTED);
+
+                topics.add(new LearnDtos.MentorTopicProgress(quiz.getId(), quiz.getTitle(), state,
+                    questionCounts.getOrDefault(quiz.getId(), 0L), rounds,
+                    answeredNow == null ? 0 : answeredNow,
+                    row == null ? null : row.getAverageScore(),
+                    row == null ? null : accuracyOf(row),
+                    row == null ? null : row.getBestScore(),
+                    last.map(LearnAttempt::getScore).orElse(null),
+                    row == null ? null : row.getLastSubmittedAt()));
+            }
+
+            learners.add(new LearnDtos.MentorLearner(label(learner, names.get(learner)), totalRounds,
+                totalAnswered == 0 ? null : accuracy(totalCorrect, totalAnswered),
+                lastActive, inProgress, completed, topics));
+        }
+
+        learners.sort(Comparator.comparing(LearnDtos.MentorLearner::lastActiveAt,
+            Comparator.nullsLast(Comparator.reverseOrder())));
+
+        return new LearnDtos.MentorOverview(learners.size(),
+            learners.stream().mapToLong(LearnDtos.MentorLearner::totalRounds).sum(),
+            average(learners.stream().map(LearnDtos.MentorLearner::averageAccuracy)
+                .filter(java.util.Objects::nonNull).mapToDouble(Double::doubleValue)),
+            learners);
+    }
+
     // ---------------------------------------------------------------- helpers
+
+    private double accuracyOf(LearnAttemptRepository.LearnerStats row) {
+        long answered = row.getTotalAnswered() == null ? 0 : row.getTotalAnswered();
+        long correct = row.getTotalScore() == null ? 0 : row.getTotalScore();
+        return answered == 0 ? 0 : (double) correct / answered;
+    }
+
+    private Double accuracy(long correct, long total) {
+        return total == 0 ? null : (double) correct / total;
+    }
+
+    private Double average(java.util.stream.DoubleStream values) {
+        return values.average().stream().boxed().findFirst().orElse(null);
+    }
+
 
     /**
      * Shuffles at passage level: a Part 6/7 passage and its questions travel together and keep their
@@ -335,6 +524,16 @@ public class LearnService {
             .orElseThrow(() -> new IllegalArgumentException("找不到這個主題"));
         if (!quiz.isPublished()) throw new IllegalArgumentException("找不到這個主題");
         return quiz;
+    }
+
+    /** Same shape as {@link #performance}, pooled over every learner who has submitted a round. */
+    private Map<Long, long[]> cohortPerformance(String quizId) {
+        Map<Long, long[]> result = new HashMap<>();
+        for (LearnAnswerRepository.QuestionPerformance row :
+                answers.cohortPerformance(quizId, LearnAttempt.Status.SUBMITTED)) {
+            result.put(row.getQuestionId(), new long[] {row.getCorrectCount(), row.getIncorrectCount()});
+        }
+        return result;
     }
 
     private Map<Long, long[]> performance(String userId, String quizId) {

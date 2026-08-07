@@ -55,10 +55,12 @@ public final class LearnDtos {
     public record ReviewItem(Long questionId, int order, Integer position, String section, Integer difficulty,
                              String focusPoint, String passageKey, String passageText, String prompt,
                              List<ReviewOption> options, String selectedOption, String correctOption,
-                             boolean correct, String explanation, long lifetimeCorrect, long lifetimeIncorrect) {}
+                             boolean correct, String explanation, long lifetimeCorrect, long lifetimeIncorrect,
+                             long cohortCorrect, long cohortIncorrect, Double cohortAccuracy) {}
 
     public record Review(Long attemptId, String quizId, String quizTitle, int score, int totalQuestions,
-                         Integer durationSeconds, OffsetDateTime submittedAt, List<ReviewItem> items) {}
+                         Integer durationSeconds, OffsetDateTime submittedAt, List<ReviewItem> items,
+                         Ranking ranking) {}
 
     public record ScorecardRow(Long questionId, Integer position, String section, Integer difficulty,
                                String focusPoint, String prompt, long timesAnswered, long correctCount,
@@ -69,4 +71,36 @@ public final class LearnDtos {
 
     public record AttemptSummary(Long attemptId, String quizId, String quizTitle, int score, int totalQuestions,
                                  Integer durationSeconds, OffsetDateTime submittedAt) {}
+
+    // -------------------------------------------------------------- ranking
+
+    /**
+     * One learner's standing on a topic. Only aggregates travel here — never the individual answers
+     * of somebody else, so a leaderboard can be shown without leaking another candidate's paper.
+     */
+    public record RankingRow(int rank, String userId, boolean self, long rounds, double averageScore,
+                             double averageAccuracy, Integer bestScore, Double averageDurationSeconds,
+                             OffsetDateTime lastSubmittedAt) {}
+
+    /** Cohort leaderboard for one topic, plus where the requesting learner sits in it. */
+    public record Ranking(String quizId, String quizTitle, long questionCount, int learnerCount,
+                          Double cohortAverageScore, Double cohortAverageAccuracy, Integer selfRank,
+                          List<RankingRow> rows) {}
+
+    // --------------------------------------------------------- mentor mode
+
+    public record MentorTopicProgress(String quizId, String quizTitle, SessionState state, long questionCount,
+                                      long completedRounds, int answeredCount, Double averageScore,
+                                      Double averageAccuracy, Integer bestScore, Integer lastScore,
+                                      OffsetDateTime lastSubmittedAt) {}
+
+    public record MentorLearner(String userId, long totalRounds, Double averageAccuracy,
+                                OffsetDateTime lastActiveAt, int topicsInProgress, int topicsCompleted,
+                                List<MentorTopicProgress> topics) {}
+
+    public record MentorOverview(int learnerCount, long totalRounds, Double cohortAverageAccuracy,
+                                 List<MentorLearner> learners) {}
+
+    /** What the page needs to decide which mode to open in. */
+    public record Profile(String userId, boolean mentor) {}
 }

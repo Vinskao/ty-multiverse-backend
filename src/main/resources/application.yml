@@ -10,6 +10,10 @@ security:
 ai-usage:
   ingest-token: ${AI_USAGE_INGEST_TOKEN:}
 
+# Learn 導師帳號（逗號分隔）：可讀 /learn/mentor/overview，看到所有帳號的作答狀況。
+learn:
+  mentors: ${LEARN_MENTORS:chiaki}
+
 # 內部寫入 Token：同步腳本以 X-Internal-Token 標頭呼叫 people/weapons/gallery 等
 # 「寫入／刪除」端點時使用（與 Keycloak JWT 二擇一）。未設定時，這些端點僅接受 JWT。
 # 生產環境務必以強隨機值設定 INTERNAL_WRITE_TOKEN。

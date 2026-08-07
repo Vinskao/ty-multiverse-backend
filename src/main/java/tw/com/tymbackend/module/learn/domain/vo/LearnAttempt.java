@@ -31,8 +31,13 @@ public class LearnAttempt {
     @JoinColumn(name = "quiz_id", nullable = false)
     private LearnQuiz quiz;
 
+    /** Token subject. Stable across username changes, so all progress keys off it. */
     @Column(name = "user_id", nullable = false, length = 160)
     private String userId;
+
+    /** Human-readable name for the leaderboard and mentor mode; the subject alone is a UUID. */
+    @Column(name = "display_name", length = 160)
+    private String displayName;
 
     @Column(nullable = false)
     private Integer score = 0;

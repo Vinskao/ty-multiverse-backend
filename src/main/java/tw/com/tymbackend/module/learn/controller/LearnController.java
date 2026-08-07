@@ -3,7 +3,9 @@ package tw.com.tymbackend.module.learn.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,7 +49,7 @@ public class LearnController {
     public ResponseEntity<BackendApiResponse<LearnDtos.Session>> session(
             @PathVariable String quizId, Authentication authentication) {
         return ResponseEntity.ok(BackendApiResponse.success("開始作答",
-            service.startOrResume(quizId, authentication.getName())));
+            service.startOrResume(quizId, authentication.getName(), displayName(authentication))));
     }
 
     /** Autosaves one choice mid-round. */
@@ -87,6 +89,45 @@ public class LearnController {
     public ResponseEntity<BackendApiResponse<List<LearnDtos.AttemptSummary>>> history(
             Authentication authentication) {
         return ResponseEntity.ok(BackendApiResponse.success("作答紀錄", service.history(authentication.getName())));
+    }
+
+    /** Whether this account opens the page as a learner or straight into mentor mode. */
+    @GetMapping("/profile")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Profile>> profile(Authentication authentication) {
+        return ResponseEntity.ok(BackendApiResponse.success("身分", service.profile(authentication.getName(), displayName(authentication))));
+    }
+
+    /** Cohort leaderboard for a topic — aggregates only, readable by every signed-in learner. */
+    @GetMapping("/topics/{quizId}/ranking")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Ranking>> ranking(
+            @PathVariable String quizId, Authentication authentication) {
+        return ResponseEntity.ok(BackendApiResponse.success("排行榜",
+            service.ranking(quizId, authentication.getName())));
+    }
+
+    /** Mentor mode: every account's progress across every topic. Mentor accounts only. */
+    @GetMapping("/mentor/overview")
+    public ResponseEntity<BackendApiResponse<LearnDtos.MentorOverview>> mentorOverview(
+            Authentication authentication) {
+        return ResponseEntity.ok(BackendApiResponse.success("全班作答狀況",
+            service.mentorOverview(authentication.getName(), displayName(authentication))));
+    }
+
+    /**
+     * Keycloak's principal name is the subject (a UUID). Progress keys off it, but the leaderboard
+     * and the mentor allow-list need the human username, so it is read from the token claim.
+     */
+    private String displayName(Authentication authentication) {
+        if (authentication instanceof JwtAuthenticationToken token) {
+            String username = token.getToken().getClaimAsString("preferred_username");
+            if (username != null && !username.isBlank()) return username;
+        }
+        return authentication.getName();
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    ResponseEntity<BackendApiResponse<Void>> forbidden(AccessDeniedException exception) {
+        return ResponseEntity.status(403).body(BackendApiResponse.error(403, exception.getMessage()));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

@@ -39,4 +39,20 @@ public interface LearnAnswerRepository extends JpaRepository<LearnAnswer, Long> 
         """)
     List<QuestionPerformance> performance(@Param("userId") String userId, @Param("quizId") String quizId,
                                           @Param("status") LearnAttempt.Status status);
+
+    /**
+     * The same tallies, but pooled over every learner. Feeds the "others got this right N% of the
+     * time" line in review, so it deliberately ignores who answered.
+     */
+    @Query("""
+        select a.question.id as questionId,
+               sum(case when a.correct = true then 1 else 0 end) as correctCount,
+               sum(case when a.correct = false then 1 else 0 end) as incorrectCount
+        from LearnAnswer a
+        where a.attempt.quiz.id = :quizId
+          and a.attempt.status = :status
+        group by a.question.id
+        """)
+    List<QuestionPerformance> cohortPerformance(@Param("quizId") String quizId,
+                                                @Param("status") LearnAttempt.Status status);
 }
