@@ -250,9 +250,7 @@ public class PeopleController {
     // 取得所有人的名字
     @GetMapping("/names")
     public ResponseEntity<?> getAllPeopleNames() {
-        logger.info("=== 強制使用異步處理模式 ===");
-
-        // 強制使用異步處理，通過 Consumer 處理
+        // RabbitMQ 啟用時走非同步（由 gateway 等待 consumer 結果後回傳真正的資料）
         if (asyncMessageService != null) {
             logger.info("使用異步處理模式");
             try {
@@ -265,10 +263,21 @@ public class PeopleController {
                 return ResponseEntity.status(500)
                     .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, "異步處理失敗: " + e.getMessage()));
             }
-        } else {
-            logger.error("AsyncMessageService 為 null，無法進行異步處理");
+        }
+
+        // 本地環境，同步處理。其餘端點都有這條分支，只有這裡漏掉，導致
+        // RabbitMQ 關閉時（本機預設）整個端點直接 500。
+        try {
+            return ResponseEntity.ok(
+                BackendApiResponse.success(MessageKey.PEOPLE_GET_ALL_SUCCESS, peopleService.getAllPeopleNames()));
+        } catch (RuntimeException e) {
+            logger.error("Runtime exception while listing people names", e);
             return ResponseEntity.status(500)
-                .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, "異步服務不可用，請檢查 RabbitMQ 配置"));
+                .body(BackendApiResponse.error(ErrorCode.PEOPLE_LIST_FAILED, e.getMessage()));
+        } catch (Exception e) {
+            logger.error("Unexpected error while listing people names", e);
+            return ResponseEntity.status(500)
+                .body(BackendApiResponse.error(ErrorCode.INTERNAL_SERVER_ERROR, e.getMessage()));
         }
     }
 }
