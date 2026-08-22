@@ -251,8 +251,11 @@ app:
       multiplier: 2.0
   # 並發控制配置
   concurrency:
-    max-concurrent-requests: 2
-    try-acquire-timeout-ms: 200
+    # permits 維持 2，對齊 Hikari maximum-pool-size=2，放寬也只會卡在連線池。
+    max-concurrent-requests: ${APP_MAX_CONCURRENT_REQUESTS:2}
+    # 200ms 太短：people/weapon 兩個同步一起跑就會互相擠掉（同步流程單一請求可能要好幾秒）。
+    # 放寬等待讓短暫尖峰排隊而不是直接被拒。
+    try-acquire-timeout-ms: ${APP_TRY_ACQUIRE_TIMEOUT_MS:3000}
   # 連接健康檢查配置
   connection:
     health-check:

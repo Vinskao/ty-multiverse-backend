@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -50,9 +51,19 @@ public class RequestConcurrencyLimiter implements Filter {
                 acquired = semaphore.tryAcquire();
             }
             if (!acquired) {
-                // 簡單丟擲 429，交由上層全域錯誤處理（Spring Boot 預設會處理）
-                logger.warn("Too many concurrent requests - path={}",
-                        (request instanceof HttpServletRequest r) ? r.getRequestURI() : "N/A");
+                // 必須回 429 而不是 500：被限流是「稍後重試」而不是「伺服器壞了」，
+                // 丟 ServletException 會變成 500，呼叫端（例如 Apps Script 同步）無從分辨，
+                // 曾因此把「刪除失敗」當成成功、接著 insert 造成 duplicate key。
+                String path = (request instanceof HttpServletRequest r) ? r.getRequestURI() : "N/A";
+                logger.warn("Too many concurrent requests - path={}", path);
+                if (response instanceof HttpServletResponse res) {
+                    res.setStatus(429); // Servlet API 沒有 429 的常數
+                    res.setHeader("Retry-After", "5");
+                    res.setContentType("application/json;charset=UTF-8");
+                    res.getWriter().write(
+                            "{\"success\":false,\"code\":429,\"message\":\"請求過於頻繁，請稍後重試\"}");
+                    return;
+                }
                 throw new ServletException("Too many concurrent requests");
             }
             chain.doFilter(request, response);
