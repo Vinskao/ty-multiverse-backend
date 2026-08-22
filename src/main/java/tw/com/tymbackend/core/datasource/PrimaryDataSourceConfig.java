@@ -84,7 +84,7 @@ public class PrimaryDataSourceConfig {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
         transactionManager.setEntityManagerFactory(primaryEntityManagerFactory().getObject());
         transactionManager.setNestedTransactionAllowed(true);
-        transactionManager.setDefaultTimeout(30);
+        transactionManager.setDefaultTimeout(120);
         return transactionManager;
     }
 } 
