@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 import tw.com.tymbackend.core.config.RabbitMQConfig;
 import tw.com.tymbackend.core.message.AsyncMessageDTO;
@@ -23,8 +24,10 @@ import java.util.UUID;
  * @since 2024
  */
 @Service
-// @ConditionalOnProperty(name = "async-message-service.enabled", havingValue =
-// "true") // 完全移除條件，讓它總是創建
+// Controller 是用 `asyncMessageService != null` 來判斷該走非同步還是同步分支，
+// 所以這個 bean 的存在與否就是那個開關。條件一旦拿掉，本機也會永遠走非同步，
+// 讀取端點只回 202 + requestId 而不回資料。必須跟 spring.rabbitmq.enabled 綁在一起。
+@ConditionalOnProperty(name = "spring.rabbitmq.enabled", havingValue = "true")
 public class AsyncMessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(AsyncMessageService.class);
