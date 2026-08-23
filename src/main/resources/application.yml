@@ -120,9 +120,14 @@ spring:
     username: '@SPRING_DATASOURCE_USERNAME@'
     password: '@SPRING_DATASOURCE_PASSWORD@'
     hikari:
-      # 連線池大小配置（降低以避免吃滿 Aiven Cloud 的 max_connections=20）
+      # 連線池大小配置
+      # 注意：舊註解寫「配合 Aiven Cloud 的 max_connections=20」已經不成立，DB 早就搬到
+      # 叢集內部的 postgres-0。真正的限制是 CPU：postgres-0 的 cgroup limit 只有 100m
+      # （0.1 core），而整個叢集是兩顆 1 vCPU 的 node。連線開多了只會讓多個查詢一起去搶
+      # 那 0.1 core，觸發 CFS throttling —— 延遲一起變長、p99 崩掉，吞吐量不升反降。
+      # 要放寬這個值，必須先提高 postgres-0 的 CPU limit，否則沒有意義。
       minimum-idle: 1
-      maximum-pool-size: 2  # 降低到 2 以配合 Aiven 限制
+      maximum-pool-size: 2
 
       # 連線生命週期配置
       idle-timeout: 600000                # 閒置連線超時 (10分鐘)
@@ -251,7 +256,10 @@ app:
       multiplier: 2.0
   # 並發控制配置
   concurrency:
-    # permits 維持 2，對齊 Hikari maximum-pool-size=2，放寬也只會卡在連線池。
+    # permits 維持 2，對齊 Hikari maximum-pool-size=2。
+    # 放寬沒有好處：瓶頸在 postgres-0 的 100m CPU limit，把閘門開大只是把排隊從這個
+    # filter 移到資料庫，而在 DB 排隊更糟（佔著連線與 transaction）。被擋下來的請求會
+    # 收到 429 + Retry-After，呼叫端退避重試即可。
     max-concurrent-requests: ${APP_MAX_CONCURRENT_REQUESTS:2}
     # 200ms 太短：people/weapon 兩個同步一起跑就會互相擠掉（同步流程單一請求可能要好幾秒）。
     # 放寬等待讓短暫尖峰排隊而不是直接被拒。
