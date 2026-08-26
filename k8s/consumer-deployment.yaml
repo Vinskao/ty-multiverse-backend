@@ -26,9 +26,15 @@ spec:
         - name: RABBITMQ_PORT
           value: "5672"
         - name: RABBITMQ_USERNAME
-          value: "admin"
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
+              key: RABBITMQ_DEFAULT_USER
         - name: RABBITMQ_PASSWORD
-          value: "admin123"
+          valueFrom:
+            secretKeyRef:
+              name: rabbitmq-credentials
+              key: RABBITMQ_DEFAULT_PASS
         - name: RABBITMQ_VIRTUAL_HOST
           value: "/"
         resources:

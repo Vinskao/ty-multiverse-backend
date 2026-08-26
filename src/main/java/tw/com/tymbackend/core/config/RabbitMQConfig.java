@@ -63,6 +63,56 @@ public class RabbitMQConfig {
     // 交換機名稱
     public static final String TYMB_EXCHANGE = "tymb-exchange";
 
+    // ===== 業務事件 Stream（稽核／事件來源）=====
+    // 這些參數必須與叢集上已建立的資源完全一致，否則 RabbitAdmin 會 PRECONDITION_FAILED。
+    // 叢集現況：tymb-event-exchange (topic, durable)、
+    //          tymb-events (stream, x-max-age=30D, x-max-length-bytes=10737418240)、
+    //          binding routing key = event.#
+    public static final String TYMB_EVENT_EXCHANGE = "tymb-event-exchange";
+    public static final String TYMB_EVENTS_STREAM = "tymb-events";
+    public static final String TYMB_EVENTS_ROUTING_PATTERN = "event.#";
+
+    /** Stream retention：保留 30 天 */
+    private static final String EVENT_STREAM_MAX_AGE = "30D";
+    /** Stream 容量上限：10 GiB */
+    private static final long EVENT_STREAM_MAX_LENGTH_BYTES = 10_737_418_240L;
+
+    /**
+     * 業務事件專用 topic exchange
+     *
+     * 與現有的 tymb-exchange（DirectExchange，RPC 用）完全分開，
+     * 避免稽核事件流量混進 classic queue。
+     */
+    @Bean
+    public TopicExchange tymbEventExchange() {
+        return ExchangeBuilder.topicExchange(TYMB_EVENT_EXCHANGE).durable(true).build();
+    }
+
+    /**
+     * 業務事件 stream
+     *
+     * Stream 為 append-only，不會因為被消費而移除訊息，
+     * 適合稽核查詢、失敗追蹤與未來重播。
+     */
+    @Bean
+    public Queue tymbEventsStream() {
+        return QueueBuilder.durable(TYMB_EVENTS_STREAM)
+                .stream()
+                .withArgument("x-max-age", EVENT_STREAM_MAX_AGE)
+                .withArgument("x-max-length-bytes", EVENT_STREAM_MAX_LENGTH_BYTES)
+                .build();
+    }
+
+    /**
+     * 綁定業務事件 stream 到 event exchange，接收所有 event.* 事件
+     */
+    @Bean
+    public Binding tymbEventsBinding(Queue tymbEventsStream, TopicExchange tymbEventExchange) {
+        return BindingBuilder.bind(tymbEventsStream)
+                .to(tymbEventExchange)
+                .with(TYMB_EVENTS_ROUTING_PATTERN);
+    }
+
     /**
      * 創建角色批量傷害計算隊列
      */
