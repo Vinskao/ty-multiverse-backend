@@ -148,7 +148,10 @@ spec:
         resources:
           requests:
             memory: "512Mi"
-            cpu: "250m"
+            # Keep below the schedulable headroom of the two small OKE nodes.
+            # A 250m request could not be placed after a RabbitMQ restart while
+            # Jenkins build pods were active, leaving the broker Pending.
+            cpu: "200m"
           limits:
             memory: "1Gi"
             cpu: "500m"
