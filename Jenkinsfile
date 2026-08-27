@@ -395,22 +395,18 @@ EOF
                                         # Inspect manifest directory
                                         ls -la k8s/
 
-                                        echo "Recreating deployment ..."
-                                        echo "=== Effective sensitive env values ==="
-                                        echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}"
-                                        echo "SPRING_PEOPLE_DATASOURCE_URL=${SPRING_PEOPLE_DATASOURCE_URL}"
-                                        echo "KEYCLOAK_AUTH_SERVER_URL=${KEYCLOAK_AUTH_SERVER_URL}"
-                                        echo "REDIS_HOST=${REDIS_HOST}:${REDIS_CUSTOM_PORT}"
-
-                                        kubectl delete deployment ty-multiverse-backend -n default --ignore-not-found
+                                        # Apply in place. Deleting the Deployment first removes the
+                                        # last healthy pod before its replacement has been scheduled.
+                                        # With a constrained cluster, that turns a failed rollout into
+                                        # an avoidable service outage.
                                         envsubst < k8s/deployment.yaml | kubectl apply -f -
                                         kubectl set image deployment/ty-multiverse-backend ty-multiverse-backend=${DOCKER_IMAGE}:${DOCKER_TAG} -n default
-                                        kubectl rollout status deployment/ty-multiverse-backend -n default
+                                        kubectl rollout status deployment/ty-multiverse-backend -n default --timeout=15m
                                     '''
 
                                     // 檢查部署狀態
                                     sh 'kubectl get deployments -n default'
-                                    sh 'kubectl rollout status deployment/ty-multiverse-backend -n default'
+                                    sh 'kubectl rollout status deployment/ty-multiverse-backend -n default --timeout=15m'
                                 } catch (Exception e) {
                                     echo "Error during deployment: ${e.message}"
                                     // Debug non-ready pods and recent events
@@ -419,8 +415,8 @@ EOF
                                         echo "=== Debug: pods for ty-multiverse-backend ==="
                                         kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o wide || true
 
-                                        echo "=== Debug: describe non-ready pods ==="
-                                        for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o jsonpath='{.items[?(@.status.conditions[?(@.type=="Ready")].status!="True")].metadata.name}'); do
+                                        echo "=== Debug: describe backend pods ==="
+                                        for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o name); do
                                           echo "--- $p"
                                           kubectl describe pod -n default "$p" || true
                                           echo "=== Last 200 logs for $p ==="
