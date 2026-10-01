@@ -147,11 +147,12 @@ spec:
               key: RABBITMQ_DEFAULT_PASS
         resources:
           requests:
-            memory: "512Mi"
-            # Keep below the schedulable headroom of the two small OKE nodes.
-            # A 250m request could not be placed after a RabbitMQ restart while
-            # Jenkins build pods were active, leaving the broker Pending.
-            cpu: "200m"
+            memory: "384Mi"
+            # Keep well below the schedulable headroom of the two small OKE nodes
+            # (840m allocatable CPU each) so a Jenkins agent pod can always be
+            # placed alongside the running services. The 500m limit still lets
+            # the broker burst when it actually needs to.
+            cpu: "75m"
           limits:
             memory: "1Gi"
             cpu: "500m"

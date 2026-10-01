@@ -51,6 +51,10 @@ metadata:
     app.kubernetes.io/name: ty-multiverse-backend
 spec:
   replicas: 1
+  # Nodes only have 840m allocatable CPU; a rolling surge needs two backend pods
+  # at once and cannot be scheduled, so replace in place instead.
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.kubernetes.io/name: ty-multiverse-backend

@@ -5,6 +5,9 @@ pipeline {
                 apiVersion: v1
                 kind: Pod
                 spec:
+                  # Reap the agent pod if a build hangs; a stranded agent holds
+                  # CPU on these 840m nodes and blocks every later deploy.
+                  activeDeadlineSeconds: 7200
                   serviceAccountName: jenkins-admin
                   imagePullSecrets:
                   - name: dockerhub-credentials
@@ -16,7 +19,7 @@ pipeline {
                     resources:
                       requests:
                         cpu: "25m"
-                        memory: "1024Mi"
+                        memory: "768Mi"
                       limits:
                         cpu: "100m"
                         memory: "1024Mi"
@@ -67,8 +70,8 @@ pipeline {
                     image: jenkins/inbound-agent:3309.v27b_9314fd1a_4-1-jdk21
                     resources:
                       requests:
-                        cpu: "50m"
-                        memory: "256Mi"
+                        cpu: "25m"
+                        memory: "192Mi"
                       limits:
                         cpu: "100m"
                         memory: "512Mi"
@@ -418,7 +421,7 @@ EOF
                                         echo "=== Debug: describe backend pods ==="
                                         for p in $(kubectl get pods -n default -l app.kubernetes.io/name=ty-multiverse-backend -o name); do
                                           echo "--- $p"
-                                          kubectl describe pod -n default "$p" || true
+                                          kubectl describe -n default "$p" || true
                                           echo "=== Last 200 logs for $p ==="
                                           kubectl logs -n default "$p" --tail=200 || true
                                         done
