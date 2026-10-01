@@ -184,26 +184,22 @@ src/main/java/tw/com/tymbackend/
 
 ## Testing Instructions
 
+### TDD is mandatory
+**All code changes follow Red → Green → Refactor. Read [docs/TDD_WORKFLOW.md](docs/TDD_WORKFLOW.md) before changing code.**
+Write a failing test first, make it pass with minimal code, then refactor. Bug fixes start with a reproducing test.
+Do not report a task done until `./mvnw test` is green and you have shown the `Tests run:` summary.
+
 ### Unit Tests
-- Focus on individual components and services
-- Use JUnit 5 with Mockito for mocking
-- Test coverage should be > 80%
-- Name tests descriptively: `methodName_Should_ExpectedBehavior`
+- Focus on individual components; JUnit 5 + Mockito, no Spring context where possible
+- Name tests `methodName_Should_ExpectedBehavior_When_Condition`
+- Cover denial/error branches, not only the happy path
+- Coverage is not yet measured (no JaCoCo); do not claim a coverage number
 
-### Integration Tests
-- Test complete request/response cycles
-- Use `@SpringBootTest` with test profiles
-- Include database integration tests
-- Test external service integrations
-
-### Test Data Management
-```java
-@Test
-@Sql(scripts = "/test-data/cleanup.sql")
-void testWithCleanData() {
-    // Test implementation
-}
-```
+### Slice / Integration Tests
+- Controllers and security rules: `@WebMvcTest` (+ `@ContextConfiguration(classes = {Controller, SecurityConfig})` and test properties; plain `@WebMvcTest` loads `TYMBackendApplication` and fails on the websocket exporter), not `@SpringBootTest`
+- Repositories: `@DataJpaTest` with H2 (already a test dependency)
+- `@SpringBootTest` only for genuinely cross-layer behavior; it needs Postgres/Redis/RabbitMQ/Keycloak wiring, so avoid it by default
+- Never call real external services in tests
 
 ## Security Considerations
 
