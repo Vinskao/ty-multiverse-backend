@@ -328,8 +328,10 @@ management:
         include: health
   endpoint:
     health:
-      show-details: always
-      show-components: always
+      # status is public (k8s probes, ingress); components/details (versions, disk paths) only for admins
+      show-details: when-authorized
+      show-components: when-authorized
+      roles: manage-users
       probes:
         enabled: true
     metrics:
