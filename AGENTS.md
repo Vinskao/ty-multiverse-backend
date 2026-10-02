@@ -28,6 +28,20 @@ TY Multiverse Backend is a comprehensive Spring Boot application that serves as 
 - **Async Processing**: Background job processing
 - **Monitoring**: Health checks and metrics
 
+## Security Hardening (2026-10-02)
+
+`/tymb` 直接掛在公開 ingress（不只經過 gateway），所以後端自己就是安全邊界。
+
+- **F1 匿名寫入（已修、已驗證上線）**：`requestMatchers("GET", "/x/**")` 在 Spring Security 6 會把 `"GET"` 當成路徑，
+  讓所有 method 都 permitAll，06-19 的寫入保護因此從未生效。一律用 `requestMatchers(HttpMethod.X, ...)`；
+  `@EnableMethodSecurity` 讓 `@PreAuthorize` 生效；delete-all 的 `hasRole` 規則放在一般寫入規則之前。
+  回歸保護：`SecurityRulesWebTest`（所有端點的授權矩陣）。
+- **F2 錯誤與日誌外洩**：common 2.3.0 的共用錯誤處理（5xx 只回 `errorId`）＋ `logback-spring.xml` 全面遮罩。
+  見 `ty-multiverse-common/docs/ERROR_HANDLING.md`。pom 的 resources 白名單需包含 `logback-spring.xml`。
+- **F4 health 細節**：`/actuator/health` 狀態公開（k8s probe 用），components/details 只給 `manage-users`。
+  `application-local.yml` 仍顯示完整細節；測試以 `platform` profile 驗證正式設定。
+- 正式環境驗證只用無害請求（例如 `POST /tymb/people/insert` 帶 `{}` 預期 401），**絕不打 delete-all**。
+
 ## Security Hardening (2026-06-19)
 
 ### #1 Data API Authentication (Mixed JWT + Internal Token)
