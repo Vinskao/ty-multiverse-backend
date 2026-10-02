@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Spring Boot's default logging, with every message and stack trace masked by ty-multiverse-common. -->
+<configuration>
+    <include resource="tw/com/ty/common/logging/logback-masking.xml"/>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+</configuration>

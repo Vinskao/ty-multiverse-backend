@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import tw.com.tymbackend.module.weapon.service.WeaponService;
 import tw.com.tymbackend.module.weapon.domain.vo.Weapon;
 import tw.com.ty.common.response.BackendApiResponse;
+import tw.com.ty.common.exception.BusinessException;
 import tw.com.ty.common.response.ErrorCode;
 import tw.com.ty.common.response.MessageKey;
 import tw.com.tymbackend.core.service.AsyncMessageService;
@@ -253,7 +254,7 @@ public class WeaponController {
             @PathVariable String name,
             @RequestBody Map<String, String> request) {
         Weapon w = weaponService.getWeaponById(name)
-                .orElseThrow(() -> new RuntimeException("Weapon not found: " + name));
+                .orElseThrow(() -> new BusinessException(ErrorCode.WEAPON_NOT_FOUND, "Weapon not found: " + name));
         w.setAttributes(request.get("attributes"));
         return ResponseEntity.ok(weaponService.updateWeaponAttributes(name, w));
     }

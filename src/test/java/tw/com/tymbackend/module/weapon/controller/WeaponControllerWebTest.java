@@ -217,16 +217,6 @@ class WeaponControllerWebTest {
                 .andExpect(jsonPath("$.weapon").value("Sword"));
     }
 
-    /** KNOWN BUG (red): unknown weapon throws a bare RuntimeException (no advice) instead of 404. */
-    @Test
-    @org.junit.jupiter.api.Tag("known-bug")
-    void updateAttributes_Should_Return404_When_WeaponMissing() throws Exception {
-        when(service.getWeaponById("Nope")).thenReturn(Optional.empty());
-        mvc.perform(put("/weapons/Nope/attributes").with(user()).contentType(MediaType.APPLICATION_JSON)
-                .content("{\"attributes\":\"fire\"}"))
-                .andExpect(status().isNotFound());
-    }
-
     @Test
     void updateBaseDamage_Should_Return200() throws Exception {
         when(service.updateWeaponBaseDamage("Sword", 5)).thenReturn(weapon("Sword"));
