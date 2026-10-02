@@ -84,6 +84,14 @@ class ErrorHandlingWebTest {
                 .andExpect(jsonPath("$.success").value(false));
     }
 
+    /** Regression seen on production with common 2.3.0: a non-numeric number parameter returned 500. */
+    @Test
+    void wrongParameterType_Should_Return400() throws Exception {
+        mvc.perform(get("/weapons/damage-range").param("minDamage", "abc").param("maxDamage", "1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false));
+    }
+
     @Test
     void methodSecurityDenial_Should_Return403_NotAdviceInducedFiveHundred() throws Exception {
         mvc.perform(get("/people-images").with(user()))
