@@ -97,4 +97,32 @@ class AiTokenUsageSecurityWebTest {
         when(service.getDailySummary(any(), any())).thenReturn(List.of());
         mvc.perform(get("/ai-usage/daily")).andExpect(status().isOk());
     }
+
+    @Test
+    void monthly_Should_BePublic() throws Exception {
+        when(service.getMonthlySummary(any(), any())).thenReturn(List.of());
+        mvc.perform(get("/ai-usage/monthly").param("months", "3")).andExpect(status().isOk());
+    }
+
+    @Test
+    void summary_Should_ReturnTodayAndThisMonth() throws Exception {
+        when(service.getDailySummary(any(), any())).thenReturn(List.of());
+        when(service.getMonthlySummary(any(), any())).thenReturn(List.of());
+        mvc.perform(get("/ai-usage/summary"))
+                .andExpect(status().isOk())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.data.today").isArray())
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath("$.data.thisMonth").isArray());
+    }
+
+    @Test
+    void overview_Should_UseRequestedTimezone() throws Exception {
+        mvc.perform(get("/ai-usage/overview").param("timezone", "UTC")).andExpect(status().isOk());
+        verify(service).getOverview("UTC");
+    }
+
+    @Test
+    void overview_Should_DefaultToTaipei() throws Exception {
+        mvc.perform(get("/ai-usage/overview")).andExpect(status().isOk());
+        verify(service).getOverview("Asia/Taipei");
+    }
 }

@@ -87,6 +87,8 @@ class InternalWriteTokenFilterTest {
             "POST,/people/update",
             "POST,/people/delete",
             "POST,/weapons",
+            "POST,/weapons/insert-multiple",
+            "POST,/people-images/bob",
             "POST,/gallery/save",
             "POST,/gallery/delete-all",
             "POST,/people-images",

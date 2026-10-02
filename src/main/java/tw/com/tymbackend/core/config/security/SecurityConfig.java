@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -55,6 +57,7 @@ import tw.com.ty.common.security.config.BaseSecurityConfig;
  */
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @Import(BaseSecurityConfig.class)
 public class SecurityConfig {
 
@@ -135,7 +138,7 @@ public class SecurityConfig {
                 .requestMatchers("/auth/visitor").permitAll() // 访客端点
                 .requestMatchers("/auth/health").permitAll() // 认证健康检查
                 .requestMatchers("/keycloak/**").permitAll() // Keycloak 所有端点（包含 introspect）
-                .requestMatchers("GET", "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
+                .requestMatchers(HttpMethod.GET, "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
 
                 // Learn 題庫、作答與個人表現一律需要有效 JWT
                 .requestMatchers("/learn/**").authenticated()
@@ -143,25 +146,32 @@ public class SecurityConfig {
                 // ========================================
                 // SELECT 系列：GET 请求，完全开放，无需认证
                 // ========================================
-                .requestMatchers("GET", "/people/**").permitAll() // People 查询 - 完全开放
-                .requestMatchers("GET", "/weapons/**").permitAll() // Weapon 查询 - 完全开放
-                .requestMatchers("GET", "/gallery/**").permitAll() // Gallery 查询 - 完全开放
-                .requestMatchers("GET", "/api/**").permitAll() // Async API 查询 - 完全开放
-                .requestMatchers("GET", "/people-images/**").permitAll() // People Images 查询 - 完全开放
-                .requestMatchers("GET", "/deckofcards/**").permitAll() // Deckofcards 查询 - 完全开放
-                .requestMatchers("GET", "/ckeditor/**").permitAll() // CKEditor 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/people/**").permitAll() // People 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/weapons/**").permitAll() // Weapon 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/gallery/**").permitAll() // Gallery 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/api/**").permitAll() // Async API 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/deckofcards/**").permitAll() // Deckofcards 查询 - 完全开放
+                .requestMatchers(HttpMethod.GET, "/ckeditor/**").permitAll() // CKEditor 查询 - 完全开放
 
                 // ========================================
                 // 特殊查询端点：POST 请求但用于查询，也完全开放
                 // ========================================
-                .requestMatchers("POST", "/people/get-all").permitAll() // People get-all 查询 - 完全开放
-                .requestMatchers("POST", "/people/get-by-name").permitAll() // People get-by-name 查询 - 完全开放
-                .requestMatchers("POST", "/people/names").permitAll() // People names 查询 - 完全开放
-                .requestMatchers("POST", "/people/batchDamageWithWeapon").permitAll() // 傷害計算 (POST 查询)
+                .requestMatchers(HttpMethod.POST, "/people/get-all").permitAll() // People get-all 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/people/get-by-name").permitAll() // People get-by-name 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/people/names").permitAll() // People names 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/people/batchDamageWithWeapon").permitAll() // 傷害計算 (POST 查询)
                 // 注意：Gallery 僅 getAll 是 POST 查询，其餘 POST（save/update/delete）為變更類，
                 // 不可用 /gallery/** 通配放行，否則會繞過下方寫入規則
-                .requestMatchers("POST", "/gallery/getAll").permitAll() // Gallery getAll 查询 - 完全开放
-                .requestMatchers("POST", "/gallery/getById").permitAll() // Gallery getById 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/gallery/getAll").permitAll() // Gallery getAll 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/gallery/getById").permitAll() // Gallery getById 查询 - 完全开放
+                .requestMatchers(HttpMethod.POST, "/ckeditor/get-content").permitAll() // CKEditor 讀取內容（前端以 POST 查詢）
+
+                // ========================================
+                // 批量刪除（破壞性）：需 manage-users 角色或內部 Token
+                // ========================================
+                .requestMatchers(HttpMethod.POST, "/people/delete-all").hasRole("manage-users") // 批量刪除 People
+                .requestMatchers(HttpMethod.DELETE, "/weapons/delete-all").hasRole("manage-users") // 批量刪除 Weapons
+                .requestMatchers(HttpMethod.DELETE, "/gallery/delete-all").hasRole("manage-users") // 批量刪除 Gallery
 
                 // ========================================
                 // INSERT/UPDATE/DELETE 系列：需 JWT 或 內部 Token（混合驗證）
@@ -169,37 +179,31 @@ public class SecurityConfig {
                 // 否則由 oauth2ResourceServer 驗證瀏覽器帶來的 Keycloak JWT。
                 // ========================================
                 // People - 修改端点（查询端点已在上方放行）
-                .requestMatchers("POST", "/people/insert").authenticated() // People 创建
-                .requestMatchers("POST", "/people/insert-multiple").authenticated() // People 批量创建
-                .requestMatchers("POST", "/people/update").authenticated() // People 更新
-                .requestMatchers("POST", "/people/delete").authenticated() // People 删除
-                .requestMatchers("PUT", "/people/**").authenticated() // People PUT 更新
-                .requestMatchers("DELETE", "/people/**").authenticated() // People DELETE 删除
+                .requestMatchers(HttpMethod.POST, "/people/insert").authenticated() // People 创建
+                .requestMatchers(HttpMethod.POST, "/people/insert-multiple").authenticated() // People 批量创建
+                .requestMatchers(HttpMethod.POST, "/people/update").authenticated() // People 更新
+                .requestMatchers(HttpMethod.POST, "/people/delete").authenticated() // People 删除
+                .requestMatchers(HttpMethod.PUT, "/people/**").authenticated() // People PUT 更新
+                .requestMatchers(HttpMethod.DELETE, "/people/**").authenticated() // People DELETE 删除
 
                 // Weapons - 修改端点
-                .requestMatchers("POST", "/weapons/**").authenticated() // Weapon 创建
-                .requestMatchers("PUT", "/weapons/**").authenticated() // Weapon 更新
-                .requestMatchers("DELETE", "/weapons/**").authenticated() // Weapon 删除
+                .requestMatchers(HttpMethod.POST, "/weapons/**").authenticated() // Weapon 创建
+                .requestMatchers(HttpMethod.PUT, "/weapons/**").authenticated() // Weapon 更新
+                .requestMatchers(HttpMethod.DELETE, "/weapons/**").authenticated() // Weapon 删除
 
                 // API - 修改端点
-                .requestMatchers("POST", "/api/**").authenticated() // Async API 创建
-                .requestMatchers("PUT", "/api/**").authenticated() // Async API 更新
-                .requestMatchers("DELETE", "/api/**").authenticated() // Async API 删除
+                .requestMatchers(HttpMethod.POST, "/api/**").authenticated() // Async API 创建
+                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated() // Async API 更新
+                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated() // Async API 删除
 
                 // People Images - 修改端点
-                .requestMatchers("POST", "/people-images/**").authenticated() // People Images 创建
-                .requestMatchers("PUT", "/people-images/**").authenticated() // People Images 更新
-                .requestMatchers("DELETE", "/people-images/**").authenticated() // People Images 删除
+                .requestMatchers(HttpMethod.POST, "/people-images/**").authenticated() // People Images 创建
+                .requestMatchers(HttpMethod.PUT, "/people-images/**").authenticated() // People Images 更新
+                .requestMatchers(HttpMethod.DELETE, "/people-images/**").authenticated() // People Images 删除
 
-                // ========================================
-                // 批量刪除（破壞性）：需 manage-users 角色或內部 Token
-                // ========================================
-                .requestMatchers("POST", "/people/delete-all").hasRole("manage-users") // 批量刪除 People
-                .requestMatchers("DELETE", "/weapons/delete-all").hasRole("manage-users") // 批量刪除 Weapons
-                .requestMatchers("DELETE", "/gallery/delete-all").hasRole("manage-users") // 批量刪除 Gallery
-                .requestMatchers("POST", "/gallery/save").authenticated() // Gallery 儲存
-                .requestMatchers("POST", "/gallery/update").authenticated() // Gallery 更新
-                .requestMatchers("POST", "/gallery/delete").authenticated() // Gallery 删除
+                .requestMatchers(HttpMethod.POST, "/gallery/save").authenticated() // Gallery 儲存
+                .requestMatchers(HttpMethod.POST, "/gallery/update").authenticated() // Gallery 更新
+                .requestMatchers(HttpMethod.POST, "/gallery/delete").authenticated() // Gallery 删除
 
                 // ========================================
                 // 认证端点：需要认证用户
@@ -212,8 +216,8 @@ public class SecurityConfig {
                 // ========================================
                 // 默认规则：所有未匹配的请求都需要认证
                 // ========================================
-                .requestMatchers("GET", "/ai-usage/**").permitAll() // AI usage dashboard summary
-                .requestMatchers("POST", "/ai-usage").permitAll() // Protected by AI usage ingest token
+                .requestMatchers(HttpMethod.GET, "/ai-usage/**").permitAll() // AI usage dashboard summary
+                .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
                 .anyRequest().authenticated())
 
                 // OAuth2 Resource Server：JWT Token 验证

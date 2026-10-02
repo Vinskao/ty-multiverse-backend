@@ -25,7 +25,7 @@ already exists (say so) or the test is wrong (fix it).
 |---|---|
 | Service / util | JUnit 5 + `@ExtendWith(MockitoExtension.class)`, mock DAOs |
 | Filter | `MockHttpServletRequest` + `MockFilterChain`, no Spring context |
-| Controller + security rules | `@WebMvcTest` + `@ContextConfiguration(classes = {Controller, SecurityConfig})` + `@MockBean` service (plain `@WebMvcTest` loads `TYMBackendApplication` and fails on the websocket exporter) (see `AiTokenUsageSecurityWebTest`) |
+| Controller + security rules | `@WebMvcTest` + `@ContextConfiguration(classes = {Controller, SecurityConfig})` + `@MockBean` service (plain `@WebMvcTest` loads `TYMBackendApplication` and fails on the websocket exporter) (see `AiTokenUsageSecurityWebTest`, `WeaponControllerWebTest`) |
 | DAO / SQL | `@DataJpaTest` with H2 |
 
 Avoid `@SpringBootTest` unless truly cross-layer. Never hit real external services.
@@ -45,12 +45,34 @@ Avoid `@SpringBootTest` unless truly cross-layer. Never hit real external servic
 - [ ] Each new public behavior and each error/denial branch has a test.
 - [ ] No unrelated test modified.
 
-## Reference tests reviewed as examples
+## Red tests for confirmed bugs (`known-bug`)
 
-- `core/config/security/InternalWriteTokenFilterTest` – filter, no Spring.
-- `module/ai_usage/controller/AiTokenUsageSecurityWebTest` – web slice with the real security chain.
+When a test proves a production bug and the fix is not part of the current task, keep the test red
+but tag it `@Tag("known-bug")` with a javadoc explaining the root cause. `pom.xml` skips that tag by
+default so `./mvnw test` stays green; run the red ones with:
 
-## Known gaps (write tests here first when touching these)
+```bash
+./mvnw test -DexcludedGroups=none          # everything, including known bugs
+./mvnw test -DexcludedGroups=none -Dtest=SecurityRulesWebTest
+```
 
-Other controllers, remaining `SecurityConfig` rules, `AiTokenUsageService`,
-`learn` and `resource` modules, DAOs, message producers. Coverage tooling (JaCoCo) is not set up.
+Fixing a bug = make its `known-bug` test pass, then delete the tag. Never delete the test.
+
+## Test support (`src/test/java/tw/com/tymbackend/support`)
+
+- `@SecuredWebSlice` – properties that let the real `SecurityConfig` load in a web slice.
+- `TestAuth.admin()` / `TestAuth.user()` – Keycloak-style JWTs (`ROLE_manage-users` / `ROLE_user`);
+  `TestAuth.INTERNAL_HEADER` / `INTERNAL_TOKEN` for the `X-Internal-Token` path.
+
+Per-controller `*WebTest` classes send a JWT and verify controller behavior. The authorization matrix
+for every endpoint lives in one place: `core/config/security/SecurityRulesWebTest`.
+
+## Where the 66 endpoints are tested
+
+See [API_TEST_COVERAGE.md](API_TEST_COVERAGE.md).
+
+## Known gaps
+
+Services without tests (`AiTokenUsageService`, `AuthService`, `LearnService`, `CompanyProductMappingService`,
+`KeycloakController` internals beyond HTTP), DAOs/repositories, message producers/consumers, WebSocket
+(`MetricsWSController`). Coverage tooling (JaCoCo) is not set up.
