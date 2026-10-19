@@ -20,7 +20,7 @@ public class DiaryNarratives {
 
     public DiaryNarratives(JdbcTemplate jdbc) { this.jdbc = jdbc; }
 
-    public record EventInput(String id, LocalDate entryDate, String category, String datePrecision, String title,
+    public record EventInput(String id, @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING) LocalDate entryDate, String category, String datePrecision, String title,
         String metadataJson, String sourceHash, String narrative, boolean stale) {}
     public record MonthInput(String month, String sourceHash, List<String> entryIds, String narrative, boolean stale) {}
     public record Work(List<EventInput> events, List<MonthInput> months) {}

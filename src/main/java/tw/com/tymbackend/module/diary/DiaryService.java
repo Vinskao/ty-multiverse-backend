@@ -28,12 +28,13 @@ public class DiaryService {
         this.transactions = new TransactionTemplate(new DataSourceTransactionManager(Objects.requireNonNull(jdbc.getDataSource())));
     }
 
-    public record Entry(String id, LocalDate entryDate, String title, String markdown, String createdAt, String category, String datePrecision, String entryKind, String metadataJson) {}
-    public record Summary(String id, LocalDate entryDate, String title, String category, String datePrecision, String entryKind, String description) {}
+    // Diary dates are ISO strings (2026-10-18): the app ObjectMapper would otherwise write [2026,10,18].
+    public record Entry(String id, @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING) LocalDate entryDate, String title, String markdown, String createdAt, String category, String datePrecision, String entryKind, String metadataJson) {}
+    public record Summary(String id, @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING) LocalDate entryDate, String title, String category, String datePrecision, String entryKind, String description) {}
     public record Page(List<Summary> entries, boolean hasMore) {}
     public record ImportResult(Entry entry, boolean duplicate) {}
     public record Reminder(boolean pending, String nextDueAt, String queuedSince, String triggeredAt) {}
-    public record ContextEntry(String id, LocalDate entryDate, String title, String markdown, boolean truncated) {}
+    public record ContextEntry(String id, @com.fasterxml.jackson.annotation.JsonFormat(shape = com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING) LocalDate entryDate, String title, String markdown, boolean truncated) {}
     public record ConversationContext(List<ContextEntry> recent, boolean hasMore, String longTermSummary, String limitations) {}
     private record State(OffsetDateTime next, OffsetDateTime queued, OffsetDateTime triggered, boolean pending) {}
 
