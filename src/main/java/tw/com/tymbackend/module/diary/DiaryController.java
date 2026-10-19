@@ -35,8 +35,11 @@ public class DiaryController {
         return privateResponse(service.importMarkdown(owner(jwt), body.entryDate(), body.title(), body.markdown(), body.category() == null ? "general" : body.category()));
     }
     @GetMapping("/entries")
-    public ResponseEntity<DiaryService.Page> entries(@AuthenticationPrincipal Jwt jwt, @RequestParam LocalDate from, @RequestParam LocalDate to,
-            @RequestParam(defaultValue = "all") String category, @RequestParam(defaultValue = "false") boolean includeUndated) {
+    public ResponseEntity<DiaryService.Page> entries(@AuthenticationPrincipal Jwt jwt, @RequestParam(required = false) LocalDate from,
+            @RequestParam(required = false) LocalDate to, @RequestParam(defaultValue = "all") String category,
+            @RequestParam(defaultValue = "false") boolean includeUndated) {
+        if (from == null && to == null) return privateResponse(service.recent(owner(jwt), category));
+        if (from == null || to == null) throw new IllegalArgumentException("Choose both a start and an end date");
         return privateResponse(service.list(owner(jwt), from, to, category, includeUndated));
     }
     @GetMapping("/entries/{id}")

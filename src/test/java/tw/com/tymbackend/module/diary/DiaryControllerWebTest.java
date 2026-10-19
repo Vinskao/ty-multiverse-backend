@@ -40,6 +40,13 @@ class DiaryControllerWebTest {
         mvc.perform(get("/diary/entries/other-entry").with(user())).andExpect(status().isNotFound());
     }
 
+    @Test void entriesWithoutDatesListRecentAndHalfARangeIsRejected() throws Exception {
+        when(service.recent("user-sub", "all")).thenReturn(new DiaryService.Page(java.util.List.of(), false));
+        mvc.perform(get("/diary/entries").with(user())).andExpect(status().isOk());
+        verify(service).recent("user-sub", "all");
+        mvc.perform(get("/diary/entries").param("from", "2026-10-01").with(user())).andExpect(status().isBadRequest());
+    }
+
     @Test void internalMachineTokenCannotImpersonateDiaryOwner() throws Exception {
         mvc.perform(post("/diary/check-in").header(INTERNAL_HEADER, INTERNAL_TOKEN)).andExpect(status().isUnauthorized());
         verifyNoInteractions(service);

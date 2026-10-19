@@ -128,4 +128,16 @@ class DiaryServiceTest {
         assertTrue(service.list("bob", from, to, "all", true).entries().isEmpty());
         assertNull(service.entry("alice", "undated").orElseThrow().entryDate());
     }
+
+    @Test void recentListSpansYearsNewestFirstWithUndatedLastAndStaysOwnerScoped() {
+        service.importMarkdown("alice", LocalDate.parse("2023-05-01"), "Old", "old", "investment");
+        service.importMarkdown("alice", LocalDate.parse("2026-10-18"), "New", "new", "relationship");
+        service.importMarkdown("bob", LocalDate.parse("2026-10-18"), "Bob", "bob-only");
+        jdbc.update("INSERT INTO diary_entries (id, owner_subject, title, markdown, content_hash, created_at, category, entry_kind, date_precision) VALUES ('undated', 'alice', 'Unknown', 'Source', 'hash', CURRENT_TIMESTAMP, 'relationship', 'event', 'unknown')");
+        var page = service.recent("alice", "all");
+        assertEquals(java.util.List.of("New", "Old", "Unknown"), page.entries().stream().map(DiaryService.Summary::title).toList());
+        assertFalse(page.hasMore());
+        assertEquals(java.util.List.of("Old"), service.recent("alice", "investment").entries().stream().map(DiaryService.Summary::title).toList());
+        assertThrows(IllegalArgumentException.class, () -> service.recent("alice", "invalid"));
+    }
 }

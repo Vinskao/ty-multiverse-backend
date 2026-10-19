@@ -118,6 +118,15 @@ public class DiaryService {
         return new Page(entries.stream().limit(200).toList(), entries.size() > 200);
     }
 
+    /** Latest entries across all dates (undated last), shown when the panel opens without a date filter. */
+    public Page recent(String owner, String category) {
+        requireOwner(owner);
+        if (!"all".equals(category)) requireCategory(category);
+        var entries = jdbc.query("SELECT id, entry_date, title, category, date_precision, entry_kind FROM diary_entries WHERE owner_subject = ? AND (? = 'all' OR category = ?) ORDER BY entry_date DESC NULLS LAST, created_at DESC, id LIMIT 201",
+            (rs, row) -> new Summary(rs.getString("id"), rs.getObject("entry_date", LocalDate.class), rs.getString("title"), rs.getString("category"), rs.getString("date_precision"), rs.getString("entry_kind")), owner, category, category);
+        return new Page(entries.stream().limit(200).toList(), entries.size() > 200);
+    }
+
     /** Called on authenticated site entry. One persisted overdue job; no catch-up storm after absence. */
     public Reminder checkIn(String owner) {
         requireOwner(owner);
