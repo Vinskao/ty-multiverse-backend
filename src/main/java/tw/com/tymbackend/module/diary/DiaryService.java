@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 public class DiaryService {
     private static final ZoneId TAIPEI = ZoneId.of("Asia/Taipei");
+    private static final com.fasterxml.jackson.databind.ObjectMapper JSON = new com.fasterxml.jackson.databind.ObjectMapper();
     private final JdbcTemplate jdbc;
     private final Clock clock;
     private final TransactionTemplate transactions;
@@ -28,7 +29,7 @@ public class DiaryService {
     }
 
     public record Entry(String id, LocalDate entryDate, String title, String markdown, String createdAt, String category, String datePrecision, String entryKind, String metadataJson) {}
-    public record Summary(String id, LocalDate entryDate, String title, String category, String datePrecision, String entryKind) {}
+    public record Summary(String id, LocalDate entryDate, String title, String category, String datePrecision, String entryKind, String description) {}
     public record Page(List<Summary> entries, boolean hasMore) {}
     public record ImportResult(Entry entry, boolean duplicate) {}
     public record Reminder(boolean pending, String nextDueAt, String queuedSince, String triggeredAt) {}
@@ -85,6 +86,19 @@ public class DiaryService {
             (rs, row) -> readEntry(rs), owner, id).stream().findFirst();
     }
 
+    /** Event descriptions let the panel tell the story without opening every entry; source documents have none. */
+    private Summary readSummary(java.sql.ResultSet rs) throws java.sql.SQLException {
+        String description = null;
+        if ("event".equals(rs.getString("entry_kind"))) {
+            try {
+                var text = JSON.readTree(rs.getString("metadata_json")).path("description");
+                if (text.isTextual() && !text.asText().isBlank()) description = text.asText().length() > 1000 ? text.asText().substring(0, 1000) : text.asText();
+            } catch (Exception malformed) { /* Older rows may hold non-JSON metadata; the title still identifies them. */ }
+        }
+        return new Summary(rs.getString("id"), rs.getObject("entry_date", LocalDate.class), rs.getString("title"),
+            rs.getString("category"), rs.getString("date_precision"), rs.getString("entry_kind"), description);
+    }
+
     private Entry readEntry(java.sql.ResultSet rs) throws java.sql.SQLException {
         return new Entry(rs.getString("id"), rs.getObject("entry_date", LocalDate.class), rs.getString("title"),
             rs.getString("markdown"), rs.getObject("created_at", OffsetDateTime.class).toString(), rs.getString("category"), rs.getString("date_precision"), rs.getString("entry_kind"), rs.getString("metadata_json"));
@@ -113,8 +127,8 @@ public class DiaryService {
         if (!"all".equals(category)) requireCategory(category);
         if (from == null || to == null || to.isBefore(from) || java.time.temporal.ChronoUnit.DAYS.between(from, to) > 366)
             throw new IllegalArgumentException("Choose a date range of at most 367 days");
-        var entries = jdbc.query("SELECT id, entry_date, title, category, date_precision, entry_kind FROM diary_entries WHERE owner_subject = ? AND ((entry_date >= ? AND entry_date <= ?) OR (? AND entry_date IS NULL)) AND (? = 'all' OR category = ?) ORDER BY entry_date DESC NULLS LAST, created_at DESC, id LIMIT 201",
-            (rs, row) -> new Summary(rs.getString("id"), rs.getObject("entry_date", LocalDate.class), rs.getString("title"), rs.getString("category"), rs.getString("date_precision"), rs.getString("entry_kind")), owner, from, to, includeUndated, category, category);
+        var entries = jdbc.query("SELECT id, entry_date, title, category, date_precision, entry_kind, metadata_json FROM diary_entries WHERE owner_subject = ? AND ((entry_date >= ? AND entry_date <= ?) OR (? AND entry_date IS NULL)) AND (? = 'all' OR category = ?) ORDER BY entry_date DESC NULLS LAST, created_at DESC, id LIMIT 201",
+            (rs, row) -> readSummary(rs), owner, from, to, includeUndated, category, category);
         return new Page(entries.stream().limit(200).toList(), entries.size() > 200);
     }
 
@@ -122,8 +136,8 @@ public class DiaryService {
     public Page recent(String owner, String category) {
         requireOwner(owner);
         if (!"all".equals(category)) requireCategory(category);
-        var entries = jdbc.query("SELECT id, entry_date, title, category, date_precision, entry_kind FROM diary_entries WHERE owner_subject = ? AND (? = 'all' OR category = ?) ORDER BY entry_date DESC NULLS LAST, created_at DESC, id LIMIT 201",
-            (rs, row) -> new Summary(rs.getString("id"), rs.getObject("entry_date", LocalDate.class), rs.getString("title"), rs.getString("category"), rs.getString("date_precision"), rs.getString("entry_kind")), owner, category, category);
+        var entries = jdbc.query("SELECT id, entry_date, title, category, date_precision, entry_kind, metadata_json FROM diary_entries WHERE owner_subject = ? AND (? = 'all' OR category = ?) ORDER BY entry_date DESC NULLS LAST, created_at DESC, id LIMIT 201",
+            (rs, row) -> readSummary(rs), owner, category, category);
         return new Page(entries.stream().limit(200).toList(), entries.size() > 200);
     }
 

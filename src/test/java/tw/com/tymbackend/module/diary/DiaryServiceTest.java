@@ -129,6 +129,20 @@ class DiaryServiceTest {
         assertNull(service.entry("alice", "undated").orElseThrow().entryDate());
     }
 
+    @Test void listsCarryEventDescriptionsForTheNarrativeButNotDocumentBodies() {
+        jdbc.update("INSERT INTO diary_entries (id, owner_subject, entry_date, title, markdown, content_hash, created_at, category, entry_kind, date_precision, metadata_json) VALUES ('ev', 'alice', DATE '2026-10-18', 'Event', 'body', 'h1', CURRENT_TIMESTAMP, 'relationship', 'event', 'day', ?)",
+            "{\"description\":\"" + "長".repeat(1200) + "\",\"notes\":\"n\"}");
+        jdbc.update("INSERT INTO diary_entries (id, owner_subject, entry_date, title, markdown, content_hash, created_at, category, entry_kind, date_precision, metadata_json) VALUES ('doc', 'alice', DATE '2026-10-18', 'Source', 'body', 'h2', CURRENT_TIMESTAMP, 'relationship', 'document', 'document', '{\"source_file\":\"a.md\"}')");
+        jdbc.update("INSERT INTO diary_entries (id, owner_subject, entry_date, title, markdown, content_hash, created_at, category, entry_kind, date_precision, metadata_json) VALUES ('bad', 'alice', DATE '2026-10-18', 'Broken', 'body', 'h3', CURRENT_TIMESTAMP, 'general', 'event', 'day', 'not json')");
+        var byId = new java.util.HashMap<String, DiaryService.Summary>();
+        service.recent("alice", "all").entries().forEach(s -> byId.put(s.id(), s));
+        assertEquals(1000, byId.get("ev").description().length());
+        assertNull(byId.get("doc").description());
+        assertNull(byId.get("bad").description());
+        var day = LocalDate.parse("2026-10-18");
+        assertEquals(byId.get("ev").description(), service.list("alice", day, day).entries().stream().filter(s -> s.id().equals("ev")).findFirst().orElseThrow().description());
+    }
+
     @Test void recentListSpansYearsNewestFirstWithUndatedLastAndStaysOwnerScoped() {
         service.importMarkdown("alice", LocalDate.parse("2023-05-01"), "Old", "old", "investment");
         service.importMarkdown("alice", LocalDate.parse("2026-10-18"), "New", "new", "relationship");
