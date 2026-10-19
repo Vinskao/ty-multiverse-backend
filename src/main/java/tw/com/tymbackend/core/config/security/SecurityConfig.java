@@ -218,6 +218,7 @@ public class SecurityConfig {
                 // ========================================
                 .requestMatchers(HttpMethod.GET, "/ai-usage/**").permitAll() // AI usage dashboard summary
                 .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
+                .requestMatchers("/diary/agent/**").permitAll() // Checked by DiaryNarrativeController against the diary agent key hash
                 .anyRequest().authenticated())
 
                 // OAuth2 Resource Server：JWT Token 验证

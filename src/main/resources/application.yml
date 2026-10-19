@@ -10,6 +10,11 @@ security:
 ai-usage:
   ingest-token: ${AI_USAGE_INGEST_TOKEN:}
 
+diary:
+  # SHA-256 of the scheduled diary agent key, and the Keycloak subject it writes narratives for.
+  agent-key-sha256: ${DIARY_AGENT_KEY_SHA256:}
+  agent-owner: ${DIARY_AGENT_OWNER:}
+
 # Learn 導師帳號（逗號分隔）：可讀 /learn/mentor/overview，看到所有帳號的作答狀況。
 learn:
   mentors: ${LEARN_MENTORS:chiaki}

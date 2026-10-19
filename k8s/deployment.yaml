@@ -197,6 +197,11 @@ spec:
             secretKeyRef:
               name: ty-multiverse-backend-secrets
               key: AI_USAGE_INGEST_TOKEN
+        # Scheduled diary agent: only the key's SHA-256 is configured; the key lives in the routine's network secret.
+        - name: DIARY_AGENT_KEY_SHA256
+          value: "c2ac1b97f55381afe10396751b45517439e123e50e7603faeb5bfb6476ebfc4d"
+        - name: DIARY_AGENT_OWNER
+          value: "e527d550-f418-4f82-93ab-41742c0a4643"
         - name: PROJECT_ENV
           valueFrom:
             configMapKeyRef:

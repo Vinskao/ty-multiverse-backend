@@ -81,3 +81,27 @@ Deployed on 2026-10-19 as backend image `:122` (diary API plus the per-minute qu
 Opening the panel lists the latest 200 entries across all dates (undated last) through `GET /diary/entries` without `from`/`to`, so saved entries show without a search. The list loads independently of `/check-in`, so a failed reminder check does not hide them. The date filter is still available for older entries.
 
 Validation: backend `mvnw.cmd test -q`; diary-specific backend classes cover owner isolation, categories, unknown dates, weekly queue and imports. Frontend `node node_modules/vitest/vitest.mjs run tests/diary` passed 7 tests, including category filtering and explicit approximate-date labels (red before implementation, green afterwards). The Python importer passed 3 synthetic-fixture tests. The full frontend suite has pre-existing failures in the moved auth imports (`tests/services/auth*.test.ts`) and Taiwan portfolio projection (2 assertions); they were not changed or weakened. Frontend build passed and the local Palais diary layout/login-required state was inspected in Chrome. A lifecycle test failed when a disposed panel continued making requests and passed after guarding follow-up loads. Node was invoked at `E:/T/nvm/v22.12.0/node.exe` because `npx` was not on this shell's PATH.
+
+## AI narratives (2026-10-19)
+
+The storyline tells each event as the owner's situation and thoughts at the time, and opens each month with a summary. These are AI interpretations of the recorded events, never records themselves: the panel labels every one "AI 整理", and the original entries are unchanged.
+
+```mermaid
+flowchart LR
+  A[Owner imports diary MD] --> B[(diary_entries)]
+  B --> C[Diary agent: GET /diary/agent/work]
+  C --> D[Claude writes situation and thoughts per event and per month]
+  D --> E[PUT /diary/agent/narratives/entry or month]
+  E --> F[(diary_narratives)]
+  F --> G[Owner: GET /diary/narratives with JWT]
+  G --> H[Palais storyline: month summary + passages, labeled AI]
+```
+
+| Part | Implementation |
+| --- | --- |
+| Storage | `db/private_diary_narratives.sql`: one row per owner and scope (`entry` = event ID, `month` = `YYYY-MM`), with the model and time it was written. Applied to production on 2026-10-19, same table owner as `diary_entries`. |
+| Freshness | Each row keeps the `source_hash` it was written from: the entry's content hash, or for a month the SHA-256 of its events' IDs and hashes. An edited entry or a month that gained an event shows "原始紀錄已更新，待重寫" until rewritten. A write with an outdated hash is refused. |
+| Agent access | `X-Diary-Agent-Key`, a scoped key (least privilege): the backend stores only its SHA-256 (`DIARY_AGENT_KEY_SHA256`) and the one owner it acts for (`DIARY_AGENT_OWNER`). It can read events and write narratives under `/diary/agent/**` only. It cannot use the owner's diary API, and a JWT cannot use the agent endpoints. |
+| Display | `src/scripts/diary/narrative.ts` (frontend) prefers the narrative per passage and adds month summaries. Without narratives the story falls back to the recorded descriptions. |
+
+Generation: the existing entries were written in a Claude Code session on 2026-10-19. New imports are picked up by a scheduled Claude Code routine on subscription usage, which writes only narratives that are missing or stale. Tests: `DiaryNarrativesTest`, `DiaryNarrativeControllerWebTest`, frontend `tests/diary/narrative.test.ts` and `panel.test.ts`.
