@@ -266,7 +266,7 @@ EOF
                                 
                                 # Docker login with retry mechanism
                                 echo "Attempting Docker login..."
-                                for i in {1..3}; do
+                                for i in 1 2 3; do
                                     echo "Docker login attempt $i/3"
                                     if echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin; then
                                         echo "Docker login successful"
@@ -300,7 +300,7 @@ EOF
                                     
                                 # Push with retry mechanism
                                 echo "Pushing Docker images..."
-                                for i in {1..3}; do
+                                for i in 1 2 3; do
                                     echo "Push attempt $i/3 for ${DOCKER_IMAGE}:${DOCKER_TAG}"
                                     if docker push ${DOCKER_IMAGE}:${DOCKER_TAG}; then
                                         echo "Successfully pushed ${DOCKER_IMAGE}:${DOCKER_TAG}"
@@ -316,7 +316,7 @@ EOF
                                     fi
                                 done
                                 
-                                for i in {1..3}; do
+                                for i in 1 2 3; do
                                     echo "Push attempt $i/3 for ${DOCKER_IMAGE}:latest"
                                     if docker push ${DOCKER_IMAGE}:latest; then
                                         echo "Successfully pushed ${DOCKER_IMAGE}:latest"
