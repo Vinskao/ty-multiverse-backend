@@ -134,6 +134,12 @@ public class DiaryService {
         });
     }
 
+    /** Atomically mark due weekly reviews for the login-triggered queue. Safe to run repeatedly. */
+    public int queueDueWorkflows() {
+        return jdbc.update("UPDATE diary_workflows SET pending = TRUE, queued_since = next_due_at "
+            + "WHERE pending = FALSE AND next_due_at <= ?", now());
+    }
+
     public void acknowledge(String owner, String triggeredAt) {
         requireOwner(owner);
         OffsetDateTime triggered;

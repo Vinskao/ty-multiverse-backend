@@ -3,8 +3,8 @@
 ## Agreed behavior (2026-10-19)
 
 - Private, owner-scoped diary data is runtime PostgreSQL data, never a Git seed or static website bundle.
-- Initial deadline: Sunday 21:00 Asia/Taipei. The stored deadline remains overdue until the next authenticated website visit.
-- That visit atomically claims one queued review. Next deadline becomes the actual claim time plus seven days, rather than the next calendar Sunday. Multiple devices share state; missed weeks do not create a backlog of duplicate jobs.
+- Initial deadline: Sunday 21:00 Asia/Taipei. A backend job checks once per minute and atomically marks one durable queue item due; missed weeks do not create a backlog of duplicate jobs.
+- The next authenticated website visit claims that queued review. Next deadline becomes the actual claim time plus seven days, rather than the next calendar Sunday. Multiple devices share state.
 - The pending review stays visible until a recent diary is imported or the owner explicitly skips it. Skipping does not move the next deadline.
 - First release has a human handoff: copy an export prompt into the original mobile ChatGPT conversation, then upload or paste its MD on the website. A complete transcript cannot be reconstructed from memory or from an inaccessible conversation link.
 - The diary panel belongs immediately below the Palais module buttons. The About page and other pages show an overdue notice after authenticated entry.
@@ -20,11 +20,13 @@ Tables:
 | `diary_entries` | Owner subject, nullable diary date, title, original Markdown, SHA-256 hash, creation time, category, entry kind, source event ID, date precision and original structured metadata. Unique owner/category/date/hash and owner/source-event-ID prevent duplicate imports. |
 | `diary_workflows` | Durable next deadline, original queued deadline, latest delivery time and pending flag. Row locking serializes concurrent check-ins. |
 
+`DiaryScheduleJob` runs at second 0 of each minute in `Asia/Taipei`. Its conditional update only marks due rows where `pending = FALSE`, so repeat runs are idempotent. It does not advance the deadline; the authenticated `check-in` claim advances it to seven days after delivery.
+
 All `/diary/*` APIs require a valid user JWT. Ownership comes only from `sub`, never URL username, request body or internal machine credentials. Responses are `Cache-Control: no-store`.
 
 | Method/path (under `/tymb`) | Behavior |
 | --- | --- |
-| `POST /diary/check-in` | Claim overdue work at login/site entry; return pending status and next deadline. Persisted deadline replaces a polling cron for this login-gated first release. |
+| `POST /diary/check-in` | Claim queued work at login/site entry; return pending status and next deadline. |
 | `POST /diary/acknowledge` | Skip current review using its exact `triggeredAt`; stale claims cannot dismiss a newer review. |
 | `POST /diary/import` | `{entryDate, title, markdown, category}`; validate, normalize BOM/newlines, deduplicate, persist. Omitted category defaults to `general`. Recent imports finish the current pending review in the same transaction. Older backfills do not. |
 | `GET /diary/entries?from=YYYY-MM-DD&to=YYYY-MM-DD&category=all&includeUndated=false` | Date/category-filtered title list; up to 200 entries and a `hasMore` flag. Range is at most 367 inclusive dates. Unknown dates require explicit inclusion. |

@@ -58,6 +58,25 @@ class DiaryServiceTest {
         assertThrows(IllegalArgumentException.class, () -> next.acknowledge("alice", triggered.triggeredAt()));
     }
 
+    @Test void scheduledTickQueuesOnceAtDeadlineAndLoginStartsTheRollingWeek() {
+        var beforeDeadline = new DiaryService(jdbc, Clock.fixed(Instant.parse("2026-10-18T12:59:00Z"), ZoneOffset.UTC));
+        assertFalse(beforeDeadline.checkIn("alice").pending());
+
+        var atDeadline = new DiaryService(jdbc, Clock.fixed(Instant.parse("2026-10-18T13:00:00Z"), ZoneOffset.UTC));
+        assertEquals(1, atDeadline.queueDueWorkflows());
+        assertEquals(0, atDeadline.queueDueWorkflows());
+        assertTrue(jdbc.queryForObject("SELECT pending FROM diary_workflows WHERE owner_subject = 'alice'", Boolean.class));
+        assertEquals(OffsetDateTime.parse("2026-10-18T21:00+08:00"),
+            jdbc.queryForObject("SELECT queued_since FROM diary_workflows WHERE owner_subject = 'alice'", OffsetDateTime.class));
+        assertNull(jdbc.queryForObject("SELECT triggered_at FROM diary_workflows WHERE owner_subject = 'alice'", OffsetDateTime.class));
+
+        var nextLogin = new DiaryService(jdbc, Clock.fixed(Instant.parse("2026-10-19T02:00:00Z"), ZoneOffset.UTC));
+        var reminder = nextLogin.checkIn("alice");
+        assertTrue(reminder.pending());
+        assertEquals("2026-10-18T21:00+08:00", reminder.queuedSince());
+        assertEquals("2026-10-26T10:00+08:00", reminder.nextDueAt());
+    }
+
     @Test void oldImportsDoNotCompleteThisWeeksReminderButCurrentWeekImportsDo() {
         assertTrue(service.checkIn("alice").pending());
         service.importMarkdown("alice", LocalDate.parse("2026-02-14"), "Archive", "old notes");
