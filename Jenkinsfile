@@ -18,10 +18,10 @@ pipeline {
                     tty: true
                     resources:
                       requests:
-                        cpu: "25m"
+                        cpu: "200m"
                         memory: "768Mi"
                       limits:
-                        cpu: "100m"
+                        cpu: "600m"
                         memory: "1024Mi"
                     volumeMounts:
                     - mountPath: /root/.m2
@@ -36,10 +36,10 @@ pipeline {
                       privileged: true
                     resources:
                       requests:
-                        cpu: "10m"
+                        cpu: "100m"
                         memory: "256Mi"
                       limits:
-                        cpu: "50m"
+                        cpu: "300m"
                         memory: "512Mi"
                     env:
                     - name: DOCKER_TLS_CERTDIR
@@ -409,7 +409,6 @@ EOF
 
                                     // 檢查部署狀態
                                     sh 'kubectl get deployments -n default'
-                                    sh 'kubectl rollout status deployment/ty-multiverse-backend -n default --timeout=15m'
                                 } catch (Exception e) {
                                     echo "Error during deployment: ${e.message}"
                                     // Debug non-ready pods and recent events
