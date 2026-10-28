@@ -18,7 +18,7 @@ pipeline {
                     tty: true
                     resources:
                       requests:
-                        cpu: "200m"
+                        cpu: "50m"
                         memory: "768Mi"
                       limits:
                         cpu: "600m"
@@ -36,7 +36,7 @@ pipeline {
                       privileged: true
                     resources:
                       requests:
-                        cpu: "100m"
+                        cpu: "25m"
                         memory: "256Mi"
                       limits:
                         cpu: "300m"

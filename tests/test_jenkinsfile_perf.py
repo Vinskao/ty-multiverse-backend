@@ -24,15 +24,20 @@ def container_cpu(name):
 
 
 class JenkinsPipelinePerformanceTests(unittest.TestCase):
+    # Speed comes from the limits: the agent may burst to them while the node is idle.
     def test_maven_container_has_build_cpu_headroom(self):
-        request, limit = container_cpu('maven')
-        self.assertGreaterEqual(request, 150)
+        _, limit = container_cpu('maven')
         self.assertGreaterEqual(limit, 500)
 
     def test_docker_container_has_layer_unpack_cpu_headroom(self):
-        request, limit = container_cpu('docker')
-        self.assertGreaterEqual(request, 100)
+        _, limit = container_cpu('docker')
         self.assertGreaterEqual(limit, 300)
+
+    # Requests are reserved before the pod can start. Each OKE node has 840m allocatable with ~535-695m
+    # already requested, so a larger reservation leaves the agent Pending ("Insufficient cpu") forever.
+    def test_agent_pod_cpu_requests_fit_the_cluster(self):
+        total = sum(container_cpu(name)[0] for name in ('maven', 'docker', 'kubectl', 'jnlp'))
+        self.assertLessEqual(total, 140)
 
     def test_rollout_is_waited_for_once(self):
         self.assertEqual(PIPELINE.count('kubectl rollout status deployment/ty-multiverse-backend'), 1)
