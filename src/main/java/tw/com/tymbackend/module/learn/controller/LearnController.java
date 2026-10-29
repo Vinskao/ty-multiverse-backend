@@ -1,6 +1,8 @@
 package tw.com.tymbackend.module.learn.controller;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -26,10 +29,77 @@ import tw.com.tymbackend.module.learn.service.LearnService;
 @RestController
 @RequestMapping("/learn")
 public class LearnController {
+    private static final String GUEST_HEADER = "X-Learn-Guest-Id";
     private final LearnService service;
 
     public LearnController(LearnService service) {
         this.service = service;
+    }
+
+    /** Public learning is available without an account. Guest progress is namespaced and keyed by a browser UUID. */
+    @GetMapping("/public/topics")
+    public ResponseEntity<BackendApiResponse<List<LearnDtos.TopicSummary>>> publicTopics(
+            @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
+        String userId = guestUserId(guestId);
+        return ResponseEntity.ok(BackendApiResponse.success("topics", service.listTopics(userId)));
+    }
+
+    @PostMapping("/public/topics/{quizId}/session")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Session>> publicSession(
+            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
+        String userId = guestUserId(guestId);
+        return ResponseEntity.ok(BackendApiResponse.success("start learning",
+                service.startOrResume(quizId, userId, "訪客")));
+    }
+
+    @PostMapping("/public/topics/{quizId}/session/answers")
+    public ResponseEntity<BackendApiResponse<LearnDtos.AnswerAck>> publicAnswer(
+            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId,
+            @RequestBody @Valid LearnDtos.AnswerInput input) {
+        return ResponseEntity.ok(BackendApiResponse.success("saved",
+                service.saveAnswer(quizId, guestUserId(guestId), input)));
+    }
+
+    @PostMapping("/public/topics/{quizId}/attempts")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Review>> publicSubmit(
+            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId,
+            @RequestBody(required = false) LearnDtos.Submission submission) {
+        return ResponseEntity.ok(BackendApiResponse.success("submitted",
+                withoutRanking(service.submit(quizId, guestUserId(guestId), submission))));
+    }
+
+    @GetMapping("/public/attempts/{attemptId}/review")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Review>> publicReview(
+            @PathVariable Long attemptId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
+        return ResponseEntity.ok(BackendApiResponse.success("review",
+                withoutRanking(service.review(attemptId, guestUserId(guestId)))));
+    }
+
+    @GetMapping("/public/topics/{quizId}/scorecard")
+    public ResponseEntity<BackendApiResponse<LearnDtos.Scorecard>> publicScorecard(
+            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
+        return ResponseEntity.ok(BackendApiResponse.success("scorecard",
+                service.scorecard(quizId, guestUserId(guestId))));
+    }
+
+    @GetMapping("/public/attempts")
+    public ResponseEntity<BackendApiResponse<List<LearnDtos.AttemptSummary>>> publicHistory(
+            @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
+        return ResponseEntity.ok(BackendApiResponse.success("history", service.history(guestUserId(guestId))));
+    }
+
+    private LearnDtos.Review withoutRanking(LearnDtos.Review review) {
+        return new LearnDtos.Review(review.attemptId(), review.quizId(), review.quizTitle(), review.score(),
+                review.totalQuestions(), review.durationSeconds(), review.submittedAt(), review.items(), null);
+    }
+
+    private String guestUserId(String raw) {
+        if (raw == null || raw.isBlank()) throw new IllegalArgumentException("A valid guest ID is required");
+        try {
+            return "guest:" + UUID.fromString(raw.trim()).toString().toLowerCase(Locale.ROOT);
+        } catch (IllegalArgumentException exception) {
+            throw new IllegalArgumentException("A valid guest ID is required");
+        }
     }
 
     /** Sidebar: every topic plus this candidate's progress on it. */

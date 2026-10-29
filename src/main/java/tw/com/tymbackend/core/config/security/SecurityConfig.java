@@ -140,7 +140,9 @@ public class SecurityConfig {
                 .requestMatchers("/keycloak/**").permitAll() // Keycloak 所有端点（包含 introspect）
                 .requestMatchers(HttpMethod.GET, "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
 
-                // Learn 題庫、作答與個人表現一律需要有效 JWT
+                // Public learning data is isolated by a validated guest UUID; mentor APIs remain private.
+                .requestMatchers("/learn/public/**").permitAll()
+                // Signed-in learning and mentor APIs require a valid JWT.
                 .requestMatchers("/learn/**").authenticated()
 
                 // ========================================

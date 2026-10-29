@@ -195,6 +195,7 @@ class SecurityRulesWebTest {
                 ep("POST", "/gallery/getAll"), ep("POST", "/gallery/getById"),
                 ep("POST", "/ckeditor/get-content"),
                 ep("GET", "/resources/company-product-mapping"),
+                ep("GET", "/learn/public/topics"), ep("POST", "/learn/public/topics/q/session"),
                 ep("GET", "/ai-usage/daily"), ep("GET", "/ai-usage/monthly"), ep("GET", "/ai-usage/summary"),
                 ep("GET", "/ai-usage/overview"),
                 ep("GET", "/keycloak/redirect?code=x"));

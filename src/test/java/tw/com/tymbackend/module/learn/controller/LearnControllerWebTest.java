@@ -50,6 +50,42 @@ class LearnControllerWebTest {
     }
 
     @Test
+    void publicTopics_Should_UseNamespacedGuestIdentity() throws Exception {
+        when(service.listTopics("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab")).thenReturn(List.of());
+        mvc.perform(get("/learn/public/topics")
+                .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
+                .andExpect(status().isOk());
+        verify(service).listTopics("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab");
+    }
+
+    @Test
+    void publicTopics_Should_RejectMalformedGuestIdentity() throws Exception {
+        mvc.perform(get("/learn/public/topics").header("X-Learn-Guest-Id", "alice"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void publicSession_Should_CreateGuestAttempt() throws Exception {
+        mvc.perform(post("/learn/public/topics/q1/session")
+                .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
+                .andExpect(status().isOk());
+        verify(service).startOrResume("q1", "guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab", "訪客");
+    }
+
+    @Test
+    void publicSubmit_ShouldHideNamedLearnerRanking() throws Exception {
+        LearnDtos.Ranking ranking = new LearnDtos.Ranking("q1", "Quiz", 1, 1, 1.0, 1.0, 1,
+                List.of(new LearnDtos.RankingRow(1, "another-user-id", false, 1, 1.0, 1.0, 1, 1.0, null)));
+        LearnDtos.Review review = new LearnDtos.Review(3L, "q1", "Quiz", 1, 1, 10, null, List.of(), ranking);
+        when(service.submit(eq("q1"), eq("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab"), any())).thenReturn(review);
+
+        mvc.perform(post("/learn/public/topics/q1/attempts")
+                        .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.ranking").value((Object) null));
+    }
+
+    @Test
     void quizzes_Should_BeAliasOfTopics() throws Exception {
         mvc.perform(get("/learn/quizzes").with(user())).andExpect(status().isOk());
         verify(service).listTopics(UID);
