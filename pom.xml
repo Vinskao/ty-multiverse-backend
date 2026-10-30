@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.7</version>
+        <version>3.2.12</version>
         <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.apache.httpcomponents.core5</groupId>
             <artifactId>httpcore5</artifactId>
-            <version>5.3.1</version>
+            <version>5.3.6</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents.client5</groupId>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20231013</version>
+            <version>20260814</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
