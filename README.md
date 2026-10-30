@@ -33,6 +33,24 @@
 
 ### Architecture Design
 
+#### 0. 整體架構（Overall）
+```mermaid
+flowchart LR
+    Client["Frontend / Gateway"] -->|"REST /tymb"| Sec["SecurityConfig + InternalWriteTokenFilter"]
+    Ingest["AI usage reporters"] -->|"REST /ai-usage + ingest token"| Sec
+    Sec -->|"JWT 驗證"| KC["Keycloak"]
+    Sec --> Ctrl["Controllers: people, weapons, gallery, ckeditor, diary, learn, resources, ai-usage"]
+    Ctrl --> Svc["Module services"]
+    Svc --> Repo["Repositories (JPA)"]
+    Repo --> PG[("PostgreSQL: primary + people")]
+    Svc --> Redis[("Redis: cache + session")]
+    Svc -->|"RabbitTemplate"| MQ["RabbitMQ"]
+    MQ -->|"queues: people-*, damage-calculation"| Ext["External consumer service"]
+    Svc --> OCI["OCI Object Storage"]
+    Sched["ScheduledTaskService / DiaryScheduleJob"] --> Svc
+    WS["WebSocket metrics"] --> Client
+```
+
 #### 1. Core Architecture
 ```mermaid
 classDiagram
