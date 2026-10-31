@@ -322,7 +322,7 @@ graph LR
 
 ### Keycloak TOTP 2FA（已部署）
 
-Keycloak 26.1.4 已在 `peoplesystem.tatdvsonorth.com/sso` 啟用強制 TOTP 2FA。
+Keycloak 26.1.4 已在 `tymultiverse.cc/sso` 啟用強制 TOTP 2FA。
 
 - **Realm**: `master`（admin dashboard）+ `PeopleSystem`（API 用戶）
 - **已強制 TOTP 用戶**: master: `admin`, `wavo`；PeopleSystem: `chiaki`, `sorane`
@@ -346,8 +346,8 @@ Keycloak 26.1.4 已在 `peoplesystem.tatdvsonorth.com/sso` 啟用強制 TOTP 2FA
 ### Documentation
 
 - Local Swagger UI: `http://localhost:8080/tymb/swagger-ui/index.html`
-- Production Swagger UI: `https://peoplesystem.tatdvsonorth.com/tymb/swagger-ui/index.html`
+- Production Swagger UI: `https://tymultiverse.cc/tymb/swagger-ui/index.html`
 - Local JavaDoc: `http://localhost:8080/tymb/javadoc/index.html`
-- Production JavaDoc: `https://peoplesystem.tatdvsonorth.com/tymb/javadoc/index.html`
+- Production JavaDoc: `https://tymultiverse.cc/tymb/javadoc/index.html`
 
 > 啟動指令、Maven 指令、Docker 建置請見 [AGENTS.md](AGENTS.md)。

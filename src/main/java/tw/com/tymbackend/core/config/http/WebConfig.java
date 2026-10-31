@@ -52,7 +52,7 @@ public class WebConfig implements WebMvcConfigurer {
                     "http://127.0.0.1:4321",
                     "http://localhost:3000",
                     "https://localhost:3000",
-                    "https://peoplesystem.tatdvsonorth.com"
+                    "https://tymultiverse.cc"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders("*")

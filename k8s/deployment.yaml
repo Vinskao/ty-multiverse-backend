@@ -311,6 +311,9 @@ metadata:
   name: ty-multiverse-backend-ingress
 spec:
   ingressClassName: nginx
+  # Old host kept on purpose: API clients that still call it must not get a 301.
+  # tymultiverse.cc serves /tymb through peoplesystem-terraform-oke/tymultiverse-domain/
+  # mirror-ingress.yaml (tymcc-ty-multiverse-backend); listing it here would collide.
   rules:
   - host: peoplesystem.tatdvsonorth.com
     http:

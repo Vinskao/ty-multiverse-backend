@@ -8,7 +8,7 @@ $env:AI_USAGE_INGEST_TOKEN = [Environment]::GetEnvironmentVariable("AI_USAGE_ING
 $env:AI_USAGE_SOURCE_DEVICE = [Environment]::GetEnvironmentVariable("AI_USAGE_SOURCE_DEVICE", "User")
 
 if (-not $env:TYMB_URL) {
-    $env:TYMB_URL = "https://peoplesystem.tatdvsonorth.com/tymb"
+    $env:TYMB_URL = "https://tymultiverse.cc/tymb"
 }
 
 if (-not $env:AI_USAGE_SOURCE_DEVICE) {
