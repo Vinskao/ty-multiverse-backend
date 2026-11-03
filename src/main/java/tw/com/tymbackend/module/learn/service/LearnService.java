@@ -307,6 +307,15 @@ public class LearnService {
             .toList();
     }
 
+    @Transactional(readOnly = true)
+    public List<LearnDtos.RecentAttempt> recentAttempts() {
+        return attempts.findTop20ByStatusOrderBySubmittedAtDesc(LearnAttempt.Status.SUBMITTED).stream()
+            .map(a -> new LearnDtos.RecentAttempt(
+                a.getDisplayName() == null || a.getDisplayName().isBlank() ? "Learner" : a.getDisplayName(),
+                a.getQuiz().getTitle(), a.getScore(), a.getTotalQuestions(), a.getSubmittedAt()))
+            .toList();
+    }
+
     // -------------------------------------------------------------- ranking
 
     /**

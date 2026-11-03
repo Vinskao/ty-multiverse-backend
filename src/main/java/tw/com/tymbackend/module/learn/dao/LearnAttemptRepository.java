@@ -38,6 +38,8 @@ public interface LearnAttemptRepository extends JpaRepository<LearnAttempt, Long
     List<LearnAttempt> findTop20ByUserIdAndStatusOrderBySubmittedAtDesc(String userId,
                                                                        LearnAttempt.Status status);
 
+    List<LearnAttempt> findTop20ByStatusOrderBySubmittedAtDesc(LearnAttempt.Status status);
+
     long countByUserIdAndQuizIdAndStatus(String userId, String quizId, LearnAttempt.Status status);
 
     /** Cohort ranking source for one topic: one row per learner who has finished at least one round. */

@@ -180,6 +180,22 @@ class LearnControllerWebTest {
     }
 
     @Test
+    void recentAttempts_Should_RequireLogin() throws Exception {
+        mvc.perform(get("/learn/attempts/recent")).andExpect(status().isUnauthorized());
+        verify(service, never()).recentAttempts();
+    }
+
+    @Test
+    void recentAttempts_Should_ShowOtherLearnersScoresToSignedInUsers() throws Exception {
+        when(service.recentAttempts()).thenReturn(List.of(
+            new LearnDtos.RecentAttempt("bob", "Quiz", 7, 10, null)));
+        mvc.perform(get("/learn/attempts/recent").with(user()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data[0].displayName").value("bob"))
+            .andExpect(jsonPath("$.data[0].score").value(7));
+    }
+
+    @Test
     void profile_Should_ReturnIdentity() throws Exception {
         when(service.profile(UID, "alice")).thenReturn(new LearnDtos.Profile(UID, false));
         mvc.perform(get("/learn/profile").with(user()))

@@ -108,6 +108,11 @@ public class LearnController {
         return ResponseEntity.ok(BackendApiResponse.success("作答紀錄", service.history(authentication.getName())));
     }
 
+    @GetMapping("/attempts/recent")
+    public ResponseEntity<BackendApiResponse<List<LearnDtos.RecentAttempt>>> recentAttempts(Authentication authentication) {
+        return ResponseEntity.ok(BackendApiResponse.success("Recent attempts", service.recentAttempts()));
+    }
+
     /** Whether this account opens the page as a learner or straight into mentor mode. */
     @GetMapping("/profile")
     public ResponseEntity<BackendApiResponse<LearnDtos.Profile>> profile(Authentication authentication) {

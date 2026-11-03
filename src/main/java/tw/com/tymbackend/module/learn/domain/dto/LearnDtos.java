@@ -72,6 +72,8 @@ public final class LearnDtos {
     public record AttemptSummary(Long attemptId, String quizId, String quizTitle, int score, int totalQuestions,
                                  Integer durationSeconds, OffsetDateTime submittedAt) {}
 
+    public record RecentAttempt(String displayName, String quizTitle, int score, int totalQuestions, OffsetDateTime submittedAt) {}
+
     // -------------------------------------------------------------- ranking
 
     /**
