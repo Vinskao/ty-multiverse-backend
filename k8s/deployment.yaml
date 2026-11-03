@@ -202,6 +202,14 @@ spec:
           value: "9ac92a86f5044b8c9ed8ad910918f1689ff0e57080ae2e9188dfdafb9858eb33"
         - name: DIARY_AGENT_OWNER
           value: "e527d550-f418-4f82-93ab-41742c0a4643"
+        # /learn activity goes to maya-sawa's user activity log over the cluster network, with the shared internal secret.
+        - name: USER_ACTIVITY_URL
+          value: "http://maya-sawa/maya-sawa/market/internal/activity"
+        - name: MARKET_INTERNAL_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: market-internal-secret
+              key: MARKET_INTERNAL_SECRET
         - name: PROJECT_ENV
           valueFrom:
             configMapKeyRef:

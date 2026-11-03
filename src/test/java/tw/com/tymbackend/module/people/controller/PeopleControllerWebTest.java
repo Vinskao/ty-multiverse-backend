@@ -55,35 +55,35 @@ class PeopleControllerWebTest {
     @Test
     void insert_Should_Return201_When_Valid() throws Exception {
         when(service.insertPerson(any())).thenReturn(person());
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success").value(true));
     }
 
     @Test
     void insert_Should_Return400_When_NameBlank() throws Exception {
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"  \"}"))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"  \"}"))
                 .andExpect(status().isBadRequest());
         verify(service, never()).insertPerson(any());
     }
 
     @Test
     void insert_Should_Return400_When_NameMissing() throws Exception {
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void insert_Should_Return400_When_ServiceRejectsInput() throws Exception {
         when(service.insertPerson(any())).thenThrow(new IllegalArgumentException("bad"));
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void insert_Should_Return500_When_ServiceFails() throws Exception {
         when(service.insertPerson(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -92,20 +92,20 @@ class PeopleControllerWebTest {
     @Test
     void update_Should_Return200_When_Valid() throws Exception {
         when(service.updatePerson(any())).thenReturn(person());
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isOk());
     }
 
     @Test
     void update_Should_Return400_When_NameBlank() throws Exception {
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\"}"))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"\"}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void update_Should_Return404_When_PersonNotFound() throws Exception {
         when(service.updatePerson(any())).thenThrow(new IllegalArgumentException("missing"));
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isNotFound());
     }
 
@@ -113,21 +113,21 @@ class PeopleControllerWebTest {
     void update_Should_Return409_When_OptimisticLockFails() throws Exception {
         when(service.updatePerson(any()))
                 .thenThrow(new ObjectOptimisticLockingFailureException(People.class, "Bob"));
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void update_Should_Return400_When_DataIntegrityViolation() throws Exception {
         when(service.updatePerson(any())).thenThrow(new DataIntegrityViolationException("dup"));
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void update_Should_Return500_When_ServiceFails() throws Exception {
         when(service.updatePerson(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isInternalServerError());
     }
 
@@ -136,14 +136,14 @@ class PeopleControllerWebTest {
     @Test
     void insertMultiple_Should_Return201_When_Valid() throws Exception {
         when(service.saveAllPeople(any())).thenReturn(List.of(person()));
-        mvc.perform(post("/people/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/people/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + PERSON + "]"))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void insertMultiple_Should_Return400_When_ListEmpty() throws Exception {
-        mvc.perform(post("/people/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON).content("[]"))
+        mvc.perform(post("/people/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON).content("[]"))
                 .andExpect(status().isBadRequest());
         verify(service, never()).saveAllPeople(any());
     }
@@ -151,7 +151,7 @@ class PeopleControllerWebTest {
     @Test
     void insertMultiple_Should_Return400_When_ServiceRejectsInput() throws Exception {
         when(service.saveAllPeople(any())).thenThrow(new IllegalArgumentException("bad"));
-        mvc.perform(post("/people/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/people/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + PERSON + "]"))
                 .andExpect(status().isBadRequest());
     }
@@ -159,7 +159,7 @@ class PeopleControllerWebTest {
     @Test
     void insertMultiple_Should_Return500_When_ServiceFails() throws Exception {
         when(service.saveAllPeople(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/people/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/people/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + PERSON + "]"))
                 .andExpect(status().isInternalServerError());
     }

@@ -15,6 +15,11 @@ diary:
   agent-key-sha256: ${DIARY_AGENT_KEY_SHA256:}
   agent-owner: ${DIARY_AGENT_OWNER:}
 
+# What each signed-in user does in /learn is reported to maya-sawa's append-only activity log (best effort; off when unset).
+user-activity:
+  url: ${USER_ACTIVITY_URL:}
+  secret: ${MARKET_INTERNAL_SECRET:}
+
 # Learn 導師帳號（逗號分隔）：可讀 /learn/mentor/overview，看到所有帳號的作答狀況。
 learn:
   mentors: ${LEARN_MENTORS:chiaki}

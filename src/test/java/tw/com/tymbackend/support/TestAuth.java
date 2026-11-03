@@ -20,6 +20,12 @@ public final class TestAuth {
                 .authorities(new SimpleGrantedAuthority("ROLE_manage-users"));
     }
 
+    /** The owner signed in as the same person as {@link #user()} (same subject and name), for tests that check identity. */
+    public static RequestPostProcessor owner() {
+        return jwt().jwt(j -> j.subject("user-sub").claim("preferred_username", "alice"))
+                .authorities(new SimpleGrantedAuthority("ROLE_manage-users"));
+    }
+
     /** Valid Keycloak JWT with no special role. */
     public static RequestPostProcessor user() {
         return jwt().jwt(j -> j.subject("user-sub").claim("preferred_username", "alice"))

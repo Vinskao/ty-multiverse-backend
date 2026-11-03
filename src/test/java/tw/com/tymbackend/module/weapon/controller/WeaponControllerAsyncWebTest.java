@@ -61,7 +61,7 @@ class WeaponControllerAsyncWebTest {
     @Test
     void save_Should_Return202() throws Exception {
         when(async.sendWeaponSaveRequest(any())).thenReturn("r4");
-        mvc.perform(post("/weapons").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/weapons").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"owner\":\"Bob\"}"))
                 .andExpect(status().isAccepted());
         verifyNoInteractions(service);
@@ -70,7 +70,7 @@ class WeaponControllerAsyncWebTest {
     @Test
     void delete_Should_Return202() throws Exception {
         when(async.sendWeaponDeleteRequest("Sword")).thenReturn("r5");
-        mvc.perform(delete("/weapons/Sword").with(user())).andExpect(status().isAccepted());
+        mvc.perform(delete("/weapons/Sword").with(admin())).andExpect(status().isAccepted());
         verifyNoInteractions(service);
     }
 

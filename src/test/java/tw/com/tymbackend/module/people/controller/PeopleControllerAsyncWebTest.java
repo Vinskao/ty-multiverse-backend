@@ -50,7 +50,7 @@ class PeopleControllerAsyncWebTest {
     @Test
     void insert_Should_Return202_And_NotTouchService() throws Exception {
         when(async.sendPeopleInsertRequest(any())).thenReturn("req-1");
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isAccepted());
         verifyNoInteractions(service);
     }
@@ -59,13 +59,13 @@ class PeopleControllerAsyncWebTest {
     void insert_Should_FallBackToSync_When_QueueFails() throws Exception {
         when(async.sendPeopleInsertRequest(any())).thenThrow(new RuntimeException("mq down"));
         when(service.insertPerson(any())).thenReturn(new tw.com.tymbackend.module.people.domain.vo.People());
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void insert_Should_Return400_BeforeQueueing_When_NameBlank() throws Exception {
-        mvc.perform(post("/people/insert").with(user()).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        mvc.perform(post("/people/insert").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{}"))
                 .andExpect(status().isBadRequest());
         verify(async, never()).sendPeopleInsertRequest(any());
     }
@@ -73,14 +73,14 @@ class PeopleControllerAsyncWebTest {
     @Test
     void update_Should_Return202() throws Exception {
         when(async.sendPeopleUpdateRequest(any())).thenReturn("req-2");
-        mvc.perform(post("/people/update").with(user()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
+        mvc.perform(post("/people/update").with(admin()).contentType(MediaType.APPLICATION_JSON).content(PERSON))
                 .andExpect(status().isAccepted());
     }
 
     @Test
     void insertMultiple_Should_Return202() throws Exception {
         when(async.sendPeopleInsertMultipleRequest(any())).thenReturn("req-3");
-        mvc.perform(post("/people/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/people/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + PERSON + "]"))
                 .andExpect(status().isAccepted());
     }

@@ -41,7 +41,7 @@ class DiaryNarrativeControllerWebTest {
     @Test void wrongMissingOrJwtCredentialsCannotUseTheAgentEndpoints() throws Exception {
         mvc.perform(get("/diary/agent/work")).andExpect(status().isUnauthorized());
         mvc.perform(get("/diary/agent/work").header("X-Diary-Agent-Key", "wrong")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/diary/agent/work").with(user())).andExpect(status().isUnauthorized());
+        mvc.perform(get("/diary/agent/work").with(owner())).andExpect(status().isUnauthorized());
         mvc.perform(put("/diary/agent/narratives/entry/e1").header(INTERNAL_HEADER, INTERNAL_TOKEN).contentType("application/json").content("{}"))
             .andExpect(status().isUnauthorized());
         verifyNoInteractions(narratives);
@@ -55,7 +55,7 @@ class DiaryNarrativeControllerWebTest {
 
     @Test void ownerReadsNarrativesWithTheirJwt() throws Exception {
         when(narratives.view("user-sub")).thenReturn(new DiaryNarratives.View(Map.of(), List.of()));
-        mvc.perform(get("/diary/narratives").with(user())).andExpect(status().isOk())
+        mvc.perform(get("/diary/narratives").with(owner())).andExpect(status().isOk())
             .andExpect(header().string("Cache-Control", "no-store"));
         verify(narratives).view("user-sub");
     }

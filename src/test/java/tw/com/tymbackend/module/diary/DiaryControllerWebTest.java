@@ -33,18 +33,18 @@ class DiaryControllerWebTest {
 
     @Test void ownerComesOnlyFromVerifiedJwtAndPrivateResponsesAreNotCached() throws Exception {
         when(service.checkIn("user-sub")).thenReturn(new DiaryService.Reminder(false, "next", null, null));
-        mvc.perform(post("/diary/check-in").param("username", "someone-else").with(user()))
+        mvc.perform(post("/diary/check-in").param("username", "someone-else").with(owner()))
             .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"));
         verify(service).checkIn("user-sub");
         when(service.entry("user-sub", "other-entry")).thenReturn(Optional.empty());
-        mvc.perform(get("/diary/entries/other-entry").with(user())).andExpect(status().isNotFound());
+        mvc.perform(get("/diary/entries/other-entry").with(owner())).andExpect(status().isNotFound());
     }
 
     @Test void entriesWithoutDatesListRecentAndHalfARangeIsRejected() throws Exception {
         when(service.recent("user-sub", "all")).thenReturn(new DiaryService.Page(java.util.List.of(), false));
-        mvc.perform(get("/diary/entries").with(user())).andExpect(status().isOk());
+        mvc.perform(get("/diary/entries").with(owner())).andExpect(status().isOk());
         verify(service).recent("user-sub", "all");
-        mvc.perform(get("/diary/entries").param("from", "2026-10-01").with(user())).andExpect(status().isBadRequest());
+        mvc.perform(get("/diary/entries").param("from", "2026-10-01").with(owner())).andExpect(status().isBadRequest());
     }
 
     @Test void internalMachineTokenCannotImpersonateDiaryOwner() throws Exception {
@@ -55,7 +55,7 @@ class DiaryControllerWebTest {
     @Test void importUsesJwtSubjectAndReportsInvalidContentWithoutEchoingIt() throws Exception {
         when(service.importMarkdown(eq("user-sub"), any(), anyString(), anyString(), eq("general")))
             .thenThrow(new IllegalArgumentException("Markdown is required"));
-        mvc.perform(post("/diary/import").with(user()).contentType("application/json")
+        mvc.perform(post("/diary/import").with(owner()).contentType("application/json")
             .content("{\"entryDate\":\"2026-10-18\",\"title\":\"T\",\"markdown\":\" \"}"))
             .andExpect(status().isBadRequest()).andExpect(jsonPath("$.error").value("Markdown is required"));
     }

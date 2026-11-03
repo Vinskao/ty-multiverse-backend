@@ -80,6 +80,7 @@ class SecurityRulesWebTest {
     @MockBean EditContentService editContentService;
     @MockBean GalleryService galleryService;
     @MockBean LearnService learnService;
+    @MockBean tw.com.tymbackend.core.service.UserActivityReporter userActivityReporter;
     @MockBean PeopleService peopleService;
     @MockBean PeopleImageService peopleImageService;
     @MockBean WeaponDamageService weaponDamageService;
@@ -183,6 +184,55 @@ class SecurityRulesWebTest {
         assertThat(call(method, path, body, admin(), null)).isNotIn(401, 403);
     }
 
+    /**
+     * 2026-11-03: Keycloak self-registration is open and every new account is a plain member. A member may upload reports
+     * (maya-sawa) and take /learn, nothing else, so every write here needs the manage-users role (or the internal token).
+     */
+    @ParameterizedTest(name = "plain user {0} {1} -> 403")
+    @MethodSource("writeEndpoints")
+    void writeEndpoint_Should_Return403_When_PlainUser(String method, String path, String body) throws Exception {
+        assertThat(call(method, path, body, user(), null)).isEqualTo(403);
+    }
+
+    /** Anything the matrix does not name falls to the default rule, which is now owner-only (it used to be "any login"). */
+    static Stream<Arguments> ownerOnlyByDefault() {
+        return Stream.of(
+                ep("GET", "/diary/entries"), ep("GET", "/diary/context"), ep("POST", "/diary/check-in"),
+                ep("POST", "/ckeditor/save-content"), ep("GET", "/docs"), ep("GET", "/docs/api"),
+                ep("GET", "/auth/token-info"), ep("GET", "/auth/test-default"),            // debugging endpoints: not used by the site
+                ep("GET", "/some/route/nobody/listed"));
+    }
+
+    @ParameterizedTest(name = "plain user {0} {1} -> 403")
+    @MethodSource("ownerOnlyByDefault")
+    void unlistedEndpoint_Should_Return403_When_PlainUser(String method, String path, String body) throws Exception {
+        assertThat(call(method, path, body, user(), null)).isEqualTo(403);
+    }
+
+    @ParameterizedTest(name = "anonymous {0} {1} -> 401")
+    @MethodSource("ownerOnlyByDefault")
+    void unlistedEndpoint_Should_Return401_When_Anonymous(String method, String path, String body) throws Exception {
+        assertThat(call(method, path, body, null, null)).isEqualTo(401);
+    }
+
+    @ParameterizedTest(name = "admin {0} {1} -> not 401/403")
+    @MethodSource("ownerOnlyByDefault")
+    void unlistedEndpoint_Should_BeAllowed_When_Admin(String method, String path, String body) throws Exception {
+        assertThat(call(method, path, body, admin(), null)).isNotIn(401, 403);
+    }
+
+    /** Guest quizzes are gone: /learn needs a login (every registered member has one). */
+    static Stream<Arguments> formerGuestEndpoints() {
+        return Stream.of(ep("GET", "/learn/public/topics"), ep("POST", "/learn/public/topics/q/session"),
+                ep("POST", "/learn/public/topics/q/attempts"), ep("GET", "/learn/public/attempts"));
+    }
+
+    @ParameterizedTest(name = "anonymous {0} {1} -> 401")
+    @MethodSource("formerGuestEndpoints")
+    void learnGuestEndpoint_Should_Return401_When_Anonymous(String method, String path, String body) throws Exception {
+        assertThat(call(method, path, body, null, null)).isEqualTo(401);
+    }
+
     /** Endpoints that must work without credentials. */
     static Stream<Arguments> publicEndpoints() {
         return Stream.of(
@@ -195,7 +245,6 @@ class SecurityRulesWebTest {
                 ep("POST", "/gallery/getAll"), ep("POST", "/gallery/getById"),
                 ep("POST", "/ckeditor/get-content"),
                 ep("GET", "/resources/company-product-mapping"),
-                ep("GET", "/learn/public/topics"), ep("POST", "/learn/public/topics/q/session"),
                 ep("GET", "/ai-usage/daily"), ep("GET", "/ai-usage/monthly"), ep("GET", "/ai-usage/summary"),
                 ep("GET", "/ai-usage/overview"),
                 ep("GET", "/keycloak/redirect?code=x"));
@@ -210,15 +259,13 @@ class SecurityRulesWebTest {
     /** Endpoints that need a valid login but no particular role (rules that DO work today). */
     static Stream<Arguments> authenticatedOnlyEndpoints() {
         return Stream.of(
-                ep("GET", "/auth/user"), ep("GET", "/auth/token-info"), ep("GET", "/auth/test-default"),
+                ep("GET", "/auth/user"),
                 ep("POST", "/auth/test"), ep("POST", "/auth/logout-test?refreshToken=x"),
-                ep("GET", "/docs"), ep("GET", "/docs/api"),
                 ep("GET", "/learn/topics"), ep("GET", "/learn/quizzes"),
                 ep("POST", "/learn/topics/q/session"), ep("POST", "/learn/topics/q/session/answers"),
                 ep("POST", "/learn/topics/q/attempts"), ep("GET", "/learn/attempts/1/review"),
                 ep("GET", "/learn/topics/q/scorecard"), ep("GET", "/learn/attempts"), ep("GET", "/learn/profile"),
-                ep("GET", "/learn/topics/q/ranking"), ep("GET", "/learn/mentor/overview"),
-                ep("POST", "/ckeditor/save-content"));
+                ep("GET", "/learn/topics/q/ranking"), ep("GET", "/learn/mentor/overview"));
     }
 
     @ParameterizedTest(name = "anonymous {0} {1} -> 401")

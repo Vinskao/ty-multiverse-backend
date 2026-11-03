@@ -1,7 +1,9 @@
 package tw.com.tymbackend.module.learn.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -11,8 +13,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static tw.com.tymbackend.support.TestAuth.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 
 import tw.com.tymbackend.core.config.security.SecurityConfig;
+import tw.com.tymbackend.core.service.UserActivityReporter;
 import tw.com.tymbackend.module.learn.domain.dto.LearnDtos;
 import tw.com.tymbackend.module.learn.service.LearnService;
 import tw.com.tymbackend.support.SecuredWebSlice;
@@ -40,6 +45,9 @@ class LearnControllerWebTest {
     @MockBean
     private LearnService service;
 
+    @MockBean
+    private UserActivityReporter activity;
+
     @Test
     void topics_Should_ListForCurrentUser() throws Exception {
         when(service.listTopics(UID)).thenReturn(List.of());
@@ -47,42 +55,6 @@ class LearnControllerWebTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.success").value(true));
         verify(service).listTopics(UID);
-    }
-
-    @Test
-    void publicTopics_Should_UseNamespacedGuestIdentity() throws Exception {
-        when(service.listTopics("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab")).thenReturn(List.of());
-        mvc.perform(get("/learn/public/topics")
-                .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
-                .andExpect(status().isOk());
-        verify(service).listTopics("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab");
-    }
-
-    @Test
-    void publicTopics_Should_RejectMalformedGuestIdentity() throws Exception {
-        mvc.perform(get("/learn/public/topics").header("X-Learn-Guest-Id", "alice"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void publicSession_Should_CreateGuestAttempt() throws Exception {
-        mvc.perform(post("/learn/public/topics/q1/session")
-                .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
-                .andExpect(status().isOk());
-        verify(service).startOrResume("q1", "guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab", "訪客");
-    }
-
-    @Test
-    void publicSubmit_ShouldHideNamedLearnerRanking() throws Exception {
-        LearnDtos.Ranking ranking = new LearnDtos.Ranking("q1", "Quiz", 1, 1, 1.0, 1.0, 1,
-                List.of(new LearnDtos.RankingRow(1, "another-user-id", false, 1, 1.0, 1.0, 1, 1.0, null)));
-        LearnDtos.Review review = new LearnDtos.Review(3L, "q1", "Quiz", 1, 1, 10, null, List.of(), ranking);
-        when(service.submit(eq("q1"), eq("guest:f04a1da2-e305-4f17-a85e-f727cf52d3ab"), any())).thenReturn(review);
-
-        mvc.perform(post("/learn/public/topics/q1/attempts")
-                        .header("X-Learn-Guest-Id", "f04a1da2-e305-4f17-a85e-f727cf52d3ab"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.ranking").value((Object) null));
     }
 
     @Test
@@ -132,6 +104,49 @@ class LearnControllerWebTest {
         mvc.perform(post("/learn/topics/nope/attempts").with(user()))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("unknown quiz"));
+    }
+
+    // 2026-11-03: what each signed-in user does in /learn is written to the activity log (docs/USER_PERMISSIONS.md).
+    private static LearnDtos.Review reviewOf(long attemptId) {
+        return new LearnDtos.Review(attemptId, "q1", "Quiz", 7, 10, 30, null, List.of(), null);
+    }
+
+    @Test
+    void session_Should_ReportTheStartedRoundToTheActivityLog() throws Exception {
+        mvc.perform(post("/learn/topics/q1/session").with(user())).andExpect(status().isOk());
+        verify(activity).report(any(), eq("C"), eq("learn-session"), eq("q1"), any());
+    }
+
+    @Test
+    void submit_Should_ReportTheAttemptWithItsScore() throws Exception {
+        when(service.submit(eq("q1"), eq(UID), any())).thenReturn(reviewOf(5L));
+        mvc.perform(post("/learn/topics/q1/attempts").with(user())).andExpect(status().isOk());
+        @SuppressWarnings("unchecked")
+        ArgumentCaptor<Map<String, Object>> detail = ArgumentCaptor.forClass(Map.class);
+        verify(activity).report(any(), eq("C"), eq("learn-attempt"), eq("5"), detail.capture());
+        assertThat(detail.getValue()).containsEntry("quizId", "q1").containsEntry("score", 7).containsEntry("total", 10)
+                .containsEntry("seconds", 30);
+    }
+
+    @Test
+    void submit_Should_NotReportAnything_When_TheServiceRejectsTheInput() throws Exception {
+        when(service.submit(eq("q1"), eq(UID), any())).thenThrow(new IllegalArgumentException("unanswered"));
+        mvc.perform(post("/learn/topics/q1/attempts").with(user())).andExpect(status().isBadRequest());
+        verify(activity, never()).report(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void review_Should_ReportAReadOfTheAttempt() throws Exception {
+        when(service.review(9L, UID)).thenReturn(reviewOf(9L));
+        mvc.perform(get("/learn/attempts/9/review").with(user())).andExpect(status().isOk());
+        verify(activity).report(any(), eq("R"), eq("learn-review"), eq("9"), any());
+    }
+
+    @Test
+    void review_Should_NotReport_When_TheAttemptBelongsToSomeoneElse() throws Exception {
+        when(service.review(9L, UID)).thenThrow(new AccessDeniedException("not yours"));
+        mvc.perform(get("/learn/attempts/9/review").with(user())).andExpect(status().isForbidden());
+        verify(activity, never()).report(any(), any(), any(), any(), any());
     }
 
     @Test

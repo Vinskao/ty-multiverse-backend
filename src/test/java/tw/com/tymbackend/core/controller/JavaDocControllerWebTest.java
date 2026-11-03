@@ -3,6 +3,7 @@ package tw.com.tymbackend.core.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static tw.com.tymbackend.support.TestAuth.admin;
 import static tw.com.tymbackend.support.TestAuth.user;
 
 import org.junit.jupiter.api.Test;
@@ -24,14 +25,14 @@ class JavaDocControllerWebTest {
 
     @Test
     void docs_Should_RedirectToJavadocIndex() throws Exception {
-        mvc.perform(get("/docs").with(user()))
+        mvc.perform(get("/docs").with(admin()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/javadoc/index.html"));
     }
 
     @Test
     void docsApi_Should_RedirectToJavadocIndex() throws Exception {
-        mvc.perform(get("/docs/api").with(user()))
+        mvc.perform(get("/docs/api").with(admin()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/javadoc/index.html"));
     }

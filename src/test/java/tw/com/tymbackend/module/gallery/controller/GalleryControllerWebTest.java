@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static tw.com.tymbackend.support.TestAuth.admin;
 import static tw.com.tymbackend.support.TestAuth.user;
 
 import java.util.List;
@@ -83,7 +84,7 @@ class GalleryControllerWebTest {
     @Test
     void save_Should_Return200() throws Exception {
         when(service.saveImage(any())).thenReturn(gallery());
-        mvc.perform(post("/gallery/save").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/gallery/save").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"imageBase64\":\"AAAA\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(7));
@@ -92,7 +93,7 @@ class GalleryControllerWebTest {
     @Test
     void save_Should_Return500_When_ServiceFails() throws Exception {
         when(service.saveImage(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/gallery/save").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/gallery/save").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"imageBase64\":\"AAAA\"}"))
                 .andExpect(status().isInternalServerError());
     }
@@ -100,7 +101,7 @@ class GalleryControllerWebTest {
     @Test
     void update_Should_Return200() throws Exception {
         when(service.updateImage(7, "BBBB")).thenReturn(gallery());
-        mvc.perform(post("/gallery/update").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/gallery/update").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id\":7,\"imageBase64\":\"BBBB\"}"))
                 .andExpect(status().isOk());
         verify(service).updateImage(7, "BBBB");
@@ -109,14 +110,14 @@ class GalleryControllerWebTest {
     @Test
     void update_Should_Return404_When_ImageMissing() throws Exception {
         when(service.updateImage(any(), any())).thenThrow(new RuntimeException("not found"));
-        mvc.perform(post("/gallery/update").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/gallery/update").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id\":9,\"imageBase64\":\"BBBB\"}"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void delete_Should_Return204() throws Exception {
-        mvc.perform(post("/gallery/delete").with(user()).contentType(MediaType.APPLICATION_JSON).content("{\"id\":7}"))
+        mvc.perform(post("/gallery/delete").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{\"id\":7}"))
                 .andExpect(status().isNoContent());
         verify(service).deleteImage(7);
     }
@@ -124,7 +125,7 @@ class GalleryControllerWebTest {
     @Test
     void delete_Should_Return500_When_ServiceFails() throws Exception {
         doThrow(new RuntimeException("boom")).when(service).deleteImage(7);
-        mvc.perform(post("/gallery/delete").with(user()).contentType(MediaType.APPLICATION_JSON).content("{\"id\":7}"))
+        mvc.perform(post("/gallery/delete").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{\"id\":7}"))
                 .andExpect(status().isInternalServerError());
     }
 }

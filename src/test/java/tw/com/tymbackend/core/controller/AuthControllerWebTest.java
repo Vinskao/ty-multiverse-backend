@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static tw.com.tymbackend.support.TestAuth.owner;
 import static tw.com.tymbackend.support.TestAuth.admin;
 import static tw.com.tymbackend.support.TestAuth.user;
 
@@ -57,21 +58,21 @@ class AuthControllerWebTest {
 
     @Test
     void user_Should_GreetAuthenticatedUser() throws Exception {
-        mvc.perform(get("/auth/user").with(user()))
+        mvc.perform(get("/auth/user").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.user").value("user-sub"));
     }
 
     @Test
     void testDefault_Should_ReportAuthenticated() throws Exception {
-        mvc.perform(get("/auth/test-default").with(user()))
+        mvc.perform(get("/auth/test-default").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.authenticated").value(true));
     }
 
     @Test
     void tokenInfo_Should_ExposeJwtClaims() throws Exception {
-        mvc.perform(get("/auth/token-info").with(user()))
+        mvc.perform(get("/auth/token-info").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.token_type").value("JWT"))
                 .andExpect(jsonPath("$.data.claims.preferred_username").value("alice"));
@@ -80,7 +81,7 @@ class AuthControllerWebTest {
     @Test
     void authTest_Should_SkipServiceCall_When_CredentialsAreNotAString() throws Exception {
         // a JwtAuthenticationToken carries the Jwt object, not the raw token string
-        mvc.perform(post("/auth/test").with(user()))
+        mvc.perform(post("/auth/test").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.current_token_available").value(false));
         verify(authService, never()).performAuthTest(any(), any());
@@ -108,7 +109,7 @@ class AuthControllerWebTest {
     @Test
     void logoutTest_Should_Return200_When_ServiceSucceeds() throws Exception {
         when(authService.performLogoutTest("rt")).thenReturn(Map.of("logout_successful", true));
-        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(user()))
+        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.security_context_cleared").value(true));
     }
@@ -116,20 +117,20 @@ class AuthControllerWebTest {
     @Test
     void logoutTest_Should_NotClearContext_When_LogoutUnsuccessful() throws Exception {
         when(authService.performLogoutTest("rt")).thenReturn(Map.of("logout_successful", false));
-        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(user()))
+        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(owner()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.security_context_cleared").doesNotExist());
     }
 
     @Test
     void logoutTest_Should_Return400_When_RefreshTokenMissing() throws Exception {
-        mvc.perform(post("/auth/logout-test").with(user())).andExpect(status().isBadRequest());
+        mvc.perform(post("/auth/logout-test").with(owner())).andExpect(status().isBadRequest());
     }
 
     @Test
     void logoutTest_Should_Return500_When_ServiceFails() throws Exception {
         when(authService.performLogoutTest("rt")).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(user()))
+        mvc.perform(post("/auth/logout-test").param("refreshToken", "rt").with(owner()))
                 .andExpect(status().isInternalServerError());
     }
 

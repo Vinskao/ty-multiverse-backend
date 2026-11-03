@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static tw.com.tymbackend.support.TestAuth.admin;
 import static tw.com.tymbackend.support.TestAuth.user;
 
 import java.util.Optional;
@@ -63,7 +64,7 @@ class ErrorHandlingWebTest {
     void uncaughtBusinessException_Should_MapToItsErrorCodeStatus() throws Exception {
         when(weaponService.getWeaponById("Nope")).thenReturn(Optional.empty());
 
-        mvc.perform(put("/weapons/Nope/attributes").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Nope/attributes").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"attributes\":\"fire\"}"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.success").value(false))
@@ -72,7 +73,7 @@ class ErrorHandlingWebTest {
 
     @Test
     void malformedJson_Should_Return400() throws Exception {
-        mvc.perform(post("/weapons").with(user()).contentType(MediaType.APPLICATION_JSON).content("{bad"))
+        mvc.perform(post("/weapons").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{bad"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.success").value(false));
     }
@@ -94,16 +95,18 @@ class ErrorHandlingWebTest {
 
     @Test
     void methodSecurityDenial_Should_Return403_NotAdviceInducedFiveHundred() throws Exception {
+        // 2026-11-03: a plain user is now refused by the URL rule itself (default-deny), before method security runs, so there is no
+        // JSON body here. The original regression (an AccessDeniedException from @PreAuthorize becoming a 500) stays covered by
+        // SecurityRulesWebTest: "plain user GET /auth/admin -> 403".
         mvc.perform(get("/people-images").with(user()))
-                .andExpect(status().isForbidden())
-                .andExpect(jsonPath("$.success").value(false));
+                .andExpect(status().isForbidden());
     }
 
     @Test
     void unexpectedException_Should_Return500WithBackendApiResponseBody() throws Exception {
         when(weaponService.updateWeaponBaseDamage("Sword", 5)).thenThrow(new IllegalStateException("kaboom"));
 
-        mvc.perform(put("/weapons/Sword/base-damage").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/base-damage").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"baseDamage\":5}"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.success").value(false))

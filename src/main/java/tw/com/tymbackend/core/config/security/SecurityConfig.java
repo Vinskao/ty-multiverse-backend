@@ -140,9 +140,8 @@ public class SecurityConfig {
                 .requestMatchers("/keycloak/**").permitAll() // Keycloak 所有端点（包含 introspect）
                 .requestMatchers(HttpMethod.GET, "/resources/**").permitAll() // 研究區公開資料（公司產品 mapping）
 
-                // Public learning data is isolated by a validated guest UUID; mentor APIs remain private.
-                .requestMatchers("/learn/public/**").permitAll()
-                // Signed-in learning and mentor APIs require a valid JWT.
+                // /learn needs a login (2026-11-03: the guest quizzes are gone). Every registered member has one; the mentor
+                // endpoints are further restricted inside LearnController.
                 .requestMatchers("/learn/**").authenticated()
 
                 // ========================================
@@ -181,31 +180,31 @@ public class SecurityConfig {
                 // 否則由 oauth2ResourceServer 驗證瀏覽器帶來的 Keycloak JWT。
                 // ========================================
                 // People - 修改端点（查询端点已在上方放行）
-                .requestMatchers(HttpMethod.POST, "/people/insert").authenticated() // People 创建
-                .requestMatchers(HttpMethod.POST, "/people/insert-multiple").authenticated() // People 批量创建
-                .requestMatchers(HttpMethod.POST, "/people/update").authenticated() // People 更新
-                .requestMatchers(HttpMethod.POST, "/people/delete").authenticated() // People 删除
-                .requestMatchers(HttpMethod.PUT, "/people/**").authenticated() // People PUT 更新
-                .requestMatchers(HttpMethod.DELETE, "/people/**").authenticated() // People DELETE 删除
+                .requestMatchers(HttpMethod.POST, "/people/insert").hasRole("manage-users") // People 创建
+                .requestMatchers(HttpMethod.POST, "/people/insert-multiple").hasRole("manage-users") // People 批量创建
+                .requestMatchers(HttpMethod.POST, "/people/update").hasRole("manage-users") // People 更新
+                .requestMatchers(HttpMethod.POST, "/people/delete").hasRole("manage-users") // People 删除
+                .requestMatchers(HttpMethod.PUT, "/people/**").hasRole("manage-users") // People PUT 更新
+                .requestMatchers(HttpMethod.DELETE, "/people/**").hasRole("manage-users") // People DELETE 删除
 
                 // Weapons - 修改端点
-                .requestMatchers(HttpMethod.POST, "/weapons/**").authenticated() // Weapon 创建
-                .requestMatchers(HttpMethod.PUT, "/weapons/**").authenticated() // Weapon 更新
-                .requestMatchers(HttpMethod.DELETE, "/weapons/**").authenticated() // Weapon 删除
+                .requestMatchers(HttpMethod.POST, "/weapons/**").hasRole("manage-users") // Weapon 创建
+                .requestMatchers(HttpMethod.PUT, "/weapons/**").hasRole("manage-users") // Weapon 更新
+                .requestMatchers(HttpMethod.DELETE, "/weapons/**").hasRole("manage-users") // Weapon 删除
 
                 // API - 修改端点
-                .requestMatchers(HttpMethod.POST, "/api/**").authenticated() // Async API 创建
-                .requestMatchers(HttpMethod.PUT, "/api/**").authenticated() // Async API 更新
-                .requestMatchers(HttpMethod.DELETE, "/api/**").authenticated() // Async API 删除
+                .requestMatchers(HttpMethod.POST, "/api/**").hasRole("manage-users") // Async API 创建
+                .requestMatchers(HttpMethod.PUT, "/api/**").hasRole("manage-users") // Async API 更新
+                .requestMatchers(HttpMethod.DELETE, "/api/**").hasRole("manage-users") // Async API 删除
 
                 // People Images - 修改端点
-                .requestMatchers(HttpMethod.POST, "/people-images/**").authenticated() // People Images 创建
-                .requestMatchers(HttpMethod.PUT, "/people-images/**").authenticated() // People Images 更新
-                .requestMatchers(HttpMethod.DELETE, "/people-images/**").authenticated() // People Images 删除
+                .requestMatchers(HttpMethod.POST, "/people-images/**").hasRole("manage-users") // People Images 创建
+                .requestMatchers(HttpMethod.PUT, "/people-images/**").hasRole("manage-users") // People Images 更新
+                .requestMatchers(HttpMethod.DELETE, "/people-images/**").hasRole("manage-users") // People Images 删除
 
-                .requestMatchers(HttpMethod.POST, "/gallery/save").authenticated() // Gallery 儲存
-                .requestMatchers(HttpMethod.POST, "/gallery/update").authenticated() // Gallery 更新
-                .requestMatchers(HttpMethod.POST, "/gallery/delete").authenticated() // Gallery 删除
+                .requestMatchers(HttpMethod.POST, "/gallery/save").hasRole("manage-users") // Gallery 儲存
+                .requestMatchers(HttpMethod.POST, "/gallery/update").hasRole("manage-users") // Gallery 更新
+                .requestMatchers(HttpMethod.POST, "/gallery/delete").hasRole("manage-users") // Gallery 删除
 
                 // ========================================
                 // 认证端点：需要认证用户
@@ -221,7 +220,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/ai-usage/**").permitAll() // AI usage dashboard summary
                 .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
                 .requestMatchers("/diary/agent/**").permitAll() // Checked by DiaryNarrativeController against the diary agent key hash
-                .anyRequest().authenticated())
+                // 2026-11-03: default-deny. Keycloak self-registration is open and a new account is a plain "member", who may
+                // upload reports (maya-sawa) and take /learn, nothing else. Anything not listed above is owner-only.
+                .anyRequest().hasRole("manage-users"))
 
                 // OAuth2 Resource Server：JWT Token 验证
                 .oauth2ResourceServer(oauth2 -> oauth2

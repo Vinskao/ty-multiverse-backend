@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static tw.com.tymbackend.support.TestAuth.admin;
 import static tw.com.tymbackend.support.TestAuth.user;
 
 import java.util.Optional;
@@ -55,7 +56,7 @@ class FileUploadControllerWebTest {
     @Test
     void save_Should_Persist_When_ContentChanged() throws Exception {
         when(service.getContent("main")).thenReturn(stored("old"));
-        mvc.perform(post("/ckeditor/save-content").with(user()).contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mvc.perform(post("/ckeditor/save-content").with(admin()).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Content saved successfully!"));
         verify(service).saveContent(any());
@@ -64,7 +65,7 @@ class FileUploadControllerWebTest {
     @Test
     void save_Should_Skip_When_ContentUnchanged() throws Exception {
         when(service.getContent("main")).thenReturn(stored("hello"));
-        mvc.perform(post("/ckeditor/save-content").with(user()).contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mvc.perform(post("/ckeditor/save-content").with(admin()).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isOk())
                 .andExpect(content().string("No changes detected. Draft saved to session."));
         verify(service, never()).saveContent(any());
@@ -73,7 +74,7 @@ class FileUploadControllerWebTest {
     @Test
     void save_Should_Create_When_NoContentFoundYet() throws Exception {
         when(service.getContent("main")).thenThrow(new RuntimeException("No content found for main"));
-        mvc.perform(post("/ckeditor/save-content").with(user()).contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mvc.perform(post("/ckeditor/save-content").with(admin()).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Content created successfully!"));
         verify(service).saveContent(any());
@@ -82,7 +83,7 @@ class FileUploadControllerWebTest {
     @Test
     void save_Should_Return500_When_OtherRuntimeError() throws Exception {
         when(service.getContent("main")).thenThrow(new RuntimeException("db down"));
-        mvc.perform(post("/ckeditor/save-content").with(user()).contentType(MediaType.APPLICATION_JSON).content(BODY))
+        mvc.perform(post("/ckeditor/save-content").with(admin()).contentType(MediaType.APPLICATION_JSON).content(BODY))
                 .andExpect(status().isInternalServerError());
     }
 

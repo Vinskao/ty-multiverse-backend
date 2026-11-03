@@ -1,8 +1,8 @@
 package tw.com.tymbackend.module.learn.controller;
 
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -14,92 +14,29 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
 import tw.com.ty.common.response.BackendApiResponse;
+import tw.com.tymbackend.core.service.UserActivityReporter;
 import tw.com.tymbackend.module.learn.domain.dto.LearnDtos;
 import tw.com.tymbackend.module.learn.service.LearnService;
 
 /**
- * Answering-phase endpoints ({@code /session}, {@code /session/answers}) never return correctness
+ * Every endpoint needs a login: the guest quizzes ({@code /learn/public/**}) were removed on 2026-11-03.
+ *
+ * <p>Answering-phase endpoints ({@code /session}, {@code /session/answers}) never return correctness
  * data; review-phase endpoints ({@code /review}, {@code /scorecard}) require a submitted attempt.
  */
 @RestController
 @RequestMapping("/learn")
 public class LearnController {
-    private static final String GUEST_HEADER = "X-Learn-Guest-Id";
     private final LearnService service;
+    private final UserActivityReporter activity;
 
-    public LearnController(LearnService service) {
+    public LearnController(LearnService service, UserActivityReporter activity) {
         this.service = service;
-    }
-
-    /** Public learning is available without an account. Guest progress is namespaced and keyed by a browser UUID. */
-    @GetMapping("/public/topics")
-    public ResponseEntity<BackendApiResponse<List<LearnDtos.TopicSummary>>> publicTopics(
-            @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
-        String userId = guestUserId(guestId);
-        return ResponseEntity.ok(BackendApiResponse.success("topics", service.listTopics(userId)));
-    }
-
-    @PostMapping("/public/topics/{quizId}/session")
-    public ResponseEntity<BackendApiResponse<LearnDtos.Session>> publicSession(
-            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
-        String userId = guestUserId(guestId);
-        return ResponseEntity.ok(BackendApiResponse.success("start learning",
-                service.startOrResume(quizId, userId, "訪客")));
-    }
-
-    @PostMapping("/public/topics/{quizId}/session/answers")
-    public ResponseEntity<BackendApiResponse<LearnDtos.AnswerAck>> publicAnswer(
-            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId,
-            @RequestBody @Valid LearnDtos.AnswerInput input) {
-        return ResponseEntity.ok(BackendApiResponse.success("saved",
-                service.saveAnswer(quizId, guestUserId(guestId), input)));
-    }
-
-    @PostMapping("/public/topics/{quizId}/attempts")
-    public ResponseEntity<BackendApiResponse<LearnDtos.Review>> publicSubmit(
-            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId,
-            @RequestBody(required = false) LearnDtos.Submission submission) {
-        return ResponseEntity.ok(BackendApiResponse.success("submitted",
-                withoutRanking(service.submit(quizId, guestUserId(guestId), submission))));
-    }
-
-    @GetMapping("/public/attempts/{attemptId}/review")
-    public ResponseEntity<BackendApiResponse<LearnDtos.Review>> publicReview(
-            @PathVariable Long attemptId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
-        return ResponseEntity.ok(BackendApiResponse.success("review",
-                withoutRanking(service.review(attemptId, guestUserId(guestId)))));
-    }
-
-    @GetMapping("/public/topics/{quizId}/scorecard")
-    public ResponseEntity<BackendApiResponse<LearnDtos.Scorecard>> publicScorecard(
-            @PathVariable String quizId, @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
-        return ResponseEntity.ok(BackendApiResponse.success("scorecard",
-                service.scorecard(quizId, guestUserId(guestId))));
-    }
-
-    @GetMapping("/public/attempts")
-    public ResponseEntity<BackendApiResponse<List<LearnDtos.AttemptSummary>>> publicHistory(
-            @RequestHeader(value = GUEST_HEADER, required = false) String guestId) {
-        return ResponseEntity.ok(BackendApiResponse.success("history", service.history(guestUserId(guestId))));
-    }
-
-    private LearnDtos.Review withoutRanking(LearnDtos.Review review) {
-        return new LearnDtos.Review(review.attemptId(), review.quizId(), review.quizTitle(), review.score(),
-                review.totalQuestions(), review.durationSeconds(), review.submittedAt(), review.items(), null);
-    }
-
-    private String guestUserId(String raw) {
-        if (raw == null || raw.isBlank()) throw new IllegalArgumentException("A valid guest ID is required");
-        try {
-            return "guest:" + UUID.fromString(raw.trim()).toString().toLowerCase(Locale.ROOT);
-        } catch (IllegalArgumentException exception) {
-            throw new IllegalArgumentException("A valid guest ID is required");
-        }
+        this.activity = activity;
     }
 
     /** Sidebar: every topic plus this candidate's progress on it. */
@@ -118,8 +55,9 @@ public class LearnController {
     @PostMapping("/topics/{quizId}/session")
     public ResponseEntity<BackendApiResponse<LearnDtos.Session>> session(
             @PathVariable String quizId, Authentication authentication) {
-        return ResponseEntity.ok(BackendApiResponse.success("開始作答",
-            service.startOrResume(quizId, authentication.getName(), displayName(authentication))));
+        var session = service.startOrResume(quizId, authentication.getName(), displayName(authentication));
+        activity.report(authentication, "C", "learn-session", quizId, Map.of());
+        return ResponseEntity.ok(BackendApiResponse.success("開始作答", session));
     }
 
     /** Autosaves one choice mid-round. */
@@ -136,15 +74,24 @@ public class LearnController {
     public ResponseEntity<BackendApiResponse<LearnDtos.Review>> submit(
             @PathVariable String quizId, Authentication authentication,
             @RequestBody(required = false) LearnDtos.Submission submission) {
-        return ResponseEntity.ok(BackendApiResponse.success("作答完成",
-            service.submit(quizId, authentication.getName(), submission)));
+        var review = service.submit(quizId, authentication.getName(), submission);
+        if (review != null) {
+            Map<String, Object> detail = new LinkedHashMap<>();
+            detail.put("quizId", quizId);
+            detail.put("score", review.score());
+            detail.put("total", review.totalQuestions());
+            detail.put("seconds", review.durationSeconds());
+            activity.report(authentication, "C", "learn-attempt", String.valueOf(review.attemptId()), detail);
+        }
+        return ResponseEntity.ok(BackendApiResponse.success("作答完成", review));
     }
 
     @GetMapping("/attempts/{attemptId}/review")
     public ResponseEntity<BackendApiResponse<LearnDtos.Review>> review(
             @PathVariable Long attemptId, Authentication authentication) {
-        return ResponseEntity.ok(BackendApiResponse.success("檢討",
-            service.review(attemptId, authentication.getName())));
+        var review = service.review(attemptId, authentication.getName());
+        activity.report(authentication, "R", "learn-review", String.valueOf(attemptId), Map.of());
+        return ResponseEntity.ok(BackendApiResponse.success("檢討", review));
     }
 
     /** Cumulative per-question tally across every completed round of a topic. */

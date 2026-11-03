@@ -115,7 +115,7 @@ class WeaponControllerWebTest {
     @Test
     void save_Should_Return200_When_JwtUser() throws Exception {
         when(service.saveWeaponSmart(any())).thenReturn(weapon("Sword"));
-        mvc.perform(post("/weapons").with(user()).contentType(MediaType.APPLICATION_JSON).content(WEAPON_JSON))
+        mvc.perform(post("/weapons").with(admin()).contentType(MediaType.APPLICATION_JSON).content(WEAPON_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.weapon").value("Sword"));
     }
@@ -123,13 +123,13 @@ class WeaponControllerWebTest {
     @Test
     void save_Should_Return500_When_ServiceFails() throws Exception {
         when(service.saveWeaponSmart(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/weapons").with(user()).contentType(MediaType.APPLICATION_JSON).content(WEAPON_JSON))
+        mvc.perform(post("/weapons").with(admin()).contentType(MediaType.APPLICATION_JSON).content(WEAPON_JSON))
                 .andExpect(status().isInternalServerError());
     }
 
     @Test
     void save_Should_Return400_When_BodyMalformed() throws Exception {
-        mvc.perform(post("/weapons").with(user()).contentType(MediaType.APPLICATION_JSON).content("{bad"))
+        mvc.perform(post("/weapons").with(admin()).contentType(MediaType.APPLICATION_JSON).content("{bad"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -138,14 +138,14 @@ class WeaponControllerWebTest {
     @Test
     void insertMultiple_Should_Return201_When_Valid() throws Exception {
         when(service.saveAllWeapons(any())).thenReturn(List.of(weapon("Sword")));
-        mvc.perform(post("/weapons/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/weapons/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + WEAPON_JSON + "]"))
                 .andExpect(status().isCreated());
     }
 
     @Test
     void insertMultiple_Should_Return400_When_ListEmpty() throws Exception {
-        mvc.perform(post("/weapons/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/weapons/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[]"))
                 .andExpect(status().isBadRequest());
         verify(service, never()).saveAllWeapons(any());
@@ -154,7 +154,7 @@ class WeaponControllerWebTest {
     @Test
     void insertMultiple_Should_Return400_When_ServiceRejectsInput() throws Exception {
         when(service.saveAllWeapons(any())).thenThrow(new IllegalArgumentException("dup"));
-        mvc.perform(post("/weapons/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/weapons/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + WEAPON_JSON + "]"))
                 .andExpect(status().isBadRequest());
     }
@@ -162,7 +162,7 @@ class WeaponControllerWebTest {
     @Test
     void insertMultiple_Should_Return500_When_ServiceFails() throws Exception {
         when(service.saveAllWeapons(any())).thenThrow(new RuntimeException("boom"));
-        mvc.perform(post("/weapons/insert-multiple").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/weapons/insert-multiple").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("[" + WEAPON_JSON + "]"))
                 .andExpect(status().isInternalServerError());
     }
@@ -171,14 +171,14 @@ class WeaponControllerWebTest {
 
     @Test
     void delete_Should_Return204_When_JwtUser() throws Exception {
-        mvc.perform(delete("/weapons/Sword").with(user())).andExpect(status().isNoContent());
+        mvc.perform(delete("/weapons/Sword").with(admin())).andExpect(status().isNoContent());
         verify(service).deleteWeapon("Sword");
     }
 
     @Test
     void delete_Should_Return500_When_ServiceFails() throws Exception {
         doThrow(new RuntimeException("boom")).when(service).deleteWeapon("Sword");
-        mvc.perform(delete("/weapons/Sword").with(user())).andExpect(status().isInternalServerError());
+        mvc.perform(delete("/weapons/Sword").with(admin())).andExpect(status().isInternalServerError());
     }
 
     // ---- DELETE /weapons/delete-all -----------------------------------
@@ -211,7 +211,7 @@ class WeaponControllerWebTest {
     void updateAttributes_Should_Return200_When_Found() throws Exception {
         when(service.getWeaponById("Sword")).thenReturn(Optional.of(weapon("Sword")));
         when(service.updateWeaponAttributes(eq("Sword"), any())).thenReturn(weapon("Sword"));
-        mvc.perform(put("/weapons/Sword/attributes").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/attributes").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"attributes\":\"fire\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.weapon").value("Sword"));
@@ -220,7 +220,7 @@ class WeaponControllerWebTest {
     @Test
     void updateBaseDamage_Should_Return200() throws Exception {
         when(service.updateWeaponBaseDamage("Sword", 5)).thenReturn(weapon("Sword"));
-        mvc.perform(put("/weapons/Sword/base-damage").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/base-damage").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"baseDamage\":5}"))
                 .andExpect(status().isOk());
         verify(service).updateWeaponBaseDamage("Sword", 5);
@@ -229,7 +229,7 @@ class WeaponControllerWebTest {
     @Test
     void updateBonusDamage_Should_Return200() throws Exception {
         when(service.updateWeaponBonusDamage("Sword", 7)).thenReturn(weapon("Sword"));
-        mvc.perform(put("/weapons/Sword/bonus-damage").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/bonus-damage").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"bonusDamage\":7}"))
                 .andExpect(status().isOk());
         verify(service).updateWeaponBonusDamage("Sword", 7);
@@ -238,7 +238,7 @@ class WeaponControllerWebTest {
     @Test
     void updateBonusAttributes_Should_Return200() throws Exception {
         when(service.updateWeaponBonusAttributes("Sword", List.of("a"))).thenReturn(weapon("Sword"));
-        mvc.perform(put("/weapons/Sword/bonus-attributes").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/bonus-attributes").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"bonusAttributes\":[\"a\"]}"))
                 .andExpect(status().isOk());
     }
@@ -246,7 +246,7 @@ class WeaponControllerWebTest {
     @Test
     void updateStateAttributes_Should_Return200() throws Exception {
         when(service.updateWeaponStateAttributes("Sword", List.of("s"))).thenReturn(weapon("Sword"));
-        mvc.perform(put("/weapons/Sword/state-attributes").with(user()).contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(put("/weapons/Sword/state-attributes").with(admin()).contentType(MediaType.APPLICATION_JSON)
                 .content("{\"stateAttributes\":[\"s\"]}"))
                 .andExpect(status().isOk());
     }
