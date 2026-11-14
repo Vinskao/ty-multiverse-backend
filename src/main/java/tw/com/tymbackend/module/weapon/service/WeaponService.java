@@ -280,8 +280,7 @@ public class WeaponService {
             specs.add((root, query, cb) -> cb.like(root.get("attributes"), "%" + attribute + "%"));
         }
         
-        Specification<Weapon> combinedSpec = specs.stream()
-            .reduce(Specification.where(null), Specification::and);
+        Specification<Weapon> combinedSpec = Specification.allOf(specs);
             
         return weaponRepository.findAll(combinedSpec);
     }

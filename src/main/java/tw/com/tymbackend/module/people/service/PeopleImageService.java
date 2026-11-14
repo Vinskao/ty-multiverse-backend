@@ -126,8 +126,7 @@ public class PeopleImageService {
      * @return 符合所有條件的角色頭像列表
      */
     public List<PeopleImage> findByMultipleSpecifications(List<Specification<PeopleImage>> specs) {
-        Specification<PeopleImage> combinedSpec = specs.stream()
-            .reduce(Specification.where(null), Specification::and);
+        Specification<PeopleImage> combinedSpec = Specification.allOf(specs);
         return peopleImageRepository.findAll(combinedSpec);
     }
 
