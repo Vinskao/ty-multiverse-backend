@@ -345,9 +345,9 @@ management:
       probes:
         enabled: true
     metrics:
-      enabled: true
+      access: unrestricted
     prometheus:
-      enabled: true
+      access: unrestricted
   metrics:
     tags:
       application: ${spring.application.name:tym-backend}
