@@ -279,10 +279,10 @@ class SecurityRulesWebTest {
     }
 
     @org.junit.jupiter.api.Test
-    void aiUsageReadsRequireOwner() throws Exception {
+    void aiUsageReadsArePublic() throws Exception {
         for (String path : new String[]{"/ai-usage/daily", "/ai-usage/monthly", "/ai-usage/summary", "/ai-usage/overview"}) {
-            assertThat(call("GET", path, null, null, null)).isEqualTo(401);
-            assertThat(call("GET", path, null, user(), null)).isEqualTo(403);
+            assertThat(call("GET", path, null, null, null)).isNotIn(401, 403);
+            assertThat(call("GET", path, null, user(), null)).isNotIn(401, 403);
             assertThat(call("GET", path, null, admin(), null)).isNotIn(401, 403);
         }
     }
