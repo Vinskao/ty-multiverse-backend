@@ -217,7 +217,7 @@ public class SecurityConfig {
                 // ========================================
                 // 默认规则：所有未匹配的请求都需要认证
                 // ========================================
-                .requestMatchers(HttpMethod.GET, "/ai-usage/**").permitAll() // AI usage dashboard summary
+                .requestMatchers(HttpMethod.GET, "/ai-usage/**").hasRole("manage-users") // Owner-only operational metrics
                 .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
                 .requestMatchers("/diary/agent/**").permitAll() // Checked by DiaryNarrativeController against the diary agent key hash
                 // 2026-11-03: default-deny. Keycloak self-registration is open and a new account is a plain "member", who may

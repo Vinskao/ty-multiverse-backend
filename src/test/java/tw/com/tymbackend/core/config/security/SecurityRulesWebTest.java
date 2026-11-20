@@ -245,8 +245,6 @@ class SecurityRulesWebTest {
                 ep("POST", "/gallery/getAll"), ep("POST", "/gallery/getById"),
                 ep("POST", "/ckeditor/get-content"),
                 ep("GET", "/resources/company-product-mapping"),
-                ep("GET", "/ai-usage/daily"), ep("GET", "/ai-usage/monthly"), ep("GET", "/ai-usage/summary"),
-                ep("GET", "/ai-usage/overview"),
                 ep("GET", "/keycloak/redirect?code=x"));
     }
 
@@ -278,5 +276,14 @@ class SecurityRulesWebTest {
     @MethodSource("authenticatedOnlyEndpoints")
     void loginRequiredEndpoint_Should_BeAllowed_When_AnyAuthenticatedUser(String method, String path, String body) throws Exception {
         assertThat(call(method, path, body, user(), null)).isNotIn(401, 403);
+    }
+
+    @org.junit.jupiter.api.Test
+    void aiUsageReadsRequireOwner() throws Exception {
+        for (String path : new String[]{"/ai-usage/daily", "/ai-usage/monthly", "/ai-usage/summary", "/ai-usage/overview"}) {
+            assertThat(call("GET", path, null, null, null)).isEqualTo(401);
+            assertThat(call("GET", path, null, user(), null)).isEqualTo(403);
+            assertThat(call("GET", path, null, admin(), null)).isNotIn(401, 403);
+        }
     }
 }
