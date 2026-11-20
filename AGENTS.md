@@ -370,3 +370,5 @@ kubectl exec keycloak-559994d657-m8t7q -- \
   /opt/keycloak/bin/kcadm.sh update users/<USER_ID> -r PeopleSystem \
     -s 'requiredActions=["CONFIGURE_TOTP"]'
 ```
+
+產品資料完整性與公開 BPMN：[開發方法](docs/PRODUCT_INTEGRITY.md)。

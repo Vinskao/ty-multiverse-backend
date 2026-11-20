@@ -112,6 +112,12 @@ spec:
             cpu: "500m"      # 提升 CPU 限制以加快啟動
             memory: "1Gi"  # 限制最多 1GB 記憶體
         env:
+        - name: TELEGRAM_BOT_TOKEN
+          valueFrom:
+            secretKeyRef: {name: telegram-notify, key: TELEGRAM_BOT_TOKEN, optional: true}
+        - name: TELEGRAM_CHAT_ID
+          valueFrom:
+            secretKeyRef: {name: telegram-notify, key: TELEGRAM_CHAT_ID, optional: true}
         - name: SERVER_PORT
           valueFrom:
             configMapKeyRef:

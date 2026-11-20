@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+  xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_TY" targetNamespace="https://tymultiverse.cc/business-processes">
+  <bpmn:process id="TYBackend" name="TY Backend business processes" isExecutable="false">
+    <bpmn:startEvent id="access_start" name="登入或驗證請求"/>
+    <bpmn:task id="access_task" name="Keycloak 驗證身分與權限"/>
+    <bpmn:endEvent id="access_end" name="提供工作階段或拒絕請求"/>
+    <bpmn:sequenceFlow id="access_1" sourceRef="access_start" targetRef="access_task"/>
+    <bpmn:sequenceFlow id="access_2" sourceRef="access_task" targetRef="access_end"/>
+    <bpmn:startEvent id="people_start" name="角色與圖片請求"/>
+    <bpmn:task id="people_task" name="查詢、驗證或更新角色與圖片資料"/>
+    <bpmn:endEvent id="people_end" name="回傳結果"/>
+    <bpmn:sequenceFlow id="people_1" sourceRef="people_start" targetRef="people_task"/>
+    <bpmn:sequenceFlow id="people_2" sourceRef="people_task" targetRef="people_end"/>
+    <bpmn:startEvent id="weapons_start" name="武器或傷害請求"/>
+    <bpmn:task id="weapons_task" name="讀取或更新武器屬性，或計算搭配傷害"/>
+    <bpmn:endEvent id="weapons_end" name="回傳結果"/>
+    <bpmn:sequenceFlow id="weapons_1" sourceRef="weapons_start" targetRef="weapons_task"/>
+    <bpmn:sequenceFlow id="weapons_2" sourceRef="weapons_task" targetRef="weapons_end"/>
+    <bpmn:startEvent id="gallery_start" name="畫廊請求"/>
+    <bpmn:task id="gallery_task" name="查詢或維護畫廊項目"/>
+    <bpmn:endEvent id="gallery_end" name="回傳結果"/>
+    <bpmn:sequenceFlow id="gallery_1" sourceRef="gallery_start" targetRef="gallery_task"/>
+    <bpmn:sequenceFlow id="gallery_2" sourceRef="gallery_task" targetRef="gallery_end"/>
+    <bpmn:startEvent id="editor_start" name="編輯器請求"/>
+    <bpmn:task id="editor_task" name="讀取或儲存編輯器內容"/>
+    <bpmn:endEvent id="editor_end" name="回傳結果"/>
+    <bpmn:sequenceFlow id="editor_1" sourceRef="editor_start" targetRef="editor_task"/>
+    <bpmn:sequenceFlow id="editor_2" sourceRef="editor_task" targetRef="editor_end"/>
+    <bpmn:startEvent id="resources_start" name="研究資料請求"/>
+    <bpmn:task id="resources_task" name="載入公司與產品對照"/>
+    <bpmn:endEvent id="resources_end" name="回傳對照資料"/>
+    <bpmn:sequenceFlow id="resources_1" sourceRef="resources_start" targetRef="resources_task"/>
+    <bpmn:sequenceFlow id="resources_2" sourceRef="resources_task" targetRef="resources_end"/>
+    <bpmn:startEvent id="learning_start" name="學習活動"/>
+    <bpmn:task id="learning_task" name="開始測驗工作階段，保存作答，提交並計分"/>
+    <bpmn:endEvent id="learning_end" name="顯示檢討、成績或排行"/>
+    <bpmn:sequenceFlow id="learning_1" sourceRef="learning_start" targetRef="learning_task"/>
+    <bpmn:sequenceFlow id="learning_2" sourceRef="learning_task" targetRef="learning_end"/>
+    <bpmn:startEvent id="diary_start" name="日記與提醒"/>
+    <bpmn:task id="diary_task" name="記錄事件，排程提醒，讀取或保存敘事"/>
+    <bpmn:endEvent id="diary_end" name="回傳日記結果"/>
+    <bpmn:sequenceFlow id="diary_1" sourceRef="diary_start" targetRef="diary_task"/>
+    <bpmn:sequenceFlow id="diary_2" sourceRef="diary_task" targetRef="diary_end"/>
+    <bpmn:startEvent id="usage_start" name="AI 用量事件或查詢"/>
+    <bpmn:task id="usage_task" name="驗證用量寫入或聚合每日及每月資料"/>
+    <bpmn:endEvent id="usage_end" name="回傳統計"/>
+    <bpmn:sequenceFlow id="usage_1" sourceRef="usage_start" targetRef="usage_task"/>
+    <bpmn:sequenceFlow id="usage_2" sourceRef="usage_task" targetRef="usage_end"/>
+    <bpmn:startEvent id="maintenance_start" name="系統排程"/>
+    <bpmn:task id="maintenance_task" name="清理、備份、健康檢查與指標匯出"/>
+    <bpmn:endEvent id="maintenance_end" name="記錄結果"/>
+    <bpmn:sequenceFlow id="maintenance_1" sourceRef="maintenance_start" targetRef="maintenance_task"/>
+    <bpmn:sequenceFlow id="maintenance_2" sourceRef="maintenance_task" targetRef="maintenance_end"/>
+    <bpmn:startEvent id="integrity_start" name="每週台北時間週一十一點"/>
+    <bpmn:task id="integrity_task" name="讀取五年資料並檢查各序列的日期跨度"/>
+    <bpmn:endEvent id="integrity_end" name="有異常時以 Telegram 通知"/>
+    <bpmn:sequenceFlow id="integrity_1" sourceRef="integrity_start" targetRef="integrity_task"/>
+    <bpmn:sequenceFlow id="integrity_2" sourceRef="integrity_task" targetRef="integrity_end"/>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="Diagram_TY">
+    <bpmndi:BPMNPlane id="Plane_TY" bpmnElement="TYBackend">
+      <bpmndi:BPMNShape id="access_start_di" bpmnElement="access_start">
+        <dc:Bounds x="65" y="42" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="access_task_di" bpmnElement="access_task">
+        <dc:Bounds x="210" y="22" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="access_end_di" bpmnElement="access_end">
+        <dc:Bounds x="620" y="42" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="access_1_di" bpmnElement="access_1">
+        <di:waypoint x="101" y="60"/><di:waypoint x="210" y="60"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="access_2_di" bpmnElement="access_2">
+        <di:waypoint x="510" y="60"/><di:waypoint x="620" y="60"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="people_start_di" bpmnElement="people_start">
+        <dc:Bounds x="65" y="168" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="people_task_di" bpmnElement="people_task">
+        <dc:Bounds x="210" y="148" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="people_end_di" bpmnElement="people_end">
+        <dc:Bounds x="620" y="168" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="people_1_di" bpmnElement="people_1">
+        <di:waypoint x="101" y="186"/><di:waypoint x="210" y="186"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="people_2_di" bpmnElement="people_2">
+        <di:waypoint x="510" y="186"/><di:waypoint x="620" y="186"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="weapons_start_di" bpmnElement="weapons_start">
+        <dc:Bounds x="65" y="294" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="weapons_task_di" bpmnElement="weapons_task">
+        <dc:Bounds x="210" y="274" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="weapons_end_di" bpmnElement="weapons_end">
+        <dc:Bounds x="620" y="294" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="weapons_1_di" bpmnElement="weapons_1">
+        <di:waypoint x="101" y="312"/><di:waypoint x="210" y="312"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="weapons_2_di" bpmnElement="weapons_2">
+        <di:waypoint x="510" y="312"/><di:waypoint x="620" y="312"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="gallery_start_di" bpmnElement="gallery_start">
+        <dc:Bounds x="65" y="420" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="gallery_task_di" bpmnElement="gallery_task">
+        <dc:Bounds x="210" y="400" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="gallery_end_di" bpmnElement="gallery_end">
+        <dc:Bounds x="620" y="420" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="gallery_1_di" bpmnElement="gallery_1">
+        <di:waypoint x="101" y="438"/><di:waypoint x="210" y="438"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="gallery_2_di" bpmnElement="gallery_2">
+        <di:waypoint x="510" y="438"/><di:waypoint x="620" y="438"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="editor_start_di" bpmnElement="editor_start">
+        <dc:Bounds x="65" y="546" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="editor_task_di" bpmnElement="editor_task">
+        <dc:Bounds x="210" y="526" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="editor_end_di" bpmnElement="editor_end">
+        <dc:Bounds x="620" y="546" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="editor_1_di" bpmnElement="editor_1">
+        <di:waypoint x="101" y="564"/><di:waypoint x="210" y="564"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="editor_2_di" bpmnElement="editor_2">
+        <di:waypoint x="510" y="564"/><di:waypoint x="620" y="564"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="resources_start_di" bpmnElement="resources_start">
+        <dc:Bounds x="65" y="672" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="resources_task_di" bpmnElement="resources_task">
+        <dc:Bounds x="210" y="652" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="resources_end_di" bpmnElement="resources_end">
+        <dc:Bounds x="620" y="672" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="resources_1_di" bpmnElement="resources_1">
+        <di:waypoint x="101" y="690"/><di:waypoint x="210" y="690"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="resources_2_di" bpmnElement="resources_2">
+        <di:waypoint x="510" y="690"/><di:waypoint x="620" y="690"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="learning_start_di" bpmnElement="learning_start">
+        <dc:Bounds x="65" y="798" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="learning_task_di" bpmnElement="learning_task">
+        <dc:Bounds x="210" y="778" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="learning_end_di" bpmnElement="learning_end">
+        <dc:Bounds x="620" y="798" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="learning_1_di" bpmnElement="learning_1">
+        <di:waypoint x="101" y="816"/><di:waypoint x="210" y="816"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="learning_2_di" bpmnElement="learning_2">
+        <di:waypoint x="510" y="816"/><di:waypoint x="620" y="816"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="diary_start_di" bpmnElement="diary_start">
+        <dc:Bounds x="65" y="924" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="diary_task_di" bpmnElement="diary_task">
+        <dc:Bounds x="210" y="904" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="diary_end_di" bpmnElement="diary_end">
+        <dc:Bounds x="620" y="924" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="diary_1_di" bpmnElement="diary_1">
+        <di:waypoint x="101" y="942"/><di:waypoint x="210" y="942"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="diary_2_di" bpmnElement="diary_2">
+        <di:waypoint x="510" y="942"/><di:waypoint x="620" y="942"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="usage_start_di" bpmnElement="usage_start">
+        <dc:Bounds x="65" y="1050" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="usage_task_di" bpmnElement="usage_task">
+        <dc:Bounds x="210" y="1030" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="usage_end_di" bpmnElement="usage_end">
+        <dc:Bounds x="620" y="1050" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="usage_1_di" bpmnElement="usage_1">
+        <di:waypoint x="101" y="1068"/><di:waypoint x="210" y="1068"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="usage_2_di" bpmnElement="usage_2">
+        <di:waypoint x="510" y="1068"/><di:waypoint x="620" y="1068"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="maintenance_start_di" bpmnElement="maintenance_start">
+        <dc:Bounds x="65" y="1176" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="maintenance_task_di" bpmnElement="maintenance_task">
+        <dc:Bounds x="210" y="1156" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="maintenance_end_di" bpmnElement="maintenance_end">
+        <dc:Bounds x="620" y="1176" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="maintenance_1_di" bpmnElement="maintenance_1">
+        <di:waypoint x="101" y="1194"/><di:waypoint x="210" y="1194"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="maintenance_2_di" bpmnElement="maintenance_2">
+        <di:waypoint x="510" y="1194"/><di:waypoint x="620" y="1194"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="integrity_start_di" bpmnElement="integrity_start">
+        <dc:Bounds x="65" y="1302" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="integrity_task_di" bpmnElement="integrity_task">
+        <dc:Bounds x="210" y="1282" width="300" height="76"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="integrity_end_di" bpmnElement="integrity_end">
+        <dc:Bounds x="620" y="1302" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="integrity_1_di" bpmnElement="integrity_1">
+        <di:waypoint x="101" y="1320"/><di:waypoint x="210" y="1320"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="integrity_2_di" bpmnElement="integrity_2">
+        <di:waypoint x="510" y="1320"/><di:waypoint x="620" y="1320"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
