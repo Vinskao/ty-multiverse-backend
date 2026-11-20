@@ -50,11 +50,15 @@ final class ProductIntegrityJob {
             send("總經圖資料完整性｜" + today + "\n無法讀取總經指標清單，請檢查資料 API。");
             return;
         }
-        log.info("Macro history check found {} short series", findings.size());
-        if (findings.isEmpty()) return;
-        String heading = "總經圖資料不足三年｜" + today + "｜" + findings.size() + " 項\n";
+        var problems = findings.stream().filter(finding -> !finding.expected()).toList();
+        long known = findings.size() - problems.size();
+        log.info("Macro history check found {} short series ({} known source limits)", findings.size(), known);
+        // Known source limits repeat every week; they only ride along as a count when something else is wrong.
+        if (problems.isEmpty()) return;
+        String heading = "總經圖資料不足三年｜" + today + "｜需處理 " + problems.size() + " 項"
+            + (known > 0 ? "（另有 " + known + " 項為已知來源限制，見 maya-sawa docs/MACRO_DATA_INTEGRITY.md）" : "") + "\n";
         var message = new StringBuilder(heading);
-        for (var finding : findings) {
+        for (var finding : problems) {
             String line = finding.alertLine() + "\n";
             if (message.length() + line.length() > 3800) {
                 send(message.toString());
