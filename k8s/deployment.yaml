@@ -111,6 +111,9 @@ spec:
           limits:
             cpu: "500m"      # 提升 CPU 限制以加快啟動
             memory: "1Gi"  # 限制最多 1GB 記憶體
+        envFrom:
+        - configMapRef: {name: palais-access-config, optional: true}
+        - secretRef: {name: palais-access-credentials, optional: true}
         env:
         - name: TELEGRAM_BOT_TOKEN
           valueFrom:

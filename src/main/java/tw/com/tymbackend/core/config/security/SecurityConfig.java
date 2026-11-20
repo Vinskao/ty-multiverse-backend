@@ -142,7 +142,7 @@ public class SecurityConfig {
 
                 // /learn needs a login (2026-11-03: the guest quizzes are gone). Every registered member has one; the mentor
                 // endpoints are further restricted inside LearnController.
-                .requestMatchers("/learn/**").authenticated()
+                .requestMatchers("/learn/**", "/palais-access/**").authenticated()
 
                 // ========================================
                 // SELECT 系列：GET 请求，完全开放，无需认证

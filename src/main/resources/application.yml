@@ -390,3 +390,14 @@ keycloak:
         - patterns:
             - /*
 
+
+# Palais access remains disabled until the database migration and realm role are installed.
+palais:
+  access:
+    enabled: ${PALAIS_ACCESS_ENABLED:false}
+    approvals: ${PALAIS_ACCESS_APPROVALS:1}
+    initial-checker-id: ${PALAIS_ACCESS_INITIAL_CHECKER_ID:}
+    issuer: ${PALAIS_ACCESS_ISSUER:}
+    audience: ${PALAIS_ACCESS_AUDIENCE:}
+    client-id: ${PALAIS_ACCESS_CLIENT_ID:}
+    client-secret: ${PALAIS_ACCESS_CLIENT_SECRET:}

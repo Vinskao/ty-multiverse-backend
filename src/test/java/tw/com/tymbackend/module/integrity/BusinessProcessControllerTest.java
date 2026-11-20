@@ -15,4 +15,13 @@ class BusinessProcessControllerTest {
             .andExpect(content().contentTypeCompatibleWith("application/xml"))
             .andExpect(content().string(containsString("<bpmndi:BPMNDiagram")));
     }
+
+    @Test
+    void servesPalaisProcessAsPublicDiagramXml() throws Exception {
+        MockMvcBuilders.standaloneSetup(new BusinessProcessController()).build()
+            .perform(get("/api/palais-access.bpmn"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentTypeCompatibleWith("application/xml"))
+            .andExpect(content().string(containsString("bpmnElement=\"PalaisAccess\"")));
+    }
 }

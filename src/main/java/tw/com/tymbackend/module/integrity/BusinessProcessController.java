@@ -11,4 +11,9 @@ final class BusinessProcessController {
     Resource businessProcesses() {
         return new ClassPathResource("business-processes.bpmn");
     }
+
+    @GetMapping(value = "/api/palais-access.bpmn", produces = "application/xml")
+    Resource palaisAccess() {
+        return new ClassPathResource("palais-access.bpmn");
+    }
 }

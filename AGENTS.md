@@ -372,3 +372,5 @@ kubectl exec keycloak-559994d657-m8t7q -- \
 ```
 
 產品資料完整性與公開 BPMN：[開發方法](docs/PRODUCT_INTEGRITY.md)。
+
+- Palais access application and review: [docs/PALAIS_ACCESS.md](docs/PALAIS_ACCESS.md)
