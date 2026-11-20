@@ -369,8 +369,7 @@ public class PeopleService {
      * @return 符合所有條件的角色列表
      */
     public List<People> findByMultipleSpecifications(List<Specification<People>> specs) {
-        Specification<People> combinedSpec = specs.stream()
-            .reduce(Specification.where(null), Specification::and);
+        Specification<People> combinedSpec = Specification.allOf(specs);
         return peopleRepository.findAll(combinedSpec);
     }
 
