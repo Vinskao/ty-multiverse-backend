@@ -81,6 +81,108 @@ class PalaisAccessControllerTest {
         verify(db, never()).update(anyString(), anyInt(), eq("ACTIVE"), anyInt(), eq(id), any(UUID.class));
     }
 
+    @Test
+    void secondOpenApplicationFromTheSameAccountIsRefused() {
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "maker")).thenReturn(false);
+        // The partial unique index on open applications makes the insert a no-op the second time.
+        when(db.update(anyString(), any(UUID.class), eq("maker"), eq("maker"), eq("need access"), eq(1))).thenReturn(0);
+        var error = assertThrows(ResponseStatusException.class,
+                () -> controller.submit(jwt("maker", "palais-api"), new PalaisAccessController.Reason("need access")));
+        assertEquals(HttpStatus.CONFLICT, error.getStatusCode());
+        verify(db, never()).update(anyString(), any(UUID.class), eq("maker"), eq("SUBMIT"), any());
+    }
+
+    @Test
+    void existingCheckerCannotApplyAgain() {
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "chiaki")).thenReturn(true);
+        var error = assertThrows(ResponseStatusException.class,
+                () -> controller.submit(jwt("chiaki", "palais-api"), new PalaisAccessController.Reason("again")));
+        assertEquals(HttpStatus.CONFLICT, error.getStatusCode());
+        verify(db, never()).update(anyString(), any(UUID.class), any(), any(), any(), anyInt());
+    }
+
+    @Test
+    void emptyOrOversizedReasonIsRejectedBeforeAnyWrite() {
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "maker")).thenReturn(false);
+        for (String bad : new String[] {"  ", "x".repeat(1001)}) {
+            var error = assertThrows(ResponseStatusException.class,
+                    () -> controller.submit(jwt("maker", "palais-api"), new PalaisAccessController.Reason(bad)));
+            assertEquals(HttpStatus.BAD_REQUEST, error.getStatusCode());
+        }
+        verify(db, never()).update(anyString(), any(UUID.class), any(), any(), any(), anyInt());
+    }
+
+    @Test
+    void applicantCannotApproveTheirOwnApplication() {
+        UUID id = UUID.randomUUID();
+        when(db.queryForList(anyString(), eq(id))).thenReturn(List.of(Map.of("applicant", "chiaki", "approvals_required", 1)));
+        stubNoVotes();
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "chiaki")).thenReturn(true);
+        var error = assertThrows(ResponseStatusException.class, () -> controller.approve(jwt("chiaki", "palais-api"), id));
+        assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
+        verify(db, never()).update(contains("SYNCING"), any(Object[].class));
+    }
+
+    @Test
+    void anotherCheckerCannotDecideInSingleReviewMode() {
+        UUID id = UUID.randomUUID();
+        when(db.queryForList(anyString(), eq(id))).thenReturn(List.of(Map.of("applicant", "maker", "approvals_required", 1)));
+        stubNoVotes();
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "someone-else")).thenReturn(true);
+        var error = assertThrows(ResponseStatusException.class, () -> controller.approve(jwt("someone-else", "palais-api"), id));
+        assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
+    }
+
+    @Test
+    void decisionLosesWhenTheApplicationChangedUnderneathIt() {
+        // Two reviewers open the same request; by the time the second one writes, the row is no longer PENDING.
+        UUID id = UUID.randomUUID();
+        when(db.queryForList(anyString(), eq(id))).thenReturn(List.of(Map.of("applicant", "maker", "approvals_required", 1)));
+        stubNoVotes();
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "chiaki")).thenReturn(true);
+        when(db.queryForList(anyString(), eq(UUID.class), eq(id))).thenReturn(List.of());
+        var error = assertThrows(ResponseStatusException.class, () -> controller.approve(jwt("chiaki", "palais-api"), id));
+        assertEquals(HttpStatus.CONFLICT, error.getStatusCode());
+        verify(db, never()).update(contains("palais_access_event"), any(Object[].class));
+        verify(db, never()).update(contains("SYNCING"), any(Object[].class));
+    }
+
+    @Test
+    void approvalMovesTheRequestToSyncingNotStraightToActive() {
+        UUID id = UUID.randomUUID();
+        when(db.queryForList(anyString(), eq(id))).thenReturn(List.of(Map.of("applicant", "maker", "approvals_required", 1)));
+        stubNoVotes();
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "chiaki")).thenReturn(true);
+        when(db.queryForList(anyString(), eq(UUID.class), eq(id))).thenReturn(List.of(id));
+        controller.approve(jwt("chiaki", "palais-api"), id);
+        verify(db).update(contains("'SYNCING'"), eq(id));
+        verify(db, never()).update(contains("'ACTIVE'"), any(Object[].class));
+    }
+
+    @Test
+    void revokedCheckerCannotDecideEvenIfLiveVerificationStillSaysYesForOthers() {
+        UUID id = UUID.randomUUID();
+        when(db.queryForList(anyString(), eq(id))).thenReturn(List.of(Map.of("applicant", "maker", "approvals_required", 1)));
+        stubNoVotes();
+        when(keycloak.token()).thenReturn("service");
+        when(keycloak.hasRole("service", "chiaki")).thenReturn(false);
+        var error = assertThrows(ResponseStatusException.class, () -> controller.approve(jwt("chiaki", "palais-api"), id));
+        assertEquals(HttpStatus.FORBIDDEN, error.getStatusCode());
+    }
+
+    @SuppressWarnings("unchecked")
+    private void stubNoVotes() {
+        when(db.query(anyString(), any(org.springframework.jdbc.core.ResultSetExtractor.class), any(Object[].class)))
+                .thenReturn(new java.util.HashMap<String, Long>());
+    }
+
     private Jwt jwt(String subject, String audience) {
         return Jwt.withTokenValue("fixture").header("alg", "RS256").subject(subject)
                 .issuer("https://sso.example/realms/test").audience(List.of(audience))
