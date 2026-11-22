@@ -30,7 +30,17 @@ final class MacroHistoryCheck {
         Map.entry("TW_MARKET_PE", "逐日以全部個股計算，往後累積"),
         Map.entry("VIX_FUT_FRONT", "每天一個請求，只抓 45 天，往後累積"),
         Map.entry("TIER_TW_GDP_FORECAST", "預測只有今年與明年"),
-        Map.entry("TIER_TW_CPI_FORECAST", "預測只有今年與明年"));
+        Map.entry("TIER_TW_CPI_FORECAST", "預測只有今年與明年"),
+        Map.entry("CRWV_DEBT", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_CASH", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_DEBT_DUE_12M", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_RPO", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_OPERATING_CASH_FLOW", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_CAPEX", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_INTEREST_EXPENSE", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_CASH_TO_DEBT_DUE_12M", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("CRWV_OCF_TO_CAPEX", "CoreWeave 2025 年才上市，SEC 申報歷史不足三年，往後累積"),
+        Map.entry("NVDA_GUARANTEE_EXPOSURE", "輝達近期才揭露擔保曝險，SEC 只有兩筆，往後累積"));
 
     record Finding(String code, String name, LocalDate first, LocalDate last, int points, String knownReason) {
         boolean expected() {
