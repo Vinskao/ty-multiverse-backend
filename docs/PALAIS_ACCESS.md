@@ -34,6 +34,29 @@ stateDiagram-v2
 
 
 The initial Checker ID is the realm user UUID carried in the JWT subject. If that account loses the direct role, a realm administrator must restore it after reviewing the audit history. Before enabling the feature, verify that the role service account cannot map unrelated roles. Maya uses the internal Backend verifier for sensitive reads made with the new role, so a revoked Checker gets denied even with an older signed token. Set PALAIS_ACCESS_VERIFICATION_URL in Maya for deployments with a different Backend service address.
+## 正式環境開通步驟（2026-11-22）
+
+功能預設關閉（`PALAIS_ACCESS_ENABLED=false`）時控制器不存在，`/palais-access/me` 回 404，帳號設定頁顯示「尚未開放」，Maker 的申請表單不會出現。依下列順序開通：
+
+1. **資料庫**：先在 staging 驗證，再用既有遷移帳號執行 `db/palais_access.sql`。runtime 帳號對申請表與序號完整授權，對審計表只給 SELECT 與 INSERT。
+2. **Keycloak（PeopleSystem realm）**：建立直接 realm 角色 `palais-checker`；登入 client 加 API audience claim；建後端服務帳號（client credentials），只授權查使用者與讀寫 realm 角色對應。驗證指派、讀回、移除，並確認它不能對應其他角色。解碼實際 access token 記下 `iss` 與 `aud`。把角色直接指派給 Chiaki 帳號。
+3. **設定值**：`PALAIS_ACCESS_INITIAL_CHECKER_ID`（Chiaki 的 JWT `sub`）、`PALAIS_ACCESS_ISSUER`、`PALAIS_ACCESS_AUDIENCE`、`PALAIS_ACCESS_CLIENT_ID`、`PALAIS_ACCESS_CLIENT_SECRET`（Jenkins credential，不進 Git）；`PALAIS_ACCESS_APPROVALS` 預設 1，設 2 為雙人審核且只影響之後新送的申請。
+4. **Kubernetes**：ConfigMap `palais-access-config` 放非機密值與 `PALAIS_ACCESS_ENABLED=true`；Secret `palais-access-credentials` 放密鑰。`deployment.yaml` 已用 `envFrom` 讀取（皆 optional），不必改 YAML。
+5. **重啟後端**，啟動 log 不應出現 `Incomplete Palais Keycloak configuration`（代表四個值缺一）。Maya 位址不同時才設 `PALAIS_ACCESS_VERIFICATION_URL`。
+6. **驗收**：Chiaki 登入 `/account-settings` 看到待審清單；一般帳號送申請；Chiaki 放行後狀態由「同步中」變「已開通」，Maker 重新登入；確認能進 `/palais`；管理員撤權後，用撤權前簽發的舊 token 讀 Maya 敏感資料應回 403；最後確認首頁 Palais BPMN 圖顯示。
+
+回退：`PALAIS_ACCESS_ENABLED` 改回 false 並重啟，資料表保留。初始 Checker 失去角色時，由 realm 管理員看過審計紀錄後手動補回。
+
+```mermaid
+flowchart LR
+    A["資料庫遷移"] --> B["Keycloak 角色與服務帳號"]
+    B --> C["取得 iss、aud、Checker UUID"]
+    C --> D["ConfigMap 與 Secret"]
+    D --> E["重啟後端"]
+    E --> F["端到端驗收"]
+    F -->|失敗| G["ENABLED 改回 false"]
+```
+
 ## What a Checker can reach (inventory, 2026-11-20)
 
 Read from the code of all four repos; nothing was run. A Checker is a logged-in account holding the realm role `palais-checker`, confirmed live by `GET /palais-access/verify-read` for every Maya read below.
