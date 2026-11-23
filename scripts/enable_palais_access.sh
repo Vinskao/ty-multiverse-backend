@@ -10,7 +10,16 @@ user="${1:-}"; mode="${2:---check}"
 [[ "$user" =~ ^[A-Za-z0-9._@-]+$ && "$mode" =~ ^--(check|apply|disable)$ ]] || { sed -n 2,5p "$0"; exit 2; }
 here="$(cd "$(dirname "$0")" && pwd)"
 sql="$(base64 < "$here/../db/palais_access.sql" | tr -d '\n')"
-ssh oke-node bash -s -- "$user" "$mode" "$sql" <<'REMOTE'
+ku=""; kp=""; kt=""; kr=master
+if [ "$mode" != --disable ]; then
+  # Typed by the operator; sent over ssh stdin, so never in arguments, history or a file on this machine.
+  read -rp "Realm of the admin account [master] (or PeopleSystem): " kr </dev/tty; kr="${kr:-master}"
+  [[ "$kr" =~ ^[A-Za-z0-9_-]+$ ]] || { echo "Invalid realm"; exit 2; }
+  read -rp "Admin username in $kr: " ku </dev/tty
+  read -rsp "Password: " kp </dev/tty; echo
+  read -rp "TOTP code (Enter if none): " kt </dev/tty
+fi
+{ printf 'ku=%q; kp=%q; kt=%q; kr=%q\n' "$ku" "$kp" "$kt" "$kr"; cat <<'REMOTE'
 set -euo pipefail
 user="$1"; mode="$2"; sql="$(base64 -d <<<"$3")"
 k() { kubectl -n default "$@" </dev/null; }
@@ -27,10 +36,12 @@ base=http://127.0.0.1:18080/sso
 for _ in $(seq 30); do curl -fsS -o /dev/null "$base/realms/master" 2>/dev/null && break; sleep 1; done
 realm="$(sec ty-multiverse-backend-secrets PUBLIC_REALM)"
 login="$(sec ty-multiverse-backend-secrets PUBLIC_CLIENT_ID)"
-sec keycloak-admin username | tr -d '\n' >"$tmp/u"; sec keycloak-admin password | tr -d '\n' >"$tmp/p"
-curl -fsS "$base/realms/master/protocol/openid-connect/token" -d grant_type=password -d client_id=admin-cli \
-  --data-urlencode "username@$tmp/u" --data-urlencode "password@$tmp/p" \
-  | jq -er '"Authorization: Bearer " + .access_token' >"$tmp/h"
+printf %s "$ku" >"$tmp/u"; printf %s "$kp" >"$tmp/p"; printf %s "$kt" >"$tmp/t"
+curl -sS "$base/realms/$kr/protocol/openid-connect/token" -d grant_type=password -d client_id=admin-cli \
+  --data-urlencode "username@$tmp/u" --data-urlencode "password@$tmp/p" --data-urlencode "totp@$tmp/t" >"$tmp/tok"
+jq -e .access_token "$tmp/tok" >/dev/null 2>&1 || {
+  echo "Login to realm $kr refused: $(jq -r '"\(.error): \(.error_description)"' "$tmp/tok" 2>/dev/null)"; exit 1; }
+jq -r '"Authorization: Bearer " + .access_token' "$tmp/tok" >"$tmp/h"
 api() { curl -fsS -H @"$tmp/h" -H 'Content-Type: application/json' "$@"; }
 A="$base/admin/realms/$realm"
 issuer="$(curl -fsS https://tymultiverse.cc/sso/realms/$realm/.well-known/openid-configuration | jq -er .issuer)"
@@ -45,6 +56,11 @@ psql() { kubectl -n default exec -i postgres-0 -- psql -X -v ON_ERROR_STOP=1 -U 
 echo "realm=$realm issuer=$issuer login-client=$login"
 echo "checker=$user uuid=${uid:-MISSING}; login client ${lid:+found}; service client: ${sid:-not created}"
 echo "database host=$host db=$db schema=$schema"
+if [ -z "$uid" ]; then
+  echo "No account named '$user' in $realm. Usernames there (up to 50; first/last name):"
+  api -G "$A/users" -d max=50 | jq -r '.[]|"  \(.username)  (\(.firstName // "") \(.lastName // ""))"'
+  echo "user count: $(api "$A/users/count")"
+fi
 [ -n "$uid" ] && [ -n "$lid" ] || { echo "Checker account or login client not found; nothing changed."; exit 1; }
 case "$host" in postgres|postgres.default*) ;; *) echo "Datasource is not the in-cluster postgres; nothing changed."; exit 1;; esac
 [[ "$dbuser" =~ ^[A-Za-z0-9_]+$ && "$schema" =~ ^[A-Za-z0-9_]+$ ]] || { echo "Unexpected database names; nothing changed."; exit 1; }
@@ -83,3 +99,4 @@ echo "4/4 restart"
 restart
 echo "Done. Sign out and in again, then open https://tymultiverse.cc/account-settings. Undo: --disable"
 REMOTE
+} | ssh oke-node bash -s -- "$user" "$mode" "$sql"
