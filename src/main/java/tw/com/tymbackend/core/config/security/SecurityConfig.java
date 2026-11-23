@@ -221,7 +221,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
                 .requestMatchers(HttpMethod.GET, "/health-data/summary").permitAll() // Public running statistics
                 .requestMatchers(HttpMethod.GET, "/health-data/**").hasAnyRole("manage-users", "palais-checker") // plus PalaisReadGuard
-                .requestMatchers(HttpMethod.POST, "/health-data/workouts", "/health-data/daily").permitAll() // Health ingest token
+                .requestMatchers(HttpMethod.POST, "/health-data/workouts", "/health-data/daily", "/health-data/daily-lines").permitAll() // Health ingest token
                 .requestMatchers("/diary/agent/**").permitAll() // Checked by DiaryNarrativeController against the diary agent key hash
                 // 2026-11-03: default-deny. Keycloak self-registration is open and a new account is a plain "member", who may
                 // upload reports (maya-sawa) and take /learn, nothing else. Anything not listed above is owner-only.

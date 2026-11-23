@@ -68,6 +68,23 @@ public class HealthDataController {
         return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
     }
 
+    /** Plain text from the iPhone Shortcut, one "metric,date,value" line per day (see HealthLines). Any content type is accepted. */
+    @PostMapping("/daily-lines")
+    public BackendApiResponse<Map<String, Object>> dailyLines(@RequestHeader(value = "X-Health-Token", required = false) String given,
+                                                             @RequestBody String body) {
+        authorize(given);
+        check(body.length() <= 20_000);
+        List<HealthDataStore.Daily> rows;
+        try {
+            rows = HealthLines.parse(body, LocalDate.now(ZONE).plusDays(1));
+        } catch (IllegalArgumentException invalid) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, invalid.getMessage());
+        }
+        check(!rows.isEmpty());
+        store.saveDaily(rows);
+        return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
+    }
+
     @GetMapping("/summary")
     public BackendApiResponse<Map<String, Object>> summary() {
         return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), LocalDate.now(ZONE))));

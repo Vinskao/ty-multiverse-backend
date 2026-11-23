@@ -53,6 +53,25 @@ class HealthDataSecurityWebTest {
     }
 
     @Test
+    void shortcutLinesNeedTheTokenAndAreValidated() throws Exception {
+        String lines = "StepCount,2026/11/15 00:04,8912 count\nFlightsClimbed,2026/11/15 00:04,12 count";
+        mvc.perform(post("/health-data/daily-lines").contentType(MediaType.TEXT_PLAIN).content(lines)).andExpect(status().isUnauthorized());
+        mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "nope").contentType(MediaType.TEXT_PLAIN).content(lines))
+                .andExpect(status().isUnauthorized());
+        verifyNoInteractions(store);
+        for (MediaType type : List.of(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON)) {
+            mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(type).content(lines))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(2));
+        }
+        verify(store, times(2)).saveDaily(argThat(rows -> rows.size() == 2));
+        for (String bad : List.of("StepCount,昨天,1 count", "", "StepCount,2026-11-15,1 furlong")) {
+            mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret")
+                    .contentType(MediaType.TEXT_PLAIN).content(bad)).andExpect(status().isBadRequest());
+        }
+        verify(store, times(2)).saveDaily(anyList());
+    }
+
+    @Test
     void rejectsInvalidRows() throws Exception {
         for (String body : List.of(WORKOUT.replace("1500", "0"), WORKOUT.replace("5000", "-1"),
                 WORKOUT.replace("2026-11-01", "2999-01-01"), WORKOUT.replace("Running", "x;y"))) {
