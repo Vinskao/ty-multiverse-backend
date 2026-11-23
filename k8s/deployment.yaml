@@ -114,6 +114,7 @@ spec:
         envFrom:
         - configMapRef: {name: palais-access-config, optional: true}
         - secretRef: {name: palais-access-credentials, optional: true}
+        - secretRef: {name: health-data-credentials, optional: true}
         env:
         - name: TELEGRAM_BOT_TOKEN
           valueFrom:

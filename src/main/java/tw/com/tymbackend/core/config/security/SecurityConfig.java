@@ -219,6 +219,8 @@ public class SecurityConfig {
                 // ========================================
                 .requestMatchers(HttpMethod.GET, "/ai-usage/**").permitAll() // Public aggregate AI usage
                 .requestMatchers(HttpMethod.POST, "/ai-usage").permitAll() // Protected by AI usage ingest token
+                .requestMatchers(HttpMethod.GET, "/health-data/summary").permitAll() // Allowlisted Apple Health statistics
+                .requestMatchers(HttpMethod.POST, "/health-data/workouts", "/health-data/daily").permitAll() // Health ingest token
                 .requestMatchers("/diary/agent/**").permitAll() // Checked by DiaryNarrativeController against the diary agent key hash
                 // 2026-11-03: default-deny. Keycloak self-registration is open and a new account is a plain "member", who may
                 // upload reports (maya-sawa) and take /learn, nothing else. Anything not listed above is owner-only.

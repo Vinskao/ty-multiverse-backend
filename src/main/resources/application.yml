@@ -10,6 +10,11 @@ security:
 ai-usage:
   ingest-token: ${AI_USAGE_INGEST_TOKEN:}
 
+# Metrics outside this list are stored but never returned by the public summary.
+health-data:
+  ingest-token: ${HEALTH_INGEST_TOKEN:}
+  public-metrics: StepCount,DistanceWalkingRunning,DistanceCycling,FlightsClimbed,AppleExerciseTime,ActiveEnergyBurned
+
 diary:
   # SHA-256 of the scheduled diary agent key, and the Keycloak subject it writes narratives for.
   agent-key-sha256: ${DIARY_AGENT_KEY_SHA256:}
