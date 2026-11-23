@@ -1,5 +1,7 @@
 package tw.com.tymbackend.module.health;
 
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDate;
@@ -28,6 +30,7 @@ import tw.com.tymbackend.module.palais.PalaisReadGuard;
 @RequestMapping("/health-data")
 public class HealthDataController {
     private static final int MAX_BATCH = 1000;
+    private static final int MAX_BODY = 20_000;
     private static final LocalDate EARLIEST = LocalDate.of(2000, 1, 1);
     private static final ZoneId ZONE = ZoneId.of("Asia/Taipei");
 
@@ -68,12 +71,19 @@ public class HealthDataController {
         return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
     }
 
-    /** Plain text from the iPhone Shortcut, one "metric,date,value" line per day (see HealthLines). Any content type is accepted. */
+    /**
+     * Plain text from the iPhone Shortcut, one "metric,date,value" line per day (see HealthLines). The raw body is read so any
+     * content type works; Spring's own String binding re-encodes a form-typed body (commas become %2C), which is why it is not used.
+     */
     @PostMapping("/daily-lines")
     public BackendApiResponse<Map<String, Object>> dailyLines(@RequestHeader(value = "X-Health-Token", required = false) String given,
-                                                             @RequestBody String body) {
+                                                             HttpServletRequest request) throws IOException {
         authorize(given);
-        check(body.length() <= 20_000);
+        String body = new String(request.getInputStream().readNBytes(MAX_BODY + 1), StandardCharsets.UTF_8);
+        if (body.isBlank()) {
+            body = formLines(request);
+        }
+        check(body.length() <= MAX_BODY);
         List<HealthDataStore.Daily> rows;
         try {
             rows = HealthLines.parse(body, LocalDate.now(ZONE).plusDays(1));
@@ -107,6 +117,16 @@ public class HealthDataController {
     public BackendApiResponse<List<Map<String, Object>>> daily(Authentication user, @RequestParam String metric) {
         guard.require(user);
         return BackendApiResponse.success("每日資料", store.daily(metric));
+    }
+
+    /** A container that already parsed a form body leaves the text as parameter names. */
+    private static String formLines(HttpServletRequest request) {
+        StringBuilder lines = new StringBuilder();
+        request.getParameterMap().forEach((name, values) -> {
+            String value = values.length == 0 ? "" : values[0];
+            lines.append(name).append(value.isEmpty() ? "" : "=" + value).append('\n');
+        });
+        return lines.toString();
     }
 
     private void authorize(String given) {

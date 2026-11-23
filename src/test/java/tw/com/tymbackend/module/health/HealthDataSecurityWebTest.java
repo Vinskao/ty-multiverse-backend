@@ -59,16 +59,20 @@ class HealthDataSecurityWebTest {
         mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "nope").contentType(MediaType.TEXT_PLAIN).content(lines))
                 .andExpect(status().isUnauthorized());
         verifyNoInteractions(store);
-        for (MediaType type : List.of(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON)) {
+        for (MediaType type : List.of(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON, MediaType.APPLICATION_FORM_URLENCODED)) {
             mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(type).content(lines))
                     .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(2));
         }
-        verify(store, times(2)).saveDaily(argThat(rows -> rows.size() == 2));
+        // A container that parsed the form already leaves the text as a parameter name.
+        mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("StepCount,2026/11/15 00:04,8,912 count", "")).andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(1));
+        verify(store, times(3)).saveDaily(argThat(rows -> rows.size() == 2));
+        verify(store).saveDaily(argThat(rows -> rows.size() == 1 && rows.get(0).total() == 8912));
         for (String bad : List.of("StepCount,昨天,1 count", "", "StepCount,2026-11-15,1 furlong")) {
             mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret")
                     .contentType(MediaType.TEXT_PLAIN).content(bad)).andExpect(status().isBadRequest());
         }
-        verify(store, times(2)).saveDaily(anyList());
+        verify(store, times(4)).saveDaily(anyList());
     }
 
     @Test
