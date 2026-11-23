@@ -6,10 +6,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,10 +18,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import tw.com.ty.common.response.BackendApiResponse;
+import tw.com.tymbackend.module.palais.PalaisReadGuard;
 
 /**
- * Apple Health import. Only /summary is public and it holds running statistics, workout totals and the allowlisted metrics;
- * everything else needs the ingest token (writes) or the owner role (reads, SecurityConfig default rule).
+ * Apple Health import. Only running statistics are public. Every other read needs the owner role or a live Palais
+ * Checker role; writes need the ingest token.
  */
 @RestController
 @RequestMapping("/health-data")
@@ -33,13 +33,13 @@ public class HealthDataController {
 
     private final HealthDataStore store;
     private final byte[] token;
-    private final Set<String> publicMetrics;
+    private final PalaisReadGuard guard;
 
-    HealthDataController(HealthDataStore store, @Value("${health-data.ingest-token:}") String token,
-                         @Value("${health-data.public-metrics:}") Set<String> publicMetrics) {
+    HealthDataController(HealthDataStore store, PalaisReadGuard guard,
+                         @Value("${health-data.ingest-token:}") String token) {
         this.store = store;
         this.token = token.getBytes(StandardCharsets.UTF_8);
-        this.publicMetrics = new TreeSet<>(publicMetrics);
+        this.guard = guard;
     }
 
     @PostMapping("/workouts")
@@ -70,18 +70,25 @@ public class HealthDataController {
 
     @GetMapping("/summary")
     public BackendApiResponse<Map<String, Object>> summary() {
-        LocalDate today = LocalDate.now(ZONE);
-        return BackendApiResponse.success("健康資料摘要", Map.of("running", RunningStats.of(store.runs(), today),
-                "activities", store.activities(), "metrics", store.dailyTotals(publicMetrics, today)));
+        return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), LocalDate.now(ZONE))));
+    }
+
+    @GetMapping("/overview")
+    public BackendApiResponse<Map<String, Object>> overview(Authentication user) {
+        guard.require(user);
+        return BackendApiResponse.success("健康資料總覽", Map.of("activities", store.activities(),
+                "metrics", store.overview(LocalDate.now(ZONE))));
     }
 
     @GetMapping("/metrics")
-    public BackendApiResponse<List<Map<String, Object>>> metrics() {
+    public BackendApiResponse<List<Map<String, Object>>> metrics(Authentication user) {
+        guard.require(user);
         return BackendApiResponse.success("指標清單", store.metrics());
     }
 
     @GetMapping("/daily")
-    public BackendApiResponse<List<Map<String, Object>>> daily(@RequestParam String metric) {
+    public BackendApiResponse<List<Map<String, Object>>> daily(Authentication user, @RequestParam String metric) {
+        guard.require(user);
         return BackendApiResponse.success("每日資料", store.daily(metric));
     }
 

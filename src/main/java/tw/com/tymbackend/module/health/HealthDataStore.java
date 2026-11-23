@@ -4,7 +4,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,25 +51,16 @@ class HealthDataStore {
                 """);
     }
 
-    /** Only cumulative metrics have a daily total; callers pass the public allowlist. */
-    List<Map<String, Object>> dailyTotals(Set<String> metrics, LocalDate today) {
-        if (metrics.isEmpty()) {
-            return List.of();
-        }
-        String marks = String.join(",", java.util.Collections.nCopies(metrics.size(), "?"));
-        Object[] args = new Object[metrics.size() + 2];
-        args[0] = Date.valueOf(today.minusDays(30));
-        args[1] = Date.valueOf(today);
-        int i = 2;
-        for (String metric : metrics) {
-            args[i++] = metric;
-        }
+    /** One row per metric: latest value, 30-day average and all-time peak (daily total, or daily average when there is none). */
+    List<Map<String, Object>> overview(LocalDate today) {
         return db.queryForList("""
-                select metric, max(unit) as unit, max(total) as peak,
-                       (array_agg(day order by total desc, day))[1]::text as peak_day,
-                       avg(total) filter (where day >= ? and day < ?) as average30
-                from health_daily where total is not null and metric in (%s) group by metric order by metric
-                """.formatted(marks), args);
+                select metric, max(unit) as unit, max(day)::text as last_day,
+                       (array_agg(coalesce(total, average) order by day desc))[1] as latest,
+                       avg(coalesce(total, average)) filter (where day >= ? and day < ?) as average30,
+                       max(coalesce(total, average)) as peak,
+                       (array_agg(day order by coalesce(total, average) desc nulls last, day))[1]::text as peak_day
+                from health_daily group by metric order by metric
+                """, Date.valueOf(today.minusDays(30)), Date.valueOf(today));
     }
 
     List<Map<String, Object>> metrics() {

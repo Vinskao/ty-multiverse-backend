@@ -2,27 +2,30 @@ package tw.com.tymbackend.module.health;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.List;
-import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 import tw.com.tymbackend.core.config.security.SecurityConfig;
+import tw.com.tymbackend.module.palais.PalaisReadGuard;
 
 @WebMvcTest(HealthDataController.class)
 @ContextConfiguration(classes = { HealthDataController.class, SecurityConfig.class })
 @TestPropertySource(properties = {
         "keycloak.auth-server-url=http://localhost:1/auth", "keycloak.realm=test", "project.env=platform",
-        "health-data.ingest-token=ingest-secret", "health-data.public-metrics=StepCount,FlightsClimbed"
+        "health-data.ingest-token=ingest-secret"
 })
 class HealthDataSecurityWebTest {
     private static final String WORKOUT = "[{\"sourceId\":\"" + "a".repeat(64)
@@ -31,6 +34,7 @@ class HealthDataSecurityWebTest {
 
     @Autowired private MockMvc mvc;
     @MockBean private HealthDataStore store;
+    @MockBean private PalaisReadGuard guard;
 
     @Test
     void writesNeedTheIngestToken() throws Exception {
@@ -59,11 +63,22 @@ class HealthDataSecurityWebTest {
     }
 
     @Test
-    void onlyTheSummaryIsPublicAndItAsksOnlyForAllowlistedMetrics() throws Exception {
-        mvc.perform(get("/health-data/summary")).andExpect(status().isOk()).andExpect(jsonPath("$.data.running.weeks.length()").value(12));
-        verify(store).dailyTotals(eq(Set.of("StepCount", "FlightsClimbed")), any());
-        mvc.perform(get("/health-data/metrics")).andExpect(status().isUnauthorized());
-        mvc.perform(get("/health-data/daily").param("metric", "HeartRate")).andExpect(status().isUnauthorized());
-        verify(store, never()).daily(any());
+    void onlyRunningIsPublic() throws Exception {
+        mvc.perform(get("/health-data/summary")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.running.weeks.length()").value(12))
+                .andExpect(jsonPath("$.data.length()").value(1));
+        for (String path : List.of("/health-data/overview", "/health-data/metrics", "/health-data/daily?metric=HeartRate")) {
+            mvc.perform(get(path)).andExpect(status().isUnauthorized());
+            mvc.perform(get(path).with(user("member"))).andExpect(status().isForbidden());
+            mvc.perform(get(path).with(user("checker").roles("palais-checker"))).andExpect(status().isOk());
+            mvc.perform(get(path).with(user("owner").roles("manage-users"))).andExpect(status().isOk());
+        }
+    }
+
+    @Test
+    void revokedCheckerIsRefusedEvenWithAnOldToken() throws Exception {
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(guard).require(any());
+        mvc.perform(get("/health-data/overview").with(user("checker").roles("palais-checker"))).andExpect(status().isForbidden());
+        verify(store, never()).overview(any());
     }
 }
