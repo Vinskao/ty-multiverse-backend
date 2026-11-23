@@ -67,7 +67,7 @@ class HealthDataStore {
         }
         return db.queryForList("""
                 select metric, max(unit) as unit, max(total) as peak,
-                       (array_agg(day order by total desc, day))[1] as peak_day,
+                       (array_agg(day order by total desc, day))[1]::text as peak_day,
                        avg(total) filter (where day >= ? and day < ?) as average30
                 from health_daily where total is not null and metric in (%s) group by metric order by metric
                 """.formatted(marks), args);
@@ -75,15 +75,15 @@ class HealthDataStore {
 
     List<Map<String, Object>> metrics() {
         return db.queryForList("""
-                select metric, max(unit) as unit, count(*) as days, min(day) as first_day, max(day) as last_day
+                select metric, max(unit) as unit, count(*) as days, min(day)::text as first_day, max(day)::text as last_day
                 from health_daily group by metric order by metric
                 """);
     }
 
     List<Map<String, Object>> daily(String metric) {
         return db.queryForList("""
-                select day, unit, total, average, minimum, maximum, samples from health_daily
-                where metric = ? order by day desc limit 1000
+                select day::text as day, unit, total, average, minimum, maximum, samples from health_daily
+                where metric = ? order by health_daily.day desc limit 1000
                 """, metric);
     }
 }

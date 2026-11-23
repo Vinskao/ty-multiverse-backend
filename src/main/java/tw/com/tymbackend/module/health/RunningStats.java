@@ -1,5 +1,6 @@
 package tw.com.tymbackend.module.health;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
@@ -17,11 +18,11 @@ final class RunningStats {
     private RunningStats() {}
 
     record Run(LocalDate day, double meters, double seconds) {}
-    record DayDistance(LocalDate day, double km) {}
-    record Fastest(LocalDate day, double km, double secondsPerKm) {}
-    record Week(LocalDate start, double km) {}
+    record DayDistance(@JsonFormat(shape = JsonFormat.Shape.STRING) LocalDate day, double km) {}
+    record Fastest(@JsonFormat(shape = JsonFormat.Shape.STRING) LocalDate day, double km, double secondsPerKm) {}
+    record Week(@JsonFormat(shape = JsonFormat.Shape.STRING) LocalDate start, double km) {}
     record Summary(int runs, double totalKm, DayDistance peakDay, Fastest fastest, double thisWeekKm, Week peakWeek,
-                   List<Week> weeks, LocalDate lastRun) {}
+                   List<Week> weeks, @JsonFormat(shape = JsonFormat.Shape.STRING) LocalDate lastRun) {}
 
     static Summary of(List<Run> all, LocalDate today) {
         List<Run> runs = all.stream().filter(run -> run.meters() > 0 && run.seconds() > 0).toList();

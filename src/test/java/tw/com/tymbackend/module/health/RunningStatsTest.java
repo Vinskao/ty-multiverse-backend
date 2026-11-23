@@ -31,6 +31,18 @@ class RunningStatsTest {
     }
 
     @Test
+    void datesAreIsoStringsEvenWhenTheMapperWritesTimestamps() throws Exception {
+        var mapper = new com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
+                .enable(com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        var json = mapper.readTree(mapper.writeValueAsString(RunningStats.of(List.of(new Run(MONDAY, 5000, 1500)), MONDAY)));
+        assertEquals("2026-11-23", json.at("/peakDay/day").asText());
+        assertEquals("2026-11-23", json.at("/fastest/day").asText());
+        assertEquals("2026-11-23", json.at("/peakWeek/start").asText());
+        assertEquals("2026-11-23", json.at("/weeks/11/start").asText());
+        assertEquals("2026-11-23", json.at("/lastRun").asText());
+    }
+
+    @Test
     void emptyHistoryHasNoRecords() {
         var s = RunningStats.of(List.of(), MONDAY);
         assertEquals(0, s.runs());
