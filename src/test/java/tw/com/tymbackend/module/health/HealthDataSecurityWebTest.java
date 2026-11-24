@@ -107,14 +107,27 @@ class HealthDataSecurityWebTest {
                 .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(0)).andExpect(jsonPath("$.data.skipped").value(1))
                 .andExpect(jsonPath("$.data.skippedDetails[0]").value(org.hamcrest.Matchers.containsString("StepCount 2026-11-15")));
         verify(store, never()).saveDaily(anyList());
-        verify(store).recordIngest(eq("daily-lines"), eq(0), anyString());
+        // A batch whose lines were all skipped still counts as a delivery for that metric.
+        verify(store).recordIngest(eq("daily-lines:StepCount"), eq(0), contains("skipped 1"));
     }
 
     @Test
-    void everyUploadLeavesAHeartbeat() throws Exception {
+    void everyMetricGetsItsOwnHeartbeatSoOneSilentFailureShowsUp() throws Exception {
+        mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(MediaType.TEXT_PLAIN)
+                .content("StepCount,2026/11/15 00:04,8912 count\nStepCount,2026/11/16 00:04,5432 count\nFlightsClimbed,2026/11/15 00:04,12 count"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(3));
+        verify(store).recordIngest("daily-lines:StepCount", 2, "latest 2026-11-16");
+        verify(store).recordIngest("daily-lines:FlightsClimbed", 1, "latest 2026-11-15");
+        verify(store, never()).recordIngest(eq("daily-lines"), anyInt(), anyString());
+    }
+
+    @Test
+    void aMetricThatStopsArrivingKeepsItsOldHeartbeat() throws Exception {
+        // Only StepCount is sent, so only its row is touched; the others age and show as stale in /overview.
         mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(MediaType.TEXT_PLAIN)
                 .content("StepCount,2026/11/15 00:04,8912 count")).andExpect(status().isOk());
-        verify(store).recordIngest(eq("daily-lines"), eq(1), contains("StepCount"));
+        verify(store).recordIngest(eq("daily-lines:StepCount"), eq(1), anyString());
+        verify(store, never()).recordIngest(eq("daily-lines:DistanceWalkingRunning"), anyInt(), anyString());
     }
 
     @Test

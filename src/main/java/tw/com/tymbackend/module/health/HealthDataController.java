@@ -99,15 +99,24 @@ public class HealthDataController {
         if (!guarded.accepted().isEmpty()) {
             store.saveDaily(guarded.accepted());
         }
-        store.recordIngest("daily-lines", guarded.accepted().size(), summary(guarded.accepted(), guarded.skipped().size()));
+        recordMetricHeartbeats(rows, guarded.accepted());
         return BackendApiResponse.success("saved", Map.of("saved", guarded.accepted().size(),
                 "skipped", guarded.skipped().size(), "skippedDetails", guarded.skipped()));
     }
 
-    private static String summary(List<HealthDataStore.Daily> rows, int skipped) {
-        String metrics = rows.stream().map(HealthDataStore.Daily::metric).distinct().sorted().collect(java.util.stream.Collectors.joining(","));
-        String latest = rows.stream().map(HealthDataStore.Daily::day).max(LocalDate::compareTo).map(LocalDate::toString).orElse("-");
-        return (metrics.isEmpty() ? "-" : metrics) + " latest " + latest + (skipped > 0 ? " skipped " + skipped : "");
+    /**
+     * One heartbeat row per metric ("daily-lines:StepCount"), so a single shortcut that quietly stops shows as stale even while
+     * the others keep arriving. A batch whose lines were all skipped still counts as a delivery for that metric.
+     */
+    private void recordMetricHeartbeats(List<HealthDataStore.Daily> received, List<HealthDataStore.Daily> accepted) {
+        for (String metric : received.stream().map(HealthDataStore.Daily::metric).distinct().sorted().toList()) {
+            long sent = received.stream().filter(r -> r.metric().equals(metric)).count();
+            var saved = accepted.stream().filter(r -> r.metric().equals(metric)).toList();
+            String latest = received.stream().filter(r -> r.metric().equals(metric)).map(HealthDataStore.Daily::day)
+                    .max(LocalDate::compareTo).map(LocalDate::toString).orElse("-");
+            long skipped = sent - saved.size();
+            store.recordIngest("daily-lines:" + metric, saved.size(), "latest " + latest + (skipped > 0 ? " skipped " + skipped : ""));
+        }
     }
 
     /**

@@ -83,7 +83,7 @@ flowchart LR
 
 1. **同一場運動不重複**（`HealthWorkoutMatch`）：匯出檔與 TCX 的開始秒數可能不同，key 就不同。同一天同種運動，若距離差 ≤ 3% 且時間差 ≤ 5%，視為同一場，更新原本那一列。用正式資料檢查過：同一天的多場運動差異都在 14% 以上，不會被誤併。
 2. **每日數值不翻倍**（`DailyGuard`）：只擋「過去的日子」且新值大於舊值 1.5 倍、增加量也超過該指標的下限（步數 500、距離 1 km、熱量 50、運動 10 分鐘、爬樓 5 層）。變小一律放行；今天還在增加所以放行。被擋的會在 `daily-lines` 回應的 `skipped`、`skippedDetails` 說明，不覆寫原值。起因是手錶加手機同時計步會變兩倍（實測 10372 對 5432）。
-3. **心跳**（`health_ingest_status`）：每次成功寫入記錄來源（`daily-lines`、`workout-tcx`、`apple-export`）、筆數與最後送達時間，`/health-data/overview` 的 `ingest` 帶 `age_hours`。寫入失敗不影響上傳（資料表剛部署時可能還沒建）。
+3. **心跳**（`health_ingest_status`）：每次成功寫入記錄來源與最後送達時間。每日捷徑「每個指標一列」（`daily-lines:StepCount`、`daily-lines:DistanceWalkingRunning`、`daily-lines:FlightsClimbed`、`daily-lines:AppleExerciseTime`、`daily-lines:ActiveEnergyBurned`），所以其中一個捷徑悄悄停了也看得出來；另有 `workout-tcx`、`apple-export`。每列有筆數與最新日期；整批都被防翻倍略過也算送達，`/health-data/overview` 的 `ingest` 帶 `age_hours`。寫入失敗不影響上傳（資料表剛部署時可能還沒建）。
 
 **不做的檢查**：曾考慮「當天步行＋跑步距離總和 ≥ 當天所有運動距離」，但實測 2026-11-21 健行 16.55 km 大於當天步行跑步距離 13.10 km（兩者的來源不同），這個不變量不成立，所以不採用。
 
