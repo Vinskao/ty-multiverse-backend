@@ -19,3 +19,10 @@ CREATE TABLE IF NOT EXISTS health_daily (
     samples integer NOT NULL CHECK (samples > 0),
     PRIMARY KEY (metric, day)
 );
+-- Heartbeat: when each source last delivered data (daily-lines, workout-tcx, apple-export). Shown in /health-data/overview.
+CREATE TABLE IF NOT EXISTS health_ingest_status (
+    source      text PRIMARY KEY,
+    received_at timestamptz NOT NULL,
+    items       integer NOT NULL,
+    detail      text
+);

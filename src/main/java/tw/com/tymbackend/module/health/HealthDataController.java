@@ -56,6 +56,7 @@ public class HealthDataController {
                     && Double.isFinite(r.durationS()) && r.durationS() > 0 && optional(r.distanceM()) && optional(r.energyKcal()));
         }
         store.saveWorkouts(rows);
+        store.recordIngest("apple-export", rows.size(), "workouts");
         return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
     }
 
@@ -69,6 +70,7 @@ public class HealthDataController {
                     && finite(r.total()) && finite(r.average()) && finite(r.minimum()) && finite(r.maximum()));
         }
         store.saveDaily(rows);
+        store.recordIngest("apple-export", rows.size(), "daily");
         return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
     }
 
@@ -92,8 +94,20 @@ public class HealthDataController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, invalid.getMessage());
         }
         check(!rows.isEmpty());
-        store.saveDaily(rows);
-        return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
+        // A past day that suddenly jumps by half or more looks like a double count; keep the stored value and say so.
+        var guarded = DailyGuard.check(rows, store.dailyTotals(rows), LocalDate.now(ZONE));
+        if (!guarded.accepted().isEmpty()) {
+            store.saveDaily(guarded.accepted());
+        }
+        store.recordIngest("daily-lines", guarded.accepted().size(), summary(guarded.accepted(), guarded.skipped().size()));
+        return BackendApiResponse.success("saved", Map.of("saved", guarded.accepted().size(),
+                "skipped", guarded.skipped().size(), "skippedDetails", guarded.skipped()));
+    }
+
+    private static String summary(List<HealthDataStore.Daily> rows, int skipped) {
+        String metrics = rows.stream().map(HealthDataStore.Daily::metric).distinct().sorted().collect(java.util.stream.Collectors.joining(","));
+        String latest = rows.stream().map(HealthDataStore.Daily::day).max(LocalDate::compareTo).map(LocalDate::toString).orElse("-");
+        return (metrics.isEmpty() ? "-" : metrics) + " latest " + latest + (skipped > 0 ? " skipped " + skipped : "");
     }
 
     /**
@@ -113,6 +127,7 @@ public class HealthDataController {
         check(rows.stream().allMatch(r -> day(r.day()) && optional(r.distanceM())));
         store.saveWorkoutsKeepingEnergy(rows);
         var first = rows.get(0);
+        store.recordIngest("workout-tcx", rows.size(), first.activity() + " " + first.day());
         return BackendApiResponse.success("saved", Map.of("saved", rows.size(), "activity", first.activity(),
                 "day", first.day().toString(), "distanceM", first.distanceM(), "durationS", first.durationS()));
     }
@@ -126,7 +141,7 @@ public class HealthDataController {
     public BackendApiResponse<Map<String, Object>> overview(Authentication user) {
         guard.require(user);
         return BackendApiResponse.success("健康資料總覽", Map.of("activities", store.activities(),
-                "metrics", store.overview(LocalDate.now(ZONE))));
+                "metrics", store.overview(LocalDate.now(ZONE)), "ingest", store.ingestStatus()));
     }
 
     @GetMapping("/metrics")

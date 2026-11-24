@@ -100,6 +100,24 @@ class HealthDataSecurityWebTest {
     }
 
     @Test
+    void aDoubledPastDayIsReportedAndNotWritten() throws Exception {
+        when(store.dailyTotals(anyList())).thenReturn(java.util.Map.of("StepCount|2026-11-15", 4000.0));
+        mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(MediaType.TEXT_PLAIN)
+                        .content("StepCount,2026/11/15 00:04,8912 count"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(0)).andExpect(jsonPath("$.data.skipped").value(1))
+                .andExpect(jsonPath("$.data.skippedDetails[0]").value(org.hamcrest.Matchers.containsString("StepCount 2026-11-15")));
+        verify(store, never()).saveDaily(anyList());
+        verify(store).recordIngest(eq("daily-lines"), eq(0), anyString());
+    }
+
+    @Test
+    void everyUploadLeavesAHeartbeat() throws Exception {
+        mvc.perform(post("/health-data/daily-lines").header("X-Health-Token", "ingest-secret").contentType(MediaType.TEXT_PLAIN)
+                .content("StepCount,2026/11/15 00:04,8912 count")).andExpect(status().isOk());
+        verify(store).recordIngest(eq("daily-lines"), eq(1), contains("StepCount"));
+    }
+
+    @Test
     void workoutTcxNeedsTheTokenAndKeepsOnlyTheSummary() throws Exception {
         String tcx = "<?xml version=\"1.0\"?><TrainingCenterDatabase xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\">"
                 + "<Activities><Activity Sport=\"Running\"><Id>2026-11-21T02:00:48.304Z</Id><Lap StartTime=\"2026-11-21T02:00:48.304Z\">"

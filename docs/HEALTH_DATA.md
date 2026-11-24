@@ -64,3 +64,27 @@ flowchart LR
 **使用**：WorkOutDoors → 該次運動 → Export → Share TCX file → 選捷徑「上傳跑步」。捷徑：「接收捷徑輸入（檔案）」→「取得 URL 內容」POST 到 `https://tymultiverse.cc/tymb/health-data/workout-tcx`，標頭 `X-Health-Token`，要求內文＝檔案（捷徑輸入）。成功回 `saved`、`activity`、`day`、`distanceM`、`durationS`。
 
 **注意**：`tymultiverse.cc/tymb` 的 Ingress 需要 `nginx.ingress.kubernetes.io/proxy-body-size`（預設 1 MB，一小時以上的運動會超過而回 413），設定在 `peoplesystem-terraform-oke/tymultiverse-domain/mirror-ingress.yaml`。
+
+## 防止重複與翻倍（2026-11-24）
+新舊兩條寫入路徑（匯出檔、每日捷徑、TCX 上傳）可能對同一天、同一場運動各寫一次，所以後端有三道防線：
+
+```mermaid
+flowchart LR
+    T["TCX 上傳"] --> M{"同一天、同運動、距離差≤3% 且時間差≤5%？"}
+    M -->|"是"| U["更新那一列，不新增"]
+    M -->|"否"| N["新增一列"]
+    L["每日捷徑 daily-lines"] --> G{"過去的日子，新值 > 舊值 1.5 倍且差距夠大？"}
+    G -->|"是"| S["不覆寫，回應 skipped 與原因"]
+    G -->|"否"| W["覆寫該日數值"]
+    T --> H["health_ingest_status：各來源最後送達時間"]
+    L --> H
+    H --> O["GET /overview 的 ingest（Palais 權限）"]
+```
+
+1. **同一場運動不重複**（`HealthWorkoutMatch`）：匯出檔與 TCX 的開始秒數可能不同，key 就不同。同一天同種運動，若距離差 ≤ 3% 且時間差 ≤ 5%，視為同一場，更新原本那一列。用正式資料檢查過：同一天的多場運動差異都在 14% 以上，不會被誤併。
+2. **每日數值不翻倍**（`DailyGuard`）：只擋「過去的日子」且新值大於舊值 1.5 倍、增加量也超過該指標的下限（步數 500、距離 1 km、熱量 50、運動 10 分鐘、爬樓 5 層）。變小一律放行；今天還在增加所以放行。被擋的會在 `daily-lines` 回應的 `skipped`、`skippedDetails` 說明，不覆寫原值。起因是手錶加手機同時計步會變兩倍（實測 10372 對 5432）。
+3. **心跳**（`health_ingest_status`）：每次成功寫入記錄來源（`daily-lines`、`workout-tcx`、`apple-export`）、筆數與最後送達時間，`/health-data/overview` 的 `ingest` 帶 `age_hours`。寫入失敗不影響上傳（資料表剛部署時可能還沒建）。
+
+**不做的檢查**：曾考慮「當天步行＋跑步距離總和 ≥ 當天所有運動距離」，但實測 2026-11-21 健行 16.55 km 大於當天步行跑步距離 13.10 km（兩者的來源不同），這個不變量不成立，所以不採用。
+
+**限制**：新的 SQL 沒有在真實 PostgreSQL 上自動測試（已用唯讀查詢在正式庫手動確認語法）；天數窗口「最近 N 天」是按整天算，N 天會寫入 N+1 筆（含今天）。排程每 2 天跑一次時建議 N = 4，才能容忍漏跑一次。

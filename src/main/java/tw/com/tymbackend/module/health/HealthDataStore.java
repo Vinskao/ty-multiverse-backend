@@ -2,6 +2,7 @@ package tw.com.tymbackend.module.health;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -29,15 +30,66 @@ class HealthDataStore {
                         r.distanceM(), r.durationS(), r.energyKcal()}).toList());
     }
 
-    /** For files that carry no active energy (TCX): updates distance and time but keeps any energy the Apple Health import stored. */
+    /**
+     * For files that carry no active energy (TCX): updates distance and time but keeps any energy the Apple Health import stored.
+     * A workout that matches one already stored under another key (same day and activity, nearly equal distance and time)
+     * updates that row, so the same run is never counted twice (see HealthWorkoutMatch).
+     */
     @Transactional
     void saveWorkoutsKeepingEnergy(List<Workout> rows) {
-        db.batchUpdate("""
-                insert into health_workout(source_id, activity, day, distance_m, duration_s, energy_kcal) values (?,?,?,?,?,?)
-                on conflict (source_id) do update set activity = excluded.activity, day = excluded.day,
-                  distance_m = excluded.distance_m, duration_s = excluded.duration_s
-                """, rows.stream().map(r -> new Object[]{r.sourceId(), r.activity(), Date.valueOf(r.day()),
-                        r.distanceM(), r.durationS(), r.energyKcal()}).toList());
+        for (Workout r : rows) {
+            List<HealthWorkoutMatch.Known> known = db.query(
+                    "select source_id, distance_m, duration_s from health_workout where day = ? and activity = ?",
+                    (row, n) -> new HealthWorkoutMatch.Known(row.getString(1), (Double) row.getObject(2), row.getDouble(3)),
+                    Date.valueOf(r.day()), r.activity());
+            String key = HealthWorkoutMatch.keyFor(r, known);
+            db.update("""
+                    insert into health_workout(source_id, activity, day, distance_m, duration_s, energy_kcal) values (?,?,?,?,?,?)
+                    on conflict (source_id) do update set activity = excluded.activity, day = excluded.day,
+                      distance_m = excluded.distance_m, duration_s = excluded.duration_s
+                    """, key, r.activity(), Date.valueOf(r.day()), r.distanceM(), r.durationS(), r.energyKcal());
+        }
+    }
+
+    /** Stored totals for the metrics and days in the batch, keyed "metric|day" (see DailyGuard). */
+    Map<String, Double> dailyTotals(List<Daily> rows) {
+        Map<String, Double> totals = new HashMap<>();
+        for (String metric : rows.stream().map(Daily::metric).distinct().toList()) {
+            LocalDate from = rows.stream().filter(r -> r.metric().equals(metric)).map(Daily::day).min(LocalDate::compareTo).orElseThrow();
+            LocalDate to = rows.stream().filter(r -> r.metric().equals(metric)).map(Daily::day).max(LocalDate::compareTo).orElseThrow();
+            db.query("select day, total from health_daily where metric = ? and day between ? and ? and total is not null",
+                    row -> {
+                        totals.put(DailyGuard.key(metric, row.getDate(1).toLocalDate()), row.getDouble(2));
+                    }, metric, Date.valueOf(from), Date.valueOf(to));
+        }
+        return totals;
+    }
+
+    /**
+     * Remembers when each source last delivered data. It is only a heartbeat, so a failure here must never fail an upload
+     * (the table may not exist yet right after a deploy).
+     */
+    void recordIngest(String source, int items, String detail) {
+        try {
+            db.update("""
+                    insert into health_ingest_status(source, received_at, items, detail) values (?, now(), ?, ?)
+                    on conflict (source) do update set received_at = excluded.received_at, items = excluded.items, detail = excluded.detail
+                    """, source, items, detail);
+        } catch (RuntimeException ignored) {
+            // heartbeat only
+        }
+    }
+
+    List<Map<String, Object>> ingestStatus() {
+        try {
+            return db.queryForList("""
+                    select source, received_at::text as received_at, items, detail,
+                           round((extract(epoch from (now() - received_at)) / 3600)::numeric, 1) as age_hours
+                    from health_ingest_status order by source
+                    """);
+        } catch (RuntimeException missing) {
+            return List.of();
+        }
     }
 
     @Transactional
