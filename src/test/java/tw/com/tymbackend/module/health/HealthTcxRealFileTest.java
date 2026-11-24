@@ -22,10 +22,10 @@ class HealthTcxRealFileTest {
             var parsed = HealthTcx.parseDetailed(in);
             var w = parsed.get(0).workout();
             var t = parsed.get(0).detail().track();
-            System.out.printf("REAL %s %s dist=%.0f dur=%.0f avgHr=%.1f maxHr=%d up=%.0f down=%.0f best1k=%.0f best5k=%s kind=%s hrBins=%d moving=%.0f%n",
+            System.out.printf("REAL %s %s dist=%.0f dur=%.0f avgHr=%.1f maxHr=%d up=%.0f down=%.0f best1k=%.0f best5k=%s kind=%s hrBins=%d moving=%.0f movingM=%.0f%n",
                     w.activity(), w.day(), w.distanceM(), w.durationS(), t.avgHr(), t.maxHr(), t.ascentM(), t.descentM(),
                     t.best1kS(), t.best5kS() == null ? "null" : String.format("%.0f", t.best5kS()), parsed.get(0).detail().kind(),
-                    t.hrSeconds().size(), t.movingS());
+                    t.hrSeconds().size(), t.movingS(), t.movingM());
             assertEquals(16.55, w.distanceM() / 1000, 0.02);
             assertEquals(20898, w.durationS(), 2);
             assertEquals(103, t.avgHr(), 2.5);

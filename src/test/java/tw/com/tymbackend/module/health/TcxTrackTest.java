@@ -122,12 +122,51 @@ class TcxTrackTest {
     }
 
     @Test
+    void movingDistanceLeavesOutGpsDriftWhileStandingStill() {
+        var t = new TcxTrack();
+        t.add(0, 0, 100, 150);
+        run(t, 200, 3, 150, 100); // 600 m of real movement
+        // The watch sits still but the GPS wanders: the counter keeps growing 0.1 m a second, below the moving threshold.
+        double d = t.lastDistance();
+        double time = t.lastTime();
+        for (int i = 1; i <= 10_000; i++) {
+            t.add(time + i, d + 0.1 * i, 100, 70);
+        }
+        var s = t.summarize();
+        assertEquals(600, s.movingM(), 5);
+        assertEquals(200, s.movingS(), 3);
+        assertTrue(t.lastDistance() > 1500, "the raw distance is inflated by the drift");
+    }
+
+    @Test
+    void whenTheTimerRanOnHeartRateIsOnlyTakenFromTheMovingPart() {
+        var t = new TcxTrack();
+        t.add(0, 0, 100, 150);
+        run(t, 600, 3, 150, 100); // 10 minutes of running at 150
+        run(t, 20_000, 0, 70, 100); // then hours of standing at 70: far more than 5 times the moving time
+        var s = t.summarize();
+        assertEquals(150, s.avgHr(), 1.5);
+        assertNull(s.hrSeconds().get(70), "resting seconds must not appear in the histogram");
+    }
+
+    @Test
+    void normalRestsStayInTheHeartRateAverage() {
+        var t = new TcxTrack();
+        t.add(0, 0, 100, 150);
+        run(t, 300, 3, 150, 100);
+        run(t, 200, 0, 100, 100); // a rest, but the elapsed time is only 1.7 times the moving time
+        var s = t.summarize();
+        assertTrue(s.avgHr() < 135, "the rest at 100 bpm is part of the average: " + s.avgHr());
+    }
+
+    @Test
     void emptyTrackHasNothingToReport() {
         var s = new TcxTrack().summarize();
         assertNull(s.avgHr());
         assertNull(s.ascentM());
         assertNull(s.best1kS());
         assertNull(s.movingS());
+        assertNull(s.movingM());
         assertTrue(s.hrSeconds().isEmpty());
     }
 }

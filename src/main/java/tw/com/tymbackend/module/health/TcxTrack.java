@@ -22,9 +22,14 @@ final class TcxTrack {
     private static final double MAX_HR_WEIGHT_S = 10;
     /** Slower than this between two points counts as standing still (about 1 km/h). */
     private static final double MIN_MOVING_MS = 0.3;
+    /**
+     * When the recorded time is longer than this many times the moving time (5: real stops and slow climbs stay well below it, a forgotten timer is far above it) (a watch left running), heart rate is taken from
+     * the moving part only, and the public statistics use the moving distance and time instead of the recorded ones.
+     */
+    static final double PAUSE_RATIO = 5;
 
     record Summary(Double avgHr, Integer maxHr, Map<Integer, Integer> hrSeconds, Double ascentM, Double descentM,
-                   Double best1kS, Double best5kS, Double movingS) {}
+                   Double best1kS, Double best5kS, Double movingS, Double movingM) {}
 
     private final List<double[]> points = new ArrayList<>(); // time s, distance m, altitude m (NaN if none), heart rate
 
@@ -41,14 +46,17 @@ final class TcxTrack {
     }
 
     Summary summarize() {
+        double[] moving = moving();
+        double elapsed = points.isEmpty() ? 0 : lastTime() - points.get(0)[0];
+        boolean movingOnly = moving != null && elapsed > PAUSE_RATIO * moving[0];
         double weighted = 0;
         double weight = 0;
         int max = 0;
         TreeMap<Integer, Double> bins = new TreeMap<>();
         for (int i = 0; i < points.size() - 1; i++) {
             int hr = (int) points.get(i)[3];
-            if (hr < HR_MIN || hr > HR_MAX) {
-                continue; // sensor dropout
+            if (hr < HR_MIN || hr > HR_MAX || (movingOnly && !movingStep(i))) {
+                continue; // sensor dropout, or standing still while the timer ran on
             }
             double dt = Math.min(points.get(i + 1)[0] - points.get(i)[0], MAX_HR_WEIGHT_S);
             if (dt <= 0) {
@@ -67,26 +75,35 @@ final class TcxTrack {
         });
         double[] climb = climb();
         return new Summary(weight > 0 ? weighted / weight : null, weight > 0 ? max : null, seconds,
-                climb == null ? null : climb[0], climb == null ? null : climb[1], best(1000), best(5000), movingSeconds());
+                climb == null ? null : climb[0], climb == null ? null : climb[1], best(1000), best(5000),
+                moving == null ? null : moving[0], moving == null ? null : moving[1]);
+    }
+
+    /** Whether the step from point i to point i + 1 is real movement: at most 30 s long, between about 1 km/h and 8 m/s. */
+    private boolean movingStep(int i) {
+        double dt = points.get(i + 1)[0] - points.get(i)[0];
+        double speed = dt > 0 ? (points.get(i + 1)[1] - points.get(i)[1]) / dt : 0;
+        return dt > 0 && dt <= MAX_GAP_S && speed >= MIN_MOVING_MS && speed <= MAX_SPEED_MS;
     }
 
     /**
-     * Seconds actually spent moving: steps of at most 30 s that go between about 1 km/h and the 8 m/s ceiling. A watch left
-     * running after the workout (or a long stop) adds elapsed time but no moving time. Null when there are no steps.
+     * Seconds and metres spent actually moving, or null when there are no steps. A watch left running after the workout, or a long
+     * stop, adds elapsed time; GPS drift while standing still adds distance too, which is why the distance is summed over moving
+     * steps only instead of being taken from the file's total.
      */
-    private Double movingSeconds() {
+    private double[] moving() {
         if (points.size() < 2) {
             return null;
         }
-        double moving = 0;
-        for (int i = 1; i < points.size(); i++) {
-            double dt = points.get(i)[0] - points.get(i - 1)[0];
-            double speed = dt > 0 ? (points.get(i)[1] - points.get(i - 1)[1]) / dt : 0;
-            if (dt > 0 && dt <= MAX_GAP_S && speed >= MIN_MOVING_MS && speed <= MAX_SPEED_MS) {
-                moving += dt;
+        double seconds = 0;
+        double meters = 0;
+        for (int i = 0; i < points.size() - 1; i++) {
+            if (movingStep(i)) {
+                seconds += points.get(i + 1)[0] - points.get(i)[0];
+                meters += points.get(i + 1)[1] - points.get(i)[1];
             }
         }
-        return moving;
+        return new double[]{seconds, meters};
     }
 
     /** Ascent and descent in metres, ignoring wobble smaller than the hysteresis. Null when there is no altitude. */

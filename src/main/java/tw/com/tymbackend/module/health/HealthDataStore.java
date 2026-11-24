@@ -67,15 +67,15 @@ class HealthDataStore {
             var t = p.detail().track();
             db.update("""
                     update health_workout set kind = ?, ascent_m = ?, descent_m = ?, avg_hr = ?, max_hr = ?,
-                      hr_seconds = ?::jsonb, best_1k_s = ?, best_5k_s = ?, moving_s = ? where source_id = ?
+                      hr_seconds = ?::jsonb, best_1k_s = ?, best_5k_s = ?, moving_s = ?, moving_m = ? where source_id = ?
                     """, p.detail().kind(), t.ascentM(), t.descentM(), t.avgHr(), t.maxHr(),
-                    t.hrSeconds().isEmpty() ? null : hrJson(t.hrSeconds()), t.best1kS(), t.best5kS(), t.movingS(), key);
+                    t.hrSeconds().isEmpty() ? null : hrJson(t.hrSeconds()), t.best1kS(), t.best5kS(), t.movingS(), t.movingM(), key);
         }
     }
 
     /** Earlier moving speeds (km/h) of one sport, the history HealthPlausibility compares a new workout with. */
     List<Double> movingSpeedsKmh(String activity) {
-        return db.query("select distance_m / moving_s * 3.6 from health_workout where activity = ? and moving_s > 0 and distance_m > 0",
+        return db.query("select coalesce(moving_m, distance_m) / moving_s * 3.6 from health_workout where activity = ? and moving_s > 0 and coalesce(moving_m, distance_m) > 0",
                 (row, n) -> row.getDouble(1), activity);
     }
 
@@ -137,14 +137,15 @@ class HealthDataStore {
     }
 
     /**
-     * Running workouts for the public statistics. When the timer ran more than twice as long as the time spent moving (a watch
-     * left running), the moving time is used so the pace is real; otherwise the recorded time, which matches what the tracking app
-     * shows. Distance totals are not affected.
+     * Running workouts for the public statistics. When the recorded time is more than 5 times the moving time (a watch left
+     * running, so the file's distance also carries hours of GPS drift) the moving distance and moving time are used, so neither the
+     * pace nor the distance totals are inflated; otherwise the recorded numbers, which match what the tracking app shows.
      */
     List<RunningStats.Run> runs() {
         return db.query("""
-                select day, distance_m,
-                       case when moving_s is not null and duration_s > 2 * moving_s then moving_s else duration_s end
+                select day,
+                       case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_m else distance_m end,
+                       case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_s else duration_s end
                 from health_workout where activity = 'Running' and distance_m > 0
                 """, (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
     }

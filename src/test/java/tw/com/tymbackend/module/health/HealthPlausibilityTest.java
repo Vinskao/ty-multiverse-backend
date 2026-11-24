@@ -11,7 +11,7 @@ class HealthPlausibilityTest {
 
     /** Distance in km and moving time in hours give the moving speed; elapsed defaults to the same. */
     private static java.util.Optional<String> check(String activity, double km, double movingHours, double elapsedHours, List<Double> history) {
-        return HealthPlausibility.check(activity, km * 1000, movingHours * 3600, elapsedHours * 3600, history);
+        return HealthPlausibility.check(activity, km * 1000, km * 1000, movingHours * 3600, elapsedHours * 3600, history);
     }
 
     @Test
@@ -45,16 +45,16 @@ class HealthPlausibilityTest {
     @Test
     void anImpossibleDistanceIsRejectedEvenWithoutAMovingTime() {
         // A file with laps only has no moving time; elapsed speed can never beat the moving speed, so the upper limit still holds.
-        assertTrue(HealthPlausibility.check("Running", 50_000, null, 3600, NO_HISTORY).isPresent());
-        assertTrue(HealthPlausibility.check("Running", 5_000, null, 3600, NO_HISTORY).isEmpty());
-        assertTrue(HealthPlausibility.check("Running", 5_000, 0.0, 3600, NO_HISTORY).isEmpty());
+        assertTrue(HealthPlausibility.check("Running", 50_000, null, null, 3600, NO_HISTORY).isPresent());
+        assertTrue(HealthPlausibility.check("Running", 5_000, null, null, 3600, NO_HISTORY).isEmpty());
+        assertTrue(HealthPlausibility.check("Running", 5_000, 0.0, 0.0, 3600, NO_HISTORY).isEmpty());
     }
 
     @Test
     void workoutsWithoutDistanceOrOfOtherTypesAreNotJudged() {
-        assertTrue(HealthPlausibility.check("Running", 0, 100.0, 100, NO_HISTORY).isEmpty());
-        assertTrue(HealthPlausibility.check("CoreTraining", 0, 3600.0, 3600, NO_HISTORY).isEmpty());
-        assertTrue(HealthPlausibility.check("Swimming", 500_000, 60.0, 60, NO_HISTORY).isEmpty());
+        assertTrue(HealthPlausibility.check("Running", 0, 50.0, 100.0, 100, NO_HISTORY).isEmpty());
+        assertTrue(HealthPlausibility.check("CoreTraining", 0, 0.0, 3600.0, 3600, NO_HISTORY).isEmpty());
+        assertTrue(HealthPlausibility.check("Swimming", 500_000, 500_000.0, 60.0, 60, NO_HISTORY).isEmpty());
     }
 
     private static List<Double> usualRunSpeeds(int count) {
@@ -82,6 +82,19 @@ class HealthPlausibilityTest {
         String message = check("Running", 30, 1, 1, NO_HISTORY).orElseThrow();
         assertTrue(message.contains("跑步") && message.contains("30"), message);
         assertTrue(check("Cycling", 60, 1, 1, NO_HISTORY).orElseThrow().contains("騎車"));
+    }
+
+    @Test
+    void theMovingDistanceDecidesTheSpeedNotTheDriftInflatedTotal() {
+        // The file says 9.15 km but only 6.4 km of it was real movement in 40 minutes (9.6 km/h): believable.
+        assertTrue(HealthPlausibility.check("Running", 9_150, 6_400.0, 2_400.0, 70_000, NO_HISTORY).isEmpty());
+        // The same total over the same moving time would look like 13.7 km/h; a stricter history would refuse that, the real one not.
+        assertTrue(HealthPlausibility.check("Running", 9_150, 6_400.0, 2_400.0, 70_000, usualRunSpeeds(25)).isEmpty());
+    }
+
+    @Test
+    void aMovingDistanceThatIsStillImpossibleIsRefused() {
+        assertTrue(HealthPlausibility.check("Running", 30_000, 28_000.0, 3_600.0, 5 * 3600.0, NO_HISTORY).isPresent());
     }
 
     @Test

@@ -31,8 +31,12 @@ final class HealthPlausibility {
 
     private HealthPlausibility() {}
 
-    /** Empty when the workout is believable, otherwise why it was refused. {@code historyKmh} holds this sport's earlier moving speeds. */
-    static Optional<String> check(String activity, double distanceM, Double movingS, double elapsedS, List<Double> historyKmh) {
+    /**
+     * Empty when the workout is believable, otherwise why it was refused. The moving speed is the moving distance over the moving
+     * time (the file's total distance can be inflated by GPS drift while the watch stood still); {@code historyKmh} holds this
+     * sport's earlier moving speeds.
+     */
+    static Optional<String> check(String activity, double distanceM, Double movingM, Double movingS, double elapsedS, List<Double> historyKmh) {
         Limits limits = LIMITS.get(activity);
         if (limits == null || distanceM <= 0 || elapsedS <= 0) {
             return Optional.empty();
@@ -44,7 +48,7 @@ final class HealthPlausibility {
         if (movingS == null || movingS <= 0) {
             return Optional.empty();
         }
-        double movingKmh = distanceM / movingS * 3.6;
+        double movingKmh = (movingM != null && movingM > 0 ? movingM : distanceM) / movingS * 3.6;
         if (movingKmh > limits.maxKmh() || movingKmh < limits.minKmh()) {
             return Optional.of(too(limits, movingKmh, "合理範圍是 " + format(limits.minKmh()) + "–" + format(limits.maxKmh()) + " km/h"));
         }

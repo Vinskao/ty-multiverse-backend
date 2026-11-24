@@ -137,8 +137,8 @@ public class HealthDataController {
         // A speed that cannot be real (a GPS jump) is refused, not stored. A real workout that merely has a bad timer is kept.
         for (var row : rows) {
             var w = row.workout();
-            var refused = HealthPlausibility.check(w.activity(), w.distanceM() == null ? 0 : w.distanceM(), row.detail().track().movingS(),
-                    w.durationS(), store.movingSpeedsKmh(w.activity()));
+            var refused = HealthPlausibility.check(w.activity(), w.distanceM() == null ? 0 : w.distanceM(), row.detail().track().movingM(),
+                    row.detail().track().movingS(), w.durationS(), store.movingSpeedsKmh(w.activity()));
             if (refused.isPresent()) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, refused.get());
             }
@@ -156,6 +156,7 @@ public class HealthDataController {
         result.put("distanceM", first.distanceM());
         result.put("durationS", first.durationS());
         result.put("movingS", track.movingS() == null ? null : Math.round(track.movingS()));
+        result.put("movingM", track.movingM() == null ? null : Math.round(track.movingM()));
         result.put("avgHr", track.avgHr() == null ? null : Math.round(track.avgHr()));
         result.put("maxHr", track.maxHr());
         result.put("ascentM", track.ascentM() == null ? null : Math.round(track.ascentM()));
