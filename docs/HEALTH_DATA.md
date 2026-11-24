@@ -1,13 +1,18 @@
 # Apple 健康資料匯入與公開統計
 
 ## 做什麼、何時觸發
-手動匯出 iPhone「健康」資料，在本機解析後送到後端；首頁公開跑步與活動統計。
+手動匯出 iPhone「健康」資料，在本機解析後送到後端；首頁公開跑步與活動統計。每日數值由 iPhone 捷徑每週自動補上；每次運動則在跑完後從 WorkOutDoors 分享 TCX 檔到捷徑（2026-11-24）。
 
 ## 架構圖
 ```mermaid
 flowchart LR
     P["iPhone 健康：輸出所有健康資料"] --> S["本機 import_apple_health.py"]
     S -->|"運動紀錄、每日彙總；X-Health-Token"| B["POST /tymb/health-data/workouts、/daily"]
+    K["iPhone 捷徑（每週六 22:00）：每日步數、距離、爬樓、運動分鐘、熱量"] -->|"文字行；X-Health-Token"| L["POST /daily-lines"]
+    W["WorkOutDoors：跑完分享 TCX 檔"] --> U["捷徑「上傳跑步」"]
+    U -->|"原始 TCX；X-Health-Token"| T["POST /workout-tcx：只讀 Lap 加總，不讀 GPS"]
+    L --> D
+    T -->|"同一把 key 覆寫，不重複"| D
     B --> D["health_workout、health_daily"]
     D -->|"只有跑步統計"| G["GET /tymb/health-data/summary（公開）"]
     D -->|"其他運動與所有指標"| O["GET /overview、/metrics、/daily（manage-users 或 Palais Checker，即時驗證）"]
@@ -35,6 +40,8 @@ flowchart LR
 
 **重要：來源要過濾。** 捷徑的「尋找健康樣本」分組只是把所有來源加總，不會像健康 App 去重。實測 2026-11-16：手錶 4940 ＋ iPhone 5432 ＝ 10372，比實際多一倍。步數、距離、爬樓每個動作都要加「來源 是 iPhone」；運動分鐘與動態能量只有手錶會記，不用過濾。
 
+**實際做法（2026-11-24）：每個指標一個捷徑**（匯出健康資料＝步數、匯出距離、匯出爬樓、匯出運動分鐘、匯出熱量），各自 POST 一次；同一個自動化放 5 個「執行捷徑」。分開送是因為後端按 (指標, 日期) 覆寫，不需要合併。單位選項要先改類型才會出現（例如先選「步行＋跑步距離」才有公里）。標題欄用英文鍵盤手打 `X-Health-Token`、token 用複製貼上，夾了全形字元或尾端空白會讓 ingress 直接回 400。
+
 每個指標一組：
 1. 尋找健康樣本：類型、開始日期為最近 8 天、單位、分類方式＝天、來源＝iPhone。
 2. 重複每個項目，裡面放一個「文字」：`指標名稱,開始日期,重複項目`。指標名稱：`StepCount`、`DistanceWalkingRunning`、`FlightsClimbed`、`AppleExerciseTime`、`ActiveEnergyBurned`。開始日期用重複項目的「開始日期」屬性，單位由後端從數值文字（例如 `8912 count`、`5.2 公里`）辨識並統一。
@@ -42,3 +49,18 @@ flowchart LR
 4. 自動化：一天中的時間 22:00、每週、星期六、立即執行。鎖定時讀不到健康資料，執行時手機要解鎖。送過去 8 天是為了補齊上週未完的日子；重送會覆寫，不會重複。
 
 文字行是純文字而非 JSON，是因為捷徑的文字欄位會把引號轉成彎引號、數字帶千分位、日期隨地區變化。
+
+## WorkOutDoors 分享 TCX：每次跑步自動更新首頁成績（2026-11-24）
+**開發方法（為什麼這樣做）**
+1. 捷徑的「尋找健康樣本」沒有「體能訓練」類型，讀不到單次運動；用「跑步速度」推算每日跑步，與匯出檔相比誤差中位數約 9.7%，且沒有跑步距離（週累積、單日高峰算不出來），不採用。
+2. 付費路線都不採用：Health Auto Export 的 REST API 要 Premium；Strava API 只開放給訂閱者，且條款只准顯示給本人。
+3. 採用 WorkOutDoors 的「Share TCX file」：TCX 的每個 Lap 有 `TotalTimeSeconds` 與 `DistanceMeters`，加總與 App 畫面一致（實測一次 16.55 km、5:48:18）。GPX 沒有總數、FIT 要另外的解析套件，所以選 TCX。
+4. 後端串流解析，遇到 `Track`（GPS 軌跡點，約占檔案 99%）整段跳過，不讀、不存座標。拒絕 DOCTYPE（防外部實體）。請求大小上限 30 MB。
+5. 去重：key 與匯入腳本相同，`sha256("<activity>|<開始時間的 epoch 秒>")`；Sport `Biking` 對應成 `Cycling`。已經由 Apple 匯出匯入的運動會被同一列覆寫（已用真實資料驗證 key 相同），所以不會重複。
+6. 不從 TCX 取熱量：TCX 的 `Calories` 含基礎代謝（實測 1333），匯入存的是活動能量（878），語意不同；已存在的熱量保留不動（`saveWorkoutsKeepingEnergy`）。
+7. 日期用 Asia/Taipei 的日曆日。
+8. 上傳端點在 Spring Security 放行（`permitAll`），由 `X-Health-Token` 驗證，與其他寫入端點一致。
+
+**使用**：WorkOutDoors → 該次運動 → Export → Share TCX file → 選捷徑「上傳跑步」。捷徑：「接收捷徑輸入（檔案）」→「取得 URL 內容」POST 到 `https://tymultiverse.cc/tymb/health-data/workout-tcx`，標頭 `X-Health-Token`，要求內文＝檔案（捷徑輸入）。成功回 `saved`、`activity`、`day`、`distanceM`、`durationS`。
+
+**注意**：`tymultiverse.cc/tymb` 的 Ingress 需要 `nginx.ingress.kubernetes.io/proxy-body-size`（預設 1 MB，一小時以上的運動會超過而回 413），設定在 `peoplesystem-terraform-oke/tymultiverse-domain/mirror-ingress.yaml`。

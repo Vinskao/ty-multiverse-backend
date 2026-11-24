@@ -31,6 +31,7 @@ import tw.com.tymbackend.module.palais.PalaisReadGuard;
 public class HealthDataController {
     private static final int MAX_BATCH = 1000;
     private static final int MAX_BODY = 20_000;
+    private static final long MAX_TCX = 30L * 1024 * 1024;
     private static final LocalDate EARLIEST = LocalDate.of(2000, 1, 1);
     private static final ZoneId ZONE = ZoneId.of("Asia/Taipei");
 
@@ -95,6 +96,27 @@ public class HealthDataController {
         return BackendApiResponse.success("saved", Map.of("saved", rows.size()));
     }
 
+    /**
+     * A TCX workout file shared from WorkOutDoors through an iPhone Shortcut (the raw file is the request body). Only the lap
+     * totals are kept, never the GPS track (see HealthTcx). A workout already imported from Apple Health is updated in place.
+     */
+    @PostMapping("/workout-tcx")
+    public BackendApiResponse<Map<String, Object>> workoutTcx(@RequestHeader(value = "X-Health-Token", required = false) String given,
+                                                             HttpServletRequest request) throws IOException {
+        authorize(given);
+        List<HealthDataStore.Workout> rows;
+        try {
+            rows = HealthTcx.parse(new CappedInput(request.getInputStream(), MAX_TCX));
+        } catch (IllegalArgumentException invalid) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, invalid.getMessage());
+        }
+        check(rows.stream().allMatch(r -> day(r.day()) && optional(r.distanceM())));
+        store.saveWorkoutsKeepingEnergy(rows);
+        var first = rows.get(0);
+        return BackendApiResponse.success("saved", Map.of("saved", rows.size(), "activity", first.activity(),
+                "day", first.day().toString(), "distanceM", first.distanceM(), "durationS", first.durationS()));
+    }
+
     @GetMapping("/summary")
     public BackendApiResponse<Map<String, Object>> summary() {
         return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), LocalDate.now(ZONE))));
@@ -156,5 +178,40 @@ public class HealthDataController {
 
     private static boolean optional(Double value) {
         return finite(value) && (value == null || value >= 0);
+    }
+
+    /** Streams the upload but refuses anything over the limit, so a huge body cannot fill the pod's memory. */
+    private static final class CappedInput extends java.io.FilterInputStream {
+        private long left;
+
+        CappedInput(java.io.InputStream in, long limit) {
+            super(in);
+            this.left = limit;
+        }
+
+        @Override
+        public int read() throws IOException {
+            int b = super.read();
+            if (b >= 0) {
+                spend(1);
+            }
+            return b;
+        }
+
+        @Override
+        public int read(byte[] buffer, int off, int len) throws IOException {
+            int n = super.read(buffer, off, len);
+            if (n > 0) {
+                spend(n);
+            }
+            return n;
+        }
+
+        private void spend(long n) {
+            left -= n;
+            if (left < 0) {
+                throw new ResponseStatusException(HttpStatus.PAYLOAD_TOO_LARGE, "TCX 檔案過大");
+            }
+        }
     }
 }

@@ -29,6 +29,17 @@ class HealthDataStore {
                         r.distanceM(), r.durationS(), r.energyKcal()}).toList());
     }
 
+    /** For files that carry no active energy (TCX): updates distance and time but keeps any energy the Apple Health import stored. */
+    @Transactional
+    void saveWorkoutsKeepingEnergy(List<Workout> rows) {
+        db.batchUpdate("""
+                insert into health_workout(source_id, activity, day, distance_m, duration_s, energy_kcal) values (?,?,?,?,?,?)
+                on conflict (source_id) do update set activity = excluded.activity, day = excluded.day,
+                  distance_m = excluded.distance_m, duration_s = excluded.duration_s
+                """, rows.stream().map(r -> new Object[]{r.sourceId(), r.activity(), Date.valueOf(r.day()),
+                        r.distanceM(), r.durationS(), r.energyKcal()}).toList());
+    }
+
     @Transactional
     void saveDaily(List<Daily> rows) {
         db.batchUpdate("""

@@ -76,6 +76,26 @@ class HealthDataSecurityWebTest {
     }
 
     @Test
+    void workoutTcxNeedsTheTokenAndKeepsOnlyTheSummary() throws Exception {
+        String tcx = "<?xml version=\"1.0\"?><TrainingCenterDatabase xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\">"
+                + "<Activities><Activity Sport=\"Running\"><Id>2026-11-21T02:00:48.304Z</Id><Lap StartTime=\"2026-11-21T02:00:48.304Z\">"
+                + "<TotalTimeSeconds>1800</TotalTimeSeconds><DistanceMeters>5000</DistanceMeters><Calories>300</Calories>"
+                + "<Track><Trackpoint><Time>2026-11-21T02:00:48.304Z</Time><DistanceMeters>7</DistanceMeters></Trackpoint></Track>"
+                + "</Lap></Activity></Activities></TrainingCenterDatabase>";
+        mvc.perform(post("/health-data/workout-tcx").contentType(MediaType.APPLICATION_XML).content(tcx)).andExpect(status().isUnauthorized());
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "nope").content(tcx)).andExpect(status().isUnauthorized());
+        verifyNoInteractions(store);
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_XML).content(tcx))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(1))
+                .andExpect(jsonPath("$.data.activity").value("Running")).andExpect(jsonPath("$.data.distanceM").value(5000.0));
+        verify(store).saveWorkoutsKeepingEnergy(argThat(rows -> rows.size() == 1 && rows.get(0).energyKcal() == null
+                && rows.get(0).distanceM() == 5000 && rows.get(0).durationS() == 1800));
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").content("not a tcx"))
+                .andExpect(status().isBadRequest());
+        verify(store, times(1)).saveWorkoutsKeepingEnergy(anyList());
+    }
+
+    @Test
     void rejectsInvalidRows() throws Exception {
         for (String body : List.of(WORKOUT.replace("1500", "0"), WORKOUT.replace("5000", "-1"),
                 WORKOUT.replace("2026-11-01", "2999-01-01"), WORKOUT.replace("Running", "x;y"))) {
