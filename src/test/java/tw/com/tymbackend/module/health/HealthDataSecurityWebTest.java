@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -18,11 +19,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
+import tw.com.tymbackend.core.config.http.WebConfig;
 import tw.com.tymbackend.core.config.security.SecurityConfig;
 import tw.com.tymbackend.module.palais.PalaisReadGuard;
 
 @WebMvcTest(HealthDataController.class)
-@ContextConfiguration(classes = { HealthDataController.class, SecurityConfig.class })
+@ContextConfiguration(classes = { HealthDataController.class, SecurityConfig.class, WebConfig.class })
 @TestPropertySource(properties = {
         "keycloak.auth-server-url=http://localhost:1/auth", "keycloak.realm=test", "project.env=platform",
         "health-data.ingest-token=ingest-secret"
@@ -73,6 +75,28 @@ class HealthDataSecurityWebTest {
                     .contentType(MediaType.TEXT_PLAIN).content(bad)).andExpect(status().isBadRequest());
         }
         verify(store, times(4)).saveDaily(anyList());
+    }
+
+    @Test
+    void backendAnswersAllowedTcxPreflightWithoutRequiringAToken() throws Exception {
+        mvc.perform(options("/health-data/workout-tcx")
+                .header("Origin", "https://tymultiverse.cc")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "X-Health-Token"))
+                .andExpect(status().isOk())
+                .andExpect(header().stringValues("Access-Control-Allow-Origin", "https://tymultiverse.cc"));
+        verifyNoInteractions(store);
+    }
+
+    @Test
+    void backendRejectsAnUnapprovedTcxPreflightOrigin() throws Exception {
+        mvc.perform(options("/health-data/workout-tcx")
+                .header("Origin", "https://unauthorized.example")
+                .header("Access-Control-Request-Method", "POST")
+                .header("Access-Control-Request-Headers", "X-Health-Token"))
+                .andExpect(status().isForbidden())
+                .andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
+        verifyNoInteractions(store);
     }
 
     @Test
