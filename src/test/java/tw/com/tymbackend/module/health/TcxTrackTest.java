@@ -100,11 +100,34 @@ class TcxTrackTest {
     }
 
     @Test
+    void movingTimeLeavesOutStopsAndLongGaps() {
+        var t = new TcxTrack();
+        t.add(0, 0, 100, 150);
+        run(t, 100, 3, 150, 100); // moving 100 s
+        run(t, 100, 0, 90, 100); // standing still 100 s
+        run(t, 100, 3, 150, 100); // moving 100 s
+        t.add(t.lastTime() + 1000, t.lastDistance() + 50, 100, 150); // a gap of 1000 s
+        assertEquals(200, t.summarize().movingS(), 2);
+    }
+
+    @Test
+    void aWatchLeftRunningAfterTheRunHasLittleMovingTime() {
+        var t = new TcxTrack();
+        t.add(0, 0, 100, 150);
+        run(t, 3600, 2.5, 150, 100); // one hour of real running, 9 km
+        run(t, 50_000, 0, 70, 100); // then the timer keeps going while the watch sits still
+        var s = t.summarize();
+        assertEquals(3600, s.movingS(), 5);
+        assertTrue(t.lastTime() > 50_000);
+    }
+
+    @Test
     void emptyTrackHasNothingToReport() {
         var s = new TcxTrack().summarize();
         assertNull(s.avgHr());
         assertNull(s.ascentM());
         assertNull(s.best1kS());
+        assertNull(s.movingS());
         assertTrue(s.hrSeconds().isEmpty());
     }
 }

@@ -151,6 +151,35 @@ class HealthDataSecurityWebTest {
         verify(store, times(1)).saveTcx(anyList());
     }
 
+    private static String lapOnlyTcx(String sport, int meters, int seconds) {
+        return "<?xml version=\"1.0\"?><TrainingCenterDatabase xmlns=\"http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2\">"
+                + "<Activities><Activity Sport=\"" + sport + "\"><Id>2026-11-21T02:00:48Z</Id><Lap StartTime=\"2026-11-21T02:00:48Z\">"
+                + "<TotalTimeSeconds>" + seconds + "</TotalTimeSeconds><DistanceMeters>" + meters + "</DistanceMeters>"
+                + "</Lap></Activity></Activities></TrainingCenterDatabase>";
+    }
+
+    @Test
+    void aSpeedThatCannotBeRealIsRefusedWhileARideAtTheSameSpeedIsStored() throws Exception {
+        // 30 km/h: impossible for a run, normal for a ride.
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_XML)
+                        .content(lapOnlyTcx("Running", 30_000, 3600)))
+                .andExpect(status().isBadRequest());
+        verify(store, never()).saveTcx(anyList());
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_XML)
+                        .content(lapOnlyTcx("Biking", 30_000, 3600)))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.data.kind").value("Ride"));
+        verify(store, times(1)).saveTcx(anyList());
+    }
+
+    @Test
+    void theRefusalSaysWhyAndRunHistoryComesFromTheSameSportOnly() throws Exception {
+        mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_XML)
+                        .content(lapOnlyTcx("Running", 40_000, 3600)))
+                .andExpect(status().isBadRequest())
+                .andExpect(status().reason(org.hamcrest.Matchers.containsString("跑步")));
+        verify(store).movingSpeedsKmh("Running");
+    }
+
     @Test
     void rejectsInvalidRows() throws Exception {
         for (String body : List.of(WORKOUT.replace("1500", "0"), WORKOUT.replace("5000", "-1"),

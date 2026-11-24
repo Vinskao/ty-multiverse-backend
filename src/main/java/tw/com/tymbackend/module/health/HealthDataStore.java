@@ -67,10 +67,16 @@ class HealthDataStore {
             var t = p.detail().track();
             db.update("""
                     update health_workout set kind = ?, ascent_m = ?, descent_m = ?, avg_hr = ?, max_hr = ?,
-                      hr_seconds = ?::jsonb, best_1k_s = ?, best_5k_s = ? where source_id = ?
+                      hr_seconds = ?::jsonb, best_1k_s = ?, best_5k_s = ?, moving_s = ? where source_id = ?
                     """, p.detail().kind(), t.ascentM(), t.descentM(), t.avgHr(), t.maxHr(),
-                    t.hrSeconds().isEmpty() ? null : hrJson(t.hrSeconds()), t.best1kS(), t.best5kS(), key);
+                    t.hrSeconds().isEmpty() ? null : hrJson(t.hrSeconds()), t.best1kS(), t.best5kS(), t.movingS(), key);
         }
+    }
+
+    /** Earlier moving speeds (km/h) of one sport, the history HealthPlausibility compares a new workout with. */
+    List<Double> movingSpeedsKmh(String activity) {
+        return db.query("select distance_m / moving_s * 3.6 from health_workout where activity = ? and moving_s > 0 and distance_m > 0",
+                (row, n) -> row.getDouble(1), activity);
     }
 
     private static String hrJson(Map<Integer, Integer> seconds) {
@@ -130,9 +136,17 @@ class HealthDataStore {
                         r.minimum(), r.maximum(), r.samples()}).toList());
     }
 
+    /**
+     * Running workouts for the public statistics. When the timer ran more than twice as long as the time spent moving (a watch
+     * left running), the moving time is used so the pace is real; otherwise the recorded time, which matches what the tracking app
+     * shows. Distance totals are not affected.
+     */
     List<RunningStats.Run> runs() {
-        return db.query("select day, distance_m, duration_s from health_workout where activity = 'Running' and distance_m > 0",
-                (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
+        return db.query("""
+                select day, distance_m,
+                       case when moving_s is not null and duration_s > 2 * moving_s then moving_s else duration_s end
+                from health_workout where activity = 'Running' and distance_m > 0
+                """, (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
     }
 
     List<Map<String, Object>> activities() {

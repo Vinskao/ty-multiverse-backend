@@ -134,6 +134,15 @@ public class HealthDataController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, invalid.getMessage());
         }
         check(rows.stream().allMatch(r -> day(r.workout().day()) && optional(r.workout().distanceM())));
+        // A speed that cannot be real (a GPS jump) is refused, not stored. A real workout that merely has a bad timer is kept.
+        for (var row : rows) {
+            var w = row.workout();
+            var refused = HealthPlausibility.check(w.activity(), w.distanceM() == null ? 0 : w.distanceM(), row.detail().track().movingS(),
+                    w.durationS(), store.movingSpeedsKmh(w.activity()));
+            if (refused.isPresent()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, refused.get());
+            }
+        }
         store.saveTcx(rows);
         var first = rows.get(0).workout();
         var track = rows.get(0).detail().track();
@@ -146,6 +155,7 @@ public class HealthDataController {
         result.put("day", first.day().toString());
         result.put("distanceM", first.distanceM());
         result.put("durationS", first.durationS());
+        result.put("movingS", track.movingS() == null ? null : Math.round(track.movingS()));
         result.put("avgHr", track.avgHr() == null ? null : Math.round(track.avgHr()));
         result.put("maxHr", track.maxHr());
         result.put("ascentM", track.ascentM() == null ? null : Math.round(track.ascentM()));

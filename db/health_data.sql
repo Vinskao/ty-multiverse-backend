@@ -38,3 +38,6 @@ ALTER TABLE health_workout
     ADD COLUMN IF NOT EXISTS best_1k_s   double precision CHECK (best_1k_s > 0),
     ADD COLUMN IF NOT EXISTS best_5k_s   double precision CHECK (best_5k_s > 0);
 CREATE INDEX IF NOT EXISTS health_workout_kind ON health_workout(kind, day);
+-- Seconds actually spent moving (TCX uploads). The recorded duration_s can be far longer when a watch was left running; the public
+-- fastest pace uses moving_s whenever duration_s is more than twice as long.
+ALTER TABLE health_workout ADD COLUMN IF NOT EXISTS moving_s double precision CHECK (moving_s >= 0);

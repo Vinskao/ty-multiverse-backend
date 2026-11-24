@@ -20,9 +20,11 @@ final class TcxTrack {
     private static final double MAX_GAP_S = 30;
     private static final double MAX_SPEED_MS = 8;
     private static final double MAX_HR_WEIGHT_S = 10;
+    /** Slower than this between two points counts as standing still (about 1 km/h). */
+    private static final double MIN_MOVING_MS = 0.3;
 
     record Summary(Double avgHr, Integer maxHr, Map<Integer, Integer> hrSeconds, Double ascentM, Double descentM,
-                   Double best1kS, Double best5kS) {}
+                   Double best1kS, Double best5kS, Double movingS) {}
 
     private final List<double[]> points = new ArrayList<>(); // time s, distance m, altitude m (NaN if none), heart rate
 
@@ -65,7 +67,26 @@ final class TcxTrack {
         });
         double[] climb = climb();
         return new Summary(weight > 0 ? weighted / weight : null, weight > 0 ? max : null, seconds,
-                climb == null ? null : climb[0], climb == null ? null : climb[1], best(1000), best(5000));
+                climb == null ? null : climb[0], climb == null ? null : climb[1], best(1000), best(5000), movingSeconds());
+    }
+
+    /**
+     * Seconds actually spent moving: steps of at most 30 s that go between about 1 km/h and the 8 m/s ceiling. A watch left
+     * running after the workout (or a long stop) adds elapsed time but no moving time. Null when there are no steps.
+     */
+    private Double movingSeconds() {
+        if (points.size() < 2) {
+            return null;
+        }
+        double moving = 0;
+        for (int i = 1; i < points.size(); i++) {
+            double dt = points.get(i)[0] - points.get(i - 1)[0];
+            double speed = dt > 0 ? (points.get(i)[1] - points.get(i - 1)[1]) / dt : 0;
+            if (dt > 0 && dt <= MAX_GAP_S && speed >= MIN_MOVING_MS && speed <= MAX_SPEED_MS) {
+                moving += dt;
+            }
+        }
+        return moving;
     }
 
     /** Ascent and descent in metres, ignoring wobble smaller than the hysteresis. Null when there is no altitude. */
