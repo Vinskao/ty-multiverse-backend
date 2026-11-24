@@ -80,6 +80,59 @@ class HealthTcxTest {
         assertTrue(refused(tcx("Running", "2026-11-21T02:00:00Z", lap("2026-11-21T02:00:00Z", 0, 0, 0))).contains("時間"));
     }
 
+    /** A TCX whose track has one point per second at 3 m/s, climbing half a metre per second, at a steady heart rate. */
+    private static String climbingRun(String sport, int seconds, double climbPerSecond, int heartRate) {
+        StringBuilder points = new StringBuilder("<Track>");
+        for (int i = 0; i <= seconds; i++) {
+            points.append("<Trackpoint><Time>").append(java.time.Instant.parse("2026-11-21T02:00:00Z").plusSeconds(i)).append("</Time>")
+                    .append("<Position><LatitudeDegrees>0.0</LatitudeDegrees><LongitudeDegrees>0.0</LongitudeDegrees></Position>")
+                    .append("<AltitudeMeters>").append(100 + climbPerSecond * i).append("</AltitudeMeters>")
+                    .append("<DistanceMeters>").append(3.0 * i).append("</DistanceMeters>")
+                    .append("<HeartRateBpm><Value>").append(heartRate).append("</Value></HeartRateBpm></Trackpoint>");
+        }
+        points.append("</Track>");
+        String lap = "<Lap StartTime=\"2026-11-21T02:00:00Z\"><TotalTimeSeconds>" + seconds + "</TotalTimeSeconds><DistanceMeters>"
+                + (3 * seconds) + "</DistanceMeters><Calories>300</Calories>" + points + "</Lap>";
+        return tcx(sport, "2026-11-21T02:00:00Z", lap);
+    }
+
+    @Test
+    void readsHeartRateClimbAndBestEffortsFromTheTrack() {
+        var parsed = HealthTcx.parseDetailed(new ByteArrayInputStream(climbingRun("Running", 700, 0.5, 150).getBytes(StandardCharsets.UTF_8)));
+        assertEquals(1, parsed.size());
+        var track = parsed.get(0).detail().track();
+        assertEquals(150, track.avgHr(), 1.0);
+        assertEquals(150, track.maxHr());
+        assertEquals(350, track.ascentM(), 8);
+        assertEquals(333, track.best1kS(), 4);
+        assertNull(track.best5kS(), "2.1 km is not enough for a 5 km effort");
+        // 350 m of climbing makes this run a trail run.
+        assertEquals("TrailRun", parsed.get(0).detail().kind());
+    }
+
+    @Test
+    void theSameRunOnTheFlatIsARoadRunAndTheWorkoutNumbersAreUnchanged() {
+        var parsed = HealthTcx.parseDetailed(new ByteArrayInputStream(climbingRun("Running", 700, 0.0, 150).getBytes(StandardCharsets.UTF_8)));
+        assertEquals("RoadRun", parsed.get(0).detail().kind());
+        assertEquals(2100, parsed.get(0).workout().distanceM(), 1e-9);
+        assertEquals(700, parsed.get(0).workout().durationS(), 1e-9);
+        assertEquals(parsed.get(0).workout(), HealthTcx.parse(new ByteArrayInputStream(climbingRun("Running", 700, 0.0, 150).getBytes(StandardCharsets.UTF_8))).get(0));
+    }
+
+    @Test
+    void aHikeKeepsItsOwnKindWhateverItClimbs() {
+        var parsed = HealthTcx.parseDetailed(new ByteArrayInputStream(climbingRun("Hiking", 700, 0.5, 120).getBytes(StandardCharsets.UTF_8)));
+        assertEquals("Hike", parsed.get(0).detail().kind());
+    }
+
+    @Test
+    void aFileWithoutHeartRateOrAltitudeStillParses() {
+        var parsed = HealthTcx.parseDetailed(new ByteArrayInputStream(HIKE.getBytes(StandardCharsets.UTF_8)));
+        assertNull(parsed.get(0).detail().track().avgHr());
+        assertNull(parsed.get(0).detail().track().ascentM());
+        assertEquals("Hike", parsed.get(0).detail().kind());
+    }
+
     @Test
     void refusesDoctypeSoExternalEntitiesCannotBeRead() {
         String evil = "<?xml version=\"1.0\"?><!DOCTYPE x [<!ENTITY e SYSTEM \"file:///etc/passwd\">]>" + HIKE.substring(HIKE.indexOf("<TrainingCenterDatabase"));

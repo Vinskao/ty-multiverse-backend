@@ -26,3 +26,15 @@ CREATE TABLE IF NOT EXISTS health_ingest_status (
     items       integer NOT NULL,
     detail      text
 );
+-- Per-workout detail from TCX uploads (docs/HEALTH_DATA.md): strict kind, climb, heart rate, best efforts. Never a route.
+-- hr_seconds is seconds per 5 bpm bin, e.g. {"150": 3200, "155": 410}, so zones can be recomputed for any maximum heart rate.
+ALTER TABLE health_workout
+    ADD COLUMN IF NOT EXISTS kind        text,
+    ADD COLUMN IF NOT EXISTS ascent_m    double precision CHECK (ascent_m >= 0),
+    ADD COLUMN IF NOT EXISTS descent_m   double precision CHECK (descent_m >= 0),
+    ADD COLUMN IF NOT EXISTS avg_hr      double precision CHECK (avg_hr > 0),
+    ADD COLUMN IF NOT EXISTS max_hr      integer CHECK (max_hr > 0),
+    ADD COLUMN IF NOT EXISTS hr_seconds  jsonb,
+    ADD COLUMN IF NOT EXISTS best_1k_s   double precision CHECK (best_1k_s > 0),
+    ADD COLUMN IF NOT EXISTS best_5k_s   double precision CHECK (best_5k_s > 0);
+CREATE INDEX IF NOT EXISTS health_workout_kind ON health_workout(kind, day);

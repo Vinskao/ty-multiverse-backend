@@ -17,8 +17,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * Reads the summary of a TCX workout file (exported from WorkOutDoors). Streams the file and skips every Track, which holds
- * the GPS points and is nearly all of the size, so no route is read or kept. Distance and time are the sum of the laps.
+ * Reads the summary of a TCX workout file (exported from WorkOutDoors). Streams the file. Distance and time are the sum of the
+ * laps. The Track (nearly all of the size) is read only for time, distance, altitude and heart rate (see TcxTrack); the GPS
+ * position is never parsed, so no route is read or kept.
  * TCX calories include basal energy, unlike the import's active energy, so energy is not taken from here.
  *
  * <p>The key matches import_apple_health.py (sha256 of "activity|start epoch seconds"), so uploading a workout that the
@@ -30,13 +31,23 @@ final class HealthTcx {
 
     private HealthTcx() {}
 
+    /** What the track adds to a workout: the strict kind (see HealthKind) and heart rate, climb and best efforts. */
+    record Detail(String kind, TcxTrack.Summary track) {}
+
+    record Parsed(HealthDataStore.Workout workout, Detail detail) {}
+
     static List<HealthDataStore.Workout> parse(InputStream in) {
+        return parseDetailed(in).stream().map(Parsed::workout).toList();
+    }
+
+    static List<Parsed> parseDetailed(InputStream in) {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
-        List<HealthDataStore.Workout> rows = new ArrayList<>();
+        List<Parsed> rows = new ArrayList<>();
         try {
             XMLStreamReader xml = factory.createXMLStreamReader(in);
+            TcxTrack track = new TcxTrack();
             String sport = null;
             Instant start = null;
             double meters = 0;
@@ -52,6 +63,7 @@ final class HealthTcx {
                     switch (xml.getLocalName()) {
                         case "Activity" -> {
                             sport = xml.getAttributeValue(null, "Sport");
+                            track = new TcxTrack();
                             start = null;
                             meters = 0;
                             seconds = 0;
@@ -66,7 +78,7 @@ final class HealthTcx {
                             inLap = true;
                             laps++;
                         }
-                        case "Track" -> skip(xml);
+                        case "Track" -> readTrack(xml, track);
                         case "TotalTimeSeconds" -> seconds += number(xml.getElementText(), "TotalTimeSeconds");
                         case "DistanceMeters" -> meters += number(xml.getElementText(), "DistanceMeters");
                         default -> { }
@@ -75,7 +87,9 @@ final class HealthTcx {
                     if ("Lap".equals(xml.getLocalName())) {
                         inLap = false;
                     } else if ("Activity".equals(xml.getLocalName())) {
-                        rows.add(workout(sport, start, meters, seconds, laps));
+                        var workout = workout(sport, start, meters, seconds, laps);
+                        var summary = track.summarize();
+                        rows.add(new Parsed(workout, new Detail(HealthKind.of(workout.activity(), workout.distanceM(), summary.ascentM()), summary)));
                     }
                 }
             }
@@ -105,15 +119,70 @@ final class HealthTcx {
         return new HealthDataStore.Workout(key(activity, start), activity, start.atZone(ZONE).toLocalDate(), meters, seconds, null);
     }
 
-    private static void skip(XMLStreamReader xml) throws XMLStreamException {
+    /**
+     * Reads the trackpoints of one Track into the accumulator. Only time, cumulative distance, altitude and heart rate are read;
+     * the position (latitude and longitude) is skipped without ever being parsed, so no route can leak out of this class.
+     */
+    private static void readTrack(XMLStreamReader xml, TcxTrack track) throws XMLStreamException {
         int depth = 1;
+        double time = Double.NaN;
+        double distance = Double.NaN;
+        double altitude = Double.NaN;
+        int heartRate = 0;
+        boolean inHeartRate = false;
         while (depth > 0 && xml.hasNext()) {
             int event = xml.next();
             if (event == XMLStreamConstants.START_ELEMENT) {
                 depth++;
+                switch (xml.getLocalName()) {
+                    case "Trackpoint" -> {
+                        time = Double.NaN;
+                        distance = Double.NaN;
+                        altitude = Double.NaN;
+                        heartRate = 0;
+                    }
+                    case "HeartRateBpm" -> inHeartRate = true;
+                    case "Time" -> {
+                        Instant at = instant(xml.getElementText());
+                        time = at == null ? Double.NaN : at.getEpochSecond() + at.getNano() / 1e9;
+                        depth--;
+                    }
+                    case "DistanceMeters" -> {
+                        distance = decimal(xml.getElementText());
+                        depth--;
+                    }
+                    case "AltitudeMeters" -> {
+                        altitude = decimal(xml.getElementText());
+                        depth--;
+                    }
+                    case "Value" -> {
+                        String text = xml.getElementText();
+                        depth--;
+                        if (inHeartRate) {
+                            double bpm = decimal(text);
+                            heartRate = Double.isNaN(bpm) ? 0 : (int) Math.round(bpm);
+                        }
+                    }
+                    default -> { }
+                }
             } else if (event == XMLStreamConstants.END_ELEMENT) {
                 depth--;
+                if ("HeartRateBpm".equals(xml.getLocalName())) {
+                    inHeartRate = false;
+                } else if ("Trackpoint".equals(xml.getLocalName()) && !Double.isNaN(time) && !Double.isNaN(distance)) {
+                    track.add(time, distance, altitude, heartRate);
+                }
             }
+        }
+    }
+
+    /** A number from a trackpoint, or NaN when it is missing or unreadable: one bad point must not reject the whole file. */
+    private static double decimal(String text) {
+        try {
+            double value = Double.parseDouble(text.trim());
+            return Double.isFinite(value) ? value : Double.NaN;
+        } catch (NumberFormatException invalid) {
+            return Double.NaN;
         }
     }
 

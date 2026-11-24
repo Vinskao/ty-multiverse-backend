@@ -127,18 +127,29 @@ public class HealthDataController {
     public BackendApiResponse<Map<String, Object>> workoutTcx(@RequestHeader(value = "X-Health-Token", required = false) String given,
                                                              HttpServletRequest request) throws IOException {
         authorize(given);
-        List<HealthDataStore.Workout> rows;
+        List<HealthTcx.Parsed> rows;
         try {
-            rows = HealthTcx.parse(new CappedInput(request.getInputStream(), MAX_TCX));
+            rows = HealthTcx.parseDetailed(new CappedInput(request.getInputStream(), MAX_TCX));
         } catch (IllegalArgumentException invalid) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, invalid.getMessage());
         }
-        check(rows.stream().allMatch(r -> day(r.day()) && optional(r.distanceM())));
-        store.saveWorkoutsKeepingEnergy(rows);
-        var first = rows.get(0);
+        check(rows.stream().allMatch(r -> day(r.workout().day()) && optional(r.workout().distanceM())));
+        store.saveTcx(rows);
+        var first = rows.get(0).workout();
+        var track = rows.get(0).detail().track();
         store.recordIngest("workout-tcx", rows.size(), first.activity() + " " + first.day());
-        return BackendApiResponse.success("saved", Map.of("saved", rows.size(), "activity", first.activity(),
-                "day", first.day().toString(), "distanceM", first.distanceM(), "durationS", first.durationS()));
+        // The Shortcut shows this as a notification, so the numbers worth eyeballing are in it.
+        var result = new java.util.LinkedHashMap<String, Object>();
+        result.put("saved", rows.size());
+        result.put("activity", first.activity());
+        result.put("kind", rows.get(0).detail().kind());
+        result.put("day", first.day().toString());
+        result.put("distanceM", first.distanceM());
+        result.put("durationS", first.durationS());
+        result.put("avgHr", track.avgHr() == null ? null : Math.round(track.avgHr()));
+        result.put("maxHr", track.maxHr());
+        result.put("ascentM", track.ascentM() == null ? null : Math.round(track.ascentM()));
+        return BackendApiResponse.success("saved", result);
     }
 
     @GetMapping("/summary")

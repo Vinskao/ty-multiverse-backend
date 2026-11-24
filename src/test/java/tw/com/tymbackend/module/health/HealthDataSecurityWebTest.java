@@ -143,11 +143,12 @@ class HealthDataSecurityWebTest {
         mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").contentType(MediaType.APPLICATION_XML).content(tcx))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.data.saved").value(1))
                 .andExpect(jsonPath("$.data.activity").value("Running")).andExpect(jsonPath("$.data.distanceM").value(5000.0));
-        verify(store).saveWorkoutsKeepingEnergy(argThat(rows -> rows.size() == 1 && rows.get(0).energyKcal() == null
-                && rows.get(0).distanceM() == 5000 && rows.get(0).durationS() == 1800));
+        verify(store).saveTcx(argThat(rows -> rows.size() == 1 && rows.get(0).workout().energyKcal() == null
+                && rows.get(0).workout().distanceM() == 5000 && rows.get(0).workout().durationS() == 1800
+                && rows.get(0).detail().kind().equals("Run")));
         mvc.perform(post("/health-data/workout-tcx").header("X-Health-Token", "ingest-secret").content("not a tcx"))
                 .andExpect(status().isBadRequest());
-        verify(store, times(1)).saveWorkoutsKeepingEnergy(anyList());
+        verify(store, times(1)).saveTcx(anyList());
     }
 
     @Test

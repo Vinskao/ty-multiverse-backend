@@ -37,18 +37,46 @@ class HealthDataStore {
      */
     @Transactional
     void saveWorkoutsKeepingEnergy(List<Workout> rows) {
-        for (Workout r : rows) {
-            List<HealthWorkoutMatch.Known> known = db.query(
-                    "select source_id, distance_m, duration_s from health_workout where day = ? and activity = ?",
-                    (row, n) -> new HealthWorkoutMatch.Known(row.getString(1), (Double) row.getObject(2), row.getDouble(3)),
-                    Date.valueOf(r.day()), r.activity());
-            String key = HealthWorkoutMatch.keyFor(r, known);
+        rows.forEach(this::saveOneKeepingEnergy);
+    }
+
+    /** Returns the key of the row that now holds the workout (an existing row when the workout matches one already stored). */
+    private String saveOneKeepingEnergy(Workout r) {
+        List<HealthWorkoutMatch.Known> known = db.query(
+                "select source_id, distance_m, duration_s from health_workout where day = ? and activity = ?",
+                (row, n) -> new HealthWorkoutMatch.Known(row.getString(1), (Double) row.getObject(2), row.getDouble(3)),
+                Date.valueOf(r.day()), r.activity());
+        String key = HealthWorkoutMatch.keyFor(r, known);
+        db.update("""
+                insert into health_workout(source_id, activity, day, distance_m, duration_s, energy_kcal) values (?,?,?,?,?,?)
+                on conflict (source_id) do update set activity = excluded.activity, day = excluded.day,
+                  distance_m = excluded.distance_m, duration_s = excluded.duration_s
+                """, key, r.activity(), Date.valueOf(r.day()), r.distanceM(), r.durationS(), r.energyKcal());
+        return key;
+    }
+
+    /**
+     * Stores TCX workouts: distance and time as above, then the detail the track adds (kind, climb, heart rate, best efforts) on
+     * the same row. The detail columns need db/health_data.sql applied first; without them this fails loudly instead of quietly
+     * dropping the heart rate of an upload.
+     */
+    @Transactional
+    void saveTcx(List<HealthTcx.Parsed> rows) {
+        for (HealthTcx.Parsed p : rows) {
+            String key = saveOneKeepingEnergy(p.workout());
+            var t = p.detail().track();
             db.update("""
-                    insert into health_workout(source_id, activity, day, distance_m, duration_s, energy_kcal) values (?,?,?,?,?,?)
-                    on conflict (source_id) do update set activity = excluded.activity, day = excluded.day,
-                      distance_m = excluded.distance_m, duration_s = excluded.duration_s
-                    """, key, r.activity(), Date.valueOf(r.day()), r.distanceM(), r.durationS(), r.energyKcal());
+                    update health_workout set kind = ?, ascent_m = ?, descent_m = ?, avg_hr = ?, max_hr = ?,
+                      hr_seconds = ?::jsonb, best_1k_s = ?, best_5k_s = ? where source_id = ?
+                    """, p.detail().kind(), t.ascentM(), t.descentM(), t.avgHr(), t.maxHr(),
+                    t.hrSeconds().isEmpty() ? null : hrJson(t.hrSeconds()), t.best1kS(), t.best5kS(), key);
         }
+    }
+
+    private static String hrJson(Map<Integer, Integer> seconds) {
+        StringBuilder json = new StringBuilder("{");
+        seconds.forEach((bin, s) -> json.append(json.length() > 1 ? "," : "").append('"').append(bin).append("\":").append(s));
+        return json.append('}').toString();
     }
 
     /** Stored totals for the metrics and days in the batch, keyed "metric|day" (see DailyGuard). */
