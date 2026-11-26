@@ -61,4 +61,12 @@ class DailyGuardTest {
         assertEquals(LocalDate.parse("2026-11-21"), result.accepted().get(0).day());
         assertEquals(1, result.skipped().size());
     }
+
+    @Test
+    void aDayStoredPartWayThroughIsCompletedByTheNextRuns() {
+        // Stored at 14:00 as 1.83 km, the real day was 10.1 km: the following runs must be allowed to fix it for a few days.
+        var rows = List.of(daily("DistanceWalkingRunning", "2026-11-22", "km", 18.2), daily("DistanceWalkingRunning", "2026-11-21", "km", 18.2));
+        var result = DailyGuard.check(rows, Map.of("DistanceWalkingRunning|2026-11-22", 5.0, "DistanceWalkingRunning|2026-11-21", 5.0), TODAY);
+        assertEquals(2, result.accepted().size());
+    }
 }
