@@ -21,6 +21,33 @@ class RunningRecordsTest {
     }
 
     @Test
+    void of_Should_IgnoreMissingHeartRateAndHikes_When_SelectingLowestRunningHeartRate() {
+        var runs = List.of(run("2026-11-20", 20, 120),
+                new Entry(TODAY.minusDays(2), 7000, 0, 0.0, null, null, 115.0),
+                new Entry(TODAY.minusDays(1), 4000, 1200, null, null, null, 125.0));
+        var hikes = List.of(new Entry(TODAY, 9000, 5400, 0.0, null, null, 90.0));
+        var records = RunningRecords.of(runs, hikes, TODAY);
+        var lowest = pr(records, "lowestAvgHr");
+        assertEquals(115.0, lowest.value());
+        assertEquals(7.0, lowest.longest().value());
+        assertNull(lowest.fastest());
+        assertNull(pr(records, "mostAscentM"));
+    }
+
+    @Test
+    void of_Should_ExposeSeparateDistanceAndPaceWinners_When_AscentTies() {
+        var runs = List.of(new Entry(TODAY.minusDays(2), 5000, 1500, 700.0, null, null),
+                new Entry(TODAY, 20_000, 4800, null, null, null));
+        var hikes = List.of(new Entry(TODAY.minusDays(1), 9000, 5400, 700.0, null, null));
+        com.fasterxml.jackson.databind.JsonNode climb = new com.fasterxml.jackson.databind.ObjectMapper().findAndRegisterModules()
+                .valueToTree(pr(RunningRecords.of(runs, hikes, TODAY), "mostAscentM"));
+        assertEquals(9.0, climb.path("longest").path("value").asDouble());
+        assertEquals(300.0, climb.path("fastest").path("value").asDouble());
+        assertEquals("2026-11-25", climb.path("longest").path("day").asText());
+        assertEquals("2026-11-24", climb.path("fastest").path("day").asText());
+    }
+
+    @Test
     void picksTheBestSingleEffortsAndKeepsPaceToRunsOnly() {
         var runs = List.of(run("2026-10-01", 5, 30), run("2026-10-08", 12, 84), run("2026-10-15", 21.5, 150));
         var hikes = List.of(new Entry(LocalDate.parse("2026-11-01"), 30_000, 36_000, 1800.0, null, null));

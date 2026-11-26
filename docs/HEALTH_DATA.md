@@ -14,7 +14,8 @@ flowchart LR
     L --> D
     T -->|"同一把 key 覆寫，不重複"| D
     B --> D["health_workout、health_daily"]
-    D -->|"只有跑步統計"| G["GET /tymb/health-data/summary（公開）"]
+    D -->|"距離、時間、平均心率與爬升"| R["RunningRecords 計算個人紀錄"]
+    R -->|"極值與對應的距離和配速"| G["GET /tymb/health-data/summary（公開）"]
     D -->|"其他運動與所有指標"| O["GET /overview、/metrics、/daily（manage-users 或 Palais Checker，即時驗證）"]
     G --> F["首頁：完整技術能力與工具"]
 ```
@@ -34,6 +35,12 @@ flowchart LR
 5. 同一趟運動若由兩個 App 寫入，重疊超過一半視為同一筆，優先 Apple Watch。
 6. 最快配速至少 3 km；週從星期一算（Asia/Taipei）。
 7. 上線順序：`db/health_data.sql`、Secret、部署後端、匯入（先不加 `--apply`）、部署前端。重複匯入會覆寫，不會重複；來源刪除的資料不會自動刪。
+
+## 開發方法（2026-11-26）
+1. 摘要沿用每次活動已儲存的平均心率、爬升、距離及時間。最低平均心率取跑步，最大爬升取跑步與健行。零值與缺值不參與比較。
+2. 在 `records.prs` 加入 `lowestAvgHr`，並為這筆紀錄和 `mostAscentM` 提供 `longest`（公里）與 `fastest`（秒／公里）。依原始數值判定並列後，分別選最長距離與最快平均配速，日期用於辨識兩次活動。有距離但缺有效時間時省略 `fastest`。
+3. `RunningRecordsTest` 先驗證並列時兩個得主可能不同，再覆蓋心率缺值、健行排除與缺時間。執行 `./mvnw test`。前端 `tests/home/healthRecord.test.ts` 驗證中英文與連續狀態。
+4. 沿用既有資料表與憑證。先部署後端並確認摘要的新欄位，再部署前端。新前端可讀取舊版摘要。
 
 ## iPhone 捷徑：每週六 22:00 更新每日數值（2026-11-23）
 捷徑無法可靠讀取單次跑步，所以公開的跑步統計仍靠匯出檔更新；捷徑只更新每日的步數、距離、爬樓、運動時間與熱量。

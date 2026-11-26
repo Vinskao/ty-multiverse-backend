@@ -159,10 +159,10 @@ class HealthDataStore {
                 select day,
                        case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_m else distance_m end,
                        case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_s else duration_s end,
-                       ascent_m, best_1k_s, best_5k_s
+                       ascent_m, best_1k_s, best_5k_s, avg_hr
                 from health_workout where activity = ? and distance_m > 0
                 """, (row, n) -> new RunningRecords.Entry(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3),
-                        (Double) row.getObject(4), (Double) row.getObject(5), (Double) row.getObject(6)), activity);
+                        (Double) row.getObject(4), (Double) row.getObject(5), (Double) row.getObject(6), (Double) row.getObject(7)), activity);
     }
 
     /** Hiking workouts, which the weekly distance counts together with the runs. */
