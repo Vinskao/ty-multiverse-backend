@@ -25,12 +25,25 @@ final class RunningStats {
                    List<Week> weeks, @JsonFormat(shape = JsonFormat.Shape.STRING) LocalDate lastRun) {}
 
     static Summary of(List<Run> all, LocalDate today) {
+        return of(all, List.of(), today);
+    }
+
+    /**
+     * {@code hikes} count toward the weekly distance (this week, best week, the 12-week chart) because a trail runner's week is
+     * running and hiking together; the totals, longest day and fastest pace stay running only.
+     */
+    static Summary of(List<Run> all, List<Run> hikes, LocalDate today) {
         List<Run> runs = all.stream().filter(run -> run.meters() > 0 && run.seconds() > 0).toList();
         Map<LocalDate, Double> days = new TreeMap<>();
         Map<LocalDate, Double> weeks = new TreeMap<>();
         for (Run run : runs) {
             days.merge(run.day(), run.meters() / 1000, Double::sum);
             weeks.merge(monday(run.day()), run.meters() / 1000, Double::sum);
+        }
+        for (Run hike : hikes) {
+            if (hike.meters() > 0) {
+                weeks.merge(monday(hike.day()), hike.meters() / 1000, Double::sum);
+            }
         }
         DayDistance peakDay = days.entrySet().stream().max(Map.Entry.comparingByValue())
                 .map(e -> new DayDistance(e.getKey(), e.getValue())).orElse(null);

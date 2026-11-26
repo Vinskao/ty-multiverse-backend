@@ -51,4 +51,14 @@ class RunningStatsTest {
         assertNull(s.peakWeek());
         assertNull(s.lastRun());
     }
+
+    @Test
+    void hikesCountTowardTheWeekButNotTheRunningRecords() {
+        var s = RunningStats.of(List.of(new Run(MONDAY, 5000, 1500)), List.of(new Run(MONDAY.plusDays(1), 16000, 20000)), MONDAY.plusDays(3));
+        assertEquals(21.0, s.thisWeekKm());
+        assertEquals(21.0, s.weeks().get(11).km());
+        assertEquals(5.0, s.totalKm());
+        assertEquals(5.0, s.peakDay().km());
+        assertEquals(1, s.runs());
+    }
 }

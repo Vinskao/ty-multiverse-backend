@@ -150,6 +150,12 @@ class HealthDataStore {
                 """, (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
     }
 
+    /** Hiking workouts, which the weekly distance counts together with the runs. */
+    List<RunningStats.Run> hikes() {
+        return db.query("select day, distance_m, duration_s from health_workout where activity = 'Hiking' and distance_m > 0",
+                (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
+    }
+
     List<Map<String, Object>> activities() {
         return db.queryForList("""
                 select activity, count(*) as sessions, coalesce(sum(distance_m), 0) / 1000 as km, sum(duration_s) / 3600 as hours
