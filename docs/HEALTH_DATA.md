@@ -92,7 +92,7 @@ flowchart LR
 ## 越野跑與心率：從 TCX 軌跡取出的指標（2026-11-24）
 ```mermaid
 flowchart LR
-    F["TCX 檔（手機分享 或 upload_tcx_folder.py 整個資料夾）"] --> P["HealthTcx：Lap 加總＋讀軌跡（時間、累積距離、海拔、心率）"]
+    F["TCX 檔（手機分享，一次一個）"] --> P["HealthTcx：Lap 加總＋讀軌跡（時間、累積距離、海拔、心率）"]
     P -.->|"經緯度完全不解析"| X["不存路線"]
     P --> T["TcxTrack：心率、爬升下降、最快 1／5 公里"]
     T --> K["HealthKind：路跑／越野跑／健行／步行／騎車"]
@@ -108,8 +108,6 @@ flowchart LR
 6. **嚴格分類 `kind`**（`HealthKind`）：以你在 WorkOutDoors 選的運動為準；跑步依爬升再分，爬升 ≥ 300 m，或 ≥ 3 km 且每公里爬升 ≥ 25 m 為 `TrailRun`，否則 `RoadRun`；`Hiking`→`Hike`、`Walking`→`Walk`、`Cycling`→`Ride`、其餘 `Other`。沒有海拔資料的跑步（Apple 匯出的舊紀錄）只會是 `Run`，上傳 TCX 後才分得出。門檻是預設，待實際越野跑校正。
 7. **步頻不採用**：`RunCadence` 含 0 值、單位不明，與 WorkOutDoors 畫面對不上。
 8. 資料表欄位要先套用 `db/health_data.sql` 的 `ALTER TABLE`，否則 TCX 上傳會直接失敗（不會悄悄丟掉心率）。
-
-**大量上傳**：`python -I -B scripts/upload_tcx_folder.py <資料夾> --dry-run` 先看清單，再不加 `--dry-run` 上傳。需要環境變數 `HEALTH_INGEST_TOKEN`（不印出、不寫進記錄）。速度預設每 6.5 秒一個，低於 Gateway 每分鐘 12 次的限制；進度記在資料夾的 `upload_tcx.log.jsonl`，重跑會跳過已成功的檔案；每個檔案印出伺服器讀到的種類、距離、時間、心率、爬升，數字不對馬上看得到。重複上傳安全：同一場運動只會被更新。
 
 **驗證**：`mvn test -Dtest=HealthTcxRealFileTest -Dtcx.sample=<tcx路徑>` 用真實檔案對照畫面數字（檔案含 GPS，不進 Git；沒給路徑時略過）。
 
