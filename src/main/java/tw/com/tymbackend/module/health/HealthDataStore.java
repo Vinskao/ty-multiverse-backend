@@ -169,6 +169,14 @@ class HealthDataStore {
                 """, Date.valueOf(today.minusDays(30)), Date.valueOf(today));
     }
 
+    /** Daily values (total, or average when there is none) of the given metrics since a day, oldest first, for the charts. */
+    List<Map<String, Object>> series(List<String> metrics, LocalDate from) {
+        return db.queryForList("""
+                select metric, day::text as day, coalesce(total, average) as value from health_daily
+                where metric = any (?::text[]) and day >= ? and coalesce(total, average) is not null order by metric, day
+                """, "{" + String.join(",", metrics) + "}", Date.valueOf(from));
+    }
+
     List<Map<String, Object>> metrics() {
         return db.queryForList("""
                 select metric, max(unit) as unit, count(*) as days, min(day)::text as first_day, max(day)::text as last_day

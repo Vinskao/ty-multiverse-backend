@@ -191,10 +191,12 @@ class HealthDataSecurityWebTest {
     }
 
     @Test
-    void onlyRunningIsPublic() throws Exception {
+    void runningAndTheDailyActivityTotalsArePublicButHeartRateAndTheRestAreNot() throws Exception {
         mvc.perform(get("/health-data/summary")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.running.weeks.length()").value(12))
-                .andExpect(jsonPath("$.data.length()").value(1));
+                .andExpect(jsonPath("$.data.other.series").isArray())
+                .andExpect(jsonPath("$.data.length()").value(2));
+        verify(store).series(argThat(metrics -> metrics.contains("StepCount") && !metrics.contains("HeartRate")), any());
         for (String path : List.of("/health-data/overview", "/health-data/metrics", "/health-data/daily?metric=HeartRate")) {
             mvc.perform(get(path)).andExpect(status().isUnauthorized());
             mvc.perform(get(path).with(user("member"))).andExpect(status().isForbidden());

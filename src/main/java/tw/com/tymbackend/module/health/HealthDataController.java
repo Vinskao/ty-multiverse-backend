@@ -23,7 +23,7 @@ import tw.com.ty.common.response.BackendApiResponse;
 import tw.com.tymbackend.module.palais.PalaisReadGuard;
 
 /**
- * Apple Health import. Only running statistics are public. Every other read needs the owner role or a live Palais
+ * Apple Health import. Running statistics and the daily activity totals (steps, distance, flights, exercise, energy) are public. Every other read needs the owner role or a live Palais
  * Checker role; writes need the ingest token.
  */
 @RestController
@@ -32,6 +32,8 @@ public class HealthDataController {
     private static final int MAX_BATCH = 1000;
     private static final int MAX_BODY = 20_000;
     private static final long MAX_TCX = 30L * 1024 * 1024;
+    /** The daily activity totals the shortcuts send; these are public together with the running statistics. */
+    private static final List<String> CHARTED = List.of("StepCount", "DistanceWalkingRunning", "FlightsClimbed", "AppleExerciseTime", "ActiveEnergyBurned");
     private static final LocalDate EARLIEST = LocalDate.of(2000, 1, 1);
     private static final ZoneId ZONE = ZoneId.of("Asia/Taipei");
 
@@ -165,7 +167,11 @@ public class HealthDataController {
 
     @GetMapping("/summary")
     public BackendApiResponse<Map<String, Object>> summary() {
-        return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), LocalDate.now(ZONE))));
+        LocalDate today = LocalDate.now(ZONE);
+        var other = Map.of("activities", store.activities().stream().filter(a -> !"Running".equals(a.get("activity"))).toList(),
+                "metrics", store.overview(today).stream().filter(m -> CHARTED.contains(m.get("metric"))).toList(),
+                "series", store.series(CHARTED, today.minusDays(29)));
+        return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), today), "other", other));
     }
 
     @GetMapping("/overview")
