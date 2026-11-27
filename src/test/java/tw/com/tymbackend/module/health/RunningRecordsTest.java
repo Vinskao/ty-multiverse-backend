@@ -132,4 +132,16 @@ class RunningRecordsTest {
         assertEquals(12, r.months().size());
         assertTrue(r.weekStreaks().stream().allMatch(s -> s.current() == 0 && s.best() == 0));
     }
+
+    @Test
+    void fewestBeatsPerKmIsNotWonByASlowJogOrAShortRun() {
+        var runs = List.of(new Entry(LocalDate.parse("2026-11-01"), 6000, 3600, null, null, null, 110.0),   // slow: 10:00/km, 1100 beats/km
+                new Entry(LocalDate.parse("2026-11-08"), 10_000, 3000, null, null, null, 150.0),            // 5:00/km, 750 beats/km
+                new Entry(LocalDate.parse("2026-11-15"), 3000, 600, null, null, null, 100.0));              // under 5 km
+        var best = pr(RunningRecords.of(runs, List.of(), TODAY), "fewestBeatsPerKm");
+        assertEquals(750.0, best.value(), 0.01);
+        assertEquals(LocalDate.parse("2026-11-08"), best.day());
+        assertEquals(10.0, best.longest().value());
+        assertEquals(300.0, best.fastest().value());
+    }
 }

@@ -59,6 +59,7 @@ final class RunningRecords {
         pace(runs, 10_000, "fastest10kPace", prs);
         pace(runs, HALF_MARATHON_M, "fastestHalfPace", prs);
         detailedRecord(runs, Entry::avgHr, -1, "lowestAvgHr", prs);
+        detailedRecord(runs, RunningRecords::beatsPerKm, -1, "fewestBeatsPerKm", prs);
         detailedRecord(all, Entry::ascentM, 1, "mostAscentM", prs);
         hikes.stream().max(Comparator.comparingDouble(Entry::meters)).ifPresent(e -> prs.add(new Pr("longestHikeKm", e.meters() / 1000, e.day())));
         weeks(all).entrySet().stream().max(Map.Entry.comparingByValue()).ifPresent(e -> prs.add(new Pr("bestWeekKm", e.getValue(), e.getKey())));
@@ -83,6 +84,12 @@ final class RunningRecords {
                 .min(Comparator.comparingDouble(RunningRecords::secondsPerKm).thenComparing(Entry::day))
                 .map(e -> new Effort(secondsPerKm(e), e.day())).orElse(null);
         prs.add(new Pr(key, value, longest.day(), new Effort(longest.meters() / 1000, longest.day()), fastest));
+    }
+
+    /** Heartbeats spent per kilometre: a slow jog cannot win it with a low heart rate, since the long time costs beats. Runs under 5 km do not count. */
+    private static Double beatsPerKm(Entry entry) {
+        if (entry.avgHr() == null || entry.meters() < 5000 || entry.seconds() <= 0) return null;
+        return entry.avgHr() * secondsPerKm(entry) / 60;
     }
 
     private static double secondsPerKm(Entry entry) {
