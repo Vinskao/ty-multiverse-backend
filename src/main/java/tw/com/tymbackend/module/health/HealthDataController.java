@@ -172,7 +172,8 @@ public class HealthDataController {
                 "metrics", store.overview(today).stream().filter(m -> CHARTED.contains(m.get("metric"))).toList(),
                 "series", store.series(CHARTED, today.minusDays(29)));
         return BackendApiResponse.success("跑步摘要", Map.of("running", RunningStats.of(store.runs(), store.hikes(), today),
-                "records", RunningRecords.of(store.recordEntries("Running"), store.recordEntries("Hiking"), today), "other", other));
+                "records", RunningRecords.of(store.recordEntries("Running"), store.recordEntries("Hiking"), today), "other", other,
+                "workouts", store.workoutsSince(today.minusWeeks(53))));
     }
 
     @GetMapping("/overview")

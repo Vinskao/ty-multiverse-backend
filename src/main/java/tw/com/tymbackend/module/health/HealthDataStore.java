@@ -171,6 +171,20 @@ class HealthDataStore {
                 (row, n) -> new RunningStats.Run(row.getDate(1).toLocalDate(), row.getDouble(2), row.getDouble(3)));
     }
 
+    /**
+     * Every workout since a day (sport, day, km, seconds, climb) for the per-sport weekly progress and the weekly streak. Same
+     * moving-time rule as {@link #runs()} when the watch was left running.
+     */
+    List<Map<String, Object>> workoutsSince(LocalDate from) {
+        return db.queryForList("""
+                select activity, day::text as day,
+                       coalesce(case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_m else distance_m end, 0) / 1000 as km,
+                       case when moving_s is not null and moving_m is not null and duration_s > 5 * moving_s then moving_s else duration_s end as seconds,
+                       ascent_m as "ascentM"
+                from health_workout where day >= ? order by day
+                """, Date.valueOf(from));
+    }
+
     List<Map<String, Object>> activities() {
         return db.queryForList("""
                 select activity, count(*) as sessions, coalesce(sum(distance_m), 0) / 1000 as km, sum(duration_s) / 3600 as hours
