@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
@@ -74,18 +74,18 @@ class SecurityRulesWebTest {
     @Autowired
     private MockMvc mvc;
 
-    @MockBean AuthService authService;
-    @MockBean RestTemplate restTemplate;
-    @MockBean AiTokenUsageService aiTokenUsageService;
-    @MockBean EditContentService editContentService;
-    @MockBean GalleryService galleryService;
-    @MockBean LearnService learnService;
-    @MockBean tw.com.tymbackend.core.service.UserActivityReporter userActivityReporter;
-    @MockBean PeopleService peopleService;
-    @MockBean PeopleImageService peopleImageService;
-    @MockBean WeaponDamageService weaponDamageService;
-    @MockBean CompanyProductMappingService companyProductMappingService;
-    @MockBean WeaponService weaponService;
+    @MockitoBean AuthService authService;
+    @MockitoBean RestTemplate restTemplate;
+    @MockitoBean AiTokenUsageService aiTokenUsageService;
+    @MockitoBean EditContentService editContentService;
+    @MockitoBean GalleryService galleryService;
+    @MockitoBean LearnService learnService;
+    @MockitoBean tw.com.tymbackend.core.service.UserActivityReporter userActivityReporter;
+    @MockitoBean PeopleService peopleService;
+    @MockitoBean PeopleImageService peopleImageService;
+    @MockitoBean WeaponDamageService weaponDamageService;
+    @MockitoBean CompanyProductMappingService companyProductMappingService;
+    @MockitoBean WeaponService weaponService;
 
     @org.junit.jupiter.api.BeforeEach
     void stubLookups() {
